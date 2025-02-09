@@ -1,0 +1,56 @@
+// Admission 
+
+{
+    "name": "Suren Kumar D",
+    "rollNo": "CSE23045",
+    "course": "B.Tech",
+    "branch": "Computer Science",
+    "semester": "5",
+    "dateOfBirth": "2003-06-15",
+    "hostelBlock": "A Block",
+    "roomNumber": "214",
+    "studentContact": "+91 9876543210",
+    "email": "suren.kumar@example.com",
+    "category": "NRI",
+    "bloodGroup": "B+",
+    "medicalHistory": "None",
+    "parents": {
+        "father": {
+            "name": "Ramesh Kumar",
+            "contact": "+91 9876543201"
+        },
+        "mother": {
+            "name": "Sita Devi",
+            "contact": "+91 9876543202"
+        }
+    },
+    "localGuardian": {
+        "name": "Mahesh Kumar",
+        "contact": "+91 9876543203"
+    },
+    "messPreference": "Veg",
+    "previousResidence": true
+}
+
+// Re-Admission
+
+{
+    "name": "Suren Kumar",
+    "course": "B.Tech",
+    "branch": "CSE",
+    "year": "3rd",
+    "semester": "5th",
+    "mobile": "9876543210",
+    "email": "surenkumard@example.com",
+    "parentsContact": {
+        "mobile1": "9876500000",
+        "mobile2": "9876511111",
+        "email": "parent@example.com"
+    },
+    "localGuardian": {
+        "name": "Guardian Name",
+        "mobile": "9876522222"
+    },
+    "address": "Annamalai Nagar, Chidambaram",
+    "roomNumber": "A-101"
+}
