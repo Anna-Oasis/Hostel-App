@@ -1,3 +1,9 @@
+GET	    /api/admission	        Get all admission entries	            ❌ No body required
+GET	    /api/admission/:id	    Get a specific admission entry by ID	❌ No body required
+POST	/api/admission	        Create a new admission entry	        ✅ Required (JSON)
+PUT	    /api/admission/:id	    Update an existing admission entry	    ✅ Required (JSON)
+DELETE	/api/admission/:id	    Delete an admission entry by ID	        ❌ No body required
+
 // Admission 
 
 {
