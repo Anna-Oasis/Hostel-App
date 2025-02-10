@@ -15,14 +15,31 @@ interface RadioFieldProps {
   options: { label: string; value: string }[];
 }
 
+/**
+ * RadioField component renders a group of radio buttons and integrates with Formik for form state management.
+ *
+ * @param {string} value - The name of the field in Formik values.
+ * @param {Array<{ label: string, value: string }>} options - An array of options for the radio buttons.
+ */
 function RadioField({ value, options }: RadioFieldProps) {
   const { values, setFieldValue, touched, errors } = useFormikContext<any>();
+
+  /**
+   * Handles the change event for the radio buttons.
+   * Sets the selected option value in the Formik field.
+   *
+   * @param {string} optionValue - The value of the radio button option.
+   */
+  const handleRadioChange = (optionValue: string) => {
+    setFieldValue(value, optionValue);
+  };
+
   return (
     <View>
       <RadioGroup
         value={values[value]}
-        onChange={(value) => {
-          setFieldValue(value, value);
+        onChange={(prop) => {
+          handleRadioChange(prop);
           console.log(value);
         }}
       >
@@ -41,7 +58,7 @@ function RadioField({ value, options }: RadioFieldProps) {
           </Radio>
         ))}
       </RadioGroup>
-      {touched[value] && errors[value] && (
+      {touched[value] && typeof errors[value] === 'string' && (
         <Text italic style={{ color: "red", marginTop: 5 }}>{errors[value]}</Text>
       )}
     </View>

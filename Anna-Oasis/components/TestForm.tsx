@@ -1,20 +1,21 @@
-import React from 'react';
+import React from "react";
 import { View } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import RadioField from "@/components/form/RadioField";
+import CheckBoxField from "@/components/form/CheckBoxField";
+import SelectField from "@/components/form/SelectField";
 
 const TestForm = () => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     gender: Yup.string().required("Gender is required"),
-    terms: Yup.boolean().oneOf(
-      [true],
-      "You must accept the terms and conditions"
-    ),
-    file: Yup.mixed().required("File is required"),
+    terms: Yup.array()
+      .of(Yup.string())
+      .min(1, "You must accept the terms and conditions"),
+    // file: Yup.mixed().required("File is required"),
     subscription: Yup.string().required("Subscription is required"),
   });
 
@@ -23,8 +24,8 @@ const TestForm = () => {
       initialValues={{
         name: "",
         gender: "",
-        terms: false,
-        file: null,
+        terms: [],
+        // file: null,
         subscription: "",
       }}
       validationSchema={validationSchema}
@@ -51,6 +52,14 @@ const TestForm = () => {
               { label: "Other", value: "other" },
             ]}
           />
+          <CheckBoxField
+            value="terms"
+            options={[{ label: "I understand", value: "checked" }]}
+          />
+          <SelectField value="subscription" options={[
+            {label: "Basic", value: "basic"},
+            {label: "Pro", value: "pro"},
+          ]}/>
           <Button onPress={() => handleSubmit()}>
             <ButtonText>Submit</ButtonText>
           </Button>
