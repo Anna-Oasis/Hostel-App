@@ -3,15 +3,15 @@ import { Button, ButtonText } from "@/components/ui/button";
 import TestForm from "@/components/TestForm";
 import AdmissionForm from "@/components/AdmissionForm";
 import React from "react";
-import { Link, useRouter } from "expo-router";
+import { Link, router } from "expo-router";
 
 
 export default function Index() {
-  const router = useRouter();
+ 
   return (
     <>
       <View className="flex m-4 gap-4">
-        <Button onPress={()=>router.push("/student/login")}>
+        <Button onPress={()=> router.push('/Login')} >
           <ButtonText>Student</ButtonText>
         </Button>
         <Button>

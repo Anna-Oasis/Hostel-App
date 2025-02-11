@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { View, Text } from "react-native";
 import {
   Select,
@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { useFormikContext } from "formik";
+import Label from "@/components/form/Label"
 
 interface SelectFieldProps {
+  label?: string;
   value: string;
   options: { label: string; value: string }[];
 }
@@ -23,19 +25,20 @@ interface SelectFieldProps {
 /**
  * SelectField component renders a select dropdown and integrates with Formik for form state management.
  *
+ * @param {string} label
  * @param {string} value - The value of the field in Formik values.
  * @param {Array<{ label: string, value: string }>} options - An array of options for the select dropdown.
  */
-const SelectField = ({ value, options }: SelectFieldProps) => {
-  const { values, setFieldValue, touched, errors } = useFormikContext<Record<string, any>>();
+const SelectField = ({ label,value, options }: SelectFieldProps) => {
+  const { values, setFieldValue, touched, errors } =
+    useFormikContext<Record<string, any>>();
 
   return (
     <View>
-      <Select
-        onValueChange={(prop) => setFieldValue(value, prop)}
-      >
+      {label && <Label text={label}/>}
+      <Select onValueChange={(prop) => setFieldValue(value, prop)}>
         <SelectTrigger>
-          <SelectInput placeholder="Select option" className="flex-1" />
+          <SelectInput placeholder="Select option" className="flex-1 my-3" />
           <SelectIcon className="mr-3" as={ChevronDownIcon} />
         </SelectTrigger>
         <SelectPortal>
@@ -45,13 +48,17 @@ const SelectField = ({ value, options }: SelectFieldProps) => {
               <SelectDragIndicator />
             </SelectDragIndicatorWrapper>
             {options.map((option) => (
-              <SelectItem key={option.value} label={option.label} value={option.value} />
+              <SelectItem
+                key={option.value}
+                label={option.label}
+                value={option.value}
+              />
             ))}
           </SelectContent>
         </SelectPortal>
       </Select>
-      {touched[value] &&typeof errors[value] === 'string' && (
-        <Text style={{ color: 'red', marginTop: 5 }}>{errors[value]}</Text>
+      {touched[value] && typeof errors[value] === "string" && (
+        <Text style={{ color: "red", marginTop: 5 }}>{errors[value]}</Text>
       )}
     </View>
   );

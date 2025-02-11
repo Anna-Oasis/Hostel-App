@@ -23,7 +23,7 @@ export default function Home() {
 function Readmission() {
   return (
     <View>
-      <Button onPress={() => router.push("/student/readmissionForm")}>
+      <Button onPress={() => router.push("/Student/Home/ReadmissionForm")}>
         <ButtonText>Readmission</ButtonText>
       </Button>
       <Text>previous details here</Text>
@@ -34,7 +34,7 @@ function Readmission() {
 function Admission() {
   return (
     <View>
-      <Button onPress={() => router.push("/student/admissionForm")}>
+      <Button onPress={() => router.push("/Student/Home/AdmissionForm")}>
         <ButtonText>Admission</ButtonText>
       </Button>
       <Text></Text>
