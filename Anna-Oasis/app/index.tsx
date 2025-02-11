@@ -1,21 +1,23 @@
 import { Text, View } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
 import TestForm from "@/components/TestForm";
+import AdmissionForm from "@/components/AdmissionForm";
+import React from "react";
+import { Link, useRouter } from "expo-router";
+
 
 export default function Index() {
+  const router = useRouter();
   return (
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //   }}
-    // >
-    //   <Text>Edit app/index.tsx to edit this screen.</Text>
-    //   <Button size="md" variant="solid" action="primary">
-    //     <ButtonText>Hello World!</ButtonText>
-    //   </Button>
-    // </View>
-    <TestForm />
+    <>
+      <View className="flex m-4 gap-4">
+        <Button onPress={()=>router.push("/student/login")}>
+          <ButtonText>Student</ButtonText>
+        </Button>
+        <Button>
+          <ButtonText>Admin</ButtonText>
+        </Button>
+      </View>
+    </>
   );
 }
