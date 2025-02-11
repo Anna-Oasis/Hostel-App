@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
 import TestForm from "@/components/TestForm";
+import ReAdmissionForm from "@/components/ReAddmissionForm";
 
 export default function Index() {
   return (
@@ -16,6 +17,7 @@ export default function Index() {
     //     <ButtonText>Hello World!</ButtonText>
     //   </Button>
     // </View>
-    <TestForm />
+    // <TestForm />
+    <ReAdmissionForm />
   );
 }
