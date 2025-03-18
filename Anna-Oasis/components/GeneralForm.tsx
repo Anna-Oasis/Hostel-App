@@ -1,6 +1,19 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View,Text } from "react-native";
 import TextField from "@/components/form/TextField";
 import RadioField from "@/components/form/RadioField";
+import SelectField from "@/components/form/SelectField";
+
+const courseOptions = [
+  { label: "course1", value: "course1" },
+  { label: "course2", value: "course2" },
+  { label: "course3", value: "course3" },
+];
+
+const branchOptions = [
+  { label: "Information Technology", value: "Information Technology" },
+  { label: "Geoinformatics", value: "Geoinformatics" },
+  { label: "Printing", value: "Printing" },
+];
 
 function GeneralForm() {
   return (
@@ -14,14 +27,17 @@ function GeneralForm() {
               placeholder="Name"
               value="name"
             />
-            <TextField
-              placeholder="Course"
-              value="course"
-            />
-            <TextField
-              placeholder="Branch"
-              value="branch"
-            />
+
+            <Text> Course</Text>
+            <SelectField
+             value="course" 
+             options={courseOptions} />
+
+            <Text> Branch</Text> 
+            <SelectField 
+             value="branch" 
+             options={branchOptions} />
+
             <TextField
               placeholder="Year"
               value="year"

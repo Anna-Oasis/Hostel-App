@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { View } from "react-native";
+import { ScrollView,View } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
 import GeneralForm from "./GeneralForm";
 import PaymentForm from "./PaymentForm";
@@ -78,29 +78,31 @@ const ReAdmissionForm = () => {
       onSubmit={(values) => console.log(values)}
     >
       {({ handleSubmit, errors }) => (
-        <View>
-          <Form stepper={stepper} />
+        <ScrollView>
           <View>
-            <Button onPress={() => setStepper((prev) => Math.max(prev - 1, 0))}>
-              <ButtonText>Previous</ButtonText>
-            </Button>
-            <Button
-              onPress={async () => {
-                if (stepper === 2) {
-                  if (Object.keys(errors).length === 0) {
-                    handleSubmit();
+            <Form stepper={stepper} />
+            <View>
+              <Button onPress={() => setStepper((prev) => Math.max(prev - 1, 0))}>
+                <ButtonText>Previous</ButtonText>
+              </Button>
+              <Button
+                onPress={async () => {
+                  if (stepper === 2) {
+                    if (Object.keys(errors).length === 0) {
+                      handleSubmit();
+                    } else {
+                      console.log(errors);
+                    }
                   } else {
-                    console.log(errors);
+                    setStepper((prev) => prev + 1);
                   }
-                } else {
-                  setStepper((prev) => prev + 1);
-                }
-              }}
-            >
-              <ButtonText>{stepper === 2 ? "Submit" : "Next"}</ButtonText>
-            </Button>
+                }}
+              >
+                <ButtonText>{stepper === 2 ? "Submit" : "Next"}</ButtonText>
+              </Button>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       )}
     </Formik>
   );

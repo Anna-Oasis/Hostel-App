@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View,Text } from "react-native";
 import { useFormikContext } from "formik";
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
@@ -20,6 +20,7 @@ function PaymentForm() {
 
   return (
     <View>
+      <Text> Have you paid the fee? </Text>
       <SelectField value="paymentDone" options={Options} />
 
       {values.paymentDone === "Yes" && (
