@@ -56,27 +56,27 @@ function GeneralForm() {
             />
             <TextField
               placeholder="Parent Mobile 1"
-              value="parentsContact.mobile1"
+              value="ParentMobile1"
             />
             <TextField
               placeholder="Parent Mobile 2"
-              value="parentsContact.mobile2"
+              value="ParentMobile2"
             />
             <TextField
               placeholder="Parent Email"
-              value="parentsContact.email"
+              value="ParentEmail"
             />
             <TextField
               placeholder="Local Guardian Name"
-              value="localGuardian.name"
+              value="LocalGuardianName"
             />
             <TextField
               placeholder="Local Guardian Mobile"
-              value="localGuardian.mobile"
+              value="LocalGuardianMobile"
             />
             <TextField
               placeholder="Local Guardian Email"
-              value="localGuardian.email"
+              value="LocalGuardianEmail"
             />
             <TextField
               placeholder="Address"

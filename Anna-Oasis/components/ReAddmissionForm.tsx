@@ -20,22 +20,18 @@ const hostelFormSchema = Yup.object().shape({
     .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
     .required("Mobile number is required"),
   email: Yup.string().email("Invalid email format").required("Email is required"),
-  parentsContact: Yup.object().shape({
-    mobile1: Yup.string()
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
-      .required("Parent's mobile number is required"),
-    mobile2: Yup.string()
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
-      .notRequired(),
-    email: Yup.string().email("Invalid email format").required("Parent's email is required"),
-  }),
-  localGuardian: Yup.object().shape({
-    name: Yup.string().required("Local guardian's name is required"),
-    mobile: Yup.string()
-      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
-      .required("Local guardian's mobile number is required"),
-    email: Yup.string().email("Invalid email format").required("Local guardian's email is required"),
-  }),
+  ParentMobile1: Yup.string()
+    .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
+    .required("Parent's mobile number is required"),
+  ParentMobile2: Yup.string()
+    .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
+    .notRequired(),
+  ParentEmail: Yup.string().email("Invalid email format").required("Parent's email is required"),
+  LocalGuardianName: Yup.string().required("Local guardian's name is required"),
+  LocalGuardianMobile: Yup.string()
+    .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
+    .required("Local guardian's mobile number is required"),
+  LocalGuardianEmail: Yup.string().email("Invalid email format").required("Local guardian's email is required"),
   address: Yup.string().required("Address is required"),
   roomNumber: Yup.number().integer().required("Room number is required"),
   paymentDone: Yup.string().required("Payment status is required"),
@@ -65,8 +61,12 @@ const ReAdmissionForm = () => {
         semester: "",
         mobile: "",
         email: "",
-        parentsContact: { mobile1: "", mobile2: "", email: "" },
-        localGuardian: { name: "", mobile: "", email: "" },
+        ParentMobile1: "",
+        ParentMobile2: "",
+        ParentEmail: "",
+        LocalGuardianName: "",
+        LocalGuardianMobile: "",
+        LocalGuardianEmail: "",
         address: "",
         roomNumber: "",
         paymentDone: "",
