@@ -2,6 +2,7 @@
   "name": "anna-oasis",
   "version": "1.0.0",
   "description": "This is backend code for anna oasis project",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,6 +17,7 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "mongoose": "^8.10.0"
   }

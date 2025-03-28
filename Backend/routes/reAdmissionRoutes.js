@@ -1,15 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const {
-    getAllReAdmissions,
-    getReAdmissionById,
-    createReAdmission,
-    updateReAdmissionById,
-    deleteReAdmissionById
-} = require("../Controller/reAdmissionController");
-
+import { Router } from "express";
+const router = Router();
+import {
+  getAllReAdmissions,
+  getReAdmissionById,
+  createReAdmission,
+  updateReAdmissionById,
+  deleteReAdmissionById,
+} from "../controllers/reAdmissionController.js";
 
 router.route("/").get(getAllReAdmissions).post(createReAdmission);
-router.route("/:id").get(getReAdmissionById).put(updateReAdmissionById).delete(deleteReAdmissionById);
+router
+  .route("/:id")
+  .get(getReAdmissionById)
+  .put(updateReAdmissionById)
+  .delete(deleteReAdmissionById);
 
-module.exports = router;
+export default router;

@@ -1,20 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const { 
-    getAllAdmissions, 
-    getAdmissionById, 
-    createAdmission, 
-    updateAdmissionById, 
-    deleteAdmissionById 
-} = require("../Controller/admissionController");
+import { Router } from "express";
+const router = Router();
+import {
+  getAllAdmissions,
+  getAdmissionById,
+  createAdmission,
+  updateAdmissionById,
+  deleteAdmissionById,
+} from "../controllers/admissionController.js";
 
-router.route("/")
-    .get(getAllAdmissions)
-    .post(createAdmission);
+router.route("/").get(getAllAdmissions).post(createAdmission);
+router
+  .route("/:id")
+  .get(getAdmissionById)
+  .put(updateAdmissionById)
+  .delete(deleteAdmissionById);
 
-router.route("/:id")
-    .get(getAdmissionById)
-    .put(updateAdmissionById)
-    .delete(deleteAdmissionById);
-
-module.exports = router;
+export default router;
