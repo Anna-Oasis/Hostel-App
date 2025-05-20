@@ -1,0 +1,231 @@
+Admission Form
+
+POST: http://localhost:5001/api/admission/
+
+body:
+{
+  "studentDetails": {
+    "name": "JOHN DOE",
+    "rollNo": "2023CS001",
+    "course": "B.Tech",
+    "branch": "Computer Science",
+    "semester": "2",
+    "dateOfBirth": "2003-05-15",
+    "age": 20,
+    "mobile": "9876543210",
+    "email": "john.doe@example.com",
+    "admissionCategory": "NRI",
+    "bloodGroup": "O+",
+    "medicalHistory": "None",
+    "previousResident": false
+  },
+  "parentDetails": {
+    "fatherName": "JAMES DOE",
+    "fatherContact": {
+      "local": "9123456789",
+      "foreign": "+1-555-123-4567"
+    },
+    "motherName": "JANE DOE",
+    "motherContact": {
+      "local": "9234567890"
+    },
+    "landline": "044-12345678",
+    "email": "james.doe@example.com",
+    "occupation": "Engineer",
+    "residentialAddress": "456, Oak Street, Chennai",
+    "pin": "600025"
+  },
+  "localGuardian": {
+    "name": "ROBERT SMITH",
+    "occupation": "Teacher",
+    "residentialAddress": "123, Main Street, Chennai",
+    "pin": "600025",
+    "mobile": "9345678901",
+    "landline": "044-87654321",
+    "email": "robert.smith@example.com"
+  },
+  "images": {
+    "passportPhoto": "data:image/jpeg;base64,/9j/abc123",
+    "studentSignature": "data:image/png;base64,iVBORxyz789",
+    "parentGuardianSignature": "data:image/png;base64,iVBORdef456"
+  },
+  "hostelBlock": "Flora",
+  "roomNumber": "A-101",
+  "messPreference": "Non Vegetarian",
+  "declaration": {
+    "studentAgreed": true,
+    "parentAgreed": true,
+    "submissionDate": "2023-03-28"
+  }
+}
+
+GET : http://localhost:5001/api/admission/682c93f11f5e20711103c9b0
+
+GET : http://localhost:5001/api/admission
+
+PUT : http://localhost:5001/api/admission/682c93f11f5e20711103c9b0
+
+Body:
+
+{
+  "studentDetails": {
+    "name": "JOHN DOE",
+    "rollNo": "2023CS001",
+    "course": "B.Tech",
+    "branch": "Computer Science",
+    "semester": "2",
+    "dateOfBirth": "2003-05-15",
+    "age": 20,
+    "mobile": "9876543210",
+    "email": "john.doe@example.com",
+    "admissionCategory": "NRI",
+    "bloodGroup": "O+",
+    "medicalHistory": "None",
+    "previousResident": false
+  },
+  "parentDetails": {
+    "fatherName": "JAMES DOE",
+    "fatherContact": {
+      "local": "9123456789",
+      "foreign": "+1-555-123-4567"
+    },
+    "motherName": "JANE DOE",
+    "motherContact": {
+      "local": "9234567890"
+    },
+    "landline": "044-12345678",
+    "email": "james.doe@example.com",
+    "occupation": "Engineer",
+    "residentialAddress": "456, Oak Street, Chennai",
+    "pin": "600025"
+  },
+  "localGuardian": {
+    "name": "ROBERT SMITH",
+    "occupation": "Teacher",
+    "residentialAddress": "123, Main Street, Chennai",
+    "pin": "600025",
+    "mobile": "9345678901",
+    "landline": "044-87654321",
+    "email": "robert.smith@example.com"
+  },
+  "images": {
+    "passportPhoto": "data:image/jpeg;base64,/9j/abc123",
+    "studentSignature": "data:image/png;base64,iVBORxyz789",
+    "parentGuardianSignature": "data:image/png;base64,iVBORdef456"
+  },
+  "hostelBlock": "Flora",
+  "roomNumber": "A-101",
+  "messPreference": "Non Vegetarian",
+  "declaration": {
+    "studentAgreed": true,
+    "parentAgreed": true,
+    "submissionDate": "2023-03-28"
+  }
+}
+
+DELETE : http://localhost:5001/api/admission/682c93f11f5e20711103c9b0
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+readmission Form
+
+POST : http://localhost:5001/api/readmission
+
+Body:
+
+{
+  "studentDetails": {
+    "name": "JANE SMITH",
+    "course": "M.Sc",
+    "branch": "Physics",
+    "year": "2",
+    "semester": "4",
+    "mobile": "8765432109",
+    "email": "jane.smith@example.com"
+  },
+  "parentDetails": {
+    "mobile": ["9012345678", "8901234567"],
+    "email": "mary.smith@example.com"
+  },
+  "localGuardian": {
+    "name": "ALICE JOHNSON",
+    "mobile": "7890123456"
+  },
+  "address": "123, ELM STREET, CHENNAI - 600025",
+  "hostelDetails": {
+    "hostelBlock": "Lavender",
+    "roomNumber": "B-301",
+    "keyReceived": true
+  },
+  "paymentDetails": {
+    "feesPaid": true,
+    "transactionReferenceNo": "TXN987654",
+    "transactionDate": "2023-06-20",
+    "amount": 85500,
+    "anyDues": false
+  },
+  "images": {
+    "studentSignature": "data:image/png;base64,iVBORxyz789",
+    "parentGuardianSignature": "data:image/png;base64,iVBORdef456"
+  },
+  "declaration": {
+    "studentAgreed": true,
+    "parentAgreed": true,
+    "submissionDate": "2023-07-01"
+  }
+}
+
+
+GET : http://localhost:5001/api/readmission
+
+GET : http://localhost:5001/api/readmission/682c94b01f5e20711103c9b5
+
+PUT : http://localhost:5001/api/readmission/682c94b01f5e20711103c9b5
+
+Body:
+
+{
+  "studentDetails": {
+    "name": "JANE",
+    "course": "M.Sc",
+    "branch": "Physics",
+    "year": "2",
+    "semester": "4",
+    "mobile": "8765432109",
+    "email": "jane.smith@example.com"
+  },
+  "parentDetails": {
+    "mobile": ["9012345678", "8901234567"],
+    "email": "mary.smith@example.com"
+  },
+  "localGuardian": {
+    "name": "ALICE JOHNSON",
+    "mobile": "7890123456"
+  },
+  "address": "123, ELM STREET, CHENNAI - 600025",
+  "hostelDetails": {
+    "hostelBlock": "Lavender",
+    "roomNumber": "B-301",
+    "keyReceived": true
+  },
+  "paymentDetails": {
+    "feesPaid": true,
+    "transactionReferenceNo": "TXN987654",
+    "transactionDate": "2023-06-20",
+    "amount": 85500,
+    "anyDues": false
+  },
+  "images": {
+    "studentSignature": "data:image/png;base64,iVBORxyz789",
+    "parentGuardianSignature": "data:image/png;base64,iVBORdef456"
+  },
+  "declaration": {
+    "studentAgreed": true,
+    "parentAgreed": true,
+    "submissionDate": "2023-07-01"
+  }
+}
+
+
+DELETE :  http://localhost:5001/api/readmission/682c94b01f5e20711103c9b5
+
