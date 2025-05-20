@@ -43,6 +43,13 @@ const hostelFormSchema = Yup.object().shape({
     is: "Yes",
     then: (schema) => schema.required("Transaction Date is required"),
   }),
+  dues: Yup.string().required("Dues status is required"),
+  amount: Yup.number().when("paymentDone", {
+    is: "Yes",
+    then: (schema) => schema.required("Amount is required"),
+  }),
+  studentSignature: Yup.string().required("Student signature is required"),
+  parentSignature: Yup.string().required("Parent signature is required"),
   declarationAccepted: Yup.array()
   .min(1, "You must accept the declaration to proceed."),
 });
@@ -70,8 +77,12 @@ const ReAdmissionForm = () => {
         address: "",
         roomNumber: "",
         paymentDone: "",
+        dues:"",
+        amount: "",
         transactionId: "",
         transactionDate: "",
+        studentSignature: "",
+        parentSignature: "",
         declarationAccepted: [],
       }}
       validationSchema={hostelFormSchema}
@@ -81,10 +92,15 @@ const ReAdmissionForm = () => {
         <ScrollView>
           <View>
             <Form stepper={stepper} />
-            <View>
-              <Button onPress={() => setStepper((prev) => Math.max(prev - 1, 0))}>
-                <ButtonText>Previous</ButtonText>
+            <View className="flex-row justify-between m-5">
+
+              <Button onPress={() => setStepper((prev) => Math.max(prev - 1, 0))}
+                className ="bg-primary-400 rounded-md">
+                <ButtonText className="text-white font-semibold text-base">
+                  Previous
+                </ButtonText>
               </Button>
+
               <Button
                 onPress={async () => {
                   if (stepper === 2) {
@@ -97,9 +113,15 @@ const ReAdmissionForm = () => {
                     setStepper((prev) => prev + 1);
                   }
                 }}
+                className={`rounded-md ${
+                  stepper === 2 ? "bg-primary-600" : "bg-primary-400"
+                }`}
               >
-                <ButtonText>{stepper === 2 ? "Submit" : "Next"}</ButtonText>
+                <ButtonText className="text-white font-semibold text-base">
+                  {stepper === 2 ? "Submit" : "Next"}
+                </ButtonText>
               </Button>
+              
             </View>
           </View>
         </ScrollView>

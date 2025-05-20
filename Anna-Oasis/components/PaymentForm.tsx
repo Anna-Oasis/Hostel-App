@@ -2,7 +2,7 @@ import React from "react";
 import { View,Text } from "react-native";
 import { useFormikContext } from "formik";
 import TextField from "@/components/form/TextField";
-import SelectField from "@/components/form/SelectField";
+import RadioField from "@/components/form/RadioField";
 
 const Options = [
   { label: "Yes", value: "Yes" },
@@ -19,14 +19,22 @@ function PaymentForm() {
   const { values } = useFormikContext<FormValues>();
 
   return (
-    <View>
-      <Text> Have you paid the fee? </Text>
-      <SelectField value="paymentDone" options={Options} />
+    <View className="p-4">
+      <Text className="text-lg font-semibold text-primary-300"> 
+        Have you paid the fee? 
+      </Text>
+      <RadioField value="paymentDone" options={Options} />
+
+      <Text className="text-lg font-semibold text-primary-300"> 
+        Any Dues ?
+      </Text>
+      <RadioField value="dues" options={Options} />
 
       {values.paymentDone === "Yes" && (
         <>
           <TextField placeholder="Transaction ID" value="transactionId" />
           <TextField placeholder="Transaction Date" value="transactionDate" />
+          <TextField placeholder="Amount" value="amount"/>
         </>
       )}
     </View>
