@@ -9,6 +9,11 @@ const courseOptions = [
   { label: "course3", value: "course3" },
 ];
 
+const Options = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];
+
 const branchOptions = [
   { label: "Information Technology", value: "Information Technology" },
   { label: "Geoinformatics", value: "Geoinformatics" },
@@ -106,6 +111,11 @@ function GeneralForm() {
           placeholder="Room Number"
           value="roomNumber"
         />
+
+      <Text className="text-lg font-semibold text-primary-300"> 
+        Key Received ?
+      </Text>
+      <RadioField value="keyReceived" options={Options} />
 
       </View>
 

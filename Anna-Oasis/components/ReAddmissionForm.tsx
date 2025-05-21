@@ -6,6 +6,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import GeneralForm from "./GeneralForm";
 import PaymentForm from "./PaymentForm";
 import DeclarationForm from "./DeclarationForm";
+import { B } from "@expo/html-elements";
 
 const hostelFormSchema = Yup.object().shape({
   hostelBlock: Yup.string()
@@ -34,6 +35,7 @@ const hostelFormSchema = Yup.object().shape({
   LocalGuardianEmail: Yup.string().email("Invalid email format").required("Local guardian's email is required"),
   address: Yup.string().required("Address is required"),
   roomNumber: Yup.number().integer().required("Room number is required"),
+  keyReceived: Yup.boolean().required("Key received status is required"),
   paymentDone: Yup.string().required("Payment status is required"),
   transactionId: Yup.string().when("paymentDone", {
     is: "Yes",
@@ -57,6 +59,83 @@ const hostelFormSchema = Yup.object().shape({
 const ReAdmissionForm = () => {
   const [stepper, setStepper] = useState(0);
 
+  interface FormValues {
+    hostelBlock: string;
+    name: string;
+    course: string;
+    branch: string;
+    year: number;
+    semester: number;
+    mobile: string;
+    email: string;
+    ParentMobile1: string;
+    ParentMobile2: string;
+    ParentEmail: string;
+    LocalGuardianName: string;
+    LocalGuardianMobile: string;
+    LocalGuardianEmail: string;
+    address: string;
+    roomNumber: number;
+    keyReceived: boolean;
+    paymentDone: string;
+    dues: string;
+    amount: string;
+    transactionId: string;
+    transactionDate: string;
+    studentSignature: string;
+    parentSignature: string;
+    declarationAccepted: string[];
+  }
+
+  function formatFormValues(values: FormValues) {
+  return {
+    studentDetails: {
+      name: values.name?.trim(),
+      course: values.course,
+      branch: values.branch,
+      year: values.year,
+      semester: values.semester,
+      mobile: values.mobile,
+      email: values.email,
+    },
+    parentDetails: {
+      mobile: [values.ParentMobile1, values.ParentMobile2],
+      email: values.ParentEmail,
+    },
+    localGuardian: {
+      name: values.LocalGuardianName,
+      mobile: values.LocalGuardianMobile,
+    },
+    address: values.address,
+    hostelDetails: {
+      hostelBlock: values.hostelBlock,
+      roomNumber: values.roomNumber,
+      keyReceived: values.keyReceived, 
+    },
+    paymentDetails: {
+      feesPaid: values.paymentDone === "Yes",
+      transactionReferenceNo: values.transactionId,
+      transactionDate: formatDate(values.transactionDate), // e.g., convert "12/5/25" to "2025-05-12"
+      amount: parseInt(values.amount),
+      anyDues: values.dues === "Yes",
+    },
+    images: { //substring of base64 printed
+      studentSignature: values.studentSignature.substring(0,100),
+      parentGuardianSignature: values.parentSignature.substring(0,100),
+    },
+    declaration: {
+      studentAgreed: values.declarationAccepted?.includes("agree"),
+      parentAgreed: values.declarationAccepted?.includes("agree"),
+      submissionDate: new Date().toISOString().split("T")[0], 
+    },
+  };
+}
+
+function formatDate(dateStr: string): string {
+  const [day, month, year] = dateStr.split("/");
+  return `20${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
   return (
     <Formik
       initialValues={{
@@ -76,6 +155,7 @@ const ReAdmissionForm = () => {
         LocalGuardianEmail: "",
         address: "",
         roomNumber: "",
+        keyReceived:"",
         paymentDone: "",
         dues:"",
         amount: "",
@@ -86,7 +166,19 @@ const ReAdmissionForm = () => {
         declarationAccepted: [],
       }}
       validationSchema={hostelFormSchema}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={(values) => {
+        const formatted = formatFormValues({
+          ...values,
+          year: Number(values.year),
+          semester: Number(values.semester),
+          roomNumber: Number(values.roomNumber),
+          amount: values.amount,
+          keyReceived: values.keyReceived === "true",
+        });
+        console.log("Formatted Payload:", formatted);
+        // API request
+      }}
+
     >
       {({ handleSubmit, errors }) => (
         <ScrollView>
