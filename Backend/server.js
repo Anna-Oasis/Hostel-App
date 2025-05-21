@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import router from "./routes/index.js";
-import connectDB from "./config/dbConnection.js";
+import connectDB from "./Config/dbConnection.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 connectDB();
@@ -16,3 +16,5 @@ app.use(errorHandler);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}...`);
 });
+
+export default app;
