@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/checkbox";
 import { CheckIcon } from "@/components/ui/icon";
 import { useFormikContext } from "formik";
+import Label from '@/components/form/Label'
 
 interface CheckBoxFieldProps {
+  label?:string,
   value: string;
   options: { label: string; value: string }[];
 }
@@ -18,10 +20,11 @@ interface CheckBoxFieldProps {
 /**
  * CheckBoxField component renders a group of checkboxes and integrates with Formik for form state management.
  *
+ * @param {string} label
  * @param {string} value - The name of the field in Formik values.
  * @param {Array<{ label: string, value: string }>} options - An array of options for the checkboxes.
  */
-const CheckBoxField = ({ value, options }: CheckBoxFieldProps) => {
+const CheckBoxField = ({ label, value, options }: CheckBoxFieldProps) => {
   const { values, setFieldValue, touched, errors } =
     useFormikContext<Record<string, any>>();
 
@@ -41,6 +44,8 @@ const CheckBoxField = ({ value, options }: CheckBoxFieldProps) => {
 
   return (
     <View>
+      
+      {label && <Label text={label}/>}
       <CheckboxGroup value={values[value] || []}>
         {options.map((option) => (
           <Checkbox
