@@ -1,0 +1,25 @@
+{
+  "name": "hostel-app-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.ts",
+
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node-dev --respawn --transpile-only server.ts",
+    "dev": "ts-node-dev server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  }
+}
