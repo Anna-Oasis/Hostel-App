@@ -1,8 +1,7 @@
 import { Text, View } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
-import TestForm from "@/components/TestForm";
 import React from "react";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 
 export default function Index() {
   return (
@@ -11,8 +10,18 @@ export default function Index() {
         <Button onPress={() => router.push("/Login")}>
           <ButtonText>Student</ButtonText>
         </Button>
+
         <Button>
           <ButtonText>Admin</ButtonText>
+        </Button>
+
+        <Button
+          onPress={() => {
+            console.log("Navigating to /Login/Signup");
+            router.push("/Login/Signup");
+          }}
+        >
+          <ButtonText>Sign Up</ButtonText>
         </Button>
       </View>
     </>
