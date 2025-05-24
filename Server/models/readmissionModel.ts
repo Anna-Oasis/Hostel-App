@@ -1,5 +1,5 @@
 import {pgTable, serial, varchar, integer, boolean, date, text, jsonb} from 'drizzle-orm/pg-core';
-import{approval_status} from './approvalStatus';
+import{approval_status} from './enum';
 
 export const readmissionModel = pgTable('readmission', {
     user_id: serial('user_id').primaryKey(),

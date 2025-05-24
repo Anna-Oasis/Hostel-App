@@ -1,4 +1,5 @@
 CREATE TYPE "public"."approval_status" AS ENUM('1', '2', '3');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('STUDENT', 'RC', 'DEPUTY_WARDEN', 'EXECUTIVE_WARDEN');--> statement-breakpoint
 CREATE TABLE "admission" (
 	"user_id" serial PRIMARY KEY NOT NULL,
 	"approval" "approval_status" NOT NULL,
@@ -74,4 +75,22 @@ CREATE TABLE "readmission" (
 	"student_agreed" boolean NOT NULL,
 	"parent_agreed" boolean NOT NULL,
 	"submission_date" date NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "user" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"username" varchar(50) NOT NULL,
+	"password" varchar(255) NOT NULL,
+	"email" varchar(100) NOT NULL,
+	"role" "role" NOT NULL,
+	CONSTRAINT "user_username_unique" UNIQUE("username"),
+	CONSTRAINT "user_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "grievances" (
+	"room_id" integer NOT NULL,
+	"user_id" integer,
+	"description" text NOT NULL,
+	"supportive_image" text,
+	"title" varchar(100) NOT NULL
 );
