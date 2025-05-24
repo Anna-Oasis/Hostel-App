@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node-dev --respawn --transpile-only server.ts",
-    "dev": "ts-node-dev server.ts"
+    "dev": "ts-node-dev server.ts",
+    "drizzle:generate": "drizzle-kit generate:pg",
+    "drizzle:push": "drizzle-kit push:pg"
   },
   "author": "",
   "license": "ISC",
@@ -14,12 +16,15 @@
     "@supabase/supabase-js": "^2.49.8",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "drizzle-orm": "^0.43.1",
+    "express": "^5.1.0",
+    "postgres": "^3.4.7"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.21",
+    "drizzle-kit": "^0.31.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
   }
