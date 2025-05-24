@@ -14,5 +14,5 @@ if (!SUPABASE_PROJECT_URL || !SUPABASE_PUBLIC_ANON_KEY || !SUPABASE_BUCKET_NAME)
   )
 }
 
-const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY)
+export const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY)
 export const supabaseBucket = supabase.storage.from(SUPABASE_BUCKET_NAME)
