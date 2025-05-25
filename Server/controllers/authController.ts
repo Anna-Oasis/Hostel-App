@@ -11,7 +11,7 @@ const generateToken = (id: string): string => {
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     const { data: existingUser, error: findError } = await supabase
       .from("users")
@@ -35,7 +35,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const { data: newUser, error: insertError } = await supabase
       .from("users")
-      .insert([{ name, email, password: hashedPassword, role }])
+      .insert([{ name, email, password: hashedPassword }])
       .select()
       .single();
 
@@ -50,7 +50,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
-        role: newUser.role,
         token: generateToken(newUser.id),
       },
     });
@@ -100,7 +99,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role, // Include role in the response
         token: generateToken(user.id),
       },
     });

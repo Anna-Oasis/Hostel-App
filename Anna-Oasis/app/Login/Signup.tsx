@@ -4,18 +4,18 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { router } from "expo-router";
 
 export default function Signup() {
-  const [userName, setUserName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignup = async () => {
     try {
-      const response = await fetch("http://<YOUR_BACKEND_URL>/api/auth/register", {
+      const response = await fetch("http://localhost:5000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userName, email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       if (!response.ok) {
@@ -25,7 +25,7 @@ export default function Signup() {
 
       Alert.alert("Signup Successful", "You can now log in.");
       router.push("/Login");
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert("Signup Failed", error.message);
     }
   };
@@ -35,9 +35,9 @@ export default function Signup() {
       <Text style={styles.header}>Sign Up</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        value={userName}
-        onChangeText={setUserName}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
       />
       <TextInput
         style={styles.input}

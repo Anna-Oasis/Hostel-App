@@ -34,7 +34,7 @@
     "expo": "~52.0.31",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.5",
-    "expo-dev-client": "^5.1.8",
+    "expo-dev-client": "~5.0.20",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
     "expo-image-picker": "^16.1.4",

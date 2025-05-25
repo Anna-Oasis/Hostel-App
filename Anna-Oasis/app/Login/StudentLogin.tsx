@@ -9,12 +9,12 @@ export default function StudentLogin() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://<YOUR_BACKEND_URL>/api/auth/login", {
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role: "student" }), // Include role in the request
       });
 
       if (!response.ok) {
@@ -22,11 +22,12 @@ export default function StudentLogin() {
         throw new Error(errorData.message || "Login failed");
       }
 
-      const data = await response.json();
-      Alert.alert("Login Successful", `Token: ${data.token}`);
+      const data = await response.json()
+
+      Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
       // Navigate to the Student Home page
       router.push("/Student/Home");
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert("Login Failed", error.message);
     }
   };

@@ -3,12 +3,12 @@ import { app } from "../server";
 import { supabase } from "../config/supabaseBucket";
 
 describe("Authentication Routes", () => {
-const testUser = {
+  const testUser = {
     name: "Test User",
     email: "testuser@example.com",
     password: "password123",
     role: "student",
-};
+  };
 
   beforeAll(async () => {
     await supabase.from("users").delete().eq("email", testUser.email);
@@ -57,6 +57,7 @@ const testUser = {
       expect(response.body.data).toHaveProperty("id");
       expect(response.body.data).toHaveProperty("token");
       expect(response.body.data.email).toBe(testUser.email);
+      expect(response.body.data).toHaveProperty("role"); // Ensure role is included in the response
     });
 
     it("should not login with invalid credentials", async () => {
