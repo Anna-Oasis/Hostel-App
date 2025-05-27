@@ -34,7 +34,7 @@ function Readmission() {
 function Admission() {
   return (
     <View>
-      <Button onPress={() => router.push("/Student/Home/AdmissionForm")}>
+      <Button onPress={() => router.push("/Student/Home/Admission")}>
         <ButtonText>Admission</ButtonText>
       </Button>
       <Text></Text>
