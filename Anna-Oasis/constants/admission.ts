@@ -137,46 +137,76 @@ const bloodGroups = [
 ];
 
 const initialValues = {
+  // Student Details
   name: "",
   rollNo: "",
   course: "",
   branch: "",
   semester: "",
-  dateOfBirth: "",
-  age: "",
   mobile: "",
   email: "",
+  emergencyContact: "",
+  dateOfBirth: "",
+  age: "",
+  nationality: "",
+  govtId: "",
   admissionCategory: "",
   bloodGroup: "",
   medicalHistory: "",
-  previousResident: "",
-  fatherName: "",
-  fatherContactLocal: "",
-  fatherContactForeign: "",
-  motherName: "",
-  motherContactLocal: "",
-  landline: "",
-  parentEmail: "",
-  occupation: "",
-  residentialAddress: "",
-  pin: "",
-  guardianName: "",
-  guardianOccupation: "",
-  guardianResidentialAddress: "",
-  guardianPin: "",
-  guardianMobile: "",
-  guardianLandline: "",
-  guardianEmail: "",
   hostelBlock: "",
-  roomNumber: "",
+  previousResident: "",
   messPreference: "",
-  declaration: [] as string[],
+
+  // Father Details
+  fatherName: "",
+  fatherOccupation: "",
+  fatherMobile: "",
+  fatherEmail: "",
+  fatherCountry: "",
+
+  // Mother Details
+  motherName: "",
+  motherOccupation: "",
+  motherMobile: "",
+  motherEmail: "",
+  motherCountry: "",
+
+  // Residential India
+  resIndiaHouseNo: "",
+  resIndiaStreet: "",
+  resIndiaCity: "",
+  resIndiaState: "",
+  resIndiaCountry: "",
+  resIndiaPostalCode: "",
+
+  // Residential Foreign
+  resForeignHouseNo: "",
+  resForeignStreet: "",
+  resForeignCity: "",
+  resForeignState: "",
+  resForeignCountry: "",
+  resForeignPostalCode: "",
+
+  // Local Guardian
+  guardianName: "",
+  guardianRelationship: "",
+  guardianMobile: "",
+  guardianEmail: "",
+  guardianHouseNo: "",
+  guardianStreet: "",
+  guardianCity: "",
+  guardianState: "",
+  guardianCountry: "",
+  guardianPostalCode: "",
+
+  // Images and Declaration
   passportPhoto: "",
   studentSignature: "",
   parentGuardianSignature: "",
-  govtId: "",
-  emergencyContact: "",
-  nationality: "",
+  declaration: [] as string[],
+
+  // Other
+  roomNumber: "",
 };
 
 const hostelBlocks = [

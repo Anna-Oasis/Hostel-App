@@ -6,7 +6,7 @@ import {initialValues} from "@/constants/admission";
 import validationSchemas from "@/utils/admission/admissionValidation";
 import StudentDetails from "@/components/admission/StudentDetails";
 import ParentDetails from "@/components/admission/ParentDetails";
-import LocalGuardian from "@/components/admission/LocalGuardian";
+import LocalGuardian from "@/components/admission/HostelMessDeclaration";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 
 const AdmissionForm = () => {
@@ -53,51 +53,69 @@ const AdmissionForm = () => {
               course: values.course,
               branch: values.branch,
               semester: values.semester,
-              dateOfBirth: values.dateOfBirth,
-              age: Number(values.age),
               mobile: values.mobile,
-              emergencyContact: values.emergencyContact,
               email: values.email,
+              emergencyContact: values.emergencyContact,
+              dateOfBirth: values.dateOfBirth,
+              age: values.age,
               nationality: values.nationality,
               govtId: values.govtId,
               admissionCategory: values.admissionCategory,
               bloodGroup: values.bloodGroup,
               medicalHistory: values.medicalHistory,
               hostelBlock: values.hostelBlock,
-              previousResident:
-                values.previousResident === "yes" ? true : false,
+              previousResident: values.previousResident === "true" ? true : false,
+              messPreference: values.messPreference
             },
-            parentDetails: {
-              fatherName: values.fatherName,
-              fatherContact: {
-                local: values.fatherContactLocal,
-                foreign: values.fatherContactForeign,
-              },
-              motherName: values.motherName,
-              motherContact: {
-                local: values.motherContactLocal,
-              },
-              landline: values.landline,
-              email: values.parentEmail,
-              occupation: values.occupation,
-              residentialAddress: values.residentialAddress,
-              pin: values.pin,
+            FatherDetails: {
+              name: values.fatherName,
+              occupation: values.fatherOccupation,
+              mobile: values.fatherMobile,
+              email: values.fatherEmail,
+              country: values.fatherCountry
+            },
+            MotherDetails: {
+              name: values.motherName,
+              occupation: values.motherOccupation,
+              mobile: values.motherMobile,
+              email: values.motherEmail,
+              country: values.motherCountry
+            },
+            ResidentialIndia: {
+              houseNo: values.resIndiaHouseNo,
+              street: values.resIndiaStreet,
+              city: values.resIndiaCity,
+              state: values.resIndiaState,
+              country: values.resIndiaCountry,
+              postalCode: values.resIndiaPostalCode
+            },
+            ResidentialForeign: {
+              houseNo: values.resForeignHouseNo,
+              street: values.resForeignStreet,
+              city: values.resForeignCity,
+              state: values.resForeignState,
+              country: values.resForeignCountry,
+              postalCode: values.resForeignPostalCode
             },
             localGuardian: {
               name: values.guardianName,
-              occupation: values.guardianOccupation,
-              residentialAddress: values.guardianResidentialAddress,
-              pin: values.guardianPin,
+              relationship: values.guardianRelationship,
               mobile: values.guardianMobile,
-              landline: values.guardianLandline,
               email: values.guardianEmail,
+              address: {
+                houseNo: values.guardianHouseNo,
+                street: values.guardianStreet,
+                city: values.guardianCity,
+                state: values.guardianState,
+                country: values.guardianCountry,
+                postalCode: values.guardianPostalCode
+              }
             },
             images: {
               passportPhoto: values.passportPhoto,
               studentSignature: values.studentSignature,
               parentGuardianSignature: values.parentGuardianSignature,
             },
-            messPreference: values.messPreference,
             declaration: {
               studentAgreed: values.declaration.includes("studentAgreed"),
               parentAgreed: values.declaration.includes("parentAgreed"),

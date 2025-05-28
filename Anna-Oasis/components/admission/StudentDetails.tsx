@@ -11,7 +11,6 @@ const StudentDetails = () => {
   const { setFieldValue, values } = useFormikContext<any>();
   const [showPicker, setShowPicker] = useState(false);
 
-  
   return (
     <>
       <TextField label="Name" value="name" placeholder="Enter name" />
@@ -19,6 +18,10 @@ const StudentDetails = () => {
       <SelectField label="Course" value="course" options={[{ label: "B.Tech", value: "B.Tech" }, { label: "M.Tech", value: "M.Tech" }]} />
       <SelectField label="Branch" value="branch" options={Departments} />
       <SelectField label="Semester" value="semester" options={semesters} />
+
+      <TextField label="Mobile" value="mobile" placeholder="Mobile Number" />
+      <TextField label="Email" value="email" placeholder="Email" />
+      <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
 
       <View>
         <Text className="mb-1 font-medium text-sm text-gray-800">Date of Birth</Text>
@@ -47,16 +50,28 @@ const StudentDetails = () => {
       </View>
 
       <TextField label="Age" value="age" placeholder="Age" />
-      <TextField label="Mobile" value="mobile" placeholder="Mobile Number" />
-      <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
-      <TextField label="Email" value="email" placeholder="Email" />
       <TextField label="Nationality" value="nationality" placeholder="Nationality" />
       <TextField label="Passport ID/Govt ID no" value="govtId" placeholder="Passport ID or Govt ID number" />
       <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
       <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
       <SelectField label="Hostel Block" value="hostelBlock" options={hostelBlocks} />
       <TextField label="Medical History" value="medicalHistory" placeholder="Optional" />
-      <RadioField label="Previous Resident" value="previousResident" options={[{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]} />
+      <RadioField
+        label="Have you ever been a resident of this hostel?"
+        value="previousResident"
+        options={[
+          { label: "Yes", value: "true" },
+          { label: "No", value: "false" }
+        ]}
+      />
+      <SelectField
+        label="Mess Preference"
+        value="messPreference"
+        options={[
+          { label: "Veg", value: "veg" },
+          { label: "Non-Veg", value: "nonveg" }
+        ]}
+      />
     </>
   );
 };

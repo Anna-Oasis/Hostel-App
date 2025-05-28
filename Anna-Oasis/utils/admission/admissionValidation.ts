@@ -5,17 +5,18 @@ const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const allowedBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const validationSchemas = [
+  // Student Details
   Yup.object({
     name: Yup.string().trim().min(2).required("Required"),
-    rollNo: Yup.number().typeError("Must be a number").required("Required"),
+    rollNo: Yup.string().required("Required"),
     course: Yup.string().required("Required"),
     branch: Yup.string().required("Required"),
     semester: Yup.string().required("Required"),
+    mobile: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
+    email: Yup.string().email().required("Required"),
+    emergencyContact: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
     dateOfBirth: Yup.string().matches(dateRegex, "Use YYYY-MM-DD").required("Required"),
     age: Yup.number().min(15).max(99).required("Required"),
-    mobile: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
-    emergencyContact: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
-    email: Yup.string().email().required("Required"),
     nationality: Yup.string().required("Required"),
     govtId: Yup.string().required("Required"),
     admissionCategory: Yup.string().required("Required"),
@@ -23,38 +24,59 @@ const validationSchemas = [
       .oneOf(allowedBloodGroups, "Invalid blood group")
       .required("Required"),
     medicalHistory: Yup.string(),
+    hostelBlock: Yup.string().required("Required"),
     previousResident: Yup.string().required("Required"),
-    hostelBlock: Yup.string().required("Required"),
-  }),
-  Yup.object({
-    fatherName: Yup.string().required("Required"),
-    fatherContactLocal: Yup.string().matches(phoneRegex, "Invalid").required("Required"),
-    fatherContactForeign: Yup.string(),
-    motherName: Yup.string().required("Required"),
-    motherContactLocal: Yup.string().matches(phoneRegex, "Invalid").required("Required"),
-    landline: Yup.string(),
-    parentEmail: Yup.string().email().required("Required"),
-    occupation: Yup.string().required("Required"),
-    residentialAddress: Yup.string().required("Required"),
-    pin: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
-  }),
-   Yup.object({
-    guardianName: Yup.string().required("Required"),
-    guardianOccupation: Yup.string().required("Required"),
-    guardianResidentialAddress: Yup.string().required("Required"),
-    guardianPin: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
-    guardianMobile: Yup.string().matches(phoneRegex, "Invalid mobile number").required("Required"),
-    guardianLandline: Yup.string(),
-    guardianEmail: Yup.string().email("Invalid email").required("Required"),
-  }),
-  Yup.object({
-    hostelBlock: Yup.string().required("Required"),
-    roomNumber: Yup.string().required("Required"),
     messPreference: Yup.string().required("Required"),
-    declaration: Yup.array().of(Yup.string()).min(1, "Required"),
+  }),
+  // Parent Details (Father, Mother, Residential India, Residential Foreign)
+  Yup.object({
+    // Father
+    fatherName: Yup.string().required("Required"),
+    fatherOccupation: Yup.string().required("Required"),
+    fatherMobile: Yup.string().matches(phoneRegex, "Invalid mobile").required("Required"),
+    fatherEmail: Yup.string().email("Invalid email").required("Required"),
+    fatherCountry: Yup.string().required("Required"),
+    // Mother
+    motherName: Yup.string().required("Required"),
+    motherOccupation: Yup.string().required("Required"),
+    motherMobile: Yup.string().matches(phoneRegex, "Invalid mobile").required("Required"),
+    motherEmail: Yup.string().email("Invalid email").required("Required"),
+    motherCountry: Yup.string().required("Required"),
+    // Residential India
+    resIndiaHouseNo: Yup.string().required("Required"),
+    resIndiaStreet: Yup.string().required("Required"),
+    resIndiaCity: Yup.string().required("Required"),
+    resIndiaState: Yup.string().required("Required"),
+    resIndiaCountry: Yup.string().required("Required"),
+    resIndiaPostalCode: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
+    // Residential Foreign
+    resForeignHouseNo: Yup.string(),
+    resForeignStreet: Yup.string(),
+    resForeignCity: Yup.string(),
+    resForeignState: Yup.string(),
+    resForeignCountry: Yup.string(),
+    resForeignPostalCode: Yup.string(),
+  }),
+  // Local Guardian
+  Yup.object({
+    guardianName: Yup.string().required("Required"),
+    guardianRelationship: Yup.string().required("Required"),
+    guardianMobile: Yup.string().matches(phoneRegex, "Invalid mobile number").required("Required"),
+    guardianEmail: Yup.string().email("Invalid email").required("Required"),
+    guardianHouseNo: Yup.string().required("Required"),
+    guardianStreet: Yup.string().required("Required"),
+    guardianCity: Yup.string().required("Required"),
+    guardianState: Yup.string().required("Required"),
+    guardianCountry: Yup.string().required("Required"),
+    guardianPostalCode: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
+  }),
+  // Hostel/Mess/Declaration/Images
+  Yup.object({
+    declaration: Yup.array().of(Yup.string()).min(2, "Required"),
     passportPhoto: Yup.string().required("Required"),
     studentSignature: Yup.string().required("Required"),
     parentGuardianSignature: Yup.string().required("Required"),
   }),
 ];
+
 export default validationSchemas;
