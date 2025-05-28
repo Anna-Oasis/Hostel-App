@@ -175,6 +175,13 @@ const initialValues = {
   passportPhoto: "",
   studentSignature: "",
   parentGuardianSignature: "",
+  govtId: "",
+  emergencyContact: "",
 };
 
-export { Departments, campusList, semesters, admissionCategories, bloodGroups, initialValues };
+const hostelBlocks = [
+  { label: "Flora (Boys)", value: "Flora" },
+  { label: "Lavendar (Girls)", value: "Lavendar" },
+];
+
+export { Departments, campusList, semesters, admissionCategories, bloodGroups, initialValues, hostelBlocks };

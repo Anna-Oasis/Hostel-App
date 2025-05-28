@@ -2,7 +2,7 @@ import * as Yup from "yup";
 const phoneRegex = /^[6-9]\d{9}$/;
 const pinRegex = /^\d{6}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-const bloodGroupRegex = /^(A|B|AB|O)[+-]$/;
+const allowedBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 const validationSchemas = [
   Yup.object({
@@ -14,11 +14,16 @@ const validationSchemas = [
     dateOfBirth: Yup.string().matches(dateRegex, "Use YYYY-MM-DD").required("Required"),
     age: Yup.number().min(15).max(99).required("Required"),
     mobile: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
+    emergencyContact: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
     email: Yup.string().email().required("Required"),
+    govtId: Yup.string().required("Required"),
     admissionCategory: Yup.string().required("Required"),
-    bloodGroup: Yup.string().matches(bloodGroupRegex, "Invalid blood group").required("Required"),
+    bloodGroup: Yup.string()
+      .oneOf(allowedBloodGroups, "Invalid blood group")
+      .required("Required"),
     medicalHistory: Yup.string(),
     previousResident: Yup.string().required("Required"),
+    hostelBlock: Yup.string().required("Required"),
   }),
   Yup.object({
     fatherName: Yup.string().required("Required"),
