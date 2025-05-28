@@ -6,7 +6,7 @@ import { useFormikContext } from "formik";
 import { View, TextInput, Text, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { Departments, semesters, admissionCaterogies } from "@/constants/admission"
+import { Departments, semesters, admissionCategories, bloodGroups } from "@/constants/admission"
 
 const StudentDetails = () => {
   const { setFieldValue, values } = useFormikContext<any>();
@@ -49,8 +49,8 @@ const StudentDetails = () => {
       <TextField label="Age" value="age" placeholder="Age" />
       <TextField label="Mobile" value="mobile" placeholder="Mobile Number" />
       <TextField label="Email" value="email" placeholder="Email" />
-      <SelectField label="Admission Category" value="admissionCategory" options={admissionCaterogies} />
-      <TextField label="Blood Group" value="bloodGroup" placeholder="e.g. B+" />
+      <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
+      <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
       <TextField label="Medical History" value="medicalHistory" placeholder="Optional" />
       <RadioField label="Previous Resident" value="previousResident" options={[{ label: "Yes", value: "yes" }, { label: "No", value: "no" }]} />
     </>
