@@ -31,7 +31,6 @@ const AdmissionForm = () => {
 
   function getISTDateString() {
     const now = new Date();
-    // IST is UTC+5:30
     const istOffset = 5.5 * 60 * 60 * 1000;
     const istTime = new Date(
       now.getTime() + istOffset - now.getTimezoneOffset() * 60000
@@ -43,12 +42,10 @@ const AdmissionForm = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchemas[page]}
-      // ...existing code...
       onSubmit={(values) => {
         if (page < 3) {
           next();
         } else {
-          // Transform flat values to nested JSON
           const output = {
             studentDetails: {
               name: values.name,
@@ -108,7 +105,6 @@ const AdmissionForm = () => {
           console.log(output);
         }
       }}
-      // ...existing code...
     >
       {({ handleSubmit }) => (
         <ScrollView>
