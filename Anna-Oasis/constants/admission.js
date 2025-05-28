@@ -118,4 +118,12 @@ const semesters = [
   { label: "Semester 8", value: "Semester 8" },
 ]
 
-export { Departments, campusList, semesters };
+admissionCaterogies = [
+  { label: "NRI", value: "NRI" },
+  { label: "CIWGC", value: "CIWGC" },
+  { label: "FN", value: "FN" },
+  { label: "LDC", value: "LDC" },
+  { label: "SIDS", value: "SIDS" },
+]
+
+export { Departments, campusList, semesters, admissionCaterogies };
