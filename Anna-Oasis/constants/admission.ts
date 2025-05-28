@@ -1,5 +1,4 @@
 const Departments = [
-    { label: "Chemical Engineering", value: "Chemical Engineering" },
     { label: "Chemistry", value: "Chemistry" },
     { label: "Civil Engineering", value: "Civil Engineering" },
     {
