@@ -176,6 +176,7 @@ const initialValues = {
   parentGuardianSignature: "",
   govtId: "",
   emergencyContact: "",
+  nationality: "",
 };
 
 const hostelBlocks = [

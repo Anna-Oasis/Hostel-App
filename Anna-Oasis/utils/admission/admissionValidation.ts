@@ -16,6 +16,7 @@ const validationSchemas = [
     mobile: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
     emergencyContact: Yup.string().matches(phoneRegex, "Invalid number").required("Required"),
     email: Yup.string().email().required("Required"),
+    nationality: Yup.string().required("Required"),
     govtId: Yup.string().required("Required"),
     admissionCategory: Yup.string().required("Required"),
     bloodGroup: Yup.string()

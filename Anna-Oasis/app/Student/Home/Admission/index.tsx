@@ -56,10 +56,14 @@ const AdmissionForm = () => {
               dateOfBirth: values.dateOfBirth,
               age: Number(values.age),
               mobile: values.mobile,
+              emergencyContact: values.emergencyContact,
               email: values.email,
+              nationality: values.nationality,
+              govtId: values.govtId,
               admissionCategory: values.admissionCategory,
               bloodGroup: values.bloodGroup,
               medicalHistory: values.medicalHistory,
+              hostelBlock: values.hostelBlock,
               previousResident:
                 values.previousResident === "yes" ? true : false,
             },
@@ -93,8 +97,6 @@ const AdmissionForm = () => {
               studentSignature: values.studentSignature,
               parentGuardianSignature: values.parentGuardianSignature,
             },
-            hostelBlock: values.hostelBlock,
-            roomNumber: values.roomNumber,
             messPreference: values.messPreference,
             declaration: {
               studentAgreed: values.declaration.includes("studentAgreed"),

@@ -1,0 +1,79 @@
+{
+    "studentDetails": {
+        "name": "",
+        "rollNo": "",
+        "course": "",
+        "branch": "",
+        "semester": "",
+        "mobile": "",
+        "email": "",
+        "emergencyContact": "",
+        "dateOfBirth": "",
+        "age": "",
+        "nationality": "",
+        "govtId": "",
+        "admissionCategory": "",
+        "bloodGroup": "",
+        "medicalHistory": "",
+        "hostelBlock": "",
+        "previousResident": "boolean",
+        "messPreference": ""
+    },
+    "FatherDetails":{
+        "name": "",
+        "occupation": "",
+        "mobile": "",
+        "email": "",
+        "country": ""
+    },
+    "MotherDetails": {
+        "name": "",
+        "occupation": "",
+        "mobile": "",
+        "email": "",
+        "country": ""
+    },
+    "ResidentialIndia":{
+        "houseNo": "",
+        "street": "",
+        "city": "",
+        "state": "",
+        "country": "",
+        "postalCode": ""
+    },
+    "ResidentialForeign": {
+        "houseNo": "",
+        "street": "",
+        "city": "",
+        "state": "",
+        "country": "",
+        "postalCode": ""
+    },
+    "localGuardian": {
+        "name": "",
+        "relationship": "",
+        "mobile": "",
+        "email": "",
+        "address": {
+            "houseNo": "",
+            "street": "",
+            "city": "",
+            "state": "",
+            "country": "",
+            "postalCode": ""
+        }
+    },
+    "images": {
+        "passportPhoto": "",
+        "studentSignature": "",
+        "parentGuardianSignature": ""
+    },
+    "declaration": {
+        "studentAgreed": "booleanvalue",
+        "parentAgreed": "booleanvalue",
+        "submissionDate": ""
+    },
+    "payment" : {
+        "transactionId": ""
+    }
+}

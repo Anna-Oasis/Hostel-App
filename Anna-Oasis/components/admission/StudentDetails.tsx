@@ -1,4 +1,3 @@
-import React from "react";
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
 import RadioField from "@/components/form/RadioField";
@@ -51,6 +50,7 @@ const StudentDetails = () => {
       <TextField label="Mobile" value="mobile" placeholder="Mobile Number" />
       <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
       <TextField label="Email" value="email" placeholder="Email" />
+      <TextField label="Nationality" value="nationality" placeholder="Nationality" />
       <TextField label="Passport ID/Govt ID no" value="govtId" placeholder="Passport ID or Govt ID number" />
       <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
       <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
