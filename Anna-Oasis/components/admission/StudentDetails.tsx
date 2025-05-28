@@ -6,7 +6,7 @@ import { useFormikContext } from "formik";
 import { View, TextInput, Text, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
-import { Departments, campusList } from "@/constants/Departments"
+import { Departments, semesters } from "@/constants/admission"
 
 const StudentDetails = () => {
   const { setFieldValue, values } = useFormikContext<any>();
@@ -18,7 +18,7 @@ const StudentDetails = () => {
       <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
       <SelectField label="Course" value="course" options={[{ label: "B.Tech", value: "B.Tech" }, { label: "M.Tech", value: "M.Tech" }]} />
       <SelectField label="Branch" value="branch" options={Departments} />
-      <SelectField label="Semester" value="semester" options={[{ label: "1", value: "1" }, { label: "2", value: "2" }]} />
+      <SelectField label="Semester" value="semester" options={semesters} />
 
       <View>
         <Text className="mb-1 font-medium text-sm text-gray-800">Date of Birth</Text>
