@@ -1,6 +1,6 @@
 import * as Yup from "yup";
-const phoneRegex = /^[6-9]\d{9}$/;
-const pinRegex = /^\d{6}$/;
+const phoneRegex = /\+[1-9]\d{9,14}$/;
+const pinRegex = /^[0-9\s\-]{3,10}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const allowedBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -50,12 +50,12 @@ const validationSchemas = [
     resIndiaCountry: Yup.string().required("Required"),
     resIndiaPostalCode: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
     // Residential Foreign
-    resForeignHouseNo: Yup.string(),
-    resForeignStreet: Yup.string(),
-    resForeignCity: Yup.string(),
-    resForeignState: Yup.string(),
-    resForeignCountry: Yup.string(),
-    resForeignPostalCode: Yup.string(),
+    resForeignHouseNo: Yup.string().required("Required"),
+    resForeignStreet: Yup.string().required("Required"),
+    resForeignCity: Yup.string().required("Required"),
+    resForeignState: Yup.string().required("Required"),
+    resForeignCountry: Yup.string().required("Required"),
+    resForeignPostalCode: Yup.string().required("Required").matches(pinRegex, "Invalid PIN"),
   }),
   // Local Guardian
   Yup.object({

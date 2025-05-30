@@ -1,3 +1,5 @@
+import Label from "@/components/form/Label";
+
 const Departments = [
     { label: "Chemistry", value: "Chemistry" },
     { label: "Civil Engineering", value: "Civil Engineering" },
@@ -106,6 +108,12 @@ const campusList = [
   { label: "SAP", value: "SAP" },
 ];
 
+const courses = [
+  { label: "B.E.", value: "B.E." },
+  { label: "B.Tech", value: "B.Tech" },
+  { label: "B.Arch", value: "B.Arch" }
+]
+
 const semesters = [
   { label: "Semester 1", value: "Semester 1" },
   { label: "Semester 2", value: "Semester 2" },
@@ -137,7 +145,6 @@ const bloodGroups = [
 ];
 
 const initialValues = {
-  // Student Details
   name: "",
   rollNo: "",
   course: "",
@@ -157,21 +164,18 @@ const initialValues = {
   previousResident: "",
   messPreference: "",
 
-  // Father Details
   fatherName: "",
   fatherOccupation: "",
   fatherMobile: "",
   fatherEmail: "",
   fatherCountry: "",
 
-  // Mother Details
   motherName: "",
   motherOccupation: "",
   motherMobile: "",
   motherEmail: "",
   motherCountry: "",
 
-  // Residential India
   resIndiaHouseNo: "",
   resIndiaStreet: "",
   resIndiaCity: "",
@@ -179,7 +183,6 @@ const initialValues = {
   resIndiaCountry: "",
   resIndiaPostalCode: "",
 
-  // Residential Foreign
   resForeignHouseNo: "",
   resForeignStreet: "",
   resForeignCity: "",
@@ -187,7 +190,6 @@ const initialValues = {
   resForeignCountry: "",
   resForeignPostalCode: "",
 
-  // Local Guardian
   guardianName: "",
   guardianRelationship: "",
   guardianMobile: "",
@@ -199,13 +201,11 @@ const initialValues = {
   guardianCountry: "",
   guardianPostalCode: "",
 
-  // Images and Declaration
   passportPhoto: "",
   studentSignature: "",
   parentGuardianSignature: "",
   declaration: [] as string[],
 
-  // Other
   roomNumber: "",
 };
 
@@ -214,4 +214,4 @@ const hostelBlocks = [
   { label: "Lavendar (Girls)", value: "Lavendar" },
 ];
 
-export { Departments, campusList, semesters, admissionCategories, bloodGroups, initialValues, hostelBlocks };
+export { Departments, campusList, semesters, admissionCategories, bloodGroups, initialValues, hostelBlocks, courses };

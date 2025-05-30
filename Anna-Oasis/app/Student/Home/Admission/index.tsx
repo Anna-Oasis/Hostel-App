@@ -6,7 +6,7 @@ import {initialValues} from "@/constants/admission";
 import validationSchemas from "@/utils/admission/admissionValidation";
 import StudentDetails from "@/components/admission/StudentDetails";
 import ParentDetails from "@/components/admission/ParentDetails";
-import LocalGuardian from "@/components/admission/HostelMessDeclaration";
+import LocalGuardian from "@/components/admission/LocalGuardian";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 
 const AdmissionForm = () => {

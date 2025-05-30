@@ -6,14 +6,14 @@ const ParentDetails = () => (
     {/* Father Details */}
     <TextField label="Father's Name" value="fatherName" placeholder="Father's name" />
     <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
-    <TextField label="Father's Mobile" value="fatherMobile" placeholder="Father's mobile" />
+    <TextField label="Father's Mobile (with country code)" value="fatherMobile" placeholder="Father's mobile" />
     <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
     <TextField label="Father's Country" value="fatherCountry" placeholder="Father's country" />
 
     {/* Mother Details */}
     <TextField label="Mother's Name" value="motherName" placeholder="Mother's name" />
     <TextField label="Mother's Occupation" value="motherOccupation" placeholder="Mother's occupation" />
-    <TextField label="Mother's Mobile" value="motherMobile" placeholder="Mother's mobile" />
+    <TextField label="Mother's Mobile (with country code)" value="motherMobile" placeholder="Mother's mobile" />
     <TextField label="Mother's Email" value="motherEmail" placeholder="Mother's email" />
     <TextField label="Mother's Country" value="motherCountry" placeholder="Mother's country" />
 
