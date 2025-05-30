@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 
-const Signup = () => {
+const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
@@ -34,17 +34,49 @@ const Signup = () => {
         confirmPassword: "",
       }}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        // Handle signup logic here
-        console.log(values);
-      }}
+      onSubmit={onSubmit}
     >
-      {({ handleSubmit }) => (
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
         <View>
-          <TextField placeholder="Name" value="name" label="Full-Name" />
-          <TextField placeholder="Email" value="email" label = "E-mail"/>
-          <TextField placeholder="Password" value="password" label = "New-Password" />
-          <TextField placeholder="Confirm Password" value="confirmPassword" label = "Confirm-Password" />
+          <TextField
+            placeholder="Name"
+            value={values.name}
+            onChangeText={handleChange("name")}
+            onBlur={handleBlur("name")}
+            error={touched.name && errors.name}
+          />
+          <TextField
+            placeholder="Email"
+            value={values.email}
+            onChangeText={handleChange("email")}
+            onBlur={handleBlur("email")}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            error={touched.email && errors.email}
+          />
+          <TextField
+            placeholder="Password"
+            value={values.password}
+            onChangeText={handleChange("password")}
+            onBlur={handleBlur("password")}
+            secureTextEntry
+            error={touched.password && errors.password}
+          />
+          <TextField
+            placeholder="Confirm Password"
+            value={values.confirmPassword}
+            onChangeText={handleChange("confirmPassword")}
+            onBlur={handleBlur("confirmPassword")}
+            secureTextEntry
+            error={touched.confirmPassword && errors.confirmPassword}
+          />
           <Button onPress={() => handleSubmit()}>
             <ButtonText>Sign Up</ButtonText>
           </Button>
