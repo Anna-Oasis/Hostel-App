@@ -2,8 +2,10 @@ import { View } from "react-native";
 import { Input, InputField } from "@/components/ui/input";
 import { useFormikContext, ErrorMessage } from "formik";
 import { Text } from "@/components/ui/text";
+import Label from "@/components/form/Label";
 
 interface TextFieldProps {
+  label?:string;
   placeholder: string;
   value: string;
   props?: any;
@@ -16,11 +18,12 @@ interface TextFieldProps {
  * @param {string} value - The name of the field in Formik values.
  * @param {any} props - Additional props for the input field.
  */
-function TextField({ placeholder, value, ...props }: TextFieldProps) {
+function TextField({ label,placeholder, value, ...props }: TextFieldProps) {
   const { values, handleBlur, handleChange, touched, errors } = useFormikContext<any>();
 
   return (
     <View>
+       {label && <Label text={label}/>}
       <Input
         variant="outline"
         size="md"
