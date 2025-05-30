@@ -124,7 +124,9 @@ const AdmissionForm = () => {
               parentAgreed: values.declaration.includes("parentAgreed"),
               submissionDate: getISTDateString(),
             },
-            transactionId: values.transactionId,
+            payment: {
+              transactionId: values.transactionId
+            }
           };
           console.log(output);
         }

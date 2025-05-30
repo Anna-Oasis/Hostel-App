@@ -77,6 +77,10 @@ const validationSchemas = [
     studentSignature: Yup.string().required("Required"),
     parentGuardianSignature: Yup.string().required("Required"),
   }),
+  // Payment Page
+  Yup.object({
+    transactionId: Yup.string().trim().required("Transaction ID is required"),
+  }),
 ];
 
 export default validationSchemas;
