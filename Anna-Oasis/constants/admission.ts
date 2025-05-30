@@ -205,6 +205,7 @@ const initialValues = {
   studentSignature: "",
   parentGuardianSignature: "",
   declaration: [] as string[],
+  transactionId: "",
 
   roomNumber: "",
 };
