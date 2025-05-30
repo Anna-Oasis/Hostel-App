@@ -1,15 +1,13 @@
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
 import RadioField from "@/components/form/RadioField";
+import DatePickerField from "@/components/form/DatePickerField";
 import { useFormikContext } from "formik";
-import { View, TextInput, Text, Pressable } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { useState } from "react";
+import { View } from "react-native";
 import { Departments, semesters, admissionCategories, bloodGroups, hostelBlocks, courses } from "@/constants/admission"
 
 const StudentDetails = () => {
   const { setFieldValue, values } = useFormikContext<any>();
-  const [showPicker, setShowPicker] = useState(false);
 
   return (
     <>
@@ -23,31 +21,7 @@ const StudentDetails = () => {
       <TextField label="Email" value="email" placeholder="Email" />
       <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
 
-      <View>
-        <Text className="mb-1 font-medium text-sm text-gray-800">Date of Birth</Text>
-        <Pressable onPress={() => setShowPicker(true)}>
-          <TextInput
-            value={values.dateOfBirth}
-            placeholder="YYYY-MM-DD"
-            onChangeText={(val) => setFieldValue("dateOfBirth", val)}
-            className="border px-2 py-1 rounded-md border-gray-400"
-          />
-        </Pressable>
-        {showPicker && (
-          <DateTimePicker
-            mode="date"
-            display="default"
-            value={values.dateOfBirth ? new Date(values.dateOfBirth) : new Date()}
-            onChange={(event: any, selectedDate: Date | undefined) => {
-              setShowPicker(false);
-              if (selectedDate) {
-                const formatted = selectedDate.toISOString().split("T")[0];
-                setFieldValue("dateOfBirth", formatted);
-              }
-            }}
-          />
-        )}
-      </View>
+      <DatePickerField label="Date of Birth" value="dateOfBirth" placeholder="YYYY-MM-DD" />
 
       <TextField label="Age" value="age" placeholder="Age" />
       <TextField label="Nationality" value="nationality" placeholder="Nationality" />
