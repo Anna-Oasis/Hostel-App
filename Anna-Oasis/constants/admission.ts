@@ -208,6 +208,7 @@ const initialValues = {
   transactionId: "",
 
   roomNumber: "",
+  transactionId: "",
 };
 
 const hostelBlocks = [
