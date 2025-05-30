@@ -48,89 +48,98 @@ const AdmissionForm = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchemas[page]}
-      onSubmit={(values) => {
+      onSubmit={async (values) => {
         if (page < 5) {
           next();
         } else {
-          const output = {
-            studentDetails: {
-              name: values.name,
-              rollNo: values.rollNo,
-              course: values.course,
-              branch: values.branch,
-              semester: values.semester,
-              mobile: values.mobile,
-              email: values.email,
-              emergencyContact: values.emergencyContact,
-              dateOfBirth: values.dateOfBirth,
-              age: values.age,
-              nationality: values.nationality,
-              govtId: values.govtId,
-              admissionCategory: values.admissionCategory,
-              bloodGroup: values.bloodGroup,
-              medicalHistory: values.medicalHistory,
-              hostelBlock: values.hostelBlock,
-              previousResident:
-                values.previousResident === "true" ? true : false,
-              messPreference: values.messPreference,
-            },
-            FatherDetails: {
-              name: values.fatherName,
-              occupation: values.fatherOccupation,
-              mobile: values.fatherMobile,
-              email: values.fatherEmail,
-              country: values.fatherCountry,
-            },
-            MotherDetails: {
-              name: values.motherName,
-              occupation: values.motherOccupation,
-              mobile: values.motherMobile,
-              email: values.motherEmail,
-              country: values.motherCountry,
-            },
-            ResidentialIndia: {
-              houseNo: values.resIndiaHouseNo,
-              street: values.resIndiaStreet,
-              city: values.resIndiaCity,
-              state: values.resIndiaState,
-              country: values.resIndiaCountry,
-              postalCode: values.resIndiaPostalCode,
-            },
-            ResidentialForeign: {
-              houseNo: values.resForeignHouseNo,
-              street: values.resForeignStreet,
-              city: values.resForeignCity,
-              state: values.resForeignState,
-              country: values.resForeignCountry,
-              postalCode: values.resForeignPostalCode,
-            },
-            localGuardian: {
-              name: values.guardianName,
-              relationship: values.guardianRelationship,
-              mobile: values.guardianMobile,
-              email: values.guardianEmail,
-              address: {
-                houseNo: values.guardianHouseNo,
-                street: values.guardianStreet,
-                city: values.guardianCity,
-                state: values.guardianState,
-                country: values.guardianCountry,
-                postalCode: values.guardianPostalCode,
-              },
-            },
-            images: {
-              passportPhoto: values.passportPhoto,
-              studentSignature: values.studentSignature,
-              parentGuardianSignature: values.parentGuardianSignature,
-            },
-            declaration: {
-              studentAgreed: values.declaration.includes("studentAgreed"),
-              parentAgreed: values.declaration.includes("parentAgreed"),
-              submissionDate: getISTDateString(),
-            },
-            payment: { transactionId: values.transactionId }
-          };
-          console.log(output);
+          // Build multipart form data
+          const formData = new FormData();
+
+          // Helper to append fields
+          formData.append("name", values.name);
+          formData.append("rollNo", values.rollNo);
+          formData.append("course", values.course);
+          formData.append("branch", values.branch);
+          formData.append("semester", values.semester);
+          formData.append("mobile", values.mobile);
+          formData.append("email", values.email);
+          formData.append("emergencyContact", values.emergencyContact);
+          formData.append("dateOfBirth", values.dateOfBirth);
+          formData.append("age", values.age);
+          formData.append("nationality", values.nationality);
+          formData.append("govtId", values.govtId);
+          formData.append("admissionCategory", values.admissionCategory);
+          formData.append("bloodGroup", values.bloodGroup);
+          formData.append("medicalHistory", values.medicalHistory);
+          formData.append("hostelBlock", values.hostelBlock);
+          formData.append(
+            "previousResident",
+            values.previousResident === "true" ? "true" : "false"
+          );
+          formData.append("messPreference", values.messPreference);
+          formData.append("fatherName", values.fatherName);
+          formData.append("fatherOccupation", values.fatherOccupation);
+          formData.append("fatherMobile", values.fatherMobile);
+          formData.append("fatherEmail", values.fatherEmail);
+          formData.append("fatherCountry", values.fatherCountry);
+          formData.append("motherName", values.motherName);
+          formData.append("motherOccupation", values.motherOccupation);
+          formData.append("motherMobile", values.motherMobile);
+          formData.append("motherEmail", values.motherEmail);
+          formData.append("motherCountry", values.motherCountry);
+          formData.append("resIndiaHouseNo", values.resIndiaHouseNo);
+          formData.append("resIndiaStreet", values.resIndiaStreet);
+          formData.append("resIndiaCity", values.resIndiaCity);
+          formData.append("resIndiaState", values.resIndiaState);
+          formData.append("resIndiaCountry", values.resIndiaCountry);
+          formData.append("resIndiaPostalCode", values.resIndiaPostalCode);
+          formData.append("resForeignHouseNo", values.resForeignHouseNo);
+          formData.append("resForeignStreet", values.resForeignStreet);
+          formData.append("resForeignCity", values.resForeignCity);
+          formData.append("resForeignState", values.resForeignState);
+          formData.append("resForeignCountry", values.resForeignCountry);
+          formData.append("resForeignPostalCode", values.resForeignPostalCode);
+          formData.append("guardianName", values.guardianName);
+          formData.append("guardianRelationship", values.guardianRelationship);
+          formData.append("guardianMobile", values.guardianMobile);
+          formData.append("guardianEmail", values.guardianEmail);
+          formData.append("guardianHouseNo", values.guardianHouseNo);
+          formData.append("guardianStreet", values.guardianStreet);
+          formData.append("guardianCity", values.guardianCity);
+          formData.append("guardianState", values.guardianState);
+          formData.append("guardianCountry", values.guardianCountry);
+          formData.append("guardianPostalCode", values.guardianPostalCode);
+          formData.append(
+            "studentAgreed",
+            values.declaration.includes("studentAgreed") ? "true" : "false"
+          );
+          formData.append(
+            "parentAgreed",
+            values.declaration.includes("parentAgreed") ? "true" : "false"
+          );
+          formData.append("submissionDate", getISTDateString());
+          formData.append("transactionId", values.transactionId);
+          // Append images
+          const imageFields = [
+            { key: "passportPhoto", name: "images[passportPhoto]" },
+            { key: "studentSignature", name: "images[studentSignature]" },
+            { key: "parentGuardianSignature", name: "images[parentGuardianSignature]" }
+          ] as const;
+          type ImageFieldKey = typeof imageFields[number]["key"];
+          for (const field of imageFields) {
+            const uri = values[field.key as ImageFieldKey];
+            if (uri) {
+              const filename = uri.split("/").pop() || "image.jpg";
+              const match = /\.(\w+)$/.exec(filename);
+              const type = match ? `image/${match[1]}` : "image";
+              formData.append(field.name, {
+                uri,
+                name: filename,
+                type,
+              } as any);
+            }
+          }
+          console.log("FormData prepared for submission:", formData);
         }
       }}
     >
