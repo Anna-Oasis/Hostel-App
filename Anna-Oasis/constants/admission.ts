@@ -207,6 +207,7 @@ const initialValues = {
   declaration: [] as string[],
 
   roomNumber: "",
+  transactionId: "",
 };
 
 const hostelBlocks = [

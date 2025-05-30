@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
-import {initialValues} from "@/constants/admission";
+import { initialValues } from "@/constants/admission";
 import validationSchemas from "@/utils/admission/admissionValidation";
 import StudentDetails from "@/components/admission/StudentDetails";
 import ParentDetails from "@/components/admission/ParentDetails";
@@ -124,7 +124,7 @@ const AdmissionForm = () => {
               parentAgreed: values.declaration.includes("parentAgreed"),
               submissionDate: getISTDateString(),
             },
-            transactionId: values.transactionId,
+            payment: { transactionId: values.transactionId }
           };
           console.log(output);
         }
