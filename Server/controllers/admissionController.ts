@@ -42,46 +42,74 @@ export const submitAdmission = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { body, files } = req;
+
+  const requiredFiles = [
+    "images[passportPhoto]",
+    "images[studentSignature]",
+    "images[parentGuardianSignature]",
+  ];
+
+  const fileFieldToFolder: Record<string, { folder: string; signature: string }> = {
+    "images[passportPhoto]": { folder: "passport", signature: "passport" },
+    "images[studentSignature]": { folder: "signature", signature: "signature" },
+    "images[parentGuardianSignature]": { folder: "parentSignature", signature: "parentGuardianSignature" },
+  };
+
+  // Collect all file paths for cleanup
+  const tempFilePaths: string[] = [];
+  requiredFiles.forEach((field) => {
+    const fileArr = (files as FileMap)?.[field];
+    if (fileArr && fileArr[0]?.path) {
+      tempFilePaths.push(fileArr[0].path);
+    }
+  });
+
+  let uploadedUrls: Record<string, string> = {};
+  let dbReadyData: any = {};
+  let userId: string | number = "";
+
   try {
-    const { body, files } = req;
-    console.log("Request Body:", body);
-    console.log("Request Files:", files);
+    // Check for missing files
+    const missingFile = requiredFiles.find(
+      (field) => !(files as FileMap)?.[field]?.length
+    );
+    if (missingFile) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required file: ${missingFile}`,
+      });
+    }
 
     const validatedData = admissionSchema.parse(body);
-    console.log("Validated Data:", validatedData);
 
-    const dbReadyData = {
+    dbReadyData = {
       ...validatedData,
       dateOfBirth: dayjs(validatedData.dateOfBirth).format("YYYY-MM-DD"),
       createdAt: dayjs(validatedData.createdAt).format("YYYY-MM-DD"),
     };
 
-    const userId = dbReadyData.user_id;
+    userId = dbReadyData.user_id;
 
-    const fileFieldToFolder: Record<string, { folder: string; signature: string }> = {
-      "images[passportPhoto]": { folder: "passport", signature: "passport" },
-      "images[studentSignature]": { folder: "signature", signature: "signature" },
-      "images[parentGuardianSignature]": { folder: "parentSignature", signature: "parentGuardianSignature" },
-    };
-
-    const uploadedUrls: Record<string, string> = {};
-
-    for (const field in fileFieldToFolder) {
-      const fileArr = (files as FileMap)?.[field];
-      if (fileArr?.[0]) {
+    // Upload files and collect URLs
+    uploadedUrls = {};
+    await Promise.all(
+      requiredFiles.map(async (field) => {
         const { folder, signature } = fileFieldToFolder[field];
-        uploadedUrls[field] = await handleFileUpload(fileArr[0], String(userId), folder, signature);
-      } else {
-        console.warn(`No file provided for ${field}`);
-      }
-    }
+        uploadedUrls[field] = await handleFileUpload(
+          (files as FileMap)[field][0],
+          String(userId),
+          folder,
+          signature
+        );
+      })
+    );
 
     // Add file URLs to DB data
     dbReadyData.passportPhotoUrl = uploadedUrls["images[passportPhoto]"];
     dbReadyData.studentSignatureUrl = uploadedUrls["images[studentSignature]"];
     dbReadyData.parentGuardianSignatureUrl = uploadedUrls["images[parentGuardianSignature]"];
 
-    console.log("DB Ready Data:", dbReadyData);
     const result = await db.insert(admissionModel).values(dbReadyData);
     if (!result) {
       return res.status(500).json({
@@ -96,19 +124,28 @@ export const submitAdmission = async (
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      console.error("Validation Error:", error.errors);
       return res.status(400).json({
         success: false,
         message: "Validation failed",
         error: error.errors,
       });
     }
-    console.error("Server Error:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred while processing your request.",
       error: error instanceof Error ? error.message : "Unknown error",
     });
+  } finally {
+    // Always clean up temp files
+    for (const path of tempFilePaths) {
+      try {
+        if (fs.existsSync(path)) {
+          fs.unlinkSync(path);
+        }
+      } catch (err) {
+        console.error(`Failed to delete temp file: ${path}`, err);
+      }
+    }
   }
 };
 
@@ -195,4 +232,4 @@ export const getAdmissionByUserId = async (
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
-}
+};
