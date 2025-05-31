@@ -52,10 +52,7 @@ const AdmissionForm = () => {
         if (page < 5) {
           next();
         } else {
-          // Build multipart form data
           const formData = new FormData();
-
-          // Helper to append fields
           formData.append("name", values.name);
           formData.append("rollNo", values.rollNo);
           formData.append("course", values.course);
@@ -119,7 +116,6 @@ const AdmissionForm = () => {
           );
           formData.append("submissionDate", getISTDateString());
           formData.append("transactionId", values.transactionId);
-          // Append images
           const imageFields = [
             { key: "passportPhoto", name: "images[passportPhoto]" },
             { key: "studentSignature", name: "images[studentSignature]" },

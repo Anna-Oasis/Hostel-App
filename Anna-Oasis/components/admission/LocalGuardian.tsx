@@ -5,7 +5,7 @@ const LocalGuardian = () => (
   <>
     <TextField label="Guardian Name" value="guardianName" placeholder="Name" />
     <TextField label="Relationship" value="guardianRelationship" placeholder="Relationship" />
-    <TextField label="Guardian Mobile (with country code)" value="guardianMobile" placeholder="Mobile" />
+    <TextField label="Guardian Mobile (with country code)" value="guardianMobile" placeholder="Eg: +917676767676" />
     <TextField label="Guardian Email" value="guardianEmail" placeholder="Email" />
     <TextField label="Guardian House No" value="guardianHouseNo" placeholder="House No" />
     <TextField label="Guardian Street" value="guardianStreet" placeholder="Street" />

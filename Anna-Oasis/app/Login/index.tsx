@@ -83,7 +83,7 @@ export default function Login() {
 
       const data = await response.json();
       await saveToken(data.data.token);
-      await saveCredentials(values.email, values.password); // Save email and password
+      await saveCredentials(values.email, values.password);
       Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
       router.push("/Student/Home");
     } catch (error: any) {
@@ -109,36 +109,28 @@ export default function Login() {
         onSubmit={handleLogin}
       >
         {({
-          handleChange,
-          handleBlur,
           handleSubmit,
           values,
-          errors,
-          touched,
         }) => (
           <View>
             <TextField
+              label="Email"
               placeholder="Email"
               value={values.email}
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              error={touched.email && errors.email}
             />
             <TextField
+              label="Password"
               placeholder="Password"
               value={values.password}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              secureTextEntry
-              error={touched.password && errors.password}
             />
             <Button onPress={() => handleSubmit()}>
               <ButtonText>Login</ButtonText>
             </Button>
             <Button onPress={() => router.push("/Signup")}>
               <ButtonText>Go to Signup</ButtonText>
+            </Button>
+            <Button onPress={() => router.push("/Student/Home")}>
+              <ButtonText>[Debug] student home </ButtonText>
             </Button>
           </View>
         )}

@@ -17,7 +17,7 @@ const StudentDetails = () => {
       <SelectField label="Branch" value="branch" options={Departments} />
       <SelectField label="Semester" value="semester" options={semesters} />
 
-      <TextField label="Mobile (with country code)" value="mobile" placeholder="Mobile Number" />
+      <TextField label="Mobile (with country code)" value="mobile" placeholder="Eg: +917676767676" />
       <TextField label="Email" value="email" placeholder="Email" />
       <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
 
