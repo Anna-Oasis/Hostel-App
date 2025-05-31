@@ -9,8 +9,10 @@ import {
 import { CircleIcon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useFormikContext, ErrorMessage } from "formik";
+import Label from "@/components/form/Label"
 
 interface RadioFieldProps {
+  label? : string;
   value: string;
   options: { label: string; value: string }[];
 }
@@ -18,10 +20,11 @@ interface RadioFieldProps {
 /**
  * RadioField component renders a group of radio buttons and integrates with Formik for form state management.
  *
+ * @param {string} label
  * @param {string} value - The name of the field in Formik values.
  * @param {Array<{ label: string, value: string }>} options - An array of options for the radio buttons.
  */
-function RadioField({ value, options }: RadioFieldProps) {
+function RadioField({label, value, options }: RadioFieldProps) {
   const { values, setFieldValue, touched, errors } = useFormikContext<any>();
 
   /**
@@ -36,6 +39,7 @@ function RadioField({ value, options }: RadioFieldProps) {
 
   return (
     <View>
+    {label && <Label text={label}/>}
       <RadioGroup
         value={values[value]}
         onChange={(prop) => {
