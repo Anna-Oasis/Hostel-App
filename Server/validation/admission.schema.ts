@@ -1,30 +1,42 @@
 import { z } from "zod";
-import { approval_status ,ApprovalStatus} from "../models/enum";
+import { approval_status, ApprovalStatus } from "../models/enum";
 
 export const admissionSchema = z.object({
   user_id: z.coerce.number(),
-approval: z.enum([
-    approval_status.submitted,
-    approval_status.rc,
-    approval_status.manager,
-    approval_status.deputyWarden,
-    approval_status.executiveWarden
-  ] as [ApprovalStatus, ...ApprovalStatus[]]).default(approval_status.submitted),
+  approval: z
+    .enum([
+      approval_status.submitted,
+      approval_status.rc,
+      approval_status.manager,
+      approval_status.deputyWarden,
+      approval_status.executiveWarden,
+    ] as [ApprovalStatus, ...ApprovalStatus[]])
+    .default(approval_status.submitted),
   transactionId: z.string(),
 
   name: z.string(),
   rollNo: z.string(),
   course: z.string(),
   branch: z.string(),
-  semester: z.string().refine(val => {
+  semester: z.string().refine(
+    (val) => {
       const sem = Number(val);
       return sem >= 1 && sem <= 8;
-    }, { message: "Semester must be between 1 and 8" }),
+    },
+    { message: "Semester must be between 1 and 8" }
+  ),
   dateOfBirth: z.coerce.date(),
   age: z.coerce.number().min(15).max(100),
-  mobile: z.string().regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
+  mobile: z
+    .string()
+    .regex(
+      /^(\+\d{1,3})?\d{10}$/,
+      "Mobile number must be 10 digits, optionally prefixed by country code"
+    ),
   email: z.string().email(),
-  emergencyContact: z.string().regex(/^\d{10}$/, "Emergency contact must be exactly 10 digits"),
+  emergencyContact: z
+    .string()
+    .regex(/^(\+\d{1,3})?\d{10}$/, "Emergency contact must be 10 digits, optionally prefixed by country code"),
   nationality: z.string(),
   govtId: z.string(),
   admissionCategory: z.string(),
@@ -38,13 +50,13 @@ approval: z.enum([
 
   fatherName: z.string(),
   fatherOccupation: z.string(),
-  fatherMobile: z.string().regex(/^\d{10}$/, "Father's mobile must be exactly 10 digits"),
+  fatherMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Father's mobile must be 10 digits, optionally prefixed by country code"),
   fatherEmail: z.string().email(),
   fatherCountry: z.string(),
 
   motherName: z.string(),
   motherOccupation: z.string(),
-  motherMobile: z.string().regex(/^\d{10}$/, "Mother's mobile must be exactly 10 digits"),
+  motherMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Mother's mobile must be 10 digits, optionally prefixed by country code"),
   motherEmail: z.string().email(),
   motherCountry: z.string(),
 
@@ -67,7 +79,7 @@ approval: z.enum([
   // Local Guardian (optional flat)
   localGuardianName: z.string().optional(),
   localGuardianRelationship: z.string().optional(),
-  localGuardianMobile: z.string().regex(/^\d{10}$/, "Local guardian mobile must be exactly 10 digits").or(z.literal("")),
+  localGuardianMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Local guardian mobile must be 10 digits, optionally prefixed by country code").or(z.literal("")),
 
   localGuardianEmail: z.string().email().optional(),
 
