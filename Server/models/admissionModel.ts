@@ -108,3 +108,5 @@ export const admissionModel = pgTable("admission", {
 
 export type Admission = typeof admissionModel.$inferSelect;
 export type NewAdmission = typeof admissionModel.$inferInsert;
+export type AdmissionUpdate = Partial<NewAdmission> & { admissionId: number };
+export type AdmissionWithUser = Admission & { user: { name: string; email: string } };

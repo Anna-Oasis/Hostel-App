@@ -6,6 +6,7 @@ import fs from "fs";
 import { uploadFile, getPublicUrl } from "../services/supabase/fileHandling";
 import { ZodError } from "zod";
 import dayjs from "dayjs";
+import { eq } from "drizzle-orm";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -110,3 +111,88 @@ export const submitAdmission = async (
     });
   }
 };
+
+export const getAdmissionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { admissionId } = req.params;
+
+  try {
+    if (!admissionId || isNaN(Number(admissionId))) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid admission ID provided.",
+      });
+    }
+
+    const result = await db
+      .select()
+      .from(admissionModel)
+      .where(eq(admissionModel.admissionId, Number(admissionId)));
+
+    const admission = result[0];
+
+    if (!admission) {
+      return res.status(404).json({
+        success: false,
+        message: "Admission not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: admission,
+    });
+  } catch (error) {
+    console.error("Error fetching admission by ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving the admission record.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+//get admissions by userID
+export const getAdmissionByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.params;
+
+  try {
+    if (!user_id || isNaN(Number(user_id))) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user ID provided.",
+      });
+    }
+
+    const admissions = await db
+      .select()
+      .from(admissionModel)
+      .where(eq(admissionModel.user_id, Number(user_id)));
+
+    if (admissions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No admissions found for this user.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: admissions,
+    });
+  } catch (error) {
+    console.error("Error fetching admissions by user ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving the admissions.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
