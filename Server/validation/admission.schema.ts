@@ -16,12 +16,15 @@ approval: z.enum([
   rollNo: z.string(),
   course: z.string(),
   branch: z.string(),
-  semester: z.string(),
+  semester: z.string().refine(val => {
+      const sem = Number(val);
+      return sem >= 1 && sem <= 8;
+    }, { message: "Semester must be between 1 and 8" }),
   dateOfBirth: z.coerce.date(),
-  age: z.coerce.number(),
-  mobile: z.string(),
+  age: z.coerce.number().min(15).max(100),
+  mobile: z.string().regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
   email: z.string().email(),
-  emergencyContact: z.string(),
+  emergencyContact: z.string().regex(/^\d{10}$/, "Emergency contact must be exactly 10 digits"),
   nationality: z.string(),
   govtId: z.string(),
   admissionCategory: z.string(),
@@ -35,13 +38,13 @@ approval: z.enum([
 
   fatherName: z.string(),
   fatherOccupation: z.string(),
-  fatherMobile: z.string(),
+  fatherMobile: z.string().regex(/^\d{10}$/, "Father's mobile must be exactly 10 digits"),
   fatherEmail: z.string().email(),
   fatherCountry: z.string(),
 
   motherName: z.string(),
   motherOccupation: z.string(),
-  motherMobile: z.string(),
+  motherMobile: z.string().regex(/^\d{10}$/, "Mother's mobile must be exactly 10 digits"),
   motherEmail: z.string().email(),
   motherCountry: z.string(),
 
@@ -64,7 +67,8 @@ approval: z.enum([
   // Local Guardian (optional flat)
   localGuardianName: z.string().optional(),
   localGuardianRelationship: z.string().optional(),
-  localGuardianMobile: z.string().optional(),
+  localGuardianMobile: z.string().regex(/^\d{10}$/, "Local guardian mobile must be exactly 10 digits").or(z.literal("")),
+
   localGuardianEmail: z.string().email().optional(),
 
   guardianHouseNo: z.string().optional(),
