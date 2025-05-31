@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Alert, StyleSheet } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { router } from "expo-router";
-import { saveToken, getToken, removeToken } from "@/utils/auth";
+import { saveToken, getToken, removeToken } from "@/utils/auth/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { loginValidationSchema } from "@/utils/auth/authValidation";
 
 export default function Login() {
   const [loading, setLoading] = useState(true);
@@ -100,12 +100,7 @@ export default function Login() {
       <Text style={styles.header}>Login</Text>
       <Formik
         initialValues={{ email: "", password: "" }}
-        validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email("Invalid email address")
-            .required("Email is required"),
-          password: Yup.string().required("Password is required"),
-        })}
+        validationSchema={loginValidationSchema}
         onSubmit={handleLogin}
       >
         {({

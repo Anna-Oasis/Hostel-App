@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -13,7 +13,14 @@ import PaymentPage from "@/components/admission/PaymentPage";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
-  const next = () => setPage((p) => p + 1);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const next = () => {
+    setPage((p) => p + 1);
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    }, 0);
+  };
   const prev = () => setPage((p) => p - 1);
 
   const renderPage = (handleSubmit: () => void) => {
@@ -140,7 +147,7 @@ const AdmissionForm = () => {
       }}
     >
       {({ handleSubmit }) => (
-        <ScrollView>
+        <ScrollView ref={scrollViewRef}>
           <View className="m-4 flex gap-3">
             {renderPage(handleSubmit)}
             <View
