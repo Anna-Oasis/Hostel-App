@@ -3,6 +3,7 @@ import cors from "cors";
 import errorHandler from "./middleware/errorHandler";
 import routes from "./routes/index";
 import authRoutes from "./routes/authRoutes";
+import { initDb } from "./config/dbConnection";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -28,8 +29,10 @@ app.get(/^\/.*/, (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}...`);
+initDb().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}...`);
+  });
 });
 
 export { app };

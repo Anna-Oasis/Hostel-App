@@ -1,6 +1,6 @@
 {
-  "id": "24994c64-80b8-40cd-8068-f5cf4f52981a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "b1ebbead-9b27-44e2-8302-a9e7a3a800bf",
+  "prevId": "2293530c-fd9d-441e-926e-432796777145",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -8,6 +8,12 @@
       "name": "admission",
       "schema": "",
       "columns": {
+        "admission_id": {
+          "name": "admission_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
@@ -17,13 +23,6 @@
         "approval": {
           "name": "approval",
           "type": "approval_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "payment_id": {
-          "name": "payment_id",
-          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -352,6 +351,24 @@
           "notNull": true,
           "default": "now()"
         },
+        "passport_photo_url": {
+          "name": "passport_photo_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "student_signature_url": {
+          "name": "student_signature_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_guardian_signature_url": {
+          "name": "parent_guardian_signature_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "transaction_id": {
           "name": "transaction_id",
           "type": "varchar(100)",
@@ -394,7 +411,6 @@
         "approval": {
           "name": "approval",
           "type": "approval_status",
-          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },

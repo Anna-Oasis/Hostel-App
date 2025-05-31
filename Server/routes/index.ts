@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import admissionRoute from "./admissionRoute";
+import admissionRouter from "./admissionRoute";
 
 
 const routes = Router();
-routes.use("/admission", admissionRoute);
+routes.use("/admission", admissionRouter);
 
 export default routes;

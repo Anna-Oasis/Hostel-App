@@ -1,53 +1,86 @@
-import { z } from 'zod';
+import { z } from "zod";
+import { approval_status ,ApprovalStatus} from "../models/enum";
 
 export const admissionSchema = z.object({
-  name: z.string().min(3, 'Name must be at least 3 characters'),
-  rollNo: z.string().min(6, 'Roll number must be at least 6 characters'),
-  course: z.string().min(2, 'Course must be at least 2 characters'),
-  branch: z.string().min(2, 'Branch must be at least 2 characters'),
-  semester: z.string().min(1, 'Semester is required'),
-  dateOfBirth: z.string().refine(
-    (val) => !isNaN(new Date(val).getTime()),
-    { message: 'Invalid date format for dateOfBirth' }
-  ),
-  age: z.number().int().min(15, 'Age must be at least 15').max(100, 'Age must be less than 100'),
-  mobile: z.string().min(10, 'Mobile number must be at least 10 digits'),
-  email: z.string().email('Invalid email format'),
-  admissionCategory: z.string().min(1, 'Admission category is required'),
-  bloodGroup: z.string().min(1, 'Blood group is required'),
-  medicalHistory: z.string().min(1, 'Medical history is required'),
-  previousResident: z.boolean(),
-  fatherName: z.string().min(1, 'Father name is required'),
-  fatherContactLocal: z.string().min(10, 'Father local contact is required'),
-  fatherContactForeign: z.string().min(10).optional(),
-  motherName: z.string().min(1, 'Mother name is required'),
-  motherContactLocal: z.string().min(10, 'Mother local contact is required'),
-  landline: z.string().min(10).optional(),
-  parentEmail: z.string().email('Invalid parent email format'),
-  occupation: z.string().min(1, 'Occupation is required'),
-  residentialAddress: z.string().min(1, 'Residential address is required'),
-  pin: z.string().min(6, 'PIN code must be at least 6 characters'),
-  guardianName: z.string().min(1).optional(),
-  guardianOccupation: z.string().min(1).optional(),
-  guardianResidentialAddress: z.string().min(1).optional(),
-  guardianPin: z.string().min(6).optional(),
-  guardianMobile: z.string().min(10).optional(),
-  guardianLandline: z.string().min(10).optional(),
-  guardianEmail: z.string().email().optional(),
-  hostelBlock: z.string().min(1, 'Hostel block is required'),
-  roomNumber: z.string().min(1, 'Room number is required'),
-  messPreference: z.enum(['Veg', 'Non-Veg'], {
-    errorMap: () => ({ message: 'Mess preference must be Veg or Non-Veg' }),
-  }),
-  declaration: z.string().refine(
-    (val) => {
-      try {
-        JSON.parse(val);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    { message: 'Declaration must be valid JSON' }
-  ),
+  user_id: z.coerce.number(),
+approval: z.enum([
+    approval_status.submitted,
+    approval_status.rc,
+    approval_status.manager,
+    approval_status.deputyWarden,
+    approval_status.executiveWarden
+  ] as [ApprovalStatus, ...ApprovalStatus[]]).default(approval_status.submitted),
+  transactionId: z.string(),
+
+  name: z.string(),
+  rollNo: z.string(),
+  course: z.string(),
+  branch: z.string(),
+  semester: z.string(),
+  dateOfBirth: z.coerce.date(),
+  age: z.coerce.number(),
+  mobile: z.string(),
+  email: z.string().email(),
+  emergencyContact: z.string(),
+  nationality: z.string(),
+  govtId: z.string(),
+  admissionCategory: z.string(),
+  bloodGroup: z.string(),
+  medicalHistory: z.string(),
+
+  previousResident: z.coerce.boolean(),
+  hostelBlock: z.string(),
+  roomNumber: z.string().default(""),
+  messPreference: z.string(),
+
+  fatherName: z.string(),
+  fatherOccupation: z.string(),
+  fatherMobile: z.string(),
+  fatherEmail: z.string().email(),
+  fatherCountry: z.string(),
+
+  motherName: z.string(),
+  motherOccupation: z.string(),
+  motherMobile: z.string(),
+  motherEmail: z.string().email(),
+  motherCountry: z.string(),
+
+  // Residential India address (flat)
+  resIndiaHouseNo: z.string(),
+  resIndiaStreet: z.string(),
+  resIndiaCity: z.string(),
+  resIndiaState: z.string(),
+  resIndiaCountry: z.string(),
+  resIndiaPostalCode: z.string(),
+
+  // Residential Foreign address (optional flat)
+  resForeignHouseNo: z.string().optional(),
+  resForeignStreet: z.string().optional(),
+  resForeignCity: z.string().optional(),
+  resForeignState: z.string().optional(),
+  resForeignCountry: z.string().optional(),
+  resForeignPostalCode: z.string().optional(),
+
+  // Local Guardian (optional flat)
+  localGuardianName: z.string().optional(),
+  localGuardianRelationship: z.string().optional(),
+  localGuardianMobile: z.string().optional(),
+  localGuardianEmail: z.string().email().optional(),
+
+  guardianHouseNo: z.string().optional(),
+  guardianStreet: z.string().optional(),
+  guardianCity: z.string().optional(),
+  guardianState: z.string().optional(),
+  guardianCountry: z.string().optional(),
+  guardianPostalCode: z.string().optional(),
+
+  studentDeclaration: z.coerce.boolean(),
+  parentDeclaration: z.coerce.boolean(),
+
+  //images
+  passportPhotoUrl: z.string().optional(),
+  studentSignatureUrl: z.string().optional(),
+  parentGuardianSignatureUrl: z.string().optional(),
+
+  createdAt: z.coerce.date().default(() => new Date()),
 });

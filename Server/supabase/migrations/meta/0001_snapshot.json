@@ -1,6 +1,6 @@
 {
-  "id": "24994c64-80b8-40cd-8068-f5cf4f52981a",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "c3fef996-f660-4711-92cd-46444f86b488",
+  "prevId": "24994c64-80b8-40cd-8068-f5cf4f52981a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -18,12 +18,6 @@
           "name": "approval",
           "type": "approval_status",
           "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "payment_id": {
-          "name": "payment_id",
-          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },

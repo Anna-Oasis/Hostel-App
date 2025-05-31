@@ -1,9 +1,9 @@
 import {pgTable, serial, varchar, integer, boolean, date, text, jsonb} from 'drizzle-orm/pg-core';
-import{approval_status} from './enum';
+import { approval_status_pgEnum } from './enum';
 
 export const readmissionModel = pgTable('readmission', {
     user_id: serial('user_id').primaryKey(),
-    approval: approval_status('approval').notNull(),
+    approval: approval_status_pgEnum('approval').notNull(),
     academic_year: varchar('academic_year', { length: 4 }).notNull(),
     payment_id: serial('payment_id').notNull(),
 
@@ -42,8 +42,9 @@ export const readmissionModel = pgTable('readmission', {
     anyDues: boolean("any_dues").notNull(),
 
     // Images (URLs in Supabase Storage)
-    studentSignatureUrl: text("student_signature_url"),
-    parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
+    //studentPhotoUrl: text("student_photo_url").notNull(),
+    //studentSignatureUrl: text("student_signature_url"),
+    //parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
 
     // Declaration
     studentAgreed: boolean("student_agreed").notNull(),
