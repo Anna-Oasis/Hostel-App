@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Alert, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Alert, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { router } from "expo-router";
 import { saveToken, getToken, removeToken } from "@/utils/auth/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
