@@ -28,7 +28,7 @@
     "@gluestack-ui/select": "^0.1.30",
     "@gluestack-ui/toast": "^1.0.8",
     "@legendapp/motion": "^2.4.0",
-    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",

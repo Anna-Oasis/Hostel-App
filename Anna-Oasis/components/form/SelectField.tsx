@@ -11,6 +11,7 @@ import {
   SelectDragIndicatorWrapper,
   SelectDragIndicator,
   SelectItem,
+  SelectScrollView
 } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { useFormikContext } from "formik";
@@ -43,10 +44,11 @@ const SelectField = ({ label,value, options }: SelectFieldProps) => {
         </SelectTrigger>
         <SelectPortal>
           <SelectBackdrop />
-          <SelectContent>
+          <SelectContent style={{ maxHeight: 400 }}>
             <SelectDragIndicatorWrapper>
               <SelectDragIndicator />
             </SelectDragIndicatorWrapper>
+            <SelectScrollView>
             {options.map((option) => (
               <SelectItem
                 key={option.value}
@@ -54,6 +56,7 @@ const SelectField = ({ label,value, options }: SelectFieldProps) => {
                 value={option.value}
               />
             ))}
+            </SelectScrollView>
           </SelectContent>
         </SelectPortal>
       </Select>

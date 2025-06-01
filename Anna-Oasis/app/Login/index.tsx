@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
@@ -49,11 +48,13 @@ export default function Login() {
         {({ handleSubmit }) => (
           <View>
             <TextField
+              label="Email"
               placeholder="Email"
               value="email"
               keyboardType="email-address"
             />
             <TextField
+              label="Password"
               placeholder="Password"
               value="password"
               secureTextEntry
@@ -63,6 +64,9 @@ export default function Login() {
             </Button>
             <Button onPress={() => router.push("/Signup")}> {/* Use router to navigate */}
               <ButtonText>Go to Signup</ButtonText>
+            </Button>
+            <Button onPress={() => router.push("/Student/Home")}>
+              <ButtonText>[Debug] student home </ButtonText>
             </Button>
           </View>
         )}
