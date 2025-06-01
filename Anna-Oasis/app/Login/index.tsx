@@ -1,35 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Alert, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { router } from "expo-router";
-import { saveToken, getToken, removeToken } from "@/utils/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
+import { useRouter } from "expo-router"; // Import useRouter
 
 export default function Login() {
   const [loading, setLoading] = useState(true);
-
-  const saveCredentials = async (email: string, password: string) => {
-    try {
-      await AsyncStorage.setItem("email", email);
-      await AsyncStorage.setItem("password", password);
-    } catch (error) {
-      console.error("Error saving credentials:", error);
-    }
-  };
-
-  const getCredentials = async () => {
-    try {
-      const email = await AsyncStorage.getItem("email");
-      const password = await AsyncStorage.getItem("password");
-      return { email, password };
-    } catch (error) {
-      console.error("Error retrieving credentials:", error);
-      return { email: null, password: null };
-    }
-  };
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     const checkTokenAndLogin = async () => {
@@ -37,59 +17,15 @@ export default function Login() {
       const { email, password } = await getCredentials();
 
       if (token && email && password) {
-        try {
-          const response = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ email, password }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            Alert.alert("Welcome Back", `Hello, ${data.data.name}`);
-            router.push("/Student/Home");
-          } else {
-            throw new Error("Invalid token or credentials");
-          }
-        } catch (error) {
-          console.error("Token validation failed:", error);
-          Alert.alert("Session Expired", "Please log in again.");
-          removeToken();
-        }
+        handleLogin({ email, password }, () => {
+          router.push("/Student/Home"); // Use router to navigate
+        });
       }
       setLoading(false);
     };
 
     checkTokenAndLogin();
-  }, []);
-
-  const handleLogin = async (values: { email: string; password: string }) => {
-    try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      const data = await response.json();
-      await saveToken(data.data.token);
-      await saveCredentials(values.email, values.password); // Save email and password
-      Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
-      router.push("/Student/Home");
-    } catch (error: any) {
-      Alert.alert("Login Failed", error.message);
-    }
-  };
+  }, [router]);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -106,38 +42,26 @@ export default function Login() {
             .required("Email is required"),
           password: Yup.string().required("Password is required"),
         })}
-        onSubmit={handleLogin}
+        onSubmit={(values) =>
+          handleLogin(values, () => router.push("/Student/Home")) // Use router to navigate
+        }
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-        }) => (
+        {({ handleSubmit }) => (
           <View>
             <TextField
               placeholder="Email"
-              value={values.email}
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
+              value="email"
               keyboardType="email-address"
-              autoCapitalize="none"
-              error={touched.email && errors.email}
             />
             <TextField
               placeholder="Password"
-              value={values.password}
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
+              value="password"
               secureTextEntry
-              error={touched.password && errors.password}
             />
             <Button onPress={() => handleSubmit()}>
               <ButtonText>Login</ButtonText>
             </Button>
-            <Button onPress={() => router.push("/Signup")}>
+            <Button onPress={() => router.push("/Signup")}> {/* Use router to navigate */}
               <ButtonText>Go to Signup</ButtonText>
             </Button>
           </View>
