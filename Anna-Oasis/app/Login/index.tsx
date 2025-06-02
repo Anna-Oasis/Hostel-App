@@ -11,6 +11,29 @@ export default function Login() {
   const [loading, setLoading] = useState(true);
   const router = useRouter(); // Initialize router
 
+  //ROLE BASED ROUTE SWITCHING:
+  //
+  // let role = "Student";
+  // switch (role) {
+  //     case "Student":
+  //       router.replace("/Student/Home");
+  //       break;
+  //     case "RC":
+  //       router.replace("/RC");
+  //       break;
+  //     case "Manager":
+  //       router.replace("/Manager");
+  //       break;
+  //     case "ExecutiveWarden":
+  //       router.replace("/ExecutiveWarden");
+  //       break;
+  //     case "DeputyWarden":
+  //       router.replace("/DeputyWarden");
+  //       break;
+  //     default:
+  //       router.replace("/Login");
+  //   }
+
   useEffect(() => {
     const checkTokenAndLogin = async () => {
       const token = await getToken();
@@ -52,13 +75,11 @@ export default function Login() {
               label="Email"
               placeholder="Email"
               value="email"
-              keyboardType="email-address"
             />
             <TextField
               label="Password"
               placeholder="Password"
               value="password"
-              secureTextEntry
             />
             <Button onPress={() => handleSubmit()}>
               <ButtonText>Login</ButtonText>

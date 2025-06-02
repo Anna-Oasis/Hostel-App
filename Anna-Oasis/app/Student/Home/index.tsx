@@ -1,43 +1,25 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { router } from "expo-router";
-import { useState } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 
-export default function Home() {
-  const [admissionFlag, setAdmissionFlag] = useState(0);
-
-  const toggleAdmissionFlag = () => {
-    setAdmissionFlag((prevFlag) => (prevFlag === 0 ? 1 : 0));
-  };
-
+export default function StudentHome() {
   return (
-    <View>
-      <Button onPress={toggleAdmissionFlag}>
-        <ButtonText>Toggle Admission Flag</ButtonText>
-      </Button>
-      {admissionFlag === 0 ? <Readmission /> : <Admission />}
-    </View>
-  );
-}
-
-function Readmission() {
-  return (
-    <View>
-      <Button onPress={() => router.push("/Student/Home/ReadmissionForm")}>
-        <ButtonText>Readmission</ButtonText>
-      </Button>
-      <Text>previous details here</Text>
-    </View>
-  );
-}
-
-function Admission() {
-  return (
-    <View>
+    <View style={{ gap: 16, margin: 24 }}>
       <Button onPress={() => router.push("/Student/Home/Admission")}>
         <ButtonText>Admission</ButtonText>
       </Button>
-      <Text></Text>
+      <Button onPress={() => router.push("/Student/Home/LeaveForm")}>
+        <ButtonText>Leave Form</ButtonText>
+      </Button>
+      <Button onPress={() => router.push("/Student/Home/SummerVacation")}>
+        <ButtonText>Summer Vacation</ButtonText>
+      </Button>
+      <Button onPress={() => router.push("/Student/Home/HostelVacation")}>
+        <ButtonText>Hostel Vacation</ButtonText>
+      </Button>
+      <Button onPress={() => router.push("/Student/Home/Grievances")}>
+        <ButtonText>Grievances</ButtonText>
+      </Button>
     </View>
   );
 }
