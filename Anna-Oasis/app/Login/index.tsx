@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
+import * as Yup from "yup";
 import { useRouter } from "expo-router"; // Import useRouter
 
 export default function Login() {
