@@ -4,9 +4,14 @@ import { admissionModel } from "../models/admissionModel";
 import { admissionSchema } from "../validation/admission.schema";
 import fs from "fs";
 import { uploadFile, getPublicUrl } from "../services/supabase/fileHandling";
-import { ZodError } from "zod";
+import { object, ZodError } from "zod";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
+import { approval_status } from "../models/enum";
+import {
+  admissionRetreivalNumbers,
+  AuthenticatedRequest,
+} from "../types/roles";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -50,10 +55,16 @@ export const submitAdmission = async (
     "images[parentGuardianSignature]",
   ];
 
-  const fileFieldToFolder: Record<string, { folder: string; signature: string }> = {
+  const fileFieldToFolder: Record<
+    string,
+    { folder: string; signature: string }
+  > = {
     "images[passportPhoto]": { folder: "passport", signature: "passport" },
     "images[studentSignature]": { folder: "signature", signature: "signature" },
-    "images[parentGuardianSignature]": { folder: "parentSignature", signature: "parentGuardianSignature" },
+    "images[parentGuardianSignature]": {
+      folder: "parentSignature",
+      signature: "parentGuardianSignature",
+    },
   };
 
   // Collect all file paths for cleanup
@@ -108,7 +119,8 @@ export const submitAdmission = async (
     // Add file URLs to DB data
     dbReadyData.passportPhotoUrl = uploadedUrls["images[passportPhoto]"];
     dbReadyData.studentSignatureUrl = uploadedUrls["images[studentSignature]"];
-    dbReadyData.parentGuardianSignatureUrl = uploadedUrls["images[parentGuardianSignature]"];
+    dbReadyData.parentGuardianSignatureUrl =
+      uploadedUrls["images[parentGuardianSignature]"];
 
     const result = await db.insert(admissionModel).values(dbReadyData);
     if (!result) {
@@ -226,6 +238,55 @@ export const getAdmissionByUserId = async (
     });
   } catch (error) {
     console.error("Error fetching admissions by user ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving the admissions.",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const getAdmissionByUserRole = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userRole } = req;
+
+  try {
+    if (
+      !userRole ||
+      !Object.keys(admissionRetreivalNumbers).includes(userRole)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user role provided.",
+      });
+    }
+
+    const admissions = await db
+      .select()
+      .from(admissionModel)
+      .where(
+        eq(
+          admissionModel.approval,
+          admissionRetreivalNumbers[userRole] as "0" | "1" | "2" | "3"
+        )
+      );
+
+    if (admissions.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No admissions found for this user role.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: admissions,
+    });
+  } catch (error) {
+    console.error("Error fetching admissions by user role:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred while retrieving the admissions.",

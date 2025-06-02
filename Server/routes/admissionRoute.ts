@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { submitAdmission } from "../controllers/admissionController";
+import {
+  getAdmissionByUserRole,
+  submitAdmission,
+} from "../controllers/admissionController";
 import { upload } from "../middleware/multer";
 import { getAdmissionById } from "../controllers/admissionController";
 import { getAdmissionByUserId } from "../controllers/admissionController";
+import { validateJWT } from "../middleware/jwt";
 
 const admissionRouter = Router();
 
@@ -19,14 +23,16 @@ admissionRouter.post(
 );
 
 //get routes to fetch by  addmissonid
-admissionRouter.get("/:admissionId", (req, res,next) => {
-  getAdmissionById(req, res,next).catch(next);
+admissionRouter.get("/:admissionId", (req, res, next) => {
+  getAdmissionById(req, res, next).catch(next);
+});
+
+admissionRouter.get("/role", validateJWT, (req, res, next) => {
+  getAdmissionByUserRole(req, res, next).catch(next);
+});
+//fetch admission by userID
+admissionRouter.get("/user/:user_id", (req, res, next) => {
+  getAdmissionByUserId(req, res, next).catch(next);
 });
 
 export default admissionRouter;
-
-//fetch admission by userID
- admissionRouter.get("/user/:user_id", (req, res, next) => {
-   getAdmissionByUserId(req, res, next).catch(next);
- });
-

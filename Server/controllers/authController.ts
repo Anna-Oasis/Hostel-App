@@ -4,9 +4,8 @@ import bcrypt from "bcryptjs";
 import { supabase } from "../config/supabaseBucket";
 import { UserRole } from "../types/roles";
 
-
 const generateToken = (id: string, role: UserRole): string => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET as string, {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 };
@@ -46,12 +45,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const { data: newUser, error: insertError } = await supabase
       .from("users")
-      .insert([{ 
-        name, 
-        email, 
-        password: hashedPassword,
-        role 
-      }])
+      .insert([
+        {
+          name,
+          email,
+          password: hashedPassword,
+          role,
+        },
+      ])
       .select()
       .single();
 
@@ -59,7 +60,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       console.error("Error inserting user:", insertError.message);
       throw new Error(insertError.message);
     }
-
 
     res.status(201).json({
       success: true,
@@ -110,7 +110,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-
 
     res.status(200).json({
       success: true,
