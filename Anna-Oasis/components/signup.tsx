@@ -4,10 +4,10 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { useRouter } from "expo-router"; // Import useRouter
+import { useRouter } from "expo-router";
 
 const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -44,32 +44,25 @@ const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
           <TextField
             placeholder="Name"
             value="name"
-            error={touched.name && errors.name}
+            label="Name"
           />
           <TextField
             placeholder="Email"
             value="email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={touched.email && errors.email}
+            label="Email"
           />
           <TextField
             placeholder="Password"
             value="password"
-            secureTextEntry
-            error={touched.password && errors.password}
+            label="Password"
           />
           <TextField
             placeholder="Confirm Password"
             value="confirmPassword"
-            secureTextEntry
-            error={touched.confirmPassword && errors.confirmPassword}
+            label="Confirm Password"
           />
           <Button onPress={() => handleSubmit()}>
             <ButtonText>Sign Up</ButtonText>
-          </Button>
-          <Button onPress={() => router.push("/Login")}> {/* Navigate to Login */}
-            <ButtonText>Go to Login</ButtonText>
           </Button>
         </View>
       )}
