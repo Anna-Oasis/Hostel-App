@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Alert, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
-import * as Yup from "yup";
-import { useRouter } from "expo-router"; // Import useRouter
+import { Text } from "@/components/ui/text";
+import { router } from "expo-router";
+import { saveToken, getToken, removeToken } from "@/utils/auth/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { loginValidationSchema } from "@/utils/auth/authValidation";
 
 export default function Login() {
   const [loading, setLoading] = useState(true);

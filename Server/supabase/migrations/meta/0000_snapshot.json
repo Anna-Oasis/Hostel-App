@@ -1,0 +1,702 @@
+{
+  "id": "24994c64-80b8-40cd-8068-f5cf4f52981a",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.admission": {
+      "name": "admission",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approval": {
+          "name": "approval",
+          "type": "approval_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_id": {
+          "name": "payment_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "roll_no": {
+          "name": "roll_no",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course": {
+          "name": "course",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "branch": {
+          "name": "branch",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "semester": {
+          "name": "semester",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mobile": {
+          "name": "mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergency_contact": {
+          "name": "emergency_contact",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nationality": {
+          "name": "nationality",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "govt_id": {
+          "name": "govt_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admission_category": {
+          "name": "admission_category",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blood_group": {
+          "name": "blood_group",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "medical_history": {
+          "name": "medical_history",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "previous_resident": {
+          "name": "previous_resident",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hostel_block": {
+          "name": "hostel_block",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "room_number": {
+          "name": "room_number",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mess_preference": {
+          "name": "mess_preference",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_name": {
+          "name": "father_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_occupation": {
+          "name": "father_occupation",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_mobile": {
+          "name": "father_mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_email": {
+          "name": "father_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "father_country": {
+          "name": "father_country",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_name": {
+          "name": "mother_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_occupation": {
+          "name": "mother_occupation",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_mobile": {
+          "name": "mother_mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_email": {
+          "name": "mother_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mother_country": {
+          "name": "mother_country",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_house_no": {
+          "name": "res_india_house_no",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_street": {
+          "name": "res_india_street",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_city": {
+          "name": "res_india_city",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_state": {
+          "name": "res_india_state",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_country": {
+          "name": "res_india_country",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_india_postal_code": {
+          "name": "res_india_postal_code",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "res_foreign_house_no": {
+          "name": "res_foreign_house_no",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "res_foreign_street": {
+          "name": "res_foreign_street",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "res_foreign_city": {
+          "name": "res_foreign_city",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "res_foreign_state": {
+          "name": "res_foreign_state",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "res_foreign_country": {
+          "name": "res_foreign_country",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "res_foreign_postal_code": {
+          "name": "res_foreign_postal_code",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_guardian_name": {
+          "name": "local_guardian_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_guardian_relationship": {
+          "name": "local_guardian_relationship",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_guardian_mobile": {
+          "name": "local_guardian_mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "local_guardian_email": {
+          "name": "local_guardian_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_house_no": {
+          "name": "guardian_house_no",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_street": {
+          "name": "guardian_street",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_city": {
+          "name": "guardian_city",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_state": {
+          "name": "guardian_state",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_country": {
+          "name": "guardian_country",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_postal_code": {
+          "name": "guardian_postal_code",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "student_declaration": {
+          "name": "student_declaration",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_declaration": {
+          "name": "parent_declaration",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "admission_user_id_users_id_fk": {
+          "name": "admission_user_id_users_id_fk",
+          "tableFrom": "admission",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.readmission": {
+      "name": "readmission",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "approval": {
+          "name": "approval",
+          "type": "approval_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "academic_year": {
+          "name": "academic_year",
+          "type": "varchar(4)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_id": {
+          "name": "payment_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_name": {
+          "name": "student_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course": {
+          "name": "course",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "branch": {
+          "name": "branch",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "name": "year",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "semester": {
+          "name": "semester",
+          "type": "varchar(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_mobile": {
+          "name": "student_mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_email": {
+          "name": "student_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_mobile_1": {
+          "name": "parent_mobile_1",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_mobile_2": {
+          "name": "parent_mobile_2",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent_email": {
+          "name": "parent_email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_name": {
+          "name": "guardian_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "guardian_mobile": {
+          "name": "guardian_mobile",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hostel_block": {
+          "name": "hostel_block",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "room_number": {
+          "name": "room_number",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_received": {
+          "name": "key_received",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fees_paid": {
+          "name": "fees_paid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transaction_reference_no": {
+          "name": "transaction_reference_no",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transaction_date": {
+          "name": "transaction_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "any_dues": {
+          "name": "any_dues",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "student_agreed": {
+          "name": "student_agreed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_agreed": {
+          "name": "parent_agreed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "submission_date": {
+          "name": "submission_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'student'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.grievances": {
+      "name": "grievances",
+      "schema": "",
+      "columns": {
+        "room_id": {
+          "name": "room_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "supportive_image": {
+          "name": "supportive_image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.approval_status": {
+      "name": "approval_status",
+      "schema": "public",
+      "values": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "STUDENT",
+        "RC",
+        "DEPUTY_WARDEN",
+        "EXECUTIVE_WARDEN"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
