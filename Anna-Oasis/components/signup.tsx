@@ -4,8 +4,11 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
+import { useRouter } from "expo-router"; // Import useRouter
 
 const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
+  const router = useRouter(); // Initialize router
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
@@ -36,49 +39,37 @@ const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        errors,
-        touched,
-      }) => (
+      {({ handleSubmit, values, errors, touched }) => (
         <View>
           <TextField
             placeholder="Name"
-            value={values.name}
-            onChangeText={handleChange("name")}
-            onBlur={handleBlur("name")}
+            value="name"
             error={touched.name && errors.name}
           />
           <TextField
             placeholder="Email"
-            value={values.email}
-            onChangeText={handleChange("email")}
-            onBlur={handleBlur("email")}
+            value="email"
             keyboardType="email-address"
             autoCapitalize="none"
             error={touched.email && errors.email}
           />
           <TextField
             placeholder="Password"
-            value={values.password}
-            onChangeText={handleChange("password")}
-            onBlur={handleBlur("password")}
+            value="password"
             secureTextEntry
             error={touched.password && errors.password}
           />
           <TextField
             placeholder="Confirm Password"
-            value={values.confirmPassword}
-            onChangeText={handleChange("confirmPassword")}
-            onBlur={handleBlur("confirmPassword")}
+            value="confirmPassword"
             secureTextEntry
             error={touched.confirmPassword && errors.confirmPassword}
           />
           <Button onPress={() => handleSubmit()}>
             <ButtonText>Sign Up</ButtonText>
+          </Button>
+          <Button onPress={() => router.push("/Login")}> {/* Navigate to Login */}
+            <ButtonText>Go to Login</ButtonText>
           </Button>
         </View>
       )}

@@ -1,43 +1,17 @@
 import React from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { router } from "expo-router";
+import { View, StyleSheet } from "react-native";
 import SignupForm from "@/components/signup";
+import { handleSignup } from "@/utils/authUtils";
+import { router } from "expo-router";
 
 export default function Signup() {
-  const handleSignup = async (values: {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    try {
-      const response = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          password: values.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Signup failed");
-      }
-
-      Alert.alert("Signup Successful", "You can now log in.");
-      router.push("/Login");
-    } catch (error: any) {
-      Alert.alert("Signup Failed", error.message);
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <SignupForm onSubmit={handleSignup} />
+      <SignupForm
+        onSubmit={(values) =>
+          handleSignup(values, () => router.push("/Login"))
+        }
+      />
     </View>
   );
 }

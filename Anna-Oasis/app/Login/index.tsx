@@ -1,36 +1,38 @@
-import { useEffect, useState } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { router } from "expo-router";
-import { saveToken, getToken, removeToken } from "@/utils/auth/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loginValidationSchema } from "@/utils/auth/authValidation";
+import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
+import * as Yup from "yup";
+import { useRouter } from "expo-router"; // Import useRouter
 
 export default function Login() {
   const [loading, setLoading] = useState(true);
+  const router = useRouter(); // Initialize router
 
-  const saveCredentials = async (email: string, password: string) => {
-    try {
-      await AsyncStorage.setItem("email", email);
-      await AsyncStorage.setItem("password", password);
-    } catch (error) {
-      console.error("Error saving credentials:", error);
-    }
-  };
-
-  const getCredentials = async () => {
-    try {
-      const email = await AsyncStorage.getItem("email");
-      const password = await AsyncStorage.getItem("password");
-      return { email, password };
-    } catch (error) {
-      console.error("Error retrieving credentials:", error);
-      return { email: null, password: null };
-    }
-  };
+  //ROLE BASED ROUTE SWITCHING:
+  //
+  // let role = "Student";
+  // switch (role) {
+  //     case "Student":
+  //       router.replace("/Student/Home");
+  //       break;
+  //     case "RC":
+  //       router.replace("/RC");
+  //       break;
+  //     case "Manager":
+  //       router.replace("/Manager");
+  //       break;
+  //     case "ExecutiveWarden":
+  //       router.replace("/ExecutiveWarden");
+  //       break;
+  //     case "DeputyWarden":
+  //       router.replace("/DeputyWarden");
+  //       break;
+  //     default:
+  //       router.replace("/Login");
+  //   }
 
   useEffect(() => {
     const checkTokenAndLogin = async () => {
@@ -38,59 +40,15 @@ export default function Login() {
       const { email, password } = await getCredentials();
 
       if (token && email && password) {
-        try {
-          const response = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ email, password }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            Alert.alert("Welcome Back", `Hello, ${data.data.name}`);
-            router.push("/Student/Home");
-          } else {
-            throw new Error("Invalid token or credentials");
-          }
-        } catch (error) {
-          console.error("Token validation failed:", error);
-          Alert.alert("Session Expired", "Please log in again.");
-          removeToken();
-        }
+        handleLogin({ email, password }, () => {
+          router.push("/Student/Home"); // Use router to navigate
+        });
       }
       setLoading(false);
     };
 
     checkTokenAndLogin();
-  }, []);
-
-  const handleLogin = async (values: { email: string; password: string }) => {
-    try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      const data = await response.json();
-      await saveToken(data.data.token);
-      await saveCredentials(values.email, values.password);
-      Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
-      router.push("/Student/Home");
-    } catch (error: any) {
-      Alert.alert("Login Failed", error.message);
-    }
-  };
+  }, [router]);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -101,28 +59,32 @@ export default function Login() {
       <Text style={styles.header}>Login</Text>
       <Formik
         initialValues={{ email: "", password: "" }}
-        validationSchema={loginValidationSchema}
-        onSubmit={handleLogin}
+        validationSchema={Yup.object().shape({
+          email: Yup.string()
+            .email("Invalid email address")
+            .required("Email is required"),
+          password: Yup.string().required("Password is required"),
+        })}
+        onSubmit={(values) =>
+          handleLogin(values, () => router.push("/Student/Home")) // Use router to navigate
+        }
       >
-        {({
-          handleSubmit,
-          values,
-        }) => (
+        {({ handleSubmit }) => (
           <View>
             <TextField
               label="Email"
               placeholder="Email"
-              value={values.email}
+              value="email"
             />
             <TextField
               label="Password"
               placeholder="Password"
-              value={values.password}
+              value="password"
             />
             <Button onPress={() => handleSubmit()}>
               <ButtonText>Login</ButtonText>
             </Button>
-            <Button onPress={() => router.push("/Signup")}>
+            <Button onPress={() => router.push("/Signup")}> {/* Use router to navigate */}
               <ButtonText>Go to Signup</ButtonText>
             </Button>
             <Button onPress={() => router.push("/Student/Home")}>
