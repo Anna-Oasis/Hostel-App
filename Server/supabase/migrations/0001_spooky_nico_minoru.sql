@@ -1,0 +1,1 @@
+ALTER TABLE "admission" DROP COLUMN "payment_id";

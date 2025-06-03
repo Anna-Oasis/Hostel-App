@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1748608068517,
+      "tag": "0000_giant_payback",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748613019336,
+      "tag": "0001_spooky_nico_minoru",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748629025175,
+      "tag": "0002_blushing_micromax",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748671923765,
+      "tag": "0003_colossal_devos",
+      "breakpoints": true
+    }
+  ]
+}
