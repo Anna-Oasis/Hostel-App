@@ -1,29 +1,36 @@
-import { Text, View } from "react-native";
-import { Button, ButtonText } from "@/components/ui/button";
-import React from "react";
-import { router } from "expo-router";
+// import { Text, View } from "react-native";
+// import { Button, ButtonText } from "@/components/ui/button";
+// import TestForm from "@/components/TestForm";
+// import React from "react";
+// import { Link, router } from "expo-router";
+
+// export default function Index() {
+//   return (
+//     <>
+//       <View className="flex m-4 gap-4">
+//         <Button onPress={() => router.push("/Login")}>
+//           <ButtonText>Student</ButtonText>
+//         </Button>
+//         <Button>
+//           <ButtonText>Admin</ButtonText>
+//         </Button>
+//       </View>
+//     </>
+//   );
+// }
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  return (
-    <>
-      <View className="flex m-4 gap-4">
-        <Button onPress={() => router.push("/Login")}>
-          <ButtonText>Student</ButtonText>
-        </Button>
+  const router = useRouter();
 
-        <Button>
-          <ButtonText>Admin</ButtonText>
-        </Button>
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      router.push("/Login");
+    }, 0);
 
-        <Button
-          onPress={() => {
-            console.log("Navigating to /Login/Signup");
-            router.push("/Login/Signup");
-          }}
-        >
-          <ButtonText>Sign Up</ButtonText>
-        </Button>
-      </View>
-    </>
-  );
+    return () => clearTimeout(timeout);
+  }, [router]);
+
+  return null;
 }

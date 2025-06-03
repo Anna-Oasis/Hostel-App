@@ -1,5 +1,7 @@
 import React from "react";
-import { View, Button, Image, Text } from "react-native";
+import { View, Image } from "react-native";
+import { Button } from "../ui/button";
+import { Text } from "../ui/text";
 import * as ImagePicker from "expo-image-picker";
 import { useFormikContext } from "formik";
 
@@ -14,28 +16,33 @@ const ImagePickerField = ({ label, value, placeholder }: Props) => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      base64: true,
+      base64: false,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 0.7,
     });
-    if (!result.canceled && result.assets?.[0]?.base64) {
-      setFieldValue(value, `data:image/jpeg;base64,${result.assets[0].base64}`);
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setFieldValue(value, result.assets[0].uri);
     }
   };
 
   return (
-    <View style={{ marginVertical: 8 }}>
-      <Text>{label}</Text>
+    <View className="my-2 p-4 rounded-lg bg-black border border-white">
+      <Text className="text-white text-base font-semibold mb-2">{label}</Text>
       {values[value] ? (
         <Image
           source={{ uri: values[value] }}
-          style={{ width: 100, height: 100, marginVertical: 8 }}
+          className="w-24 h-24 rounded border border-white mb-2"
         />
       ) : (
-        <Text style={{ color: "#888" }}>{placeholder}</Text>
+        <Text className="text-gray-400 mb-2">{placeholder}</Text>
       )}
-      <Button title={`Pick ${label}`} onPress={pickImage} />
+      <Button
+        className="bg-white border border-black rounded px-4 py-2"
+        onPress={pickImage}
+      >
+        <Text className="text-black font-medium">Upload {label}</Text>
+      </Button>
     </View>
   );
 };
