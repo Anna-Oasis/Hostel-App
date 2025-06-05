@@ -1,79 +1,98 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { useRouter } from "expo-router"; // Import useRouter
+import { useRouter } from "expo-router";
+import { validationSchema } from "@/utils/auth/authValidation";
 
 const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
-  const router = useRouter(); // Initialize router
-
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string()
-      .matches(
-        /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/,
-        "Enter a valid email address"
-      )
-      .required("Email is required"),
-    password: Yup.string()
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must be at least 8 characters, include uppercase, lowercase, number, and special character"
-      )
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Confirm Password is required"),
-  });
+  const router = useRouter();
 
   return (
-    <Formik
-      initialValues={{
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      }}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 bg-white"
     >
-      {({ handleSubmit, values, errors, touched }) => (
-        <View>
-          <TextField
-            placeholder="Name"
-            value="name"
-            error={touched.name && errors.name}
-          />
-          <TextField
-            placeholder="Email"
-            value="email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={touched.email && errors.email}
-          />
-          <TextField
-            placeholder="Password"
-            value="password"
-            secureTextEntry
-            error={touched.password && errors.password}
-          />
-          <TextField
-            placeholder="Confirm Password"
-            value="confirmPassword"
-            secureTextEntry
-            error={touched.confirmPassword && errors.confirmPassword}
-          />
-          <Button onPress={() => handleSubmit()}>
-            <ButtonText>Sign Up</ButtonText>
-          </Button>
-          <Button onPress={() => router.push("/Login")}> {/* Navigate to Login */}
-            <ButtonText>Go to Login</ButtonText>
-          </Button>
+      <View className="flex-1 justify-center px-6 pb-10">
+        <View className="items-center mb-12">
+          <Text className="text-3xl font-bold text-gray-900 mt-4 mb-2">
+            Create Account
+          </Text>
+          <Text className="text-base text-gray-600">
+            Sign up to get started
+          </Text>
         </View>
-      )}
-    </Formik>
+
+        <Formik
+          initialValues={{
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ handleSubmit }) => (
+            <View className="space-y-4">
+              <TextField
+                placeholder="Enter your full name"
+                value="name"
+                label="Full Name"
+                // className="bg-gray-50 rounded-lg"
+              />
+              
+              <TextField
+                placeholder="Enter your email"
+                value="email"
+                label="Email Address"
+                // className="bg-gray-50 rounded-lg"
+              />
+              
+              <TextField
+                placeholder="Create a password"
+                value="password"
+                label="Password"
+                // className="bg-gray-50 rounded-lg"
+              />
+              
+              <TextField
+                placeholder="Confirm your password"
+                value="confirmPassword"
+                label="Confirm Password"
+                // className="bg-gray-50 rounded-lg"
+              />
+
+              <Button 
+                size="lg"
+                variant="solid"
+                action="primary"
+                className="mt-6 rounded-lg bg-slate-900"
+                onPress={() => handleSubmit()}
+              >
+                <ButtonText className="text-white font-semibold">
+                  Create Account
+                </ButtonText>
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                action="secondary"
+                className="mt-3 rounded-lg border-2 border-slate-500"
+                onPress={() => router.push("/Login")}
+              >
+                <ButtonText className="text-slate-500 font-semibold">
+                  Already have an account? Login
+                </ButtonText>
+              </Button>
+            </View>
+          )}
+        </Formik>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
