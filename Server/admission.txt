@@ -1,0 +1,113 @@
+0: name → "Salai"
+​​
+1: rollNo → "2022115081"
+​​
+2: course → "B.Tech"
+​​
+3: branch → "Information Technology"
+​​
+4: semester → "Semester 6"
+​​
+5: mobile → "+917418585920"
+​​
+6: email → "salaikowshikan8743@gmail.com"
+​​
+7: emergencyContact → "+917418585920"
+​​
+8: dateOfBirth → "2005-06-25"
+​​
+9: age → "20"
+​​
+10: nationality → "Indian"
+​​
+11: govtId → "1234567"
+​​
+12: admissionCategory → "NRI"
+​​
+13: bloodGroup → "O+"
+​​
+14: medicalHistory → "Nil"
+​​
+15: hostelBlock → "Flora"
+​​
+16: previousResident → "false"
+​​
+17: messPreference → "veg"
+​​
+18: fatherName → "Salai"
+​​
+19: fatherOccupation → "work"
+​​
+20: fatherMobile → "+917418585920"
+​​
+21: fatherEmail → "salai@salai.com"
+​​
+22: fatherCountry → "India"
+​​
+23: motherName → "Mother"
+​​
+24: motherOccupation → "Mothering"
+​​
+25: motherMobile → "+917418585920"
+​​
+26: motherEmail → "salai@salai.com"
+​​
+27: motherCountry → "India"
+​​
+28: resIndiaHouseNo → "12"
+​​
+29: resIndiaStreet → "12"
+​​
+30: resIndiaCity → "Rock city"
+​​
+31: resIndiaState → "Rock state"
+​​
+32: resIndiaCountry → "India"
+​​
+33: resIndiaPostalCode → "12314312"
+​​
+34: resForeignHouseNo → "12434"
+​​
+35: resForeignStreet → "4dg"
+​​
+36: resForeignCity → "fgedhg"
+​​
+37: resForeignState → "fdhh"
+​​
+38: resForeignCountry → "dfgh"
+​​
+39: resForeignPostalCode → "123456"
+​​
+40: guardianName → "fdg"
+​​
+41: guardianRelationship → "dfg"
+​​
+42: guardianMobile → "+7418585920"
+​​
+43: guardianEmail → "salai@gmail.com"
+​​
+44: guardianHouseNo → "23"
+​​
+45: guardianStreet → "asdar"
+​​
+46: guardianCity → "are"
+​​
+47: guardianState → "erwew"
+​​
+48: guardianCountry → "rrer"
+​​
+49: guardianPostalCode → "1232"
+​​
+50: studentAgreed → "true"
+​​
+51: parentAgreed → "true"
+​​
+52: submissionDate → "2025-05-30"
+​​
+53: transactionId → "234554"
+​​
+54: "images[passportPhoto]" → "[object Object]"
+​​
+55: "images[studentSignature]" → "[object Object]"
+​​
+56: "images[parentGuardianSignature]" → "[object Object]"

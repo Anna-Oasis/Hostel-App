@@ -1,4 +1,8 @@
+
 .env
 node_modules
 package-lock.json
 uploads/
+logs/
+utils/logger.ts
+
