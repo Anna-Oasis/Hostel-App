@@ -68,7 +68,7 @@ export const getUserRole = async (): Promise<string | null> => {
 };
 
 export const handleLogin = async (
-  values: { email: string; password: string, setRole ?: (role: string) => void },
+  values: { email: string; password: string },
   onSuccess: () => void
 ) => {
   try {
