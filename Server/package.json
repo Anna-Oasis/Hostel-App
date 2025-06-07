@@ -9,7 +9,8 @@
     "dev": "ts-node-dev server.ts",
     "drizzle:generate": "drizzle-kit generate:pg",
     "drizzle:push": "drizzle-kit push:pg",
-    "test": "jest"
+    "test": "jest",
+    "suhaib": "nodemon --exec ts-node server.ts"
   },
   "author": "",
   "license": "ISC",
