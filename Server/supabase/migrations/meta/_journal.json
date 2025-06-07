@@ -36,6 +36,20 @@
       "when": 1749306068346,
       "tag": "0004_exotic_silver_centurion",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1749309105047,
+      "tag": "0005_careful_robin_chapel",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1749312860467,
+      "tag": "0006_pale_captain_midlands",
+      "breakpoints": true
     }
   ]
 }
