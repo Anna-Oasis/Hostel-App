@@ -18,7 +18,7 @@ export default function Login() {
 
       if (token && email && password) {
         handleLogin({ email, password }, () => {
-          router.push("/Student/Home");
+          router.push("/User");
         });
       }
       setLoading(false);
@@ -56,9 +56,7 @@ export default function Login() {
               .required("Email is required"),
             password: Yup.string().required("Password is required"),
           })}
-          onSubmit={(values) =>
-            handleLogin(values, () => router.push("/Student/Home"))
-          }
+          onSubmit={(values) => handleLogin(values, () => router.push("/User"))}
         >
           {({ handleSubmit }) => (
             <View className="space-y-4">
@@ -98,12 +96,12 @@ export default function Login() {
                   Create Account
                 </ButtonText>
               </Button>
-               <Button
+              <Button
                 size="lg"
                 variant="outline"
                 action="secondary"
                 className="mt-3 rounded-lg border-2 border-slate-500"
-                onPress={() => router.push("/Student/Home")}
+                onPress={() => router.push("/User")}
               >
                 <ButtonText className="text-slate-500 font-semibold">
                   DEBUG LOGIN
