@@ -3,7 +3,7 @@ import { db } from "../config/dbConnection";
 import { admissionModel } from "../models/admissionModel";
 import { admissionSchema } from "../validation/admission.schema";
 import fs from "fs";
-import { uploadFile, getPublicUrl } from "../services/supabase/fileHandling";
+import { uploadFile, getPublicUrl } from "../services/cloudflare/fileHandling";
 import { object, ZodError } from "zod";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
