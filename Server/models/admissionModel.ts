@@ -5,10 +5,10 @@ import {
   date,
   serial,
 } from "drizzle-orm/pg-core";
-import { approval_status_pgEnum } from "./enum";
+import { approval_status_pgEnum, messPreferenceEnum} from "./enum";
 import { studentModel } from "./studentModel";
 
-export const admissionModel = pgTable("Admissionn", {
+export const admissionModel = pgTable("admission", {
   // Student Reference
   admissionId: serial("admission_id").primaryKey(),
   rollNo: varchar("roll_no", { length: 20 })
@@ -27,6 +27,18 @@ export const admissionModel = pgTable("Admissionn", {
 
   // Timestamp
   createdAt: date("created_at").defaultNow().notNull(),
+
+  // Category
+  admissionCategory: varchar("category", {length: 25}).notNull(),
+
+  // Readmission
+  previousResident: boolean("previous_resident").notNull(),
+
+  // Mess preference
+  messPreference: messPreferenceEnum("mess_preference").notNull(),
+
+  // Block assignment
+  hostelBlock: varchar("hostel_block", {length: 50}),
 
   // Payment
   transactionId: varchar("transaction_id", { length: 100 }).notNull(),
