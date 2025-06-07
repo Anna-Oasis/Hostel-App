@@ -68,7 +68,7 @@ export const getUserRole = async (): Promise<string | null> => {
 };
 
 export const handleLogin = async (
-  values: { email: string; password: string },
+  values: { email: string; password: string, setRole ?: (role: string) => void },
   onSuccess: () => void
 ) => {
   try {
@@ -118,5 +118,31 @@ export const handleSignup = async (
     onSuccess();
   } catch (error: any) {
     Alert.alert("Signup Failed", error.message);
+  }
+};
+
+export const redirectByRole = (role: string | null) => {
+  switch (role) {
+    case "student":
+      router.push("/Student/Home");
+      break;
+    case "warden":
+      router.push("/ExecutiveWarden");
+      break;
+    case "rc":
+      router.push("/RC");
+      break;
+    case "deputyWarden":
+      router.push("/DeputyWarden");
+      break;
+    case "executiveWarden":
+      router.push("/ExecutiveWarden");
+      break;
+    case "manager":
+      router.push("/Manager");
+      break;
+    default:
+      console.error("Unknown user role:", role);
+      router.push("/Login");
   }
 };
