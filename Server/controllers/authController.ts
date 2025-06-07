@@ -14,7 +14,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, role = "student" } = req.body;
 
-    const validRoles: UserRole[] = ["admin", "rc", "manager", "student"];
+    const validRoles: UserRole[] = ["warden", "rc", "manager", "student"];
     if (!validRoles.includes(role)) {
       res.status(400).json({
         success: false,
