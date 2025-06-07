@@ -9,7 +9,7 @@ import {
 
 import { userModel } from "./userModel";
 
-export const rcModel = pgTable("RC", {
+export const rcModel = pgTable("rc", {
   
   id: serial("rc_id").primaryKey().references(() => userModel.id, { onDelete: "no action" }),
   name: varchar("name", { length: 100 }).notNull(),

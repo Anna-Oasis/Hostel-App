@@ -1,4 +1,4 @@
-CREATE TABLE "Admissionn" (
+CREATE TABLE "admission" (
 	"admission_id" serial PRIMARY KEY NOT NULL,
 	"roll_no" varchar(20) NOT NULL,
 	"academic_year" varchar(15) NOT NULL,
@@ -9,14 +9,14 @@ CREATE TABLE "Admissionn" (
 	"transaction_id" varchar(100) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "userss" (
+CREATE TABLE "users" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"email" varchar(100) NOT NULL,
 	"password" text NOT NULL,
 	"role" varchar(20) DEFAULT 'student' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "userss_email_unique" UNIQUE("email")
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "student" (
@@ -89,6 +89,6 @@ CREATE TABLE "RC" (
 --> statement-breakpoint
 DROP TABLE "admission" CASCADE;--> statement-breakpoint
 DROP TABLE "users" CASCADE;--> statement-breakpoint
-ALTER TABLE "Admissionn" ADD CONSTRAINT "Admissionn_roll_no_student_roll_no_fk" FOREIGN KEY ("roll_no") REFERENCES "public"."student"("roll_no") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "student" ADD CONSTRAINT "student_user_id_userss_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."userss"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "RC" ADD CONSTRAINT "RC_rc_id_userss_id_fk" FOREIGN KEY ("rc_id") REFERENCES "public"."userss"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "admission" ADD CONSTRAINT "admission_roll_no_student_roll_no_fk" FOREIGN KEY ("roll_no") REFERENCES "public"."student"("roll_no") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "student" ADD CONSTRAINT "student_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "RC" ADD CONSTRAINT "RC_rc_id_users_id_fk" FOREIGN KEY ("rc_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;

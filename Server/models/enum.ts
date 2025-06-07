@@ -29,3 +29,8 @@ export const user_role = pgEnum("role", [
   "DEPUTY_WARDEN",
   "EXECUTIVE_WARDEN",
 ]);
+
+export const messPreferenceEnum = pgEnum("mess_preference", [
+  "VEG",
+  "NON-VEG",
+]);
