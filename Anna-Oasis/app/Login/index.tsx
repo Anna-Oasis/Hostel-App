@@ -3,7 +3,7 @@ import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { handleLogin, getToken, getCredentials } from "@/utils/authUtils";
+import { handleLogin, getToken, getCredentials, getUserRole } from "@/utils/authUtils";
 import * as Yup from "yup";
 import { useRouter } from "expo-router";
 
@@ -14,11 +14,34 @@ export default function Login() {
   useEffect(() => {
     const checkTokenAndLogin = async () => {
       const token = await getToken();
+      const userRole = await getUserRole();
       const { email, password } = await getCredentials();
 
-      if (token && email && password) {
+      if (token && email && password && userRole) {
         handleLogin({ email, password }, () => {
-          router.push("/Student/Home");
+          // router.push("/Student/Home");
+          switch (userRole) {
+            case "student":
+              router.push("/Student/Home");
+              break;
+            case "warden":
+              router.push("/ExecutiveWarden");
+              break;
+            case "rc":
+              router.push("/RC");
+              break;
+            case "deputyWarden":
+              router.push("/DeputyWarden");
+              break;
+            case "executiveWarden":
+              router.push("/ExecutiveWarden");
+              break;
+            case "manager":
+              router.push("/Manager");
+              break;
+            default:
+              console.error("Unknown user role:", userRole);
+          }
         });
       }
       setLoading(false);
@@ -66,13 +89,13 @@ export default function Login() {
                 label="Email"
                 placeholder="Enter your email"
                 value="email"
-                // className="bg-gray-50 rounded-lg"
+              // className="bg-gray-50 rounded-lg"
               />
               <TextField
                 label="Password"
                 placeholder="Enter your password"
                 value="password"
-                // className="bg-gray-50 rounded-lg"
+              // className="bg-gray-50 rounded-lg"
               />
 
               <Button
@@ -98,17 +121,63 @@ export default function Login() {
                   Create Account
                 </ButtonText>
               </Button>
-               <Button
-                size="lg"
-                variant="outline"
-                action="secondary"
-                className="mt-3 rounded-lg border-2 border-slate-500"
-                onPress={() => router.push("/Student/Home")}
-              >
-                <ButtonText className="text-slate-500 font-semibold">
-                  DEBUG LOGIN
-                </ButtonText>
-              </Button>
+              <View>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  action="secondary"
+                  className="mt-3 rounded-lg border-2 border-slate-500"
+                  onPress={() => router.push("/Student/Home")}
+                >
+                  <ButtonText className="text-slate-500 font-semibold">
+                    DEBUG STUUDENT LOGIN
+                  </ButtonText>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  action="secondary"
+                  className="mt-3 rounded-lg border-2 border-slate-500"
+                  onPress={() => router.push("/Manager")}
+                >
+                  <ButtonText className="text-slate-500 font-semibold">
+                    DEBUG MANAGER LOGIN
+                  </ButtonText>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  action="secondary"
+                  className="mt-3 rounded-lg border-2 border-slate-500"
+                  onPress={() => router.push("/RC")}
+                >
+                  <ButtonText className="text-slate-500 font-semibold">
+                    DEBUG RC LOGIN
+                  </ButtonText>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  action="secondary"
+                  className="mt-3 rounded-lg border-2 border-slate-500"
+                  onPress={() => router.push("/DeputyWarden")}
+                >
+                  <ButtonText className="text-slate-500 font-semibold">
+                    DEBUG DW LOGIN
+                  </ButtonText>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  action="secondary"
+                  className="mt-3 rounded-lg border-2 border-slate-500"
+                  onPress={() => router.push("/ExecutiveWarden")}
+                >
+                  <ButtonText className="text-slate-500 font-semibold">
+                    DEBUG EW LOGIN
+                  </ButtonText>
+                </Button>
+              </View>
             </View>
           )}
         </Formik>
