@@ -1,0 +1,2 @@
+CREATE TYPE "public"."gender" AS ENUM('Male', 'Female', 'Other', 'Prefer not to say');--> statement-breakpoint
+ALTER TABLE "student" ALTER COLUMN "gender" SET DATA TYPE "public"."gender" USING "gender"::"public"."gender";

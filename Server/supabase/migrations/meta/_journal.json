@@ -8,6 +8,20 @@
       "when": 1749456655266,
       "tag": "0000_shallow_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749470495686,
+      "tag": "0001_chief_rictor",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749471812486,
+      "tag": "0002_wakeful_mad_thinker",
+      "breakpoints": true
     }
   ]
 }
