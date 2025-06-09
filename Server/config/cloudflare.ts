@@ -3,6 +3,7 @@ import {
   HeadBucketCommand
 } from "@aws-sdk/client-s3";
 import { config } from "dotenv";
+import { logger } from "../utils/logger";
 
 config();
 
@@ -28,9 +29,9 @@ async function initCloudflare() {
 
   try {
     const data = await S3.send(new HeadBucketCommand({ Bucket: BUCKET }));
-    console.log("✅ Connected to Cloudflare successfully");
+    logger.config("✅ Connected to Cloudflare successfully");
   } catch (err) {
-    console.error("Failed to connect to Cloudflare:", err);
+    logger.error(`Cloudflare connection failed: ${err}`);
   }
 }
 

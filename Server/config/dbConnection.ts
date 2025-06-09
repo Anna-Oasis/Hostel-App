@@ -11,7 +11,7 @@ export async function initDb() {
   const client = postgres(process.env.DATABASE_URL!);
   try {
     await client`SELECT 1`;
-    logger.db('Database connected successfully');
+    logger.config('✅ Database connected successfully');
     db = drizzle({ client });
   } catch (err) {
     logger.error(`Database connection failed: ${err}`);
