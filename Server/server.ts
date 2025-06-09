@@ -5,6 +5,7 @@ import routes from "./routes/index";
 import authRoutes from "./routes/authRoutes";
 import { initDb } from "./config/dbConnection";
 import { logger } from "./utils/logger";
+import http from "http";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,10 +36,14 @@ app.get(/^\/.*/, (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
+let server: http.Server;
+
 initDb().then(() => {
-    app.listen(port, () => {
-        logger.info(`Server is running on port ${port}...`);
+    server = app.listen(port, () => {
+        logger.info(`Server is running on port ${port}`);
     });
 });
+
+   
 
 export { app };
