@@ -6,7 +6,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import { newAdmissionModel } from "./newaAdmissionModel";
+import { admissionModel } from "./admissionModel";
 import { userModel } from "./userModel";
 
 export const admissionApprovalsModel = pgTable("admission_approvals", {
@@ -15,7 +15,7 @@ export const admissionApprovalsModel = pgTable("admission_approvals", {
   // Foreign key to admission
   admission_id: integer("admission_id")
     .notNull()
-    .references(() => newAdmissionModel.id, { onDelete: "cascade" }),
+    .references(() => admissionModel.id, { onDelete: "cascade" }),
 
   // Foreign key to users
   user_id: integer("user_id")
