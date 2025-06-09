@@ -12,13 +12,13 @@ router.post("/login", login);
 // router.get(
 //   "/admin/users",
 //   authenticateUser,
-//   hasRole(['admin']),
+//   hasRole(['warden']),
 // );
 
 // router.post(
 //   "/admission/approve",
 //   authenticateUser,
-//   hasRole(['admin', 'rc']),
+//   hasRole(['warden', 'rc']),
 //   hasPermission('approve_admission'),
 // );
 

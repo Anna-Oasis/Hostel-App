@@ -1,36 +1,22 @@
-import { useEffect, useState } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+// Login.tsx
+import React, { useEffect, useState } from "react";
+import { View, Text, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { router } from "expo-router";
-import { saveToken, getToken, removeToken } from "@/utils/auth/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loginValidationSchema } from "@/utils/auth/authValidation";
+import * as Yup from "yup";
+import { useRouter } from "expo-router";
+import {
+  handleLogin,
+  getToken,
+  getCredentials,
+  getUserRole,
+} from "@/utils/authUtils";
+import { redirectByRole } from "@/utils/authUtils";
 
 export default function Login() {
   const [loading, setLoading] = useState(true);
-
-  const saveCredentials = async (email: string, password: string) => {
-    try {
-      await AsyncStorage.setItem("email", email);
-      await AsyncStorage.setItem("password", password);
-    } catch (error) {
-      console.error("Error saving credentials:", error);
-    }
-  };
-
-  const getCredentials = async () => {
-    try {
-      const email = await AsyncStorage.getItem("email");
-      const password = await AsyncStorage.getItem("password");
-      return { email, password };
-    } catch (error) {
-      console.error("Error retrieving credentials:", error);
-      return { email: null, password: null };
-    }
-  };
+  const router = useRouter();
 
   useEffect(() => {
     const checkTokenAndLogin = async () => {
@@ -38,114 +24,104 @@ export default function Login() {
       const { email, password } = await getCredentials();
 
       if (token && email && password) {
-        try {
-          const response = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ email, password }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            Alert.alert("Welcome Back", `Hello, ${data.data.name}`);
-            router.push("/Student/Home");
-          } else {
-            throw new Error("Invalid token or credentials");
-          }
-        } catch (error) {
-          console.error("Token validation failed:", error);
-          Alert.alert("Session Expired", "Please log in again.");
-          removeToken();
-        }
+        await handleLogin({ email, password }, async () => {
+          const userRole = await getUserRole();
+          redirectByRole(userRole);
+        });
       }
+
       setLoading(false);
     };
 
     checkTokenAndLogin();
   }, []);
 
-  const handleLogin = async (values: { email: string; password: string }) => {
-    try {
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      const data = await response.json();
-      await saveToken(data.data.token);
-      await saveCredentials(values.email, values.password);
-      Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
-      router.push("/Student/Home");
-    } catch (error: any) {
-      Alert.alert("Login Failed", error.message);
-    }
-  };
-
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <Text className="text-base text-gray-600">Loading...</Text>
+      </View>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        validationSchema={loginValidationSchema}
-        onSubmit={handleLogin}
-      >
-        {({
-          handleSubmit,
-          values,
-        }) => (
-          <View>
-            <TextField
-              label="Email"
-              placeholder="Email"
-              value={values.email}
-            />
-            <TextField
-              label="Password"
-              placeholder="Password"
-              value={values.password}
-            />
-            <Button onPress={() => handleSubmit()}>
-              <ButtonText>Login</ButtonText>
-            </Button>
-            <Button onPress={() => router.push("/Signup")}>
-              <ButtonText>Go to Signup</ButtonText>
-            </Button>
-            <Button onPress={() => router.push("/Student/Home")}>
-              <ButtonText>[Debug] student home </ButtonText>
-            </Button>
-          </View>
-        )}
-      </Formik>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 bg-white"
+    >
+      <View className="flex-1 justify-center px-6 pb-10">
+        <View className="items-center mb-12">
+          <Text className="text-3xl font-bold text-gray-900 mt-4 mb-2">
+            Welcome Back
+          </Text>
+          <Text className="text-base text-gray-600">Login to continue</Text>
+        </View>
+
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={Yup.object().shape({
+            email: Yup.string().email("Invalid email address").required("Email is required"),
+            password: Yup.string().required("Password is required"),
+          })}
+          onSubmit={(values) =>
+            handleLogin(values, async () => {
+              const role = await getUserRole();
+              redirectByRole(role);
+            })
+          }
+        >
+          {({ handleSubmit }) => (
+            <View className="space-y-4">
+              <TextField label="Email" placeholder="Enter your email" value="email" />
+              <TextField label="Password" placeholder="Enter your password" value="password" />
+
+              <Button
+                size="lg"
+                variant="solid"
+                action="primary"
+                className="mt-6 rounded-lg bg-slate-900"
+                onPress={() => handleSubmit()}
+              >
+                <ButtonText className="text-white font-semibold">Login</ButtonText>
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                action="secondary"
+                className="mt-3 rounded-lg border-2 border-slate-500"
+                onPress={() => router.push("/Signup")}
+              >
+                <ButtonText className="text-slate-500 font-semibold">Create Account</ButtonText>
+              </Button>
+
+              {/* Debug Buttons */}
+              <View>
+                {[
+                  ["/Student/Home", "STUDENT"],
+                  ["/Manager", "MANAGER"],
+                  ["/RC", "RC"],
+                  ["/DeputyWarden", "DW"],
+                  ["/ExecutiveWarden", "EW"],
+                ].map(([route, label]) => (
+                  <Button
+                    key={label}
+                    size="lg"
+                    variant="outline"
+                    action="secondary"
+                    className="mt-3 rounded-lg border-2 border-slate-500"
+                    onPress={() => router.push(route as any)}
+                  >
+                    <ButtonText className="text-slate-500 font-semibold">
+                      DEBUG {label} LOGIN
+                    </ButtonText>
+                  </Button>
+                ))}
+              </View>
+            </View>
+          )}
+        </Formik>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#F5FCFF",
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-});
