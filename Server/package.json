@@ -9,11 +9,13 @@
     "dev": "ts-node-dev server.ts",
     "drizzle:generate": "drizzle-kit generate:pg",
     "drizzle:push": "drizzle-kit push:pg",
-    "test": "jest"
+    "test": "jest",
+    "suhaib": "nodemon --exec ts-node server.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.826.0",
     "@supabase/supabase-js": "^2.49.8",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
