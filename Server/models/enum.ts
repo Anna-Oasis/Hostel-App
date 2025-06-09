@@ -10,8 +10,8 @@ import { pgEnum } from "drizzle-orm/pg-core";
 
 export const approval_status = {
   submitted: "0",
-  rc: "1",
-  manager: "2",
+  manager: "1",
+  rc: "2",
   deputyWarden: "3",
   executiveWarden: "4",
   declined:"-1,"
@@ -26,6 +26,7 @@ export const approval_status_pgEnum = pgEnum(
 );
 export const user_role = pgEnum("role", [
   "STUDENT",
+  "MANAGER",
   "RC",
   "DEPUTY_WARDEN",
   "EXECUTIVE_WARDEN",
