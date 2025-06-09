@@ -14,6 +14,7 @@ export const approval_status = {
   manager: "2",
   deputyWarden: "3",
   executiveWarden: "4",
+  declined:"-1,"
 } as const;
 
 export type ApprovalStatus =
