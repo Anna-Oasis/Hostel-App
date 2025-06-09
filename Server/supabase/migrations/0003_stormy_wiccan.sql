@@ -1,5 +1,5 @@
 ALTER TABLE "admission" RENAME COLUMN "declaration" TO "student_agreed";--> statement-breakpoint
-ALTER TABLE "admission" ADD COLUMN "parent_agreed" boolean NOT NULL;--> statement-breakpoint
+ALTER TABLE "admission" ADD COLUMN "parent_agreed" boolean DEFAULT false NOT NULL;--> statement-breakpoint
 ALTER TABLE "admission" ADD COLUMN "admission_category" varchar(20) NOT NULL;--> statement-breakpoint
 ALTER TABLE "admission" ADD COLUMN "previous_resident" boolean NOT NULL;--> statement-breakpoint
 ALTER TABLE "admission" ADD COLUMN "hostel_block" varchar(20) NOT NULL;--> statement-breakpoint
