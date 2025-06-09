@@ -25,7 +25,7 @@ export const approval_status_pgEnum = pgEnum(
   approval_status
 );
 
-export const GENDER = pgEnum("gender", ["Male", "Female", "Other", "Prefer not to say"]);
+export const GENDER = pgEnum("gender", ["male", "female", "other", "prefer not to say"]);
 
 export const user_role = pgEnum("role", [
   "STUDENT",

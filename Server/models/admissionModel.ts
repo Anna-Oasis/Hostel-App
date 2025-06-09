@@ -17,9 +17,20 @@ export const admissionModel = pgTable("admission", {
     .notNull()
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
 
-  academicYear: varchar("academic_year", { length: 9 }).notNull(), // e.g., "2024-2025"
+  academicYear: varchar("academic_year", { length: 9 }).notNull(), 
 
-  declaration: boolean("declaration").notNull(),
+  studentAgreed: boolean("student_agreed").notNull(),
+  parentAgreed: boolean("parent_agreed").notNull(),
+
+  admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
+  // Hostel/Mess Info
+  previousResident: boolean("previous_resident").notNull(),
+  hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
+  roomNumber: varchar("room_number", { length: 10 }).notNull(),
+  messPreference: varchar("mess_preference", { length: 20 }).notNull(),
+
+  submission_Date: date("submission_date").notNull().defaultNow(),
+  updatedAt: date("updated_at").defaultNow().notNull(),
 
   transaction_id: varchar("transaction_id", { length: 100 }).notNull(),
 
