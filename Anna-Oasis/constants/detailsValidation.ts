@@ -1,5 +1,4 @@
 import * as Yup from "yup";
-// Updated phone regex to allow for more formats while still requiring country code
 const phoneRegex = /^\+[1-9]\d{1,14}$/;
 const pinRegex = /^[0-9\s\-]{3,10}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;

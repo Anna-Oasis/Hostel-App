@@ -2,12 +2,11 @@ import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
 import DatePickerField from "@/components/form/DatePickerField";
 import RadioField from "@/components/form/RadioField";
-import { useFormikContext } from "formik";
-import { Departments, semesters, bloodGroups, courses } from "@/constants/details"
+import PhoneInputField from "@/components/form/PhoneInputField";
+import { Departments, semesters, bloodGroups, courses } from "@/constants/details";
+import nationalities from "@/constants/nationalities";
 
 const StudentDetails = () => {
-  const { setFieldValue, values } = useFormikContext<any>();
-
   return (
     <>
       <TextField label="Name" value="name" placeholder="Enter name" />
@@ -16,9 +15,9 @@ const StudentDetails = () => {
       <SelectField label="Branch" value="branch" options={Departments} />
       <SelectField label="Semester" value="semester" options={semesters} />
 
-      <TextField label="Mobile (with country code)" value="mobile" placeholder="Eg: +917676767676" />
+      <PhoneInputField label="Mobile" value="mobile" placeholder="Phone number" />
       <TextField label="Email" value="email" placeholder="Email" />
-      <TextField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency Contact Number" />
+      <PhoneInputField label="Emergency Contact Number" value="emergencyContact" placeholder="Emergency contact" />
 
       <DatePickerField label="Date of Birth" value="dateOfBirth" placeholder="YYYY-MM-DD" />
       <TextField label="Age" value="age" placeholder="Age" />
@@ -31,7 +30,7 @@ const StudentDetails = () => {
           { label: "Other", value: "Other" }
         ]} 
       />
-      <TextField label="Nationality" value="nationality" placeholder="Nationality" />
+      <SelectField label="Nationality" value="nationality" options={nationalities} />
       <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
       <TextField label="Medical History" value="medicalHistory" placeholder="Optional" />
     </>

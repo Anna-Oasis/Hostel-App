@@ -4,12 +4,10 @@ import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/admission";
 import validationSchemas from "@/constants/admissionValidation";
-import StudentDetails from "@/components/details/StudentDetails";
-import ParentDetails from "@/components/details/ParentDetails";
-import LocalGuardian from "@/components/details/LocalGuardian";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 import PreviewPage from "@/components/admission/PreviewPage";
 import PaymentPage from "@/components/admission/PaymentPage";
+import AdmissionDetails from "@/components/admission/AdmissionDetails";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
@@ -26,10 +24,12 @@ const AdmissionForm = () => {
   const renderPage = (handleSubmit: () => void) => {
     switch (page) {
       case 0:
-        return <HostelMessDeclaration />;
+        return <AdmissionDetails />;
       case 1:
         return <PaymentPage />;
       case 2:
+        return <HostelMessDeclaration />;
+      case 3:
         return <PreviewPage onEdit={prev} onSubmit={handleSubmit} />;
       default:
         return null;
@@ -49,7 +49,12 @@ const AdmissionForm = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchemas[page]}
-      
+      onSubmit={async (values) => {
+        if (page < 2) {
+          next();
+        } else {
+        }
+      }}
     >
       {({ handleSubmit }) => (
         <ScrollView ref={scrollViewRef}>
@@ -58,7 +63,7 @@ const AdmissionForm = () => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              {page < 5 && (
+              {page < 3 && (
                 <>
                   {page > 0 && (
                     <Button onPress={prev}>

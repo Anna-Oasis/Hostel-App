@@ -138,7 +138,7 @@ const govtIdTypes = [
   { label: "Aadhaar", value: "aadhaar" },
   { label: "Voter ID", value: "voterId" },
   { label: "PAN Card", value: "panCard" },
-]
+];
 
 const initialValues = {
   name: "",
@@ -213,5 +213,5 @@ export {
   bloodGroups,
   initialValues,
   courses,
-  govtIdTypes
+  govtIdTypes,
 };

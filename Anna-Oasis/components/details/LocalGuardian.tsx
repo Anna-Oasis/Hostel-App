@@ -1,11 +1,12 @@
 import React from "react";
 import TextField from "@/components/form/TextField";
+import PhoneInputField from "@/components/form/PhoneInputField";
 
 const LocalGuardian = () => (
   <>
     <TextField label="Guardian Name" value="guardianName" placeholder="Name" />
     <TextField label="Relationship" value="guardianRelationship" placeholder="Relationship" />
-    <TextField label="Guardian Mobile (with country code)" value="guardianMobile" placeholder="Eg: +917676767676" />
+    <PhoneInputField label="Guardian Mobile" value="guardianMobile" placeholder="Guardian's phone number" />
     <TextField label="Guardian Email" value="guardianEmail" placeholder="Email" />
     <TextField label="Guardian House No" value="guardianHouseNo" placeholder="House No" />
     <TextField label="Guardian Street" value="guardianStreet" placeholder="Street" />
