@@ -122,11 +122,6 @@ export default function DetailsPage() {
       {({ handleSubmit }) => (
         <ScrollView ref={scrollViewRef}>
           <View className="m-4 flex gap-3">
-            <Text className="text-xl font-bold mb-4">
-              {page === 0 ? "Personal Information" : 
-               page === 1 ? "Parents Information" : 
-               "Local Guardian Information"}
-            </Text>
             
             {renderPage()}
             
@@ -140,7 +135,7 @@ export default function DetailsPage() {
               )}
               
               <Button onPress={() => handleSubmit()}>
-                <ButtonText>{page < 2 ? "Next" : "Update Details"}</ButtonText>
+                <ButtonText>{page < 3 ? "Next" : "Update Details"}</ButtonText>
               </Button>
             </View>
           </View>

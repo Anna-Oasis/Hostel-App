@@ -8,22 +8,7 @@ import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
 
 const FileUploads = () => {
-  const { values, setFieldValue } = useFormikContext<any>();
-  const [isForeignNational, setIsForeignNational] = useState(false);
-
-  // Handle the change of foreign national status
-  const handleForeignNationalChange = (value: string) => {
-    const isForeign = value === "Yes";
-    setIsForeignNational(isForeign);
-
-    // Reset related fields when changing nationality status
-    if (isForeign) {
-      setFieldValue("govtId", "Passport");
-    } else {
-      setFieldValue("govtId", "");
-    }
-    setFieldValue("govtIdNumber", "");
-  };
+  const { values } = useFormikContext<any>();
 
   return (
     <>
