@@ -29,6 +29,13 @@
       "when": 1749476594390,
       "tag": "0003_stormy_wiccan",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1749479077202,
+      "tag": "0004_omniscient_thor",
+      "breakpoints": true
     }
   ]
 }
