@@ -123,14 +123,6 @@ const semesters = [
   { label: "Semester 8", value: "Semester 8" },
 ];
 
-const admissionCategories = [
-  { label: "NRI", value: "NRI" },
-  { label: "CIWGC", value: "CIWGC" },
-  { label: "FN", value: "FN" },
-  { label: "LDC", value: "LDC" },
-  { label: "SIDS", value: "SIDS" },
-];
-
 const bloodGroups = [
   { label: "A+", value: "A+" },
   { label: "A-", value: "A-" },
@@ -141,6 +133,12 @@ const bloodGroups = [
   { label: "O+", value: "O+" },
   { label: "O-", value: "O-" },
 ];
+
+const govtIdTypes = [
+  { label: "Aadhaar", value: "aadhaar" },
+  { label: "Voter ID", value: "voterId" },
+  { label: "PAN Card", value: "panCard" },
+]
 
 const initialValues = {
   name: "",
@@ -154,13 +152,9 @@ const initialValues = {
   dateOfBirth: "",
   age: "",
   nationality: "",
-  govtId: "",
-  admissionCategory: "",
   bloodGroup: "",
   medicalHistory: "",
-  hostelBlock: "",
-  previousResident: "",
-  messPreference: "",
+  gender: "",
 
   fatherName: "",
   fatherOccupation: "",
@@ -178,7 +172,6 @@ const initialValues = {
   resIndiaStreet: "",
   resIndiaCity: "",
   resIndiaState: "",
-  resIndiaCountry: "",
   resIndiaPostalCode: "",
 
   resForeignHouseNo: "",
@@ -202,24 +195,23 @@ const initialValues = {
   passportPhoto: "",
   studentSignature: "",
   parentGuardianSignature: "",
+  govtIdType: "",
+  govtId: "",
+  govtIdDocument: "",
+  aadhaar: "",
+  admissionSlip: "",
   declaration: [] as string[],
   transactionId: "",
 
   roomNumber: "",
 };
 
-const hostelBlocks = [
-  { label: "Flora (Boys)", value: "Flora" },
-  { label: "Lavendar (Girls)", value: "Lavendar" },
-];
-
 export {
   Departments,
   campusList,
   semesters,
-  admissionCategories,
   bloodGroups,
   initialValues,
-  hostelBlocks,
   courses,
+  govtIdTypes
 };

@@ -22,7 +22,6 @@ const ParentDetails = () => (
     <TextField label="Indian Street" value="resIndiaStreet" placeholder="Street" />
     <TextField label="Indian City" value="resIndiaCity" placeholder="City" />
     <TextField label="Indian State" value="resIndiaState" placeholder="State" />
-    <TextField label="Indian Country" value="resIndiaCountry" placeholder="Country" />
     <TextField label="Indian Postal Code" value="resIndiaPostalCode" placeholder="Postal Code" />
 
     {/* Residential Address (Foreign) */}

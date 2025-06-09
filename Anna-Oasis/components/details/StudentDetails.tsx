@@ -1,9 +1,9 @@
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
-import RadioField from "@/components/form/RadioField";
 import DatePickerField from "@/components/form/DatePickerField";
+import RadioField from "@/components/form/RadioField";
 import { useFormikContext } from "formik";
-import { Departments, semesters, admissionCategories, bloodGroups, hostelBlocks, courses } from "@/constants/admission"
+import { Departments, semesters, bloodGroups, courses } from "@/constants/details"
 
 const StudentDetails = () => {
   const { setFieldValue, values } = useFormikContext<any>();
@@ -22,8 +22,16 @@ const StudentDetails = () => {
 
       <DatePickerField label="Date of Birth" value="dateOfBirth" placeholder="YYYY-MM-DD" />
       <TextField label="Age" value="age" placeholder="Age" />
+      <RadioField 
+        label="Gender" 
+        value="gender" 
+        options={[
+          { label: "Male", value: "Male" },
+          { label: "Female", value: "Female" },
+          { label: "Other", value: "Other" }
+        ]} 
+      />
       <TextField label="Nationality" value="nationality" placeholder="Nationality" />
-      <TextField label="Passport ID/Govt ID no" value="govtId" placeholder="Passport ID or Govt ID number" />
       <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
       <TextField label="Medical History" value="medicalHistory" placeholder="Optional" />
     </>

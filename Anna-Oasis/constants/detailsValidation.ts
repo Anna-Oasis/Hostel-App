@@ -18,6 +18,7 @@ const validationSchemas = [
     emergencyContact: Yup.string().matches(phoneRegex, "Include country code (e.g., +91...)").required("Required"),
     dateOfBirth: Yup.string().matches(dateRegex, "Use YYYY-MM-DD").required("Required"),
     age: Yup.number().min(15).max(99).required("Required"),
+    gender: Yup.string().oneOf(["Male", "Female", "Other"], "Please select a gender").required("Required"),
     nationality: Yup.string().required("Required"),
     govtId: Yup.string().required("Required"),
     bloodGroup: Yup.string()
@@ -69,10 +70,13 @@ const validationSchemas = [
   }),
   // File Uploads
   Yup.object({
+    isForeignNational: Yup.string().oneOf(["Yes", "No"], "Please select an option").required("Required"),
+    govtId: Yup.string().required("Required"),
+    govtIdType: Yup.string().required("Required"),
+    govtIdDocument: Yup.string().required("Required"),
     passportPhoto: Yup.string().required("Required"),
     studentSignature: Yup.string().required("Required"),
     parentGuardianSignature: Yup.string().required("Required"),
-    passport: Yup.string().required("Required"),
     aadhaar: Yup.string().required("Required"),
     admissionSlip: Yup.string().required("Required"),
   }),
