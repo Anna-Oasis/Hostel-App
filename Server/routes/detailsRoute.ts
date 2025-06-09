@@ -14,6 +14,9 @@ detailsRouter.post(
     { name: "passportPhotoUrl", maxCount: 1 },
     { name: "studentSignatureUrl", maxCount: 1 },
     { name: "parentGuardianSignatureUrl", maxCount: 1 },
+    { name: "passportUrl", maxCount: 1 },
+    { name: "aadhaarUrl", maxCount: 1 },
+    { name: "admissionSlipUrl", maxCount: 1 },
   ]),
   (req, res, next) => {
     // console.log("Hello from details route");
@@ -36,6 +39,9 @@ detailsRouter.put(
     { name: "passportPhotoUrl", maxCount: 1 },
     { name: "studentSignatureUrl", maxCount: 1 },
     { name: "parentGuardianSignatureUrl", maxCount: 1 },
+    { name: "passportUrl", maxCount: 1 },
+    { name: "aadhaarUrl", maxCount: 1 },
+    { name: "admissionSlipUrl", maxCount: 1 },
   ]),
   (req, res, next) => {
     updateStudentDetails(req, res, next).catch(next);

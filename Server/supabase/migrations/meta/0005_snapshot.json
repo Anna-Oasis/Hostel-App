@@ -1,6 +1,6 @@
 {
-  "id": "8ec9999c-bff2-45e7-bcd5-e8777239d863",
-  "prevId": "9ab45626-5f27-45b4-a14f-0f905ab18686",
+  "id": "be75e221-898f-4443-96b7-8f666c4d120c",
+  "prevId": "8ec9999c-bff2-45e7-bcd5-e8777239d863",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1520,7 +1520,7 @@
         "2",
         "3",
         "4",
-        "-1,"
+        "-1"
       ]
     },
     "public.role": {
