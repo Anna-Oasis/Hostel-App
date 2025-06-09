@@ -14,7 +14,7 @@ export const approval_status = {
   rc: "2",
   deputyWarden: "3",
   executiveWarden: "4",
-  declined:"-1,"
+  declined:"-1"
 } as const;
 
 export type ApprovalStatus =

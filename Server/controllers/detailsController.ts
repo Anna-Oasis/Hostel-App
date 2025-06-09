@@ -83,6 +83,9 @@ export const createStudentDetails = async (
   "passportPhotoUrl",
   "studentSignatureUrl",
   "parentGuardianSignatureUrl",
+  "passportUrl",
+  "aadhaarUrl",
+  "admissionSlipUrl",
 ];
 
   const fileFieldToFolder: Record<string, { folder: string; signature: string }> = {
@@ -92,6 +95,9 @@ export const createStudentDetails = async (
       folder: "parentSignature",
       signature: "parentGuardianSignature",
     },
+    "passportUrl": { folder: "passport", signature: "passport" },
+    "aadhaarUrl": { folder: "aadhaar", signature: "aadhaar" },
+    "admissionSlipUrl": { folder: "admissionSlip", signature: "admissionSlip" },
   };
 
   let uploadedUrls: Record<string, string> = {};
@@ -143,9 +149,12 @@ export const createStudentDetails = async (
     dbReadyData.studentSignatureUrl = uploadedUrls["studentSignatureUrl"];
     dbReadyData.parentGuardianSignatureUrl =
       uploadedUrls["parentGuardianSignatureUrl"];
+    dbReadyData.passportUrl = uploadedUrls["passportUrl"];
+    dbReadyData.aadhaarUrl = uploadedUrls["aadhaarUrl"];
+    dbReadyData.admissionSlipUrl = uploadedUrls["admissionSlipUrl"];
 
     console.log("🗃️ DB Insert Payload:", dbReadyData);
-    
+
     const result = await db.insert(studentModel).values(dbReadyData);
     console.log("✅ Inserted student:", result);
 
@@ -183,18 +192,28 @@ export const updateStudentDetails = async (
     "passportPhotoUrl",
     "studentSignatureUrl",
     "parentGuardianSignatureUrl",
+    "passportUrl",
+    "aadhaarUrl",
+    "admissionSlipUrl",
   ];
 
   const fieldToColumnMap: Record<string, keyof typeof studentModel._.columns> = {
     "passportPhotoUrl": "passportPhotoUrl",
     "studentSignatureUrl": "studentSignatureUrl",
     "parentGuardianSignatureUrl": "parentGuardianSignatureUrl",
+    "passportUrl": "passportUrl",
+    "aadhaarUrl": "aadhaarUrl",
+    "admissionSlipUrl": "admissionSlipUrl",
+
   };
 
   const fieldToFolderMap: Record<string, string> = {
     "passportPhotoUrl": "passport",
     "studentSignatureUrl": "signature",
     "parentGuardianSignatureUrl": "parentSignature",
+    "passportUrl": "passport",
+    "aadhaarUrl": "aadhaar",
+    "admissionSlipUrl": "admissionSlip",
   };
 
   try {
