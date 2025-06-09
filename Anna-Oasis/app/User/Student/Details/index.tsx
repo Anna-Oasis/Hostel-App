@@ -2,16 +2,16 @@ import { useState, useRef } from "react";
 import { ScrollView, View, Text } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
-import { initialValues } from "@/constants/admission"; // Reusing the same initial values
-import validationSchemas from "@/utils/admission/admissionValidation";
-import StudentDetails from "@/components/admission/StudentDetails";
-import ParentDetails from "@/components/admission/ParentDetails";
-import LocalGuardian from "@/components/admission/LocalGuardian";
+import { initialValues } from "@/constants/details";
+import validationSchemas from "@/constants/detailsValidation";
+import StudentDetails from "@/components/details/StudentDetails";
+import ParentDetails from "@/components/details/ParentDetails";
+import LocalGuardian from "@/components/details/LocalGuardian";
+import FileUploads from "@/components/details/FileUploads";
 
 export default function DetailsPage() {
   const [page, setPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const next = () => {
     setPage((p) => p + 1);
@@ -30,21 +30,12 @@ export default function DetailsPage() {
         return <ParentDetails />;
       case 2:
         return <LocalGuardian />;
+      case 3:
+        return <FileUploads />
       default:
         return null;
     }
   };
-
-  if (isSubmitted) {
-    return (
-      <View className="flex-1 justify-center items-center p-4">
-        <Text className="text-xl font-bold mb-4">Details Updated Successfully</Text>
-        <Button onPress={() => setIsSubmitted(false)}>
-          <ButtonText>Edit Details</ButtonText>
-        </Button>
-      </View>
-    );
-  }
 
   return (
     <Formik
@@ -54,11 +45,7 @@ export default function DetailsPage() {
         if (page < 2) {
           next();
         } else {
-          // Here you would submit the form data to your backend
           console.log("Personal details updated:", values);
-          
-          // For demonstration, just showing submission success
-          setIsSubmitted(true);
         }
       }}
     >
