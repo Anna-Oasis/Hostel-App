@@ -20,6 +20,7 @@ export const studentSchema = z.object({
 
   nationality: z.string(),
   govtId: z.string(),
+  govtIdType: z.string(),
   bloodGroup: z.string(),
   medicalHistory: z.string(),
 
@@ -74,9 +75,9 @@ export const studentSchema = z.object({
   passportPhotoUrl: z.string().optional(),
   studentSignatureUrl: z.string().optional(),
   parentGuardianSignatureUrl: z.string().optional(),
-  passportUrl: z.string().optional(),
   aadhaarUrl: z.string().optional(),
   admissionSlipUrl: z.string().optional(),
+  categoryProofUrl: z.string().optional(),
 
   createdAt: z.coerce.date().default(() => new Date()),
 });

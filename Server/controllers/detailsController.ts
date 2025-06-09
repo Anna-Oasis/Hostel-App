@@ -92,7 +92,7 @@ export const createStudentDetails = async (
     "passportPhotoUrl": { folder: "passport", signature: "passport" },
     "studentSignatureUrl": { folder: "signature", signature: "signature" },
     "parentGuardianSignatureUrl": {
-      folder: "parentSignature",
+      folder: "parentGuardianSignature",
       signature: "parentGuardianSignature",
     },
     "passportUrl": { folder: "passport", signature: "passport" },
