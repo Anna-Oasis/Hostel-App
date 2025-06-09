@@ -7,6 +7,7 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 import { userModel } from "./userModel";
+import { GENDER } from "./enum";
 
 export const studentModel = pgTable("student", {
   // User Reference
@@ -20,11 +21,12 @@ export const studentModel = pgTable("student", {
   course: varchar("course", { length: 50 }).notNull(),
   branch: varchar("branch", { length: 50 }).notNull(),
   semester: varchar("semester", { length: 10 }).notNull(),
-  dateOfBirth: date("date_of_birth").notNull(),
-  age: integer("age").notNull(),
   mobile: varchar("mobile", { length: 15 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
   emergencyContact: varchar("emergency_contact", { length: 15 }).notNull(),
+  dateOfBirth: date("date_of_birth").notNull(),
+  age: integer("age").notNull(),
+  gender: GENDER("gender").notNull(),
   nationality: varchar("nationality", { length: 50 }).notNull(),
   govtId: varchar("govt_id", { length: 50 }).notNull(),
   admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
@@ -91,6 +93,9 @@ export const studentModel = pgTable("student", {
   passportPhotoUrl: text("passport_photo_url"),
   studentSignatureUrl: text("student_signature_url"),
   parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
+  passportUrl: text("passport_url"),
+  aadhaarUrl: text("aadhaar_url"),
+  admissionSlipUrl: text("admission_slip_url")
 });
 
 export type Student = typeof studentModel.$inferSelect;
