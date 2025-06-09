@@ -1,3 +1,4 @@
+import { timestamp } from "drizzle-orm/gel-core";
 import { z } from "zod";
 
 export const studentSchema = z.object({
@@ -9,6 +10,7 @@ export const studentSchema = z.object({
   course: z.string().min(1),
   branch: z.string().min(1),
   semester: z.string().min(1),
+  gender: z.enum(["male", "female", "other"]),
 
   dateOfBirth: z.coerce.date(),
   age: z.coerce.number().min(15).max(100),
@@ -18,14 +20,8 @@ export const studentSchema = z.object({
 
   nationality: z.string(),
   govtId: z.string(),
-  admissionCategory: z.string(),
   bloodGroup: z.string(),
   medicalHistory: z.string(),
-
-  previousResident: z.coerce.boolean(),
-  hostelBlock: z.string(),
-  roomNumber: z.string(),
-  messPreference: z.string(),
 
   // Father Info
   fatherName: z.string(),
@@ -78,6 +74,9 @@ export const studentSchema = z.object({
   passportPhotoUrl: z.string().optional(),
   studentSignatureUrl: z.string().optional(),
   parentGuardianSignatureUrl: z.string().optional(),
+  passportUrl: z.string().optional(),
+  aadhaarUrl: z.string().optional(),
+  admissionSlipUrl: z.string().optional(),
 
   createdAt: z.coerce.date().default(() => new Date()),
 });
