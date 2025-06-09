@@ -83,7 +83,7 @@ export const createStudentDetails = async (
   "passportPhotoUrl",
   "studentSignatureUrl",
   "parentGuardianSignatureUrl",
-  "passportUrl",
+  "categoryProofUrl",
   "aadhaarUrl",
   "admissionSlipUrl",
 ];
@@ -95,7 +95,7 @@ export const createStudentDetails = async (
       folder: "parentSignature",
       signature: "parentGuardianSignature",
     },
-    "passportUrl": { folder: "passport", signature: "passport" },
+    "categoryProofUrl": { folder: "categoryProof", signature: "categoryProof" },
     "aadhaarUrl": { folder: "aadhaar", signature: "aadhaar" },
     "admissionSlipUrl": { folder: "admissionSlip", signature: "admissionSlip" },
   };
@@ -149,7 +149,7 @@ export const createStudentDetails = async (
     dbReadyData.studentSignatureUrl = uploadedUrls["studentSignatureUrl"];
     dbReadyData.parentGuardianSignatureUrl =
       uploadedUrls["parentGuardianSignatureUrl"];
-    dbReadyData.passportUrl = uploadedUrls["passportUrl"];
+    dbReadyData.categoryProofUrl = uploadedUrls["categoryProofUrl"];
     dbReadyData.aadhaarUrl = uploadedUrls["aadhaarUrl"];
     dbReadyData.admissionSlipUrl = uploadedUrls["admissionSlipUrl"];
 
@@ -192,7 +192,7 @@ export const updateStudentDetails = async (
     "passportPhotoUrl",
     "studentSignatureUrl",
     "parentGuardianSignatureUrl",
-    "passportUrl",
+    "categoryProofUrl",
     "aadhaarUrl",
     "admissionSlipUrl",
   ];
@@ -201,7 +201,7 @@ export const updateStudentDetails = async (
     "passportPhotoUrl": "passportPhotoUrl",
     "studentSignatureUrl": "studentSignatureUrl",
     "parentGuardianSignatureUrl": "parentGuardianSignatureUrl",
-    "passportUrl": "passportUrl",
+    "categoryProofUrl": "categoryProofUrl",
     "aadhaarUrl": "aadhaarUrl",
     "admissionSlipUrl": "admissionSlipUrl",
 
@@ -211,7 +211,7 @@ export const updateStudentDetails = async (
     "passportPhotoUrl": "passport",
     "studentSignatureUrl": "signature",
     "parentGuardianSignatureUrl": "parentSignature",
-    "passportUrl": "passport",
+    "categoryProofUrl": "categoryProof",
     "aadhaarUrl": "aadhaar",
     "admissionSlipUrl": "admissionSlip",
   };

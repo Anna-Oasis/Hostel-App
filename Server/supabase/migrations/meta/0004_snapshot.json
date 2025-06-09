@@ -1,5 +1,5 @@
 {
-  "id": "8ec9999c-bff2-45e7-bcd5-e8777239d863",
+  "id": "04911ef7-7fdb-4e5b-a2af-850a04e20bf1",
   "prevId": "9ab45626-5f27-45b4-a14f-0f905ab18686",
   "version": "7",
   "dialect": "postgresql",
@@ -815,6 +815,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "govt_id_type": {
+          "name": "govt_id_type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "govt_id": {
           "name": "govt_id",
           "type": "varchar(50)",
@@ -1057,8 +1063,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "passport_url": {
-          "name": "passport_url",
+        "category_proof_url": {
+          "name": "category_proof_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false

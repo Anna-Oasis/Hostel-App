@@ -28,6 +28,7 @@ export const studentModel = pgTable("student", {
   age: integer("age").notNull(),
   gender: GENDER("gender").notNull(),
   nationality: varchar("nationality", { length: 50 }).notNull(),
+  govtIdType: varchar("govt_id_type", { length: 50 }).notNull(),
   govtId: varchar("govt_id", { length: 50 }).notNull(),
   bloodGroup: varchar("blood_group", { length: 10 }).notNull(),
   medicalHistory: text("medical_history").notNull(),
@@ -87,7 +88,7 @@ export const studentModel = pgTable("student", {
   passportPhotoUrl: text("passport_photo_url"),
   studentSignatureUrl: text("student_signature_url"),
   parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
-  passportUrl: text("passport_url"),
+  categoryProofUrl: text("category_proof_url"),
   aadhaarUrl: text("aadhaar_url"),
   admissionSlipUrl: text("admission_slip_url")
 });
