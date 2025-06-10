@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Animated, TouchableOpacity, Modal, Dimensions } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
+import { Button, ButtonText } from '@/components/ui/button';
+import { Badge, BadgeText } from "@/components/ui/badge"
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
+import { Icon, CloseIcon, CopyIcon } from "@/components/ui/icon"
 
 export enum badgeStatus {
   Pending = 'pending',
@@ -38,7 +42,7 @@ const ApprovalCard = (props: approvalCardProps) => {
   }, []);
 
   return (
-    <View className="border border-primary-400 rounded-lg m-2 p-4 bg-secondary-800">
+    <View className="border border-primary-400 rounded-lg m-2 p-4 bg-black/10">
       <Text className="text-black font-semibold text-2xl mb-2">{props.title}</Text>
 
       <View className="flex-row items-center">
@@ -48,71 +52,79 @@ const ApprovalCard = (props: approvalCardProps) => {
           <Animated.View
             style={{
               opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
-              backgroundColor:
-                props.badge === badgeStatus.Approved
-                  ? '#34eb46'
-                  : props.badge === badgeStatus.Rejected
-                  ? '#eb4f34'
-                  : '#eb7134',
             }}
-            className="w-[80px] h-[24px] rounded-full justify-center items-center"
           >
-            <Text className="text-white text-sm capitalize">{props.badge}</Text>
+            <Badge
+              size="md"
+              variant="solid"
+              action={
+                props.badge === badgeStatus.Approved
+                  ? 'success'
+                  : props.badge === badgeStatus.Rejected
+                  ? 'error'
+                  : 'muted'
+              }
+              className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
+                                          props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+            >
+              <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
+            </Badge>
           </Animated.View>
         )}
+
       </View>
 
       <View className="items-center mt-4">
-        <TouchableOpacity onPress={() => setViewDetails(true)}>
-            <Text
-                className='bg-info-500 p-2 rounded-md text-white'
-            >View Details</Text>
-        </TouchableOpacity>
+        <Button
+            onPress={() => setViewDetails(true)}
+        >
+          <ButtonText >View more</ButtonText>
+        </Button>
       </View>
 
-      {/* Modal */}
       <Modal
-        visible={viewDetails}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setViewDetails(false)}
+        isOpen={viewDetails}
+        onClose={() => setViewDetails(false)}
       >
-        <View className="flex-1 bg-black/40 justify-center items-center">
-          <View className="bg-white w-[90%] p-4 rounded-xl shadow-lg">
-            <TouchableOpacity className="self-end mb-2" onPress={() => setViewDetails(false)}>
-              <Feather name="x" size={24} color="black" />
-            </TouchableOpacity>
-
-            <Text className="text-lg font-bold mb-2">Details</Text>
-            <Text className="text-base text-gray-700">JSON content</Text>
-
-            <View className="flex-row justify-evenly mt-6">
-              {props.onApprove && (
-                <TouchableOpacity
+        <ModalBackdrop/>
+        <ModalContent>
+          <ModalHeader className='border-b-2'>
+            <Text className="text-2xl font-bold mb-2">Details</Text>
+            <ModalCloseButton>
+                          <ModalCloseButton>
+              <Icon as={CloseIcon} className="mb-2" size='xl' />
+            </ModalCloseButton>
+            </ModalCloseButton>
+          </ModalHeader>
+          <ModalBody className='mt-6'>
+            <Text >JSON file</Text>
+          </ModalBody>
+          <ModalFooter className="flex-row justify-evenly mt-6">
+            {props.onApprove && (
+                <Button
                   onPress={() => {
                     setViewDetails(false);
                     props.onApprove?.();
                   }}
                   className="bg-green-600 w-[90px] h-10 rounded-lg justify-center"
                 >
-                  <Text className="text-white text-center">Approve</Text>
-                </TouchableOpacity>
+                  <ButtonText className="text-white text-center">Approve</ButtonText>
+                </Button>
               )}
 
               {props.onDecline && (
-                <TouchableOpacity
+                <Button
                   onPress={() => {
                     setViewDetails(false);
                     props.onDecline?.();
                   }}
                   className="bg-red-600 w-[90px] h-10 rounded-lg justify-center"
                 >
-                  <Text className="text-white text-center">Decline</Text>
-                </TouchableOpacity>
+                  <ButtonText className="text-white text-center">Decline</ButtonText>
+                </Button>
               )}
-            </View>
-          </View>
-        </View>
+          </ModalFooter>
+        </ModalContent>
       </Modal>
     </View>
   );
