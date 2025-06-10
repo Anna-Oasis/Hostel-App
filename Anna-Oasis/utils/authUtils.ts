@@ -51,6 +51,22 @@ export const removeToken = async () => {
   }
 };
 
+export const saveUserRole = async (role: string) => {
+  try {
+    await AsyncStorage.setItem("userRole", role);
+  } catch (error) {
+    console.error("Error saving user role:", error);
+  }
+};
+export const getUserRole = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem("userRole");
+  } catch (error) {
+    console.error("Error retrieving user role:", error);
+    return null;
+  }
+};
+
 export const handleLogin = async (
   values: { email: string; password: string },
   onSuccess: () => void
@@ -72,6 +88,7 @@ export const handleLogin = async (
     const data = await response.json();
     await saveToken(data.data.token);
     await saveCredentials(values.email, values.password);
+    await saveUserRole(data.data.role);
     Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
     onSuccess();
   } catch (error: any) {
@@ -101,5 +118,31 @@ export const handleSignup = async (
     onSuccess();
   } catch (error: any) {
     Alert.alert("Signup Failed", error.message);
+  }
+};
+
+export const redirectByRole = (role: string | null) => {
+  switch (role) {
+    case "student":
+      router.push("/Student/Home");
+      break;
+    case "warden":
+      router.push("/ExecutiveWarden");
+      break;
+    case "rc":
+      router.push("/RC");
+      break;
+    case "deputyWarden":
+      router.push("/DeputyWarden");
+      break;
+    case "executiveWarden":
+      router.push("/ExecutiveWarden");
+      break;
+    case "manager":
+      router.push("/Manager");
+      break;
+    default:
+      console.error("Unknown user role:", role);
+      router.push("/Login");
   }
 };

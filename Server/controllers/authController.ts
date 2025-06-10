@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { supabase } from "../config/supabaseBucket";
+import { db } from "../config/dbConnection"; 
+import { userModel } from "../models/userModel"; 
+import { eq } from "drizzle-orm";
 import { UserRole } from "../types/roles";
 
 const generateToken = (id: string, role: UserRole): string => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET environment variable is not set");
+  }
+  return jwt.sign({ id, role }, jwtSecret, {
     expiresIn: "30d",
   });
 };
@@ -14,7 +20,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, role = "student" } = req.body;
 
-    const validRoles: UserRole[] = ["admin", "rc", "manager", "student"];
+    // Validate required fields
+    if (!name || !email || !password) {
+      res.status(400).json({
+        success: false,
+        message: "Name, email, and password are required",
+      });
+      return;
+    }
+
+    const validRoles: UserRole[] = ["warden", "rc", "manager", "student"];
     if (!validRoles.includes(role)) {
       res.status(400).json({
         success: false,
@@ -23,17 +38,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { data: existingUser, error: findError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
+    // Check if user already exists
+    const existingUser = await db
+      .select()
+      .from(userModel)
+      .where(eq(userModel.email, email))
+      .limit(1);
 
-    if (findError) {
-      console.error("Error checking existing user:", findError.message);
-    }
-
-    if (existingUser) {
+    if (existingUser.length > 0) {
       res.status(400).json({
         success: false,
         message: "User with this email already exists",
@@ -43,32 +55,31 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const { data: newUser, error: insertError } = await supabase
-      .from("users")
-      .insert([
-        {
-          name,
-          email,
-          password: hashedPassword,
-          role,
-        },
-      ])
-      .select()
-      .single();
+    // Insert new user
+    const newUser = await db
+      .insert(userModel)
+      .values({
+        name,
+        email,
+        password: hashedPassword,
+        role: role as UserRole,
+      })
+      .returning();
 
-    if (insertError) {
-      console.error("Error inserting user:", insertError.message);
-      throw new Error(insertError.message);
+    if (!newUser || newUser.length === 0) {
+      throw new Error("Failed to create user");
     }
+
+    const createdUser = newUser[0];
 
     res.status(201).json({
       success: true,
       data: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        token: generateToken(newUser.id, newUser.role as UserRole),
+        id: createdUser.id,
+        name: createdUser.name,
+        email: createdUser.email,
+        role: createdUser.role,
+        token: generateToken(createdUser.id.toString(), createdUser.role as UserRole),
       },
     });
   } catch (error: any) {
@@ -84,23 +95,31 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    const { data: user, error: findError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .single();
-
-    if (findError) {
-      console.error("Error finding user:", findError.message);
+    // Validate required fields
+    if (!email || !password) {
+      res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+      return;
     }
 
-    if (!user) {
+    // Find user by email
+    const userResult = await db
+      .select()
+      .from(userModel)
+      .where(eq(userModel.email, email))
+      .limit(1);
+
+    if (userResult.length === 0) {
       res.status(401).json({
         success: false,
         message: "Invalid credentials",
       });
       return;
     }
+
+    const user = userResult[0];
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -118,7 +137,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user.id, user.role as UserRole),
+        token: generateToken(user.id.toString(), user.role as UserRole),
       },
     });
   } catch (error: any) {

@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserRole, PERMISSIONS } from "../types/roles";
-import { supabase } from "../config/supabaseBucket";
+import { db } from "../config/dbConnection";
+import { userModel } from "../models/userModel";
+import { eq } from "drizzle-orm";
 
 interface JwtPayload {
   id: string;
+  role: UserRole;
 }
-
 
 interface AuthRequest extends Request {
   user?: {
@@ -28,22 +30,33 @@ export const authenticateUser = async (
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      res.status(500).json({ success: false, message: "Server configuration error" });
+      return;
+    }
 
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("id, role")
-      .eq("id", decoded.id)
-      .single();
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
 
-    if (error || !user) {
+    // Query user from database using Drizzle
+    const userResult = await db
+      .select({
+        id: userModel.id,
+        role: userModel.role
+      })
+      .from(userModel)
+      .where(eq(userModel.id, parseInt(decoded.id)))
+      .limit(1);
+
+    if (userResult.length === 0) {
       res.status(401).json({ success: false, message: "Invalid token" });
       return;
     }
 
+    const user = userResult[0];
+
     req.user = {
-      id: user.id,
+      id: user.id.toString(),
       role: user.role as UserRole
     };
     
@@ -52,7 +65,6 @@ export const authenticateUser = async (
     res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
-
 
 export const hasRole = (allowedRoles: UserRole[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -71,7 +83,6 @@ export const hasRole = (allowedRoles: UserRole[]) => {
     }
   };
 };
-
 
 export const hasPermission = (requiredPermission: string) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
