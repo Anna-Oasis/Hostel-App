@@ -1,7 +1,7 @@
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { admissionModel } from "../models/admissionModel";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../models/enum";
 
 export const getAdmissionsApprovedByRC = async (rcId: number) => {
@@ -21,7 +21,10 @@ export const getAdmissionsApprovedByRC = async (rcId: number) => {
     .where(
       and(
         eq(admissionApprovalsModel.user_id, rcId),
-        eq(admissionModel.status, approval_status.rc)
+        or(
+          eq(admissionModel.status, approval_status.rc),
+          eq(admissionModel.status, approval_status.declined)
+        )
       )
     );
 };
