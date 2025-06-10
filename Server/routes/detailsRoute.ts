@@ -19,17 +19,9 @@ detailsRouter.post(
     { name: "admissionSlipUrl", maxCount: 1 },
   ]),
   (req, res, next) => {
-    // console.log("Hello from details route");
-    // console.log("Request body:", req.body);
     createStudentDetails(req, res, next).catch(next);
   }
 );
-
-detailsRouter.post("/test", (req, res, next) => {
-  console.log("🔥 Reached test POST route before Multer");
-  res.send("OK");
-});
-
 
 
 
