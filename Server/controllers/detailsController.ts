@@ -1,49 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { eq } from "drizzle-orm";
-import { db } from "../config/dbConnection";
-import { studentModel } from "../models/studentModel";
-import fs from "fs/promises";
-import { studentSchema } from "../validation/student.schema";
-import { uploadFile, getPublicUrl } from "../services/cloudflare/fileHandling";
 import { ZodError } from "zod";
 import dayjs from "dayjs";
+import { studentSchema } from "../validation/student.schema";
+import { handleFileUpload } from "../services/cloudflare/fileUpload";
+import { findStudentByRollNo,insertStudentDetails,updateStudentByRollNo } from "../services/detailsService";
+import { studentModel } from "../models/studentModel";
 
 type FileMap = Record<string, Express.Multer.File[]>;
-
-const handleFileUpload = async (
-  file: Express.Multer.File,
-  userId: string,
-  folder: string,
-  signature: string
-): Promise<string> => {
-  const ext = file.originalname
-    ? file.originalname.substring(file.originalname.lastIndexOf("."))
-    : "";
-  const timestampMatch = file.filename.match(/-(\d+)\./);
-  const timestamp = timestampMatch ? timestampMatch[1] : Date.now();
-  const newFileName = `${userId}-${signature}-${timestamp}${ext}`;
-  console.log(`📤 Uploading ${signature} as: ${newFileName} to ${folder}`);
-
-  try {
-    const fileBuffer = await fs.readFile(file.path);
-    const { error } = await uploadFile(fileBuffer, newFileName, folder);
-
-    if (error) {
-      throw new Error(`Upload failed: ${error.message}`);
-    }
-
-    const publicUrl = getPublicUrl(newFileName, folder);
-    console.log(`✅ Uploaded ${signature} => ${publicUrl}`);
-    return publicUrl;
-  } finally {
-    try {
-      await fs.unlink(file.path);
-      console.log(`🧹 Deleted temp file: ${file.path}`);
-    } catch (err) {
-      console.error(`❌ Failed to delete temp file: ${file.path}`, err);
-    }
-  }
-};
 
 export const getDetailsByRollNo = async (
   req: Request,
@@ -56,11 +19,7 @@ export const getDetailsByRollNo = async (
       return res.status(400).json({ message: "Roll number is required" });
     }
 
-    const student = await db
-      .select()
-      .from(studentModel)
-      .where(eq(studentModel.rollNo, rollNo));
-
+    const student = await findStudentByRollNo(rollNo);
     if (student.length === 0) {
       return res.status(404).json({ message: "Student not found" });
     }
@@ -78,29 +37,29 @@ export const createStudentDetails = async (
   next: NextFunction
 ) => {
   const { body, files } = req;
-  console.log("📥 Received files:", files);
+
   const requiredFiles = [
-  "passportPhotoUrl",
-  "studentSignatureUrl",
-  "parentGuardianSignatureUrl",
-];
+    "passportPhotoUrl",
+    "studentSignatureUrl",
+    "parentGuardianSignatureUrl",
+    "categoryProofUrl",
+    "aadhaarUrl",
+    "admissionSlipUrl",
+  ];
 
   const fileFieldToFolder: Record<string, { folder: string; signature: string }> = {
-    "passportPhotoUrl": { folder: "passport", signature: "passport" },
-    "studentSignatureUrl": { folder: "signature", signature: "signature" },
-    "parentGuardianSignatureUrl": {
-      folder: "parentSignature",
+    passportPhotoUrl: { folder: "passport", signature: "passport" },
+    studentSignatureUrl: { folder: "signature", signature: "signature" },
+    parentGuardianSignatureUrl: {
+      folder: "parentGuardianSignature",
       signature: "parentGuardianSignature",
     },
+    categoryProofUrl: { folder: "categoryProof", signature: "categoryProof" },
+    aadhaarUrl: { folder: "aadhaar", signature: "aadhaar" },
+    admissionSlipUrl: { folder: "admissionSlip", signature: "admissionSlip" },
   };
 
-  let uploadedUrls: Record<string, string> = {};
-  let dbReadyData: any = {};
-  let userId: string | number = "";
-
   try {
-    console.log("📦 Received body:", body);
-
     const missingFile = requiredFiles.find(
       (field) => !(files as FileMap)?.[field]?.length
     );
@@ -112,22 +71,18 @@ export const createStudentDetails = async (
     }
 
     const validatedData = studentSchema.parse(body);
-    dbReadyData = {
+    const dbReadyData = {
       ...validatedData,
       dateOfBirth: dayjs(validatedData.dateOfBirth).format("YYYY-MM-DD"),
       createdAt: dayjs(validatedData.createdAt).format("YYYY-MM-DD"),
     };
 
-    userId = dbReadyData.user_id;
+    const userId = dbReadyData.user_id;
+    const uploadedUrls: Record<string, string> = {};
 
-    uploadedUrls = {};
     await Promise.all(
       requiredFiles.map(async (field) => {
         const fileArr = (files as FileMap)[field];
-        if (!fileArr || !fileArr[0]) {
-          throw new Error(`Missing file array for field: ${field}`);
-        }
-
         const { folder, signature } = fileFieldToFolder[field];
         uploadedUrls[field] = await handleFileUpload(
           fileArr[0],
@@ -135,19 +90,12 @@ export const createStudentDetails = async (
           folder,
           signature
         );
-        console.log(`✅ Uploaded ${field}`);
       })
     );
 
-    dbReadyData.passportPhotoUrl = uploadedUrls["passportPhotoUrl"];
-    dbReadyData.studentSignatureUrl = uploadedUrls["studentSignatureUrl"];
-    dbReadyData.parentGuardianSignatureUrl =
-      uploadedUrls["parentGuardianSignatureUrl"];
+    Object.assign(dbReadyData, uploadedUrls);
 
-    console.log("🗃️ DB Insert Payload:", dbReadyData);
-    
-    const result = await db.insert(studentModel).values(dbReadyData);
-    console.log("✅ Inserted student:", result);
+    await insertStudentDetails(dbReadyData);
 
     return res.status(201).json({
       success: true,
@@ -161,8 +109,7 @@ export const createStudentDetails = async (
         error: error.errors,
       });
     }
-
-    console.error("❌ Error while processing:", error);
+    console.error("❌ Error while creating student:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -176,30 +123,39 @@ export const updateStudentDetails = async (
   res: Response,
   next: NextFunction
 ) => {
-  const rollNo = req.params.rollNo;
+  const { rollNo } = req.params;
   const { body, files } = req;
 
   const imageFields = [
     "passportPhotoUrl",
     "studentSignatureUrl",
     "parentGuardianSignatureUrl",
+    "categoryProofUrl",
+    "aadhaarUrl",
+    "admissionSlipUrl",
   ];
 
   const fieldToColumnMap: Record<string, keyof typeof studentModel._.columns> = {
-    "passportPhotoUrl": "passportPhotoUrl",
-    "studentSignatureUrl": "studentSignatureUrl",
-    "parentGuardianSignatureUrl": "parentGuardianSignatureUrl",
+    passportPhotoUrl: "passportPhotoUrl",
+    studentSignatureUrl: "studentSignatureUrl",
+    parentGuardianSignatureUrl: "parentGuardianSignatureUrl",
+    categoryProofUrl: "categoryProofUrl",
+    aadhaarUrl: "aadhaarUrl",
+    admissionSlipUrl: "admissionSlipUrl",
   };
 
   const fieldToFolderMap: Record<string, string> = {
-    "passportPhotoUrl": "passport",
-    "studentSignatureUrl": "signature",
-    "parentGuardianSignatureUrl": "parentSignature",
+    passportPhotoUrl: "passport",
+    studentSignatureUrl: "signature",
+    parentGuardianSignatureUrl: "parentGuardianSignature",
+    categoryProofUrl: "categoryProof",
+    aadhaarUrl: "aadhaar",
+    admissionSlipUrl: "admissionSlip",
   };
 
   try {
     const validated = studentSchema.partial().parse(body);
-    const updatedData = {
+    const updatedData: Record<string, any> = {
       ...validated,
       dateOfBirth: validated.dateOfBirth
         ? dayjs(validated.dateOfBirth).format("YYYY-MM-DD")
@@ -211,22 +167,18 @@ export const updateStudentDetails = async (
 
     for (const field of imageFields) {
       const fileArr = (files as FileMap)?.[field];
-      if (fileArr && fileArr.length > 0) {
+      if (fileArr?.length > 0) {
         const file = fileArr[0];
         const folder = fieldToFolderMap[field];
         const signatureKey = fieldToColumnMap[field];
         const userId = validated.user_id ?? "unknown";
 
         const url = await handleFileUpload(file, String(userId), folder, signatureKey);
-        (updatedData as any)[signatureKey] = url;
+        updatedData[signatureKey] = url;
       }
     }
 
-    const result = await db
-      .update(studentModel)
-      .set(updatedData)
-      .where(eq(studentModel.rollNo, rollNo))
-      .returning();
+    const result = await updateStudentByRollNo(rollNo, updatedData);
 
     return res.status(200).json({
       success: true,
@@ -241,7 +193,6 @@ export const updateStudentDetails = async (
         error: error.errors,
       });
     }
-
     console.error("❌ Update error:", error);
     return res.status(500).json({
       success: false,

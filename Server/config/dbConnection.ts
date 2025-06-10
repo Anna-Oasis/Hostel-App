@@ -12,7 +12,7 @@ export async function initDb() {
   try {
     await client`SELECT 1`;
     logger.config('✅ Database connected successfully');
-    db = drizzle({ client });
+    db = drizzle({client});
   } catch (err) {
     logger.error(`Database connection failed: ${err}`);
     process.exit(1);
