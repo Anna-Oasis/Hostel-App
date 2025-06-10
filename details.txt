@@ -17,22 +17,16 @@
 8: dateOfBirth → "2005-06-25"
 ​​
 9: age → "20"
+
+9: Gender → "Male"
 ​​
 10: nationality → "Indian"
 ​​
 11: govtId → "1234567"
 ​​
-12: admissionCategory → "NRI"
-​​
 13: bloodGroup → "O+"
 ​​
 14: medicalHistory → "Nil"
-​​
-15: hostelBlock → "Flora"
-​​
-16: previousResident → "false"
-​​
-17: messPreference → "veg"
 ​​
 18: fatherName → "Salai"
 ​​
@@ -61,8 +55,6 @@
 30: resIndiaCity → "Rock city"
 ​​
 31: resIndiaState → "Rock state"
-​​
-32: resIndiaCountry → "India"
 ​​
 33: resIndiaPostalCode → "12314312"
 ​​
@@ -98,16 +90,15 @@
 ​​
 49: guardianPostalCode → "1232"
 ​​
-50: studentAgreed → "true"
-​​
-51: parentAgreed → "true"
-​​
-52: submissionDate → "2025-05-30"
-​​
-53: transactionId → "234554"
-​​
 54: "images[passportPhoto]" → "[object Object]"
 ​​
 55: "images[studentSignature]" → "[object Object]"
 ​​
 56: "images[parentGuardianSignature]" → "[object Object]"
+
+54: "images[passport]" → "[object Object]"
+​​
+55: "images[aadhaar]" → "[object Object]"
+​​
+56: "images[admissionSlip]" → "[object Object]"
+
