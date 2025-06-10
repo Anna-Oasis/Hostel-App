@@ -1,102 +1,27 @@
 import { z } from "zod";
-import { approval_status, ApprovalStatus } from "../models/enum";
 
-export const admissionSchema = z.object({
-  user_id: z.coerce.number(),
-  approval: z
-    .enum([
-      approval_status.submitted,
-      approval_status.rc,
-      approval_status.manager,
-      approval_status.deputyWarden,
-      approval_status.executiveWarden,
-    ] as [ApprovalStatus, ...ApprovalStatus[]])
-    .default(approval_status.submitted),
-  transactionId: z.string(),
 
-  name: z.string(),
-  rollNo: z.string(),
-  course: z.string(),
-  branch: z.string(),
-  semester: z.string().refine(
-    (val) => {
-      const sem = Number(val);
-      return sem >= 1 && sem <= 8;
-    },
-    { message: "Semester must be between 1 and 8" }
-  ),
-  dateOfBirth: z.coerce.date(),
-  age: z.coerce.number().min(15).max(100),
-  mobile: z
+export const createAdmissionSchema = z.object({
+  roll_number: z.string().min(6, "Roll number is required"),
+  academicYear: z
     .string()
-    .regex(
-      /^(\+\d{1,3})?\d{10}$/,
-      "Mobile number must be 10 digits, optionally prefixed by country code"
-    ),
-  email: z.string().email(),
-  emergencyContact: z
+    .min(9, "Academic year is required")
+    .regex(/^\d{4}-\d{4}$/, "Academic year must be in format YYYY-YYYY"),
+  studentAgreed: z.boolean().refine((val) => val === true, {
+    message: "Student must agree to the terms",
+  }),
+  parentAgreed: z.boolean().refine((val) => val === true, {
+    message: "Parent must agree to the terms",
+  }),
+  admissionCategory: z
     .string()
-    .regex(/^(\+\d{1,3})?\d{10}$/, "Emergency contact must be 10 digits, optionally prefixed by country code"),
-  nationality: z.string(),
-  govtId: z.string(),
-  admissionCategory: z.string(),
-  bloodGroup: z.string(),
-  medicalHistory: z.string(),
+    .min(1, "Admission category is required")
+    .max(30, "Admission category must be less than 30 characters"),
 
-  previousResident: z.coerce.boolean(),
-  hostelBlock: z.string(),
-  roomNumber: z.string().default(""),
-  messPreference: z.string(),
+  previousResident: z.boolean(),
+  hostelBlock: z.string().min(1, "Hostel block is required").max(20, "Hostel block must be less than 20 characters"),
+  roomNumber: z.string().min(1, "Room number is required").max(10, "Room number must be less than 10 characters"),
+  messPreference: z.string().min(1, "Mess preference is required").max(20, "Mess preference must be less than 20 characters"),
 
-  fatherName: z.string(),
-  fatherOccupation: z.string(),
-  fatherMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Father's mobile must be 10 digits, optionally prefixed by country code"),
-  fatherEmail: z.string().email(),
-  fatherCountry: z.string(),
-
-  motherName: z.string(),
-  motherOccupation: z.string(),
-  motherMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Mother's mobile must be 10 digits, optionally prefixed by country code"),
-  motherEmail: z.string().email(),
-  motherCountry: z.string(),
-
-  // Residential India address (flat)
-  resIndiaHouseNo: z.string(),
-  resIndiaStreet: z.string(),
-  resIndiaCity: z.string(),
-  resIndiaState: z.string(),
-  resIndiaCountry: z.string(),
-  resIndiaPostalCode: z.string(),
-
-  // Residential Foreign address (optional flat)
-  resForeignHouseNo: z.string().optional(),
-  resForeignStreet: z.string().optional(),
-  resForeignCity: z.string().optional(),
-  resForeignState: z.string().optional(),
-  resForeignCountry: z.string().optional(),
-  resForeignPostalCode: z.string().optional(),
-
-  // Local Guardian (optional flat)
-  localGuardianName: z.string().optional(),
-  localGuardianRelationship: z.string().optional(),
-  localGuardianMobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Local guardian mobile must be 10 digits, optionally prefixed by country code").or(z.literal("")),
-
-  localGuardianEmail: z.string().email().optional(),
-
-  guardianHouseNo: z.string().optional(),
-  guardianStreet: z.string().optional(),
-  guardianCity: z.string().optional(),
-  guardianState: z.string().optional(),
-  guardianCountry: z.string().optional(),
-  guardianPostalCode: z.string().optional(),
-
-  studentDeclaration: z.coerce.boolean(),
-  parentDeclaration: z.coerce.boolean(),
-
-  //images
-  passportPhotoUrl: z.string().optional(),
-  studentSignatureUrl: z.string().optional(),
-  parentGuardianSignatureUrl: z.string().optional(),
-
-  createdAt: z.coerce.date().default(() => new Date()),
-});
+  transaction_id: z.string().min(1, "Transaction ID is required").max(100, "Transaction ID must be less than 100 characters"),
+});  

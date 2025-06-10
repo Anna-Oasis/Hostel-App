@@ -5,6 +5,8 @@ import {
   boolean,
   integer,
   date,
+  time,
+  timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { approval_status_pgEnum, approval_status } from "./enum";
@@ -29,8 +31,8 @@ export const admissionModel = pgTable("admission", {
   roomNumber: varchar("room_number", { length: 10 }).notNull(),
   messPreference: varchar("mess_preference", { length: 20 }).notNull(),
 
-  submission_Date: date("submission_date").notNull().defaultNow(),
-  updatedAt: date("updated_at").defaultNow().notNull(),
+  submission_Date: timestamp("submission_date",{withTimezone:true}).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at",{withTimezone:true}).defaultNow().notNull(),
 
   transaction_id: varchar("transaction_id", { length: 100 }).notNull(),
 
