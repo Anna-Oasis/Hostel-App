@@ -1,6 +1,8 @@
 import { Text, View } from "react-native";
 import { Button, ButtonText } from "@/components/ui/button";
 import TestForm from "@/components/TestForm";
+import ApprovalCard from "@/components/ApprovalCard";
+import { badgeStatus } from "@/components/ApprovalCard";
 
 export default function Index() {
   return (
@@ -16,6 +18,12 @@ export default function Index() {
     //     <ButtonText>Hello World!</ButtonText>
     //   </Button>
     // </View>
-    <TestForm />
+    <ApprovalCard 
+      title="Gogul" 
+      subTitle="Going for home" 
+      onApprove={() => console.log("approve button")}
+      onDecline={() => console.log("decline button")}
+      badge={badgeStatus.Pending}
+    />
   );
 }
