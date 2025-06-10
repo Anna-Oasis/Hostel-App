@@ -1,0 +1,1 @@
+ALTER TABLE "admission" ADD COLUMN "admission_id" serial PRIMARY KEY NOT NULL;
