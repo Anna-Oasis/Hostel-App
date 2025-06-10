@@ -18,7 +18,7 @@
 //       </View>
 //     </>
 //   );
-// } -->
+// }
 
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
