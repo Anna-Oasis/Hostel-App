@@ -3,7 +3,7 @@ import {
   getAdmissionByAdmissionId,
   getAdmissionByRollNumber,
   updateAdmission,
-  checkForAdmissionByRollNumberAndPrevResidentFalse,
+  checkForAdmissionByRollNumberAndAcademicYear,
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -16,18 +16,20 @@ export async function createAdmissionController(req: Request, res: Response) {
     const parsedData = createAdmissionSchema.parse(admissionData);
 
     const existingAdmissions =
-      await checkForAdmissionByRollNumberAndPrevResidentFalse(
-        parsedData.roll_number
+      await checkForAdmissionByRollNumberAndAcademicYear(
+        parsedData.roll_number,
+        parsedData.academicYear
       );
     if (existingAdmissions.length > 0) {
       return res.status(400).json({
         success: false,
         message:
-          "Admission already exists for this roll number and previous resident is false",
+          "Admission already exists for this roll number and academic year",
       });
     }
     const newAdmission = await createAdmission({
       ...parsedData,
+      roomNumber:"",
       status: approval_status.submitted,
       submission_Date: new Date(),
       updatedAt: new Date(),

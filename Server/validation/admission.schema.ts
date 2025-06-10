@@ -20,7 +20,6 @@ export const createAdmissionSchema = z.object({
 
   previousResident: z.boolean(),
   hostelBlock: z.string().min(1, "Hostel block is required").max(20, "Hostel block must be less than 20 characters"),
-  roomNumber: z.string().min(1, "Room number is required").max(10, "Room number must be less than 10 characters"),
   messPreference: z.string().min(1, "Mess preference is required").max(20, "Mess preference must be less than 20 characters"),
 
   transaction_id: z.string().min(1, "Transaction ID is required").max(100, "Transaction ID must be less than 100 characters"),

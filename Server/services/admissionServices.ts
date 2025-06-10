@@ -39,13 +39,13 @@ export async function getAdmissionByRollNumber(rollNumber: string) {
 }
 
 
-export async function checkForAdmissionByRollNumberAndPrevResidentFalse(rollNumber: string) {
+export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: string, academicYear: string) {
   const result = await db
     .select()
     .from(admissionModel)
     .where(and(
       eq(admissionModel.roll_number, rollNumber),
-      eq(admissionModel.previousResident, false)
+      eq(admissionModel.academicYear, academicYear)
     ));
 
     return result;
