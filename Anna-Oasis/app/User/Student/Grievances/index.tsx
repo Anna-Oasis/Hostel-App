@@ -6,22 +6,27 @@ import ModalCallable from "@/components/ModalCallable";
 export default function GrievancesPage() {
   const router = useRouter();
   const [showModal, setShowModal] = React.useState(false);
-  const handleSubmit = (values : any) => {
+  const handleSubmit = (values: any) => {
     console.log("Grievance submitted:", values);
     setShowModal(true);
-    if (!showModal) {
-      router.push("/User/Student");
-    }
+    setTimeout(() => {
+      redirectToHome();
+    }, 4000); 
   };
+  const redirectToHome = () => {
+    if (!showModal) {
+      router.replace("/User/Student");
+    }
+  }
   return (
     <View style={{ flex: 1, justifyContent: "center", }}>
       <GrievanceForm
         onSubmit={(values) => {
-            handleSubmit(values);
-          }
-        } 
+          handleSubmit(values);
+        }
+        }
       />
-      <ModalCallable 
+      <ModalCallable
         show={showModal}
         onClose={() => setShowModal(false)}
         title="Grievance Submitted"
