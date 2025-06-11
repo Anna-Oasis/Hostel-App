@@ -4,11 +4,110 @@ import {
   getAdmissionByRollNumber,
   updateAdmission,
   checkForAdmissionByRollNumberAndAcademicYear,
+  getAdmissionsByStatus
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
+import { db } from "../config/dbConnection";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
+// ...other imports...
+export async function getAdmissionWaitingForApprovalController(req: Request, res: Response) {
+  try {
+    // Fetch all admissions with submitted status using the service
+    const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+
+    if (submittedAdmissions.length === 0) {
+      return res.status(404).json({ 
+        success: false,
+        message: "No admissions waiting for manager approval",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: submittedAdmissions
+    });
+
+  } catch (error) {
+    console.error("Error fetching submitted admissions:", error);
+    return res.status(500).json({ 
+      success: false,
+      message: "Internal server error",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}
+
+export async function updateApprovalStatusController(req: Request, res: Response) {
+  try {
+    const { admission_id } = req.params;
+    const { status, comment, user_id } = req.body;
+
+    // Validate required fields
+    if (!admission_id || typeof status !== 'boolean' || !user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Admission ID, status (boolean), and user_id are required",
+      });
+    }
+
+    // // If status is false, comment is required
+    // if (status === false && (!comment || comment.trim() === '')) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Comment is required when declining an admission",
+    //   });
+    // }
+
+    // Fetch the existing admission
+    const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+    if (existingAdmission.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Admission not found for the provided ID",
+      });
+    }
+
+    // Determine the new status based on boolean value
+    const newStatus = status ? approval_status.rc : approval_status.declined;
+
+    // Update the admission status
+    const updatedAdmission = await updateAdmission(Number(admission_id), {
+      status: newStatus,
+      updatedAt: new Date(),
+    });
+
+    // Create entry in admission_approvals table
+    const approvalEntry = await db.insert(admissionApprovalsModel).values({
+      admission_id: Number(admission_id),
+      user_id: Number(user_id),
+      approve: status,
+      comment: comment || null,
+    }).returning();
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        admission: updatedAdmission,
+        approval: approvalEntry[0]
+      },
+      message: status 
+        ? "Admission approved and forwarded to RC" 
+        : "Admission declined successfully",
+    });
+
+  } catch (error) {
+    console.error("Error updating admission approval status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}
 
 export async function createAdmissionController(req: Request, res: Response) {
   try {

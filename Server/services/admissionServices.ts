@@ -61,3 +61,11 @@ export async function getAdmissionByAdmissionId(admissionId: number) {
 }
 
 
+export async function getAdmissionsByStatus(status: string) {
+  const result = await db
+    .select()
+    .from(admissionModel)
+    .where(eq(admissionModel.status, status))
+    .orderBy(admissionModel.submission_Date);
+  return result;
+}
