@@ -1,25 +1,12 @@
 import { Request, Response } from "express";
-import {
-  getRCById,
-  getAdmissionsByHostelBlock,
-  createAdmissionApproval,
-  updateAdmissionStatus,
-} from "../services/rcServices";
-import { rcDecisionSchema } from "../validation/rc.schema";
+import { getAdmissionsByDeputyWarden, createAdmissionApprovalByDeputyWarden, updateAdmissionStatusByDeputyWarden } from "../services/deputyWardenServices";
+import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
 
-export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<void> => {
-  const { rc_id } = req.params;
-
+export const viewAdmissionsByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
   try {
-    const rc = await getRCById(Number(rc_id));
-    if (rc.length === 0) {
-      res.status(404).json({ success: false, message: "RC not found" });
-      return;
-    }
-
-    const admissions = await getAdmissionsByHostelBlock(rc[0].hostel);
+    const admissions = await getAdmissionsByDeputyWarden();
     res.status(200).json({ success: true, data: admissions });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Internal Server Error";
@@ -30,21 +17,21 @@ export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<v
   }
 };
 
-export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response): Promise<void> => {
+export const approveOrDeclineAdmissionByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
   const { admission_id } = req.params;
 
   try {
-    const validated = rcDecisionSchema.parse(req.body);
-    const status = validated.approve ? approval_status.rc : approval_status.declined;
+    const validated = deputyWardenDecisionSchema.parse(req.body);
+    const status = validated.approve ? approval_status.deputyWarden : approval_status.declined;
 
-    await createAdmissionApproval({
+    await createAdmissionApprovalByDeputyWarden({
       admission_id: Number(admission_id),
-      user_id: validated.rc_id,
+      user_id: validated.user_id,
       approve: validated.approve,
       comment: validated.comment,
     });
 
-    await updateAdmissionStatus({
+    await updateAdmissionStatusByDeputyWarden({
       admission_id: Number(admission_id),
       status,
       roomNumber: validated.approve ? validated.room : ' ', // Empty string if declined
@@ -65,7 +52,7 @@ export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response)
       return;
     }
 
-    console.error("❌ RC approval error:", error);
+    console.error("❌ Deputy Warden approval error:", error);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
