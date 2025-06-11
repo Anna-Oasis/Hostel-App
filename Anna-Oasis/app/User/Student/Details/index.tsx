@@ -1,17 +1,15 @@
 import { useState, useRef } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
-import { initialValues } from "@/constants/admission";
-import validationSchemas from "@/utils/admission/admissionValidation";
-import StudentDetails from "@/components/admission/StudentDetails";
-import ParentDetails from "@/components/admission/ParentDetails";
-import LocalGuardian from "@/components/admission/LocalGuardian";
-import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
-import PreviewPage from "@/components/admission/PreviewPage";
-import PaymentPage from "@/components/admission/PaymentPage";
+import { initialValues } from "@/constants/details";
+import validationSchemas from "@/constants/detailsValidation";
+import StudentDetails from "@/components/details/StudentDetails";
+import ParentDetails from "@/components/details/ParentDetails";
+import LocalGuardian from "@/components/details/LocalGuardian";
+import FileUploads from "@/components/details/FileUploads";
 
-const AdmissionForm = () => {
+export default function DetailsPage() {
   const [page, setPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -21,9 +19,10 @@ const AdmissionForm = () => {
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }, 0);
   };
+  
   const prev = () => setPage((p) => p - 1);
 
-  const renderPage = (handleSubmit: () => void) => {
+  const renderPage = () => {
     switch (page) {
       case 0:
         return <StudentDetails />;
@@ -32,31 +31,18 @@ const AdmissionForm = () => {
       case 2:
         return <LocalGuardian />;
       case 3:
-        return <HostelMessDeclaration />;
-      case 4:
-        return <PaymentPage />;
-      case 5:
-        return <PreviewPage onEdit={prev} onSubmit={handleSubmit} />;
+        return <FileUploads />
       default:
         return null;
     }
   };
 
-  function getISTDateString() {
-    const now = new Date();
-    const istOffset = 5.5 * 60 * 60 * 1000;
-    const istTime = new Date(
-      now.getTime() + istOffset - now.getTimezoneOffset() * 60000
-    );
-    return istTime.toISOString().slice(0, 10);
-  }
-
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchemas[page]}
+      // validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
-        if (page < 5) {
+        if (page < 3) {
           next();
         } else {
           const formData = new FormData();
@@ -70,17 +56,10 @@ const AdmissionForm = () => {
           formData.append("emergencyContact", values.emergencyContact);
           formData.append("dateOfBirth", values.dateOfBirth);
           formData.append("age", values.age);
+          formData.append("gender", values.gender);
           formData.append("nationality", values.nationality);
-          formData.append("govtId", values.govtId);
-          formData.append("admissionCategory", values.admissionCategory);
           formData.append("bloodGroup", values.bloodGroup);
           formData.append("medicalHistory", values.medicalHistory);
-          formData.append("hostelBlock", values.hostelBlock);
-          formData.append(
-            "previousResident",
-            values.previousResident === "true" ? "true" : "false"
-          );
-          formData.append("messPreference", values.messPreference);
           formData.append("fatherName", values.fatherName);
           formData.append("fatherOccupation", values.fatherOccupation);
           formData.append("fatherMobile", values.fatherMobile);
@@ -95,7 +74,6 @@ const AdmissionForm = () => {
           formData.append("resIndiaStreet", values.resIndiaStreet);
           formData.append("resIndiaCity", values.resIndiaCity);
           formData.append("resIndiaState", values.resIndiaState);
-          formData.append("resIndiaCountry", values.resIndiaCountry);
           formData.append("resIndiaPostalCode", values.resIndiaPostalCode);
           formData.append("resForeignHouseNo", values.resForeignHouseNo);
           formData.append("resForeignStreet", values.resForeignStreet);
@@ -113,20 +91,15 @@ const AdmissionForm = () => {
           formData.append("guardianState", values.guardianState);
           formData.append("guardianCountry", values.guardianCountry);
           formData.append("guardianPostalCode", values.guardianPostalCode);
-          formData.append(
-            "studentAgreed",
-            values.declaration.includes("studentAgreed") ? "true" : "false"
-          );
-          formData.append(
-            "parentAgreed",
-            values.declaration.includes("parentAgreed") ? "true" : "false"
-          );
-          formData.append("submissionDate", getISTDateString());
-          formData.append("transactionId", values.transactionId);
+          formData.append("govtIdType", values.govtIdType);
+          formData.append("govtId", values.govtId);
           const imageFields = [
             { key: "passportPhoto", name: "images[passportPhoto]" },
             { key: "studentSignature", name: "images[studentSignature]" },
-            { key: "parentGuardianSignature", name: "images[parentGuardianSignature]" }
+            { key: "parentGuardianSignature", name: "images[parentGuardianSignature]" },
+            { key: "govtIdDocument", name: "images[govtIdDocument]" },
+            { key: "aadhaar", name: "images[aadhaar]" },
+            { key: "admissionSlip", name: "images[admissionSlip]" }
           ] as const;
           type ImageFieldKey = typeof imageFields[number]["key"];
           for (const field of imageFields) {
@@ -149,28 +122,25 @@ const AdmissionForm = () => {
       {({ handleSubmit }) => (
         <ScrollView ref={scrollViewRef}>
           <View className="m-4 flex gap-3">
-            {renderPage(handleSubmit)}
+            
+            {renderPage()}
+            
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}
             >
-              {page < 5 && (
-                <>
-                  {page > 0 && (
-                    <Button onPress={prev}>
-                      <ButtonText>Back</ButtonText>
-                    </Button>
-                  )}
-                  <Button onPress={() => handleSubmit()}>
-                    <ButtonText>Next</ButtonText>
-                  </Button>
-                </>
+              {page > 0 && (
+                <Button onPress={prev} variant="outline">
+                  <ButtonText>Back</ButtonText>
+                </Button>
               )}
+              
+              <Button onPress={() => handleSubmit()}>
+                <ButtonText>{page < 3 ? "Next" : "Update Details"}</ButtonText>
+              </Button>
             </View>
           </View>
         </ScrollView>
       )}
     </Formik>
   );
-};
-
-export default AdmissionForm;
+}

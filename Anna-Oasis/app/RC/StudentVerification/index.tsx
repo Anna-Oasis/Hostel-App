@@ -2,43 +2,43 @@ import { View, Text } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
-  HomeIcon,
-  UsersIcon,
-  ClipboardListIcon,
-  CalendarCheckIcon,
+  ClipboardIcon,
+  FileTextIcon,
+  CalendarIcon,
+  LogOutIcon,
 } from "lucide-react-native";
 
-export default function RCPage() {
+export default function StudentVerificationPage() {
   const menuItems = [
     {
-      title: "Room Allocation",
-      route: "/RC/RoomAllocation",
-      icon: HomeIcon,
-      color: "#4F46E5",
+      title: "Leave Form",
+      route: "/RC/StudentVerification/LeaveForm",
+      icon: ClipboardIcon,
+      color: "#6366F1",
     },
     {
-      title: "Student Verification",
-      route: "/RC/StudentVerification",
-      icon: UsersIcon,
-      color: "#0891B2",
+      title: "Grievances",
+      route: "/RC/StudentVerification/Grievances",
+      icon: FileTextIcon,
+      color: "#EF4444",
     },
     {
-      title: "Attendance",
-      route: "/RC/Attendance",
-      icon: ClipboardListIcon,
-      color: "#10B981",
-    },
-    {
-      title: "Apply for Leave",
-      route: "/RC/ApplyForLeave",
-      icon: CalendarCheckIcon,
+      title: "Summer Vacation",
+      route: "/RC/StudentVerification/SummerVacation",
+      icon: CalendarIcon,
       color: "#D97706",
+    },
+    {
+      title: "Vacating Hostel",
+      route: "/RC/StudentVerification/VacatingHostel",
+      icon: LogOutIcon,
+      color: "#10B981",
     },
   ];
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">RC Dashboard</Text>
+      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Student Verification</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
