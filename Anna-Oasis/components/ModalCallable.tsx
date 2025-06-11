@@ -12,6 +12,16 @@ type LeaveModalProps = {
   message?: string;
 };
 
+
+
+/**
+ * 
+ * @param {boolean} show - Determines if the modal is visible.
+ * @param {function} onClose - Function to call when the modal is closed.
+ * @param {string} [title] - Optional title for the modal.
+ * @param {string} [message] - Optional message to display in the modal.
+ * @returns 
+ */
 const ModalCallable: React.FC<LeaveModalProps> = ({
   show,
   onClose,
