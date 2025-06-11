@@ -6,19 +6,30 @@ import { studentModel } from "../models/studentModel";
 import { rcModel } from "../models/rcModel";
 import { approval_status } from "../models/enum";
 
-export const getAdmissionsByRC = async (rc_id: number) => {
+interface NewAdmissionApproval {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}
+
+interface AdmissionUpdateParams {
+  admission_id: number;
+  status: typeof approval_status[keyof typeof approval_status]; // This is the key fix
+  roomNumber: string;
+  floor: number;
+}
+
+export async function getRCById(rc_id: number) {
   const rc = await db
     .select()
     .from(rcModel)
     .where(eq(rcModel.id, rc_id))
     .limit(1);
+  return rc;
+}
 
-  if (rc.length === 0) {
-    throw new Error("RC not found");
-  }
-
-  const rcHostel = rc[0].hostel;
-
+export const getAdmissionsByHostelBlock = async (hostelBlock: string) => {
   const admissions = await db
     .select()
     .from(admissionModel)
@@ -26,52 +37,34 @@ export const getAdmissionsByRC = async (rc_id: number) => {
     .where(
       and(
         eq(admissionModel.status, approval_status.manager),
-        eq(admissionModel.hostelBlock, rcHostel)
+        eq(admissionModel.hostelBlock, hostelBlock)
       )
     );
-
   return admissions;
 };
 
-export const submitRCAdmissionDecision = async ({
-  admission_id,
-  rc_id,
-  approve,
-  comment,
-  room,
-  floor,
-}: {
-  admission_id: number;
-  rc_id: number;
-  approve: boolean;
-  comment?: string;
-  room: string;
-  floor: number;
-}) => {
+export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
   const approvalInsert = await db
     .insert(admissionApprovalsModel)
-    .values({
-      admission_id,
-      user_id: rc_id,
-      approve,
-      comment: comment ?? null,
-    })
+    .values(approvalInfo)
     .returning();
+  return approvalInsert;
+};
 
-  const newStatus = approve ? approval_status.rc : approval_status.declined;
-
+export const updateAdmissionStatus = async ({
+  admission_id,
+  status,
+  roomNumber,
+  floor,
+}: AdmissionUpdateParams) => {
   const admissionUpdate = await db
     .update(admissionModel)
     .set({ 
-      status: newStatus,
-      roomNumber: room,
-      floor: floor,
+      status,
+      roomNumber,
+      floor,
     })
     .where(eq(admissionModel.id, admission_id))
     .returning();
-
-  return {
-    approvalInsert,
-    admissionUpdate,
-  };
+  return admissionUpdate;
 };
