@@ -29,6 +29,7 @@ export const admissionModel = pgTable("admission", {
   previousResident: boolean("previous_resident").notNull(),
   hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
   roomNumber: varchar("room_number", { length: 10 }).notNull(),
+  floor: integer("floor"),
   messPreference: varchar("mess_preference", { length: 20 }).notNull(),
 
   submission_Date: timestamp("submission_date",{withTimezone:true}).defaultNow().notNull(),
