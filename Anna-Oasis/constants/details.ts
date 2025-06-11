@@ -209,7 +209,7 @@ const initialValues = {
 const leaveTypes = [
   { label: "Medical Leave", value: "medical" },
   { label: "Emergency Leave", value: "emergency" },
-  { label: "Vacation Leave", value: "vacation" },
+  { label: "Special Vacation Leave [i.e, Diwali, Pongal]", value: "specialVacation" },
   { label: "Personal Leave", value: "personal" },
   { label: "Other", value: "other" },
 ];
