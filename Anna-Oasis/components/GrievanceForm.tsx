@@ -24,7 +24,7 @@ const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
         })}
         onSubmit={onSubmit}
       >
-        {({ handleSubmit, values, setFieldValue }) => (
+        {({ handleSubmit, values }) => (
           <View className="space-y-4">
             <TextField
               placeholder="Enter grievance title"
