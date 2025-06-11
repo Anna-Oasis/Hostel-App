@@ -28,7 +28,7 @@ export default function Index() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      router.push("/Login");
+      router.replace("/Login");
     }, 0);
 
     return () => clearTimeout(timeout);
