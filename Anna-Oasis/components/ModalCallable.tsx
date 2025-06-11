@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalFooter } from '@/components/ui/modal';
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton,ModalBody, ModalFooter } from '@/components/ui/modal';
+import { CloseIcon, Icon } from './ui/icon';
+import { Heading } from '@/components/ui/heading'
 
 type LeaveModalProps = {
   show: boolean;
@@ -17,18 +19,35 @@ const ModalCallable: React.FC<LeaveModalProps> = ({
   message,
 }) => {
   return (
-    <Modal isOpen={show} onClose={onClose} size="md">
-      <ModalBackdrop />
-      <ModalContent>
-        <ModalHeader>
-          <Text className="text-2xl font-bold text-gray-900 mb-4">{title}</Text>
-          <ModalCloseButton onPress={onClose} />
-        </ModalHeader>
-        <View style={{ padding: 16 }}>
-          <Text className="text-gray-700">{message}</Text>
-        </View>
-      </ModalContent>
-    </Modal>
+    // <Modal isOpen={show} onClose={onClose} size="md">
+
+    // </Modal>
+     <Modal
+        isOpen={show}
+        onClose={onClose}
+        size="md"
+      >
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Heading size="sm" className="text-typography-950">
+              {title}
+            </Heading>
+            <ModalCloseButton>
+              <Icon
+                as={CloseIcon}
+                size="md"
+                className="stroke-background-400 group-[:hover]/modal-close-button:stroke-background-700 group-[:active]/modal-close-button:stroke-background-900 group-[:focus-visible]/modal-close-button:stroke-background-900"
+              />
+            </ModalCloseButton>
+          </ModalHeader>
+          <ModalBody>
+            <Heading size="sm" className="text-typography-500">
+              {message }
+            </Heading>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
   );
 };
 
