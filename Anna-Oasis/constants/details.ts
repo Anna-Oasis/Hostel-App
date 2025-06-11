@@ -206,11 +206,20 @@ const initialValues = {
   roomNumber: "",
 };
 
+const leaveTypes = [
+  { label: "Medical Leave", value: "medical" },
+  { label: "Emergency Leave", value: "emergency" },
+  { label: "Vacation Leave", value: "vacation" },
+  { label: "Personal Leave", value: "personal" },
+  { label: "Other", value: "other" },
+];
+
 export {
   Departments,
   campusList,
   semesters,
   bloodGroups,
+  leaveTypes,
   initialValues,
   courses,
   govtIdTypes,
