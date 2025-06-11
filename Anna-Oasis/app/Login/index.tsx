@@ -95,10 +95,9 @@ export default function Login() {
                 <ButtonText className="text-slate-500 font-semibold">Create Account</ButtonText>
               </Button>
 
-              {/* Debug Buttons */}
               <View>
                 {[
-                  ["/Student/Home", "STUDENT"],
+                  ["/User/Student", "STUDENT"],
                   ["/Manager", "MANAGER"],
                   ["/RC", "RC"],
                   ["/DeputyWarden", "DW"],

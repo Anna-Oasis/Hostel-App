@@ -124,25 +124,26 @@ export const handleSignup = async (
 export const redirectByRole = (role: string | null) => {
   switch (role) {
     case "student":
-      router.push("/Student/Home");
+      router.replace("/User/Student");
       break;
     case "warden":
-      router.push("/ExecutiveWarden");
+      router.replace("/ExecutiveWarden");
       break;
     case "rc":
-      router.push("/RC");
+      router.replace("/RC");
       break;
     case "deputyWarden":
-      router.push("/DeputyWarden");
+      router.replace("/DeputyWarden");
       break;
     case "executiveWarden":
-      router.push("/ExecutiveWarden");
+      router.replace("/ExecutiveWarden");
       break;
     case "manager":
-      router.push("/Manager");
+      router.replace("/Manager");
       break;
     default:
       console.error("Unknown user role:", role);
-      router.push("/Login");
+      router.replace("/Login");
+      break;
   }
 };
