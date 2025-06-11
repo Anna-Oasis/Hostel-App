@@ -18,6 +18,7 @@ type approvalCardProps = {
   onApprove?: () => void,
   onDecline?: () => void,
   badge?: badgeStatus,
+  data ?: Record<string, any>,
 }
 
 const ApprovalCard = (props: approvalCardProps) => {
@@ -43,36 +44,35 @@ const ApprovalCard = (props: approvalCardProps) => {
 
   return (
     <View className="border border-primary-400 rounded-lg m-2 p-4 bg-black/10">
-      <Text className="text-black font-semibold text-2xl mb-2">{props.title}</Text>
 
-      <View className="flex-row items-center">
-        <Text className="text-base font-medium w-[70%]">{props.subTitle}</Text>
-
+      <View className="flex flex-row ">
+        <Text className="text-black font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
         {props.badge && (
-          <Animated.View
-            style={{
-              opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
-            }}
-          >
-            <Badge
-              size="md"
-              variant="solid"
-              action={
-                props.badge === badgeStatus.Approved
-                  ? 'success'
-                  : props.badge === badgeStatus.Rejected
-                  ? 'error'
-                  : 'muted'
-              }
-              className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
-                                          props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+            <Animated.View
+              style={{
+                opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
+              }}
             >
-              <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
-            </Badge>
-          </Animated.View>
-        )}
-
+              <Badge
+                size="md"
+                variant="solid"
+                action={
+                  props.badge === badgeStatus.Approved
+                    ? 'success'
+                    : props.badge === badgeStatus.Rejected
+                    ? 'error'
+                    : 'muted'
+                }
+                className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
+                                            props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+              >
+                <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
+              </Badge>
+            </Animated.View>
+          )}
       </View>
+
+        <Text className="text-base font-medium ">{props.subTitle}</Text>
 
       <View className="items-center mt-4">
         <Button
@@ -91,14 +91,24 @@ const ApprovalCard = (props: approvalCardProps) => {
           <ModalHeader className='border-b-2'>
             <Text className="text-2xl font-bold mb-2">Details</Text>
             <ModalCloseButton>
-                          <ModalCloseButton>
               <Icon as={CloseIcon} className="mb-2" size='xl' />
-            </ModalCloseButton>
             </ModalCloseButton>
           </ModalHeader>
           <ModalBody className='mt-6'>
-            <Text >JSON file</Text>
+            {props.data && (
+              <View>
+                {Object.entries(props.data).map(([key, value]) => (
+                  <View key={key} className='flex flex-row space-y-2 gap-1'>
+                    <Text className='text-lg font-medium'>{key} : </Text>
+                    <Text className='text-lg font-normal'>
+                      {typeof value === 'string' ? value : JSON.stringify(value)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </ModalBody>
+
           <ModalFooter className="flex-row justify-evenly mt-6">
             {props.onApprove && (
                 <Button
