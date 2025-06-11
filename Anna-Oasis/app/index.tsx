@@ -1,4 +1,5 @@
-// import { Text, View } from "react-native";
+
+ // import { Text, View } from "react-native";
 // import { Button, ButtonText } from "@/components/ui/button";
 // import TestForm from "@/components/TestForm";
 // import React from "react";
@@ -18,6 +19,7 @@
 //     </>
 //   );
 // }
+
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
 
