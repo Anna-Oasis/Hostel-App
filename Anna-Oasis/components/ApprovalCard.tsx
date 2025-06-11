@@ -1,26 +1,67 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Icon, CloseIcon, CopyIcon } from "@/components/ui/icon"
 
+/**
+ * Status options for the approval badge
+ * @enum {string}
+ */
 export enum badgeStatus {
+  /** Request is pending approval */
   Pending = 'pending',
+  /** Request has been approved */
   Approved = 'approved',
+  /** Request has been rejected */
   Rejected = 'rejected'
 }
 
+/**
+ * Props for the ApprovalCard component
+ * @typedef {Object} approvalCardProps
+ */
 type approvalCardProps = {
+  /** Main title displayed at the top of the card */
   title: string,
+  /** Subtitle or description displayed below the title */
   subTitle: string,
+  /** Callback function triggered when the approve button is clicked */
   onApprove?: () => void,
+  /** Callback function triggered when the decline button is clicked */
   onDecline?: () => void,
+  /** Status badge to display on the card (pending, approved, or rejected) */
   badge?: badgeStatus,
+  /** JSON object containing data to be displayed in the details modal */
   data ?: Record<string, any>,
 }
 
+/**
+ * ApprovalCard Component
+ * 
+ * A card component that displays approval information with an optional status badge.
+ * It provides a "View more" button that opens a modal with detailed information.
+ * The modal can include approve/decline action buttons if the respective callbacks are provided.
+ * 
+ * @param {approvalCardProps} props - The component props
+ * @returns {JSX.Element} The rendered ApprovalCard component
+ * 
+ * @example
+ * <ApprovalCard
+ *   title="Room Change Request"
+ *   subTitle="John Doe wants to change to Room 302"
+ *   badge={badgeStatus.Pending}
+ *   onApprove={() => handleApprove()}
+ *   onDecline={() => handleDecline()}
+ *   data={{
+ *     "Student": "John Doe",
+ *     "Current Room": "201",
+ *     "Requested Room": "302",
+ *     "Reason": "Roommate incompatibility"
+ *   }}
+ * />
+ */
 const ApprovalCard = (props: approvalCardProps) => {
   const floatBadge = useRef(new Animated.Value(0.3)).current;
   const [viewDetails, setViewDetails] = useState(false);
