@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://10.0.2.2:5000";
 
 const TOKEN_KEY = "authToken";
 
@@ -67,6 +67,34 @@ export const getUserRole = async (): Promise<string | null> => {
   }
 };
 
+export const removeCredentials = async () => {
+  try {
+    await AsyncStorage.removeItem("email");
+    await AsyncStorage.removeItem("password");
+  } catch (error) {
+    console.error("Error removing credentials:", error);
+  }
+};
+
+export const saveUserId = async (id: Number) => {
+  try {
+    await AsyncStorage.setItem("userId", id.toString());
+  }
+  catch (error) {
+    console.error("Error saving user ID:", error);
+  }
+}
+
+export const getUserId = async (): Promise<Number | null> => {
+  try {
+    const userId = await AsyncStorage.getItem("userId");
+    return userId ? Number(userId) : null;
+  } catch (error) {
+    console.error("Error retrieving user ID:", error);
+    return null;
+  }
+};
+
 export const handleLogin = async (
   values: { email: string; password: string },
   onSuccess: () => void
@@ -89,6 +117,7 @@ export const handleLogin = async (
     await saveToken(data.data.token);
     await saveCredentials(values.email, values.password);
     await saveUserRole(data.data.role);
+    await saveUserId(data.data.id);
     Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
     onSuccess();
   } catch (error: any) {
