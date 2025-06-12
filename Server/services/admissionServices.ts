@@ -2,6 +2,8 @@ import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
 import { db } from "../config/dbConnection";
 import { eq ,and} from "drizzle-orm";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
+
 
 export async function createAdmission(admissionData: NewAdmission) {
   const result = await db
@@ -67,5 +69,24 @@ export async function getAdmissionsByStatus(status: string) {
     .from(admissionModel)
     .where(eq(admissionModel.status, status))
     .orderBy(admissionModel.submission_Date);
+  return result;
+}
+
+
+export async function createAdmissionApproval(approvalData: {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}) {
+  const result = await db
+    .insert(admissionApprovalsModel)
+    .values({
+      admission_id: approvalData.admission_id,
+      user_id: approvalData.user_id,
+      approve: approvalData.approve,
+      comment: approvalData.comment || null,
+    })
+    .returning();
   return result;
 }
