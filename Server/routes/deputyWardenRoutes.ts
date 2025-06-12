@@ -9,7 +9,7 @@ import { validateJWT } from "../middleware/jwt";
 const router = Router();
 
 router.get("/admissions/approvals", validateJWT, async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.userRole || req.userRole !== "manager" || !req.userId) {
+    if (!req.userRole || req.userRole !== "deputyWarden" || !req.userId) {
       res.status(403).json({ error: "Access denied" });
       return;
     }
