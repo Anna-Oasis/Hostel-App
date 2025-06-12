@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import { fetchAdmissionsApprovedByRC } from "../controllers/rcAdmissionApprovalController";
 import {
   viewAdmissionsByRC,
   approveOrDeclineAdmissionByRC
@@ -14,7 +14,7 @@ rcRouter.get("/admissions/:rc_id", viewAdmissionsByRC);
 rcRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByRC);
 
 
-// fetch the approval data reviewd by a particular RC
+// Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals/:rc_id",(req,res,next) => {
     fetchAdmissionsApprovedByRC(req, res, next).catch(next);
 })
