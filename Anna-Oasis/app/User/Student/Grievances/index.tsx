@@ -1,13 +1,15 @@
 import GrievanceForm from "@/components/GrievanceForm";
 import { useRouter } from "expo-router";
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import ModalCallable from "@/components/ModalCallable";
+import { getUserId } from "@/utils/authUtils";
 export default function GrievancesPage() {
   const router = useRouter();
   const [showModal, setShowModal] = React.useState(false);
-  const handleSubmit = (values: any) => {
-    console.log("Grievance submitted:", values);
+  const [userId, setUserId] = React.useState<Number | null>(null);
+  const handleSubmit = (values: any, id : Number | null) => {
+    console.log(`Grievance Form Submitted by User ID: ${id}`, values);
     setShowModal(true);
     setTimeout(() => {
       redirectToHome();
@@ -18,11 +20,19 @@ export default function GrievancesPage() {
       router.replace("/User/Student");
     }
   }
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const id = await getUserId();
+      setUserId(id);
+    };
+    fetchUserId();
+  }, []);
+
   return (
     <View style={{ flex: 1, justifyContent: "center", }}>
       <GrievanceForm
         onSubmit={(values) => {
-          handleSubmit(values);
+          handleSubmit(values, userId);
         }
         }
       />
