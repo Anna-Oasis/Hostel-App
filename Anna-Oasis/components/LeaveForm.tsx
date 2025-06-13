@@ -52,11 +52,13 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
                 value="leave_type"
                 options={leaveTypes}
               />
+              
               <DatePickerField
                 placeholder="YYYY-MM-DD"
                 value="from_date"
                 label="From Date"
               />
+
               <TimePickerField
                 label="From Time"
                 value="from_time"
