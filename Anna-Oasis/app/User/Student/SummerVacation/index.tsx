@@ -1,100 +1,28 @@
 import CheckBoxField from "@/components/form/CheckBoxField";
 import DatePickerField from "@/components/form/DatePickerField";
-import Label from "@/components/form/Label";
-import PhoneInputField from "@/components/form/PhoneInputField";
-import SelectField from "@/components/form/SelectField";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Formik } from "formik";
 import { ScrollView } from "react-native";
 import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
-import TimePickerField from "@/components/form/timePickerField";
-
+import TimePickerField from "@/components/form/TimePickerField";
 export default function SummerVacationPage() {
-
-  const degreeOptions: { label: string; value: string }[] = [
-  { label: 'B.E', value: 'B.E' },
-  { label: 'B.Tech', value: 'B.Tech' },
-  { label: 'M.E', value: 'M.E' },
-  { label: 'M.Tech', value: 'M.Tech' },
-  { label: 'M.Sc', value: 'M.Sc' },
-  { label: 'M.Phil', value: 'M.Phil' },
-  { label: 'M.C.A', value: 'M.C.A' },
-  { label: 'M.B.A', value: 'M.B.A' }
-];
-
-
-const programmeOptions: { label: string; value: string }[] = [
-  { label: "Computer Science and Engineering", value: "Computer Science and Engineering" },
-  { label: "Information Technology", value: "Information Technology" },
-  { label: "Electronics and Communication Engineering", value: "Electronics and Communication Engineering" },
-  { label: "Electrical and Electronics Engineering", value: "Electrical and Electronics Engineering" },
-  { label: "Mechanical Engineering", value: "Mechanical Engineering" },
-  { label: "Civil Engineering", value: "Civil Engineering" },
-  { label: "Industrial Engineering", value: "Industrial Engineering" },
-  { label: "Manufacturing Engineering", value: "Manufacturing Engineering" },
-  { label: "Mining Engineering", value: "Mining Engineering" },
-  { label: "Printing and Packaging Technology", value: "Printing and Packaging Technology" },
-  { label: "Geo Informatics", value: "Geo Informatics" },
-  { label: "Material Science and Engineering", value: "Material Science and Engineering" },
-  { label: "Biomedical Engineering", value: "Biomedical Engineering" },
-  { label: "M.Sc. IT (Integrated)", value: "M.Sc. IT (Integrated)" },
-  { label: "M.Sc. Computer Science (Integrated)", value: "M.Sc. Computer Science (Integrated)" },
-  { label: "Materials Science", value: "Materials Science" },
-  { label: "Applied Chemistry", value: "Applied Chemistry" },
-  { label: "Applied Mathematics", value: "Applied Mathematics" },
-  { label: "Software Engineering", value: "Software Engineering" },
-  { label: "Tourism Management", value: "Tourism Management" },
-  { label: "Polymer Science and Engineering", value: "Polymer Science and Engineering" },
-  { label: "Applied Geology", value: "Applied Geology" },
-  { label: "Electronic Media", value: "Electronic Media" },
-  { label: "Medical Physics", value: "Medical Physics" },
-  { label: "Laser and Electro Optical Engineering", value: "Laser and Electro Optical Engineering" },
-  { label: "Master of Business Administration", value: "Master of Business Administration" }
-];
-
-
-
-  const semesterOptions: { label: string; value: string }[] = [
-    { label: 'Semester 1', value: '1' },
-    { label: 'Semester 2', value: '2' },
-    { label: 'Semester 3', value: '3' },
-    { label: 'Semester 4', value: '4' },
-    { label: 'Semester 5', value: '5' },
-    { label: 'Semester 6', value: '6' },
-    { label: 'Semester 7', value: '7' },
-    { label: 'Semester 8', value: '8' },
-    { label: 'Semester 9', value: '9' },
-    { label: 'Semester 10', value: '10' },
-  ];
 
   const hostelItemsOptions: { label: string; value: string }[] = [
   { label: "AC Remote", value: "AC Remote" },
   { label: "Room Keys", value: "Room Keys" },
-  { label: "Lab Cable", value: "Lab Cable" },
+  { label: "Lan Cable", value: "Lan Cable" },
   { label: "Cupboard Keys", value: "Cupboard Keys" },
 ];
 
 const summerVacationSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required"),
-  roomno: Yup.string().required("Room number is required"),
-  degree: Yup.string().required("Please select a degree"),
-  programme: Yup.string().required("Please select a programme"),
-  semester: Yup.string().required("Please select a semester"),
   vacationDate: Yup.string().required("Date of vacate is required"),
   vacationTime: Yup.string().required("Time of vacate is required"),
   address: Yup.string().required("Address is required"),
-  mobileNumber: Yup.string()
-    .matches(/^\+\d{1,3}[-\s]?\d{6,14}$/, "Enter a valid mobile number with country code")
-    .required("Mobile number is required"),
   email: Yup.string()
     .email("Enter a valid email")
     .required("Parent's email is required"),
-  lgmobileNumber: Yup.string()
-    .matches(/^\+\d{1,3}[-\s]?\d{6,14}$/, "Enter a valid local guardian number with country code")
-    .required("Local guardian number is required"),
   hostelItems: Yup.array()
     .min(1, "Please select at least one handed over item")
     .required("Please select at least one handed over item"),
@@ -116,25 +44,18 @@ const summerVacationSchema = Yup.object().shape({
         <View className="flex-1 justify-center p-4 items-center">
         
           <Text
-            className="text-2xl font-semibold"
+            className="text-2xl font-normal"
           >SummarVacation Form</Text>
 
           <View className="p-2">
             <Formik
               initialValues={{
-                name: "",
-                roomno: "",
-                degree: "",
-                programme: "",
-                semester: "",
                 vacationDate: "",             
                 vacationTime: "",             
                 address: "",
-                mobileNumber: "",
                 email: "",
-                lgmobileNumber: "",
-                hostelItems: [],               // for multiple checkbox values
-                declaration: [],               // checkbox value stored as array
+                hostelItems: [],               
+                declaration: [],               
               }}
               validationSchema={summerVacationSchema}
               onSubmit={(values) => {
@@ -142,72 +63,29 @@ const summerVacationSchema = Yup.object().shape({
               }}
             >
               {({handleSubmit}) => (
-                <View className="space-y-4">
-
-                  <TextField 
-                    label="Name" 
-                    placeholder="Enter your name" 
-                    value="name" 
-                  />
-                  
-                  <TextField 
-                    label="Room No" 
-                    placeholder="Enter your room no" 
-                    value="roomno" 
-                  />
-                  
-                  <SelectField 
-                    label="Degree" 
-                    value="degree" 
-                    options={degreeOptions}
-                  />
-                  
-                  <SelectField 
-                    label="Programme" 
-                    value="programme" 
-                    options={programmeOptions}
-                  />
-
-                  <SelectField 
-                    label="Semester" 
-                    value="semester" 
-                    options={semesterOptions}
-                  />
+                <View className="space-y-4"> 
 
                   <DatePickerField 
                     minimumDate={new Date()} 
                     value="vacationDate" 
-                    label="Date of Vacate"
+                    label="Date of vacate"
                   />
 
                   <TimePickerField
                     value="vacationTime"
-                    label="Time of Vacate"
+                    label="Time of vacate"
                   />
                   
-
                   <TextField 
-                    label="Address" 
+                    label="Address of stay during vacation" 
                     value="address" 
-                    placeholder="Address for future contact"
-                  />
-
-                  <PhoneInputField 
-                    label="Mobile Number" 
-                    placeholder="Enter Mobile Number" 
-                    value="mobileNumber"
+                    placeholder="Address of Stay during vacation"
                   />
 
                   <TextField 
                     label="Parent's Email" 
                     value="email" 
                     placeholder="Enter Parent's Email"
-                  />
-
-                  <PhoneInputField 
-                    label="Local Guardian Number" 
-                    placeholder="Localguardian Number" 
-                    value="lgmobileNumber"
                   />
             
                   <CheckBoxField
