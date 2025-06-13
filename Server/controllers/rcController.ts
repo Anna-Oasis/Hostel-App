@@ -7,7 +7,7 @@ import {
   getGrievances,
   updateGrievanceApprovalStatus
 } from "../services/rcServices";
-import { rcDecisionSchema } from "../validation/rc.schema";
+import { rcAdmissionDecisionSchema, rcGrievanceDecisionSchema } from "../validation/rc.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
 
@@ -36,7 +36,7 @@ export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response)
   const { admission_id } = req.params;
 
   try {
-    const validated = rcDecisionSchema.parse(req.body);
+    const validated = rcAdmissionDecisionSchema.parse(req.body);
     const status = validated.approve ? approval_status.rc : approval_status.declined;
 
     await createAdmissionApproval({
@@ -100,7 +100,7 @@ export const approveOrDeclineGrievancesByRC = async (req: Request, res: Response
   const { rc_id } = req.params;
 
   try {
-    const validated = rcDecisionSchema.parse(req.body);
+    const validated = rcGrievanceDecisionSchema.parse(req.body);
     const rc = await getRCById(Number(rc_id));
     if (rc.length === 0) {
       res.status(404).json({ success: false, message: "RC not found" });
