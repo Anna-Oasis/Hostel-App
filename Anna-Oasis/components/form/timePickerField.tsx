@@ -1,63 +1,87 @@
+/**
+ * TimePickerField is a reusable React Native component for selecting time values in forms managed by Formik.
+ *
+ * @remarks
+ * This component displays a label, a pressable input with a placeholder, and opens a native time picker modal.
+ * The selected time is stored in Formik state in "HH:MM" (24-hour) format.
+ *
+ * @param props - The props for the TimePickerField component.
+ * @param props.label - The label text displayed above the field.
+ * @param props.value - The Formik field name to bind the value to.
+ * @param props.placeholder - (Optional) Placeholder text shown when no time is selected.
+ *
+ * @example
+ * ```tsx
+ * <Formik initialValues={{ time: "" }} onSubmit={...}>
+ *   <TimePickerField label="Select Time" value="time" placeholder="Choose a time" />
+ * </Formik>
+ * ```
+ *
+ * @returns A React element that renders a time picker integrated with Formik.
+ */
+//
+// Props:
+// | Prop        | Type   | Required | Description                                       |
+// |-------------|--------|----------|-------------------------------------------------- |
+// | label       | string | Yes      | The label text displayed above the field          |
+// | value       | string | Yes      | The Formik field name to bind the value to        |
+// | placeholder | string | No       | Placeholder text shown when no time is selected   |
+
+
 import React, { useState } from "react";
-import { View, Platform } from "react-native";
-import { useFormikContext } from "formik";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { View, Text, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useFormikContext } from "formik";
 import Label from "@/components/form/Label";
 
+
 interface TimePickerFieldProps {
-  label?: string;
+  label: string;
   value: string;
   placeholder?: string;
-  props?: any;
 }
 
-const TimePickerField = ({
-  label,
-  value,
-  placeholder = "Select time",
-  ...props
-}: TimePickerFieldProps) => {
-  const { values, setFieldValue, touched, errors } = useFormikContext<any>();
+export default function TimePickerField({ label, value, placeholder }: TimePickerFieldProps) {
+  const { setFieldValue, values } = useFormikContext<any>();
   const [show, setShow] = useState(false);
 
-  const displayValue = values[value] ? values[value] : "";
+  const timeValue = values[value];
 
   return (
-    <View>
+    <View style={{ marginBottom: 1 }}>
       {label && <Label text={label} />}
-      <Button onPress={() => setShow(true)} variant="outline" size="md">
-        <ButtonText>
-          {displayValue || placeholder}
-        </ButtonText>
-      </Button>
+      <Pressable
+        onPress={() => setShow(true)}
+        style={{
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 6,
+          padding: 12,
+          backgroundColor: "#fff",
+        }}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+      >
+        <Text style={{ color: timeValue ? "#111" : "#888" }}>
+          {timeValue ? timeValue : placeholder || "Select Time"}
+        </Text>
+      </Pressable>
       {show && (
         <DateTimePicker
+          value={timeValue ? new Date(`1970-01-01T${timeValue}:00`) : new Date()}
           mode="time"
-          display={Platform.OS === "ios" ? "spinner" : "default"}
-          value={new Date()}
-          onChange={(_, selectedTime) => {
+          is24Hour={true}
+          display="default"
+          onChange={(_, selectedDate) => {
             setShow(false);
-            if (selectedTime) {
-              const formatted = selectedTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              setFieldValue(value, formatted);
+            if (selectedDate) {
+              const hours = selectedDate.getHours().toString().padStart(2, "0");
+              const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
+              setFieldValue(value, `${hours}:${minutes}`);
             }
           }}
-          is24Hour={false}
-          {...props}
         />
-      )}
-      {touched[value] && typeof errors[value] === "string" && (
-        <Text italic style={{ color: "red", marginTop: 5 }}>
-          {errors[value]}
-        </Text>
       )}
     </View>
   );
-};
-
-export default TimePickerField;
+}
