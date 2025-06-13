@@ -1,8 +1,8 @@
 import { View, Text } from "react-native";
-export default function SummerVacationPage() {
+export default function PaymentVerificationsPage() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Summer Vacation Verification (Coming Soon)</Text>
+      <Text>Payment Verifications (Coming Soon)</Text>
     </View>
   );
 }
