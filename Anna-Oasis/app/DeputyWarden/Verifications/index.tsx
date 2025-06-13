@@ -2,43 +2,43 @@ import { View, Text } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
-  ClipboardListIcon,
-  FileTextIcon,
-  UsersIcon,
-  BarChart2Icon,
+  FileCheckIcon,
+  ClipboardIcon,
+  CalendarIcon,
+  LogOutIcon,
 } from "lucide-react-native";
 
-export default function DeputyWardenPage() {
+export default function VerificationsPage() {
   const menuItems = [
     {
-      title: "Verifications",
-      route: "/DeputyWarden/Verifications",
-      icon: ClipboardListIcon,
-      color: "#4F46E5",
+      title: "Admissions",
+      route: "/DeputyWarden/Verifications/Admissions",
+      icon: FileCheckIcon,
+      color: "#6366F1",
     },
     {
-      title: "Grievances",
-      route: "/DeputyWarden/Grievances",
-      icon: FileTextIcon,
-      color: "#EF4444",
-    },
-    {
-      title: "RC Management",
-      route: "/DeputyWarden/RCManagement",
-      icon: UsersIcon,
+      title: "Leave Form",
+      route: "/DeputyWarden/Verifications/LeaveForm",
+      icon: ClipboardIcon,
       color: "#0891B2",
     },
     {
-      title: "Attendance Reports",
-      route: "/DeputyWarden/AttendanceReports",
-      icon: BarChart2Icon,
+      title: "Summer Vacation",
+      route: "/DeputyWarden/Verifications/SummerVacation",
+      icon: CalendarIcon,
+      color: "#D97706",
+    },
+    {
+      title: "Vacating Hostel",
+      route: "/DeputyWarden/Verifications/VacatingHostel",
+      icon: LogOutIcon,
       color: "#10B981",
     },
   ];
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Deputy Warden Dashboard</Text>
+      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Verifications</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
