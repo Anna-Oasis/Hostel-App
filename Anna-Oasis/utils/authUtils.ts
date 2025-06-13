@@ -71,6 +71,7 @@ export const removeCredentials = async () => {
   try {
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
+    await AsyncStorage.removeItem("userId")
   } catch (error) {
     console.error("Error removing credentials:", error);
   }
