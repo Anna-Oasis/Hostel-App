@@ -98,7 +98,7 @@ export default function Login() {
               {/* Debug Buttons */}
               <View>
                 {[
-                  ["User/Student", "STUDENT"],
+                  ["/User/Student", "STUDENT"],
                   ["/Manager", "MANAGER"],
                   ["/RC", "RC"],
                   ["/DeputyWarden", "DW"],
