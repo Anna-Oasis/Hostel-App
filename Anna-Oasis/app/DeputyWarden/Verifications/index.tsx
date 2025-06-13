@@ -2,57 +2,43 @@ import { View, Text } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
-  UserIcon,
-  HomeIcon,
+  FileCheckIcon,
   ClipboardIcon,
   CalendarIcon,
-  FileTextIcon,
-  BuildingIcon,
+  LogOutIcon,
 } from "lucide-react-native";
 
-export default function StudentMain() {
+export default function VerificationsPage() {
   const menuItems = [
     {
-      title: "Personal Details",
-      route: "/User/Student/Details",
-      icon: UserIcon,
+      title: "Admissions",
+      route: "/DeputyWarden/Verifications/Admissions",
+      icon: FileCheckIcon,
       color: "#6366F1",
     },
     {
-      title: "Admission",
-      route: "/User/Student/Admission",
-      icon: HomeIcon,
-      color: "#4F46E5",
-    },
-    {
       title: "Leave Form",
-      route: "/User/Student/LeaveForm",
+      route: "/DeputyWarden/Verifications/LeaveForm",
       icon: ClipboardIcon,
       color: "#0891B2",
     },
     {
       title: "Summer Vacation",
-      route: "/User/Student/SummerVacation",
+      route: "/DeputyWarden/Verifications/SummerVacation",
       icon: CalendarIcon,
       color: "#D97706",
     },
     {
-      title: "Grievances",
-      route: "/User/Student/Grievances",
-      icon: FileTextIcon,
-      color: "#EF4444",
-    },
-    {
-      title: "Hostel Vacation",
-      route: "/User/Student/HostelVacation",
-      icon: BuildingIcon,
+      title: "Vacating Hostel",
+      route: "/DeputyWarden/Verifications/VacatingHostel",
+      icon: LogOutIcon,
       color: "#10B981",
     },
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4 pt-16">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Student Services</Text>
+    <View className="flex-1 bg-gray-50 p-4">
+      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Verifications</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
