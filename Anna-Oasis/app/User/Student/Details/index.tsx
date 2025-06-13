@@ -40,7 +40,7 @@ export default function DetailsPage() {
   return (
     <Formik
       initialValues={initialValues}
-      // validationSchema={validationSchemas[page]}
+      validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
@@ -119,7 +119,7 @@ export default function DetailsPage() {
         }
       }}
     >
-      {({ handleSubmit }) => (
+      {({ handleSubmit, validateForm }) => (
         <ScrollView ref={scrollViewRef}>
           <View className="m-4 flex gap-3">
             
@@ -134,7 +134,13 @@ export default function DetailsPage() {
                 </Button>
               )}
               
-              <Button onPress={() => handleSubmit()}>
+              <Button onPress={async () => {
+                const formErrors = await validateForm();
+                if (Object.keys(formErrors).length > 0) {
+                  console.log("Formik validation errors:", formErrors);
+                }
+                handleSubmit();
+                }}>
                 <ButtonText>{page < 3 ? "Next" : "Update Details"}</ButtonText>
               </Button>
             </View>

@@ -1,6 +1,9 @@
 import React from "react";
 import TextField from "@/components/form/TextField";
 import PhoneInputField from "@/components/form/PhoneInputField";
+import SelectField from "@/components/form/SelectField";
+import countries from "@/constants/countries";
+import indianStates from "@/constants/indianStates";
 
 const LocalGuardian = () => (
   <>
@@ -11,8 +14,8 @@ const LocalGuardian = () => (
     <TextField label="Guardian House No" value="guardianHouseNo" placeholder="House No" />
     <TextField label="Guardian Street" value="guardianStreet" placeholder="Street" />
     <TextField label="Guardian City" value="guardianCity" placeholder="City" />
-    <TextField label="Guardian State" value="guardianState" placeholder="State" />
-    <TextField label="Guardian Country" value="guardianCountry" placeholder="Country" />
+    <SelectField label="Guardian State" value="guardianState" options={indianStates} />
+    <SelectField label="Guardian Country" value="guardianCountry" options={countries} />
     <TextField label="Guardian Postal Code" value="guardianPostalCode" placeholder="Postal Code" />
   </>
 );

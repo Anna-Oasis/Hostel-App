@@ -21,20 +21,7 @@ const FileUploads = () => {
         ]}
       />
 
-      {values.isForeignNational === "Yes" ? (
-        <View>
-          <TextField
-            label="Passport Number"
-            value="govtId"
-            placeholder="Enter passport number"
-          />
-          <ImagePickerField
-            label="Passport Document"
-            value="govtIdDocument"
-            placeholder="Upload"
-          />
-        </View>
-      ) : values.isForeignNational === "No" ? (
+      {values.isForeignNational === "No" ? (
         <View>
           <SelectField
             label="Government ID Type"
@@ -52,7 +39,20 @@ const FileUploads = () => {
             placeholder="Upload"
           />
         </View>
-      ) : null}
+      ) : (
+        <View>
+          <TextField
+            label="Passport Number"
+            value="govtId"
+            placeholder="Enter passport number"
+          />
+          <ImagePickerField
+            label="Passport Document"
+            value="govtIdDocument"
+            placeholder="Upload"
+          />
+        </View>
+      ) }
 
       <ImagePickerField label="Passport Photo" value="passportPhoto" placeholder="Upload" />
       <ImagePickerField label="Student Signature" value="studentSignature" placeholder="Upload" />

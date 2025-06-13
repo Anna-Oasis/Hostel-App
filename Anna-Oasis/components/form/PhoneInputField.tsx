@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { View } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import { Text } from '@/components/ui/text';
@@ -32,7 +32,6 @@ interface PhoneInputFieldProps {
  */
 function PhoneInputField({ label, value, placeholder }: PhoneInputFieldProps) {
   const { values, setFieldValue, touched, errors } = useFormikContext<any>();
-  const [formattedValue, setFormattedValue] = useState('');
   const phoneInput = useRef<PhoneInput>(null);
 
   return (
@@ -41,25 +40,24 @@ function PhoneInputField({ label, value, placeholder }: PhoneInputFieldProps) {
       <PhoneInput
         ref={phoneInput}
         defaultValue={values[value]}
-        defaultCode="IN" // Default to India
+        defaultCode="IN"
         layout="first"
         onChangeText={(text: string) => {
           setFieldValue(value, text);
         }}
         onChangeFormattedText={(text: string) => {
-          setFormattedValue(text);
           setFieldValue(value, text);
         }}
         placeholder={placeholder || 'Phone number'}
         containerStyle={{ 
           width: '100%', 
           borderWidth: 1, 
-          borderColor: '#d1d5db', 
-          borderRadius: 6 
+          borderRadius: 6, 
+          backgroundColor: 'transparent',
         }}
         textContainerStyle={{ 
           backgroundColor: 'transparent', 
-          paddingVertical: 0 
+          paddingVertical: 6 
         }}
       />
       {touched[value] && errors[value] && (

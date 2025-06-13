@@ -53,7 +53,7 @@ export default function StudentMain() {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <View className="flex-1 bg-gray-50 p-4 pt-16">
       <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Student Services</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
