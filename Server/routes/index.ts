@@ -4,6 +4,7 @@ import detailsRouter from "./detailsRoute";
 import studentRouter from "./studentRoutes";
 import managerRouter from "./managerRoutes";
 import rcRouter from "./rcRoutes";
+import deputyWardenRouter from "./deputyWardenRoutes";
 // import { generatePdf, PDFData } from "../utils/pdfGenerator"; // Uncomment if you want to use the PDF generation route
 
 
@@ -15,6 +16,7 @@ routes.use("/api/student/", studentRouter);
 routes.use("/api/manager/", managerRouter);
 
 routes.use("/api/resident_counsellor/",rcRouter);
+routes.use("/api/deputy_warden/",deputyWardenRouter);
 
 
 routes.get("/health", (req: Request, res: Response) => {
