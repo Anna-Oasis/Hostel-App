@@ -1,74 +1,69 @@
 {
-  "id": "6c972143-19c2-4ed6-82d6-f88f3a07ed46",
-  "prevId": "b1ebbead-9b27-44e2-8302-a9e7a3a800bf",
+  "id": "04911ef7-7fdb-4e5b-a2af-850a04e20bf1",
+  "prevId": "9ab45626-5f27-45b4-a14f-0f905ab18686",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.Admissionn": {
-      "name": "Admissionn",
+    "public.admission_approvals": {
+      "name": "admission_approvals",
       "schema": "",
       "columns": {
         "admission_id": {
           "name": "admission_id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "roll_no": {
-          "name": "roll_no",
-          "type": "varchar(20)",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "academic_year": {
-          "name": "academic_year",
-          "type": "varchar(15)",
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "approval": {
-          "name": "approval",
-          "type": "approval_status",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "student_declaration": {
-          "name": "student_declaration",
+        "approve": {
+          "name": "approve",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
-        "parent_declaration": {
-          "name": "parent_declaration",
-          "type": "boolean",
+        "comment": {
+          "name": "comment",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "transaction_id": {
-          "name": "transaction_id",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "Admissionn_roll_no_student_roll_no_fk": {
-          "name": "Admissionn_roll_no_student_roll_no_fk",
-          "tableFrom": "Admissionn",
-          "tableTo": "student",
+        "admission_approvals_admission_id_admission_id_fk": {
+          "name": "admission_approvals_admission_id_admission_id_fk",
+          "tableFrom": "admission_approvals",
+          "tableTo": "admission",
           "columnsFrom": [
-            "roll_no"
+            "admission_id"
           ],
           "columnsTo": [
-            "roll_no"
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "admission_approvals_user_id_users_id_fk": {
+          "name": "admission_approvals_user_id_users_id_fk",
+          "tableFrom": "admission_approvals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -80,157 +75,25 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.readmission": {
-      "name": "readmission",
+    "public.admission": {
+      "name": "admission",
       "schema": "",
       "columns": {
-        "user_id": {
-          "name": "user_id",
+        "id": {
+          "name": "id",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
-        "approval": {
-          "name": "approval",
-          "type": "approval_status",
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         },
         "academic_year": {
           "name": "academic_year",
-          "type": "varchar(4)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "payment_id": {
-          "name": "payment_id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "student_name": {
-          "name": "student_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "course": {
-          "name": "course",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "branch": {
-          "name": "branch",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "year": {
-          "name": "year",
-          "type": "varchar(2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "semester": {
-          "name": "semester",
-          "type": "varchar(2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "student_mobile": {
-          "name": "student_mobile",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "student_email": {
-          "name": "student_email",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "parent_mobile_1": {
-          "name": "parent_mobile_1",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "parent_mobile_2": {
-          "name": "parent_mobile_2",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "parent_email": {
-          "name": "parent_email",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "guardian_name": {
-          "name": "guardian_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "guardian_mobile": {
-          "name": "guardian_mobile",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "hostel_block": {
-          "name": "hostel_block",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "room_number": {
-          "name": "room_number",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "key_received": {
-          "name": "key_received",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "fees_paid": {
-          "name": "fees_paid",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "transaction_reference_no": {
-          "name": "transaction_reference_no",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "transaction_date": {
-          "name": "transaction_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "amount": {
-          "name": "amount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "any_dues": {
-          "name": "any_dues",
-          "type": "boolean",
+          "type": "varchar(9)",
           "primaryKey": false,
           "notNull": true
         },
@@ -246,23 +109,88 @@
           "primaryKey": false,
           "notNull": true
         },
+        "admission_category": {
+          "name": "admission_category",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "previous_resident": {
+          "name": "previous_resident",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hostel_block": {
+          "name": "hostel_block",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "room_number": {
+          "name": "room_number",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mess_preference": {
+          "name": "mess_preference",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "submission_date": {
           "name": "submission_date",
           "type": "date",
           "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "varchar(100)",
+          "primaryKey": false,
           "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "approval_status",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "admission_roll_number_student_roll_no_fk": {
+          "name": "admission_roll_number_student_roll_no_fk",
+          "tableFrom": "admission",
+          "tableTo": "student",
+          "columnsFrom": [
+            "roll_number"
+          ],
+          "columnsTo": [
+            "roll_no"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.userss": {
-      "name": "userss",
+    "public.attendance": {
+      "name": "attendance",
       "schema": "",
       "columns": {
         "id": {
@@ -271,30 +199,47 @@
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(100)",
+        "date": {
+          "name": "date",
+          "type": "date",
           "primaryKey": false,
           "notNull": true
         },
-        "email": {
-          "name": "email",
-          "type": "varchar(100)",
+        "rc_id": {
+          "name": "rc_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "password": {
-          "name": "password",
-          "type": "text",
+        "hostel": {
+          "name": "hostel",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
-        "role": {
-          "name": "role",
-          "type": "varchar(20)",
+        "floor": {
+          "name": "floor",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'student'"
+          "notNull": true
+        },
+        "no_present": {
+          "name": "no_present",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_absent": {
+          "name": "no_absent",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "absentee": {
+          "name": "absentee",
+          "type": "varchar(20)[]",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -302,17 +247,97 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "attendance_rc_id_rc_rc_id_fk": {
+          "name": "attendance_rc_id_rc_rc_id_fk",
+          "tableFrom": "attendance",
+          "tableTo": "rc",
+          "columnsFrom": [
+            "rc_id"
+          ],
+          "columnsTo": [
+            "rc_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.caution_deposit_refund": {
+      "name": "caution_deposit_refund",
+      "schema": "",
+      "columns": {
+        "vacating_hostel_id": {
+          "name": "vacating_hostel_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deductions": {
+          "name": "deductions",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0.00'"
+        },
+        "refund_amount": {
+          "name": "refund_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deduction_details": {
+          "name": "deduction_details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "caution_deposit_refund_vacating_hostel_id_vacating_hostel_id_fk": {
+          "name": "caution_deposit_refund_vacating_hostel_id_vacating_hostel_id_fk",
+          "tableFrom": "caution_deposit_refund",
+          "tableTo": "vacating_hostel",
+          "columnsFrom": [
+            "vacating_hostel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "userss_email_unique": {
-          "name": "userss_email_unique",
+        "caution_deposit_refund_vacating_hostel_id_unique": {
+          "name": "caution_deposit_refund_vacating_hostel_id_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "email"
+            "vacating_hostel_id"
           ]
         }
       },
@@ -324,8 +349,196 @@
       "name": "grievances",
       "schema": "",
       "columns": {
-        "room_id": {
-          "name": "room_id",
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grievance_type": {
+          "name": "grievance_type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject": {
+          "name": "subject",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "priority": {
+          "name": "priority",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'medium'"
+        },
+        "rc_approval": {
+          "name": "rc_approval",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "resolved": {
+          "name": "resolved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "grievances_roll_number_student_roll_no_fk": {
+          "name": "grievances_roll_number_student_roll_no_fk",
+          "tableFrom": "grievances",
+          "tableTo": "student",
+          "columnsFrom": [
+            "roll_number"
+          ],
+          "columnsTo": [
+            "roll_no"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.leave_form": {
+      "name": "leave_form",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "leave_type": {
+          "name": "leave_type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "from_date": {
+          "name": "from_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_date": {
+          "name": "to_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "destination": {
+          "name": "destination",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergency_contact": {
+          "name": "emergency_contact",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "approval_status",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "leave_form_roll_number_student_roll_no_fk": {
+          "name": "leave_form_roll_number_student_roll_no_fk",
+          "tableFrom": "leave_form",
+          "tableTo": "student",
+          "columnsFrom": [
+            "roll_number"
+          ],
+          "columnsTo": [
+            "roll_no"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.leave_form_approvals": {
+      "name": "leave_form_approvals",
+      "schema": "",
+      "columns": {
+        "leave_form_id": {
+          "name": "leave_form_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -334,29 +547,185 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "approve": {
+          "name": "approve",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
-        "supportive_image": {
-          "name": "supportive_image",
+        "comment": {
+          "name": "comment",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "title": {
-          "name": "title",
-          "type": "varchar(100)",
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "leave_form_approvals_leave_form_id_leave_form_id_fk": {
+          "name": "leave_form_approvals_leave_form_id_leave_form_id_fk",
+          "tableFrom": "leave_form_approvals",
+          "tableTo": "leave_form",
+          "columnsFrom": [
+            "leave_form_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "leave_form_approvals_user_id_users_id_fk": {
+          "name": "leave_form_approvals_user_id_users_id_fk",
+          "tableFrom": "leave_form_approvals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.rc_leave": {
+      "name": "rc_leave",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "rc_id": {
+          "name": "rc_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "leaving": {
+          "name": "leaving",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arrival": {
+          "name": "arrival",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approved": {
+          "name": "approved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "rc_leave_rc_id_rc_rc_id_fk": {
+          "name": "rc_leave_rc_id_rc_rc_id_fk",
+          "tableFrom": "rc_leave",
+          "tableTo": "rc",
+          "columnsFrom": [
+            "rc_id"
+          ],
+          "columnsTo": [
+            "rc_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.rc": {
+      "name": "rc",
+      "schema": "",
+      "columns": {
+        "rc_id": {
+          "name": "rc_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hostel": {
+          "name": "hostel",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "on_leave": {
+          "name": "on_leave",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "floor": {
+          "name": "floor",
+          "type": "integer[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "rc_rc_id_users_id_fk": {
+          "name": "rc_rc_id_users_id_fk",
+          "tableFrom": "rc",
+          "tableTo": "users",
+          "columnsFrom": [
+            "rc_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -403,18 +772,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "date_of_birth": {
-          "name": "date_of_birth",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "age": {
-          "name": "age",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "mobile": {
           "name": "mobile",
           "type": "varchar(15)",
@@ -433,8 +790,33 @@
           "primaryKey": false,
           "notNull": true
         },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "nationality": {
           "name": "nationality",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "govt_id_type": {
+          "name": "govt_id_type",
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
@@ -442,12 +824,6 @@
         "govt_id": {
           "name": "govt_id",
           "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "admission_category": {
-          "name": "admission_category",
-          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         },
@@ -460,30 +836,6 @@
         "medical_history": {
           "name": "medical_history",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "previous_resident": {
-          "name": "previous_resident",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "hostel_block": {
-          "name": "hostel_block",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "room_number": {
-          "name": "room_number",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "mess_preference": {
-          "name": "mess_preference",
-          "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
         },
@@ -686,6 +1038,13 @@
           "notNull": true,
           "default": "now()"
         },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
         "passport_photo_url": {
           "name": "passport_photo_url",
           "type": "text",
@@ -703,14 +1062,32 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "category_proof_url": {
+          "name": "category_proof_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "aadhaar_url": {
+          "name": "aadhaar_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admission_slip_url": {
+          "name": "admission_slip_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "student_user_id_userss_id_fk": {
-          "name": "student_user_id_userss_id_fk",
+        "student_user_id_users_id_fk": {
+          "name": "student_user_id_users_id_fk",
           "tableFrom": "student",
-          "tableTo": "userss",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -727,12 +1104,179 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.RC": {
-      "name": "RC",
+    "public.summer_vacation": {
+      "name": "summer_vacation",
       "schema": "",
       "columns": {
-        "rc_id": {
-          "name": "rc_id",
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vacation_from": {
+          "name": "vacation_from",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vacation_to": {
+          "name": "vacation_to",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "destination": {
+          "name": "destination",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_during_vacation": {
+          "name": "contact_during_vacation",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "local_guardian_consent": {
+          "name": "local_guardian_consent",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "approval_status",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "summer_vacation_roll_number_student_roll_no_fk": {
+          "name": "summer_vacation_roll_number_student_roll_no_fk",
+          "tableFrom": "summer_vacation",
+          "tableTo": "student",
+          "columnsFrom": [
+            "roll_number"
+          ],
+          "columnsTo": [
+            "roll_no"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.summer_vacation_approvals": {
+      "name": "summer_vacation_approvals",
+      "schema": "",
+      "columns": {
+        "summer_vacation_id": {
+          "name": "summer_vacation_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approve": {
+          "name": "approve",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "summer_vacation_approvals_summer_vacation_id_summer_vacation_id_fk": {
+          "name": "summer_vacation_approvals_summer_vacation_id_summer_vacation_id_fk",
+          "tableFrom": "summer_vacation_approvals",
+          "tableTo": "summer_vacation",
+          "columnsFrom": [
+            "summer_vacation_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "summer_vacation_approvals_user_id_users_id_fk": {
+          "name": "summer_vacation_approvals_user_id_users_id_fk",
+          "tableFrom": "summer_vacation_approvals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
@@ -743,27 +1287,126 @@
           "primaryKey": false,
           "notNull": true
         },
-        "hostel": {
-          "name": "hostel",
-          "type": "varchar(50)",
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
         },
-        "on_leave": {
-          "name": "on_leave",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "floor": {
-          "name": "floor",
-          "type": "integer[]",
+        "password": {
+          "name": "password",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'student'"
         },
         "created_at": {
           "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.vacating_hostel": {
+      "name": "vacating_hostel",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "roll_number": {
+          "name": "roll_number",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason_for_vacating": {
+          "name": "reason_for_vacating",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_date_of_stay": {
+          "name": "last_date_of_stay",
           "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forwarding_address": {
+          "name": "forwarding_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contact_after_vacating": {
+          "name": "contact_after_vacating",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "room_condition": {
+          "name": "room_condition",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dues_clearance": {
+          "name": "dues_clearance",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'No'"
+        },
+        "key_submitted": {
+          "name": "key_submitted",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'No'"
+        },
+        "status": {
+          "name": "status",
+          "type": "approval_status",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -771,12 +1414,83 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "RC_rc_id_userss_id_fk": {
-          "name": "RC_rc_id_userss_id_fk",
-          "tableFrom": "RC",
-          "tableTo": "userss",
+        "vacating_hostel_roll_number_student_roll_no_fk": {
+          "name": "vacating_hostel_roll_number_student_roll_no_fk",
+          "tableFrom": "vacating_hostel",
+          "tableTo": "student",
           "columnsFrom": [
-            "rc_id"
+            "roll_number"
+          ],
+          "columnsTo": [
+            "roll_no"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.vacating_hostel_approvals": {
+      "name": "vacating_hostel_approvals",
+      "schema": "",
+      "columns": {
+        "vacating_hostel_id": {
+          "name": "vacating_hostel_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approve": {
+          "name": "approve",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "vacating_hostel_approvals_vacating_hostel_id_vacating_hostel_id_fk": {
+          "name": "vacating_hostel_approvals_vacating_hostel_id_vacating_hostel_id_fk",
+          "tableFrom": "vacating_hostel_approvals",
+          "tableTo": "vacating_hostel",
+          "columnsFrom": [
+            "vacating_hostel_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "vacating_hostel_approvals_user_id_users_id_fk": {
+          "name": "vacating_hostel_approvals_user_id_users_id_fk",
+          "tableFrom": "vacating_hostel_approvals",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -793,6 +1507,16 @@
     }
   },
   "enums": {
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "male",
+        "female",
+        "other",
+        "prefer not to say"
+      ]
+    },
     "public.approval_status": {
       "name": "approval_status",
       "schema": "public",
@@ -801,7 +1525,8 @@
         "1",
         "2",
         "3",
-        "4"
+        "4",
+        "-1,"
       ]
     },
     "public.role": {
@@ -809,6 +1534,7 @@
       "schema": "public",
       "values": [
         "STUDENT",
+        "MANAGER",
         "RC",
         "DEPUTY_WARDEN",
         "EXECUTIVE_WARDEN"

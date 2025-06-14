@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
     console.log(`Saving file to: uploads/`);
     cb(null, "uploads/");
   },
-  // ...existing code...
   filename: (req, file, cb) => {
     const userId = req.body.user_id || "unknown";
     let signature = file.fieldname.match(/\[(.*?)\]/)?.[1] || file.fieldname;
@@ -31,7 +30,7 @@ const storage = multer.diskStorage({
 
 export const upload = multer({
   storage,
-  limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
+  limits: { fileSize: 3 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
     console.log(
       `Received file: ${file.originalname}, mimetype: ${file.mimetype}`
