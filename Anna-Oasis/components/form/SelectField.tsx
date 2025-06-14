@@ -39,7 +39,7 @@ const SelectField = ({ label,value, options }: SelectFieldProps) => {
       {label && <Label text={label}/>}
       <Select onValueChange={(prop) => setFieldValue(value, prop)}>
         <SelectTrigger>
-          <SelectInput placeholder="Select option" className="flex-1 my-3" />
+          <SelectInput placeholder="Select option" className="flex-1 my-3 py-2" />
           <SelectIcon className="mr-3" as={ChevronDownIcon} />
         </SelectTrigger>
         <SelectPortal>

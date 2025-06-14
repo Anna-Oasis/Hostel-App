@@ -8,7 +8,9 @@ import {
   CalendarIcon,
   FileTextIcon,
   BuildingIcon,
+  LogOut,
 } from "lucide-react-native";
+import { removeCredentials, removeToken } from "@/utils/authUtils";
 
 export default function StudentMain() {
   const menuItems = [
@@ -66,6 +68,20 @@ export default function StudentMain() {
             <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
           </Button>
         ))}
+        <Button
+          key={1}
+          onPress={() => {
+            removeToken();
+            removeCredentials();
+            router.replace("/Login");
+          }}
+          className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"
+          style={{ backgroundColor: "#444444" }}
+          variant="solid"
+        >
+          <ButtonIcon as={LogOut} size="xl" color="white" />
+          <ButtonText className="mt-3 text-base font-medium">{"Logout"}</ButtonText>
+        </Button>
       </View>
     </View>
   );
