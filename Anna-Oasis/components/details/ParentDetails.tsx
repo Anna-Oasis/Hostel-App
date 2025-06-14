@@ -1,19 +1,20 @@
 import React from "react";
 import TextField from "@/components/form/TextField";
+import PhoneInputField from "@/components/form/PhoneInputField";
 
 const ParentDetails = () => (
   <>
     {/* Father Details */}
     <TextField label="Father's Name" value="fatherName" placeholder="Father's name" />
     <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
-    <TextField label="Father's Mobile (with country code)" value="fatherMobile" placeholder="Eg: +917676767676" />
+    <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
     <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
     <TextField label="Father's Country" value="fatherCountry" placeholder="Father's country" />
 
     {/* Mother Details */}
     <TextField label="Mother's Name" value="motherName" placeholder="Mother's name" />
     <TextField label="Mother's Occupation" value="motherOccupation" placeholder="Mother's occupation" />
-    <TextField label="Mother's Mobile (with country code)" value="motherMobile" placeholder="Eg: +917676767676" />
+    <PhoneInputField label="Mother's Mobile" value="motherMobile" placeholder="Mother's phone number" />
     <TextField label="Mother's Email" value="motherEmail" placeholder="Mother's email" />
     <TextField label="Mother's Country" value="motherCountry" placeholder="Mother's country" />
 
@@ -22,7 +23,6 @@ const ParentDetails = () => (
     <TextField label="Indian Street" value="resIndiaStreet" placeholder="Street" />
     <TextField label="Indian City" value="resIndiaCity" placeholder="City" />
     <TextField label="Indian State" value="resIndiaState" placeholder="State" />
-    <TextField label="Indian Country" value="resIndiaCountry" placeholder="Country" />
     <TextField label="Indian Postal Code" value="resIndiaPostalCode" placeholder="Postal Code" />
 
     {/* Residential Address (Foreign) */}

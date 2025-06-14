@@ -1,0 +1,17 @@
+step 1 - Import the "generatePdf" service from the pdfGenerationServices
+generatePdf -> takes two arguments: 1-templateName 2-data
+templateName - this is the pdf type that is to be generated. always refer the file names from pdf_templates folder
+data - this is the payload for the pdf
+
+eg - generatePdf("outpass_lavendar",data)
+data =  {
+    "name": "Jothiruban M", 
+    "roomNo":"3", 
+    "year":"4", 
+    "mobileNo" : "9384", 
+    "dateOut":"2-3-4", 
+    "timeOut":"10 AM" 
+    }
+this will generate a pdf with the name "outpass_lavendar.pdf" and returns integer
+
+all JSON key names are specific to each pdf and they must be followed as mentioned here
