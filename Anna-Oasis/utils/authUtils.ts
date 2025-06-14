@@ -126,6 +126,30 @@ export const handleLogin = async (
   }
 };
 
+export const verifyToken = async (token: string): Promise<string | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/verify-token`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 401) {
+      Alert.alert("Token Expired", "Please log in again.");
+      await removeToken();
+      router.replace("/Login");
+      return null;
+    }
+
+    const data = await response.json();
+    return data.user.role;
+  } catch (error: any) {
+    Alert.alert("Token Verification Failed", error.message);
+    return null;
+  }
+};
+
 export const handleSignup = async (
   values: { name: string; email: string; password: string },
   onSuccess: () => void

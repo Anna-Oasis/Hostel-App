@@ -11,6 +11,7 @@ import {
   getToken,
   getCredentials,
   getUserRole,
+  verifyToken,
 } from "@/utils/authUtils";
 import { redirectByRole } from "@/utils/authUtils";
 
@@ -20,17 +21,23 @@ export default function Login() {
 
   useEffect(() => {
     const checkTokenAndLogin = async () => {
-      const token = await getToken();
-      const { email, password } = await getCredentials();
+      try {
+        const token = await getToken();
 
-      if (token && email && password) {
-        await handleLogin({ email, password }, async () => {
-          const userRole = await getUserRole();
-          redirectByRole(userRole);
-        });
+        if (token) {
+          const role = await verifyToken(token);
+
+          if (role) {
+            console.log("Token is valid, redirecting based on role...", role);
+            redirectByRole(role);
+            return; 
+          }
+        }
+      } catch (error) {
+        console.error("Error during token verification:", error);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     checkTokenAndLogin();
@@ -60,7 +67,9 @@ export default function Login() {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={Yup.object().shape({
-            email: Yup.string().email("Invalid email address").required("Email is required"),
+            email: Yup.string()
+              .email("Invalid email address")
+              .required("Email is required"),
             password: Yup.string().required("Password is required"),
           })}
           onSubmit={(values) =>
@@ -72,8 +81,16 @@ export default function Login() {
         >
           {({ handleSubmit }) => (
             <View className="space-y-4">
-              <TextField label="Email" placeholder="Enter your email" value="email" />
-              <TextField label="Password" placeholder="Enter your password" value="password" />
+              <TextField
+                label="Email"
+                placeholder="Enter your email"
+                value="email"
+              />
+              <TextField
+                label="Password"
+                placeholder="Enter your password"
+                value="password"
+              />
 
               <Button
                 size="lg"
@@ -92,7 +109,9 @@ export default function Login() {
                 className="mt-3 rounded-lg border-2 border-slate-500"
                 onPress={() => router.push("/Signup")}
               >
-                <ButtonText className="text-slate-500 font-semibold">Create Account</ButtonText>
+                <ButtonText className="text-slate-500 font-semibold">
+                  Create Account
+                </ButtonText>
               </Button>
 
               <View>
