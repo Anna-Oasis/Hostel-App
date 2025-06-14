@@ -2,13 +2,11 @@ import { Admission } from "../models/admissionModel";
 import { Router } from "express";
 import { createAdmissionController, getAdmissionByAdmissionIdController,getAdmissionByRollNumberController,updateAdmissionController} from "../controllers/admissionController";
 import { createGrievanceController,getGrievancesByRollNumberController } from "../controllers/grievanceController";
-
+import errorWrapper from "../middleware/errorWrapper";
 
 const studentRouter = Router();
 
-studentRouter.post("/admission", (req, res) => {
-  createAdmissionController(req, res);
-});
+studentRouter.post("/admission", errorWrapper(createAdmissionController));
 
 studentRouter.get("/admission/:admissionId", (req, res) => {
   getAdmissionByAdmissionIdController(req, res);
