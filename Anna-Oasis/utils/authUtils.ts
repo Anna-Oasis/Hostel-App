@@ -154,8 +154,8 @@ export const handleSignup = async (
   onSuccess: () => void
 ) => {
   try {
-    await api.post("/register", values);
-
+    const response = await api.post("/register", values);
+    console.log("Signup API response:", response.data);
     Alert.alert("Signup Successful", "You can now log in.");
     onSuccess();
   } catch (error: any) {

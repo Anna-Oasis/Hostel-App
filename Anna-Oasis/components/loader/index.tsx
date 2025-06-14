@@ -14,10 +14,11 @@ const Loader = () => {
       transparent
       animationType="fade"
       onRequestClose={() => {}}
+      statusBarTranslucent={true}
     >
-      <Box className="flex-1 justify-center items-center bg-black/50 p-20">
+      <Box className="absolute inset-0 flex-1 justify-center items-center bg-black/50 p-20 z-50">
         <Center className="flex-1">
-          <Spinner size="large" color="$primary500" />
+          <Spinner size="large" />
         </Center>
       </Box>
     </Modal>
