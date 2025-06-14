@@ -136,7 +136,7 @@ export const verifyToken = async (token: string): Promise<User | null> => {
     });
 
     const data = response.data;
-    return data.user.role;
+    return data.user;
   } catch (error: any) {
     if (error.response?.status === 401) {
       Alert.alert("Token Expired", "Please log in again.");
