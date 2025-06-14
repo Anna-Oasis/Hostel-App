@@ -1,31 +1,46 @@
 import fs from 'fs';
 import path from 'path';
+import morgan from 'morgan';
 
-const LOG_FILE = path.join(__dirname, '../logs/app.log');
+// Ensure logs directory exists
+const LOG_DIR = path.join(__dirname, '../logs');
+const LOG_FILE = path.join(LOG_DIR, 'app.log');
 
-
-if (!fs.existsSync(path.dirname(LOG_FILE))) {
-    fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
+if (!fs.existsSync(LOG_DIR)) {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
 }
 
-const logToFile = (message: string) => {
-    const timestamp = new Date().toISOString();
-    const logMessage = `[${timestamp}] ${message}\n`;
-    
-    fs.appendFileSync(LOG_FILE, logMessage);
-};
+const accessLogStream = fs.createWriteStream(LOG_FILE, { flags: 'a' });
 
+morgan.token('date', () => new Date().toISOString());
+// Morgan middleware for HTTP request logging (logs to both file and console)
+export const morganLogger = morgan(
+    '[:date] [:method] :url :status :res[content-length] - :response-time ms',
+    {
+        stream: {
+            write: (message: string) => {
+                process.stdout.write(message); //console
+                accessLogStream.write(message); //file
+            }
+        }
+    }
+);
+
+// Simple logger for other logs (logs to both file and console)
 export const logger = {
     info: (message: string) => {
-        logToFile(`[INFO] ${message}`);
+        const logMessage = `[${new Date().toISOString()}] [INFO] ${message}\n`;
+        process.stdout.write(logMessage);
+        fs.appendFileSync(LOG_FILE, logMessage);
     },
     error: (message: string) => {
-        logToFile(`[ERROR] ${message}`);
+        const logMessage = `[${new Date().toISOString()}] [ERROR] ${message}\n`;
+        process.stderr.write(logMessage);
+        fs.appendFileSync(LOG_FILE, logMessage);
     },
-    request: (method: string, url: string, status: number) => {
-        logToFile(`[REQUEST] ${method} ${url} - Status: ${status}`);
-    },
-    db: (message: string) => {
-        logToFile(`[DATABASE] ${message}`);
+    config: (message: string) => {
+        const logMessage = `[${new Date().toISOString()}] [CONFIG] ${message}\n`;
+        process.stdout.write(logMessage);
+        fs.appendFileSync(LOG_FILE, logMessage);
     }
-}; 
+};

@@ -7,6 +7,7 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 import { userModel } from "./userModel";
+import { GENDER } from "./enum";
 
 export const studentModel = pgTable("student", {
   // User Reference
@@ -20,22 +21,17 @@ export const studentModel = pgTable("student", {
   course: varchar("course", { length: 50 }).notNull(),
   branch: varchar("branch", { length: 50 }).notNull(),
   semester: varchar("semester", { length: 10 }).notNull(),
-  dateOfBirth: date("date_of_birth").notNull(),
-  age: integer("age").notNull(),
   mobile: varchar("mobile", { length: 15 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
   emergencyContact: varchar("emergency_contact", { length: 15 }).notNull(),
+  dateOfBirth: date("date_of_birth").notNull(),
+  age: integer("age").notNull(),
+  gender: GENDER("gender").notNull(),
   nationality: varchar("nationality", { length: 50 }).notNull(),
+  govtIdType: varchar("govt_id_type", { length: 50 }).notNull(),
   govtId: varchar("govt_id", { length: 50 }).notNull(),
-  admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
   bloodGroup: varchar("blood_group", { length: 10 }).notNull(),
   medicalHistory: text("medical_history").notNull(),
-
-  // Hostel/Mess Info
-  previousResident: boolean("previous_resident").notNull(),
-  hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
-  roomNumber: varchar("room_number", { length: 10 }).notNull(),
-  messPreference: varchar("mess_preference", { length: 20 }).notNull(),
 
   // Father Details
   fatherName: varchar("father_name", { length: 100 }).notNull(),
@@ -86,11 +82,15 @@ export const studentModel = pgTable("student", {
 
   // Timestamp
   createdAt: date("created_at").defaultNow().notNull(),
+  updatedAt:date("updated_at").defaultNow().notNull(),
 
   // Images
   passportPhotoUrl: text("passport_photo_url"),
   studentSignatureUrl: text("student_signature_url"),
   parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
+  categoryProofUrl: text("category_proof_url"),
+  aadhaarUrl: text("aadhaar_url"),
+  admissionSlipUrl: text("admission_slip_url")
 });
 
 export type Student = typeof studentModel.$inferSelect;
