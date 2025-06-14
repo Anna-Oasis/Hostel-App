@@ -61,6 +61,12 @@ interface AuthRequest extends Request {
   };
 }
 
+/**
+ * Route to verify the token and return user information
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns JSON response with user information if token is valid
+ */
 routes.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) => {
   if (req.user) {
     res.status(200).json({
