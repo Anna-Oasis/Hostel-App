@@ -43,9 +43,15 @@ const ImagePickerField = ({ label, value, placeholder }: Props) => {
       >
         <Text className="text-black font-medium">Upload {label}</Text>
       </Button>
-      {touched[value] && errors[value] ? (
-        <Text className="text-red-500 mt-2">{errors[value]}</Text>
-      ) : null}
+      {touched[value] && errors[value] && (
+        typeof errors[value] === "string" ? (
+          <Text className="text-red-500 mt-2">{errors[value]}</Text>
+        ) : Array.isArray(errors[value]) ? (
+          (errors[value] as string[]).map((err, idx) => (
+            <Text className="text-red-500 mt-2" key={idx}>{err}</Text>
+          ))
+        ) : null
+      )}
     </View>
   );
 };
