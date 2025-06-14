@@ -95,7 +95,6 @@ export default function Login() {
                 <ButtonText className="text-slate-500 font-semibold">Create Account</ButtonText>
               </Button>
 
-              {/* Debug Buttons */}
               <View>
                 {[
                   ["/User/Student", "STUDENT"],

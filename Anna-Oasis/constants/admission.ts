@@ -7,6 +7,13 @@ const admissionCategories = [
   { label: "SIDS", value: "SIDS" },
 ];
 
+const grievanceCategories = [
+  { label: "Administrative", value: "Administrative" },
+  { label: "Hostel", value: "Hostel" },
+  { label: "Mess", value: "Mess" },
+  { label: "Health", value: "Health" },
+  { label: "Other", value: "Other" },
+];
 
 const initialValues = {
   admissionCategory: "",
@@ -28,5 +35,6 @@ const hostelBlocks = [
 export {
   admissionCategories,
   initialValues,
+  grievanceCategories,
   hostelBlocks,
 };
