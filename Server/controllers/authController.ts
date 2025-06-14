@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const validRoles: UserRole[] = ["warden", "rc", "manager", "student"];
+    const validRoles: UserRole[] = ["warden", "rc", "manager", "student", "deputyWarden", "executiveWarden"];
     if (!validRoles.includes(role)) {
       res.status(400).json({
         success: false,

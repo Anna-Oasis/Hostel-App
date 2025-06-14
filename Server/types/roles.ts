@@ -7,7 +7,7 @@ export interface CustomRequest extends Request {
   };
 }
 
-export type UserRole = "warden" | "rc" | "manager" | "student" | "admin";
+export type UserRole = "warden" | "rc" | "manager" | "student" | "admin" | "deputyWarden" | "executiveWarden";
 
 export const PERMISSIONS = {
   warden: ["all"],
