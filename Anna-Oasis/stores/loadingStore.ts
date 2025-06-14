@@ -12,4 +12,5 @@ const useLoadingStore = create<LoadingStore>((set) => ({
   resetLoading: () => set({ isLoading: false }),
 }));
 
+
 export default useLoadingStore;

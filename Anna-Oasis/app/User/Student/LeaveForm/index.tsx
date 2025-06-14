@@ -1,41 +1,71 @@
 import LeaveForm from "@/components/LeaveForm";
-import { View, Text } from "react-native";
-import React, { useEffect } from "react";
+import { View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import ModalCallable from "@/components/ModalCallable";
 import { useRouter } from "expo-router";
-import { getUserId } from "@/utils/authUtils";
+import { useUserStore } from "@/stores/userStore"
+import { getToken } from "@/utils/authUtils";
+import { verifyToken } from "@/utils/authUtils"; 
 
-export default function LeaveFormPage() {
-  const [showModal, setShowModal] = React.useState(false);
-  const [userId, setUserId] = React.useState<Number | null>(null);
+function LeaveFormPage() {
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  const handleSubmit = (values: any, id : Number | null) => {
+
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  const hasInitialized = useRef(false);
+
+  const handleSubmit = (values: any, id: number | null) => {
     console.log(`Leave Form Submitted by User ID: ${id}`, values);
     setShowModal(true);
-    if (!showModal) {
-      router.push("/User/Student");
-    }
   };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    router.push("/User/Student");
+  };
+
   useEffect(() => {
-    const fetchUserId = async () => {
-      const id = await getUserId();
-      setUserId(id);
+    if (hasInitialized.current || user !== null) return;
+
+    hasInitialized.current = true;
+
+    const initializeUser = async () => {
+      try {
+        const token = await getToken();
+        if (!token) {
+          router.replace("/Login");
+          return;
+        }
+
+        const verifiedUser = await verifyToken(token);
+        if (verifiedUser) {
+          setUser(verifiedUser);
+        }
+      } catch (error) {
+        console.error("Failed to verify user:", error);
+      }
     };
-    fetchUserId();
-  }, []);
+
+    initializeUser();
+  }, [user, setUser]);
+
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
-      <LeaveForm onSubmit={(values) => {
-        console.log("Leave Form Submitted:", values);
-        handleSubmit(values, userId);
-      }}
+      <LeaveForm
+        onSubmit={(values) => {
+          handleSubmit(values, user ? parseInt(user.id) : null);
+        }}
       />
       <ModalCallable
         show={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={handleModalClose}
         title="Leave Application Submitted"
         message="Your leave application has been successfully submitted. We will review it and get back to you shortly."
       />
     </View>
   );
 }
+
+export default LeaveFormPage;

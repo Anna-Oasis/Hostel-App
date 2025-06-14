@@ -8,8 +8,6 @@ import { useRouter } from "expo-router";
 import {
   handleLogin,
   getToken,
-  getCredentials,
-  getUserRole,
   verifyToken,
 } from "@/utils/authUtils";
 import { redirectByRole } from "@/utils/authUtils";

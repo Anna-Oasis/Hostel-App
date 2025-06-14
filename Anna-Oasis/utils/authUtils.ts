@@ -2,28 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 import api from "@/api"; // <-- import the axios instance
+import { User } from "../stores/userStore"; // <-- import the User type
 
 const TOKEN_KEY = "authToken";
-
-export const saveCredentials = async (email: string, password: string) => {
-  try {
-    await AsyncStorage.setItem("email", email);
-    await AsyncStorage.setItem("password", password);
-  } catch (error) {
-    console.error("Error saving credentials:", error);
-  }
-};
-
-export const getCredentials = async () => {
-  try {
-    const email = await AsyncStorage.getItem("email");
-    const password = await AsyncStorage.getItem("password");
-    return { email, password };
-  } catch (error) {
-    console.error("Error retrieving credentials:", error);
-    return { email: null, password: null };
-  }
-};
 
 export const saveToken = async (token: string) => {
   try {
@@ -50,51 +31,6 @@ export const removeToken = async () => {
   }
 };
 
-export const saveUserRole = async (role: string) => {
-  try {
-    await AsyncStorage.setItem("userRole", role);
-  } catch (error) {
-    console.error("Error saving user role:", error);
-  }
-};
-export const getUserRole = async (): Promise<string | null> => {
-  try {
-    return await AsyncStorage.getItem("userRole");
-  } catch (error) {
-    console.error("Error retrieving user role:", error);
-    return null;
-  }
-};
-
-export const removeCredentials = async () => {
-  try {
-    await AsyncStorage.removeItem("email");
-    await AsyncStorage.removeItem("password");
-    await AsyncStorage.removeItem("userId")
-  } catch (error) {
-    console.error("Error removing credentials:", error);
-  }
-};
-
-export const saveUserId = async (id: Number) => {
-  try {
-    await AsyncStorage.setItem("userId", id.toString());
-  }
-  catch (error) {
-    console.error("Error saving user ID:", error);
-  }
-}
-
-export const getUserId = async (): Promise<Number | null> => {
-  try {
-    const userId = await AsyncStorage.getItem("userId");
-    return userId ? Number(userId) : null;
-  } catch (error) {
-    console.error("Error retrieving user ID:", error);
-    return null;
-  }
-};
-
 export const handleLogin = async (
   values: { email: string; password: string },
   onSuccess: () => void
@@ -104,9 +40,6 @@ export const handleLogin = async (
 
     const data = response.data;
     await saveToken(data.data.token);
-    await saveCredentials(values.email, values.password);
-    await saveUserRole(data.data.role);
-    await saveUserId(data.data.id);
     Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
     onSuccess();
   } catch (error: any) {
@@ -114,10 +47,7 @@ export const handleLogin = async (
   }
 };
 
-interface User {
-  id: number;
-  role: string;
-}
+
 
 /**
  * 
