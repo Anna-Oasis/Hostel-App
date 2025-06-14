@@ -126,6 +126,15 @@ export const handleLogin = async (
   }
 };
 
+
+/**
+ * 
+ * @param token - The JWT token to verify
+ * @description Verifies the JWT token by making a request to the backend.
+ * If the token is valid, it returns the user's role. If the token is expired or invalid,
+ * it alerts the user and redirects them to the login page.
+ * @returns {Promise<string | null>} - Returns the user's role if the token is valid, otherwise returns null.
+ */
 export const verifyToken = async (token: string): Promise<string | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/verify-token`, {
