@@ -54,33 +54,6 @@ routes.get("/health", (req: Request, res: Response) => {
 // });
 
 
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    role: UserRole;
-  };
-}
-
-/**
- * Route to verify the token and return user information
- * @param req - Express request object
- * @param res - Express response object
- * @returns JSON response with user information if token is valid
- */
-routes.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) => {
-  if (req.user) {
-    res.status(200).json({
-      success: true,
-      message: "Token is valid",
-      user : req.user
-    });
-  } else {
-    res.status(401).json({
-      success: false,
-      message: "Invalid token",
-    });
-  }
-});
 
 routes.get(/^\/.*/, (req: Request, res: Response) => {
   res.send("👋 Welcome to Anna Oasis API!");

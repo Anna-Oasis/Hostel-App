@@ -25,12 +25,12 @@ export default function Login() {
         const token = await getToken();
 
         if (token) {
-          const role = await verifyToken(token);
+          const user = await verifyToken(token);
 
-          if (role) {
-            console.log("Token is valid, redirecting based on role...", role);
-            redirectByRole(role);
-            return; 
+          if (user) {
+            console.log("Token is valid, redirecting based on role...", user.role);
+            redirectByRole(user.role);
+            return;
           }
         }
       } catch (error) {
@@ -77,10 +77,10 @@ export default function Login() {
               // const role = await getUserRole();
               const token = await getToken();
               if (token) {
-                const role = await verifyToken(token);
-                if (role) {
-                  console.log("Login successful, redirecting based on role...", role);
-                  redirectByRole(role);
+                const user = await verifyToken(token);
+                if (user) {
+                  console.log("Login successful, redirecting based on role...", user.role);
+                  redirectByRole(user.role);
                 } else {
                   Alert.alert("Error", "Invalid token, please login again.");
                 }

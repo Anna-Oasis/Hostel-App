@@ -126,6 +126,10 @@ export const handleLogin = async (
   }
 };
 
+interface User {
+  id: number;
+  role: string;
+}
 
 /**
  * 
@@ -133,9 +137,9 @@ export const handleLogin = async (
  * @description Verifies the JWT token by making a request to the backend.
  * If the token is valid, it returns the user's role. If the token is expired or invalid,
  * it alerts the user and redirects them to the login page.
- * @returns {Promise<string | null>} - Returns the user's role if the token is valid, otherwise returns null.
+ * @returns {Promise<User | null>} - Returns the user's information if the token is valid, otherwise returns null.
  */
-export const verifyToken = async (token: string): Promise<string | null> => {
+export const verifyToken = async (token: string): Promise<User | null> => {
   try {
     const response = await fetch(`${API_BASE_URL}/verify-token`, {
       method: "GET",
@@ -152,7 +156,8 @@ export const verifyToken = async (token: string): Promise<string | null> => {
     }
 
     const data = await response.json();
-    return data.user.role;
+    console.log("Token verification response:", data.user);
+    return data.user;
   } catch (error: any) {
     Alert.alert("Token Verification Failed", error.message);
     return null;
