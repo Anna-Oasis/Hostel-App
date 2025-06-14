@@ -6,7 +6,6 @@ import { initialValues } from "@/constants/admission";
 import validationSchemas from "@/constants/admissionValidation";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 import PreviewPage from "@/components/admission/PreviewPage";
-import PaymentPage from "@/components/admission/PaymentPage";
 import AdmissionDetails from "@/components/admission/AdmissionDetails";
 
 const AdmissionForm = () => {
@@ -26,10 +25,8 @@ const AdmissionForm = () => {
       case 0:
         return <AdmissionDetails />;
       case 1:
-        return <PaymentPage />;
-      case 2:
         return <HostelMessDeclaration />;
-      case 3:
+      case 2:
         return <PreviewPage onEdit={prev} onSubmit={handleSubmit} />;
       default:
         return null;
@@ -63,7 +60,7 @@ const AdmissionForm = () => {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              {page < 3 && (
+              {page < 2 && (
                 <>
                   {page > 0 && (
                     <Button onPress={prev}>

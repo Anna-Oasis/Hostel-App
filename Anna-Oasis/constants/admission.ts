@@ -1,4 +1,3 @@
-
 const admissionCategories = [
   { label: "NRI", value: "NRI" },
   { label: "CIWGC", value: "CIWGC" },
@@ -16,15 +15,15 @@ const grievanceCategories = [
 ];
 
 const initialValues = {
-  admissionCategory: "",
-  previousResident: "",
-  messPreference: "",
+  admissionCategory: undefined,
+  previousResident: undefined,
+  messPreference: undefined,
   studentAgreed: "",
   parentAgreed: "",
   submissionDate: "",
   transactionId: "",
   academicYear: "",
-  hostelBlock: ""
+  hostelBlock: undefined
 };
 
 const hostelBlocks = [
@@ -32,9 +31,21 @@ const hostelBlocks = [
   { label: "Lavendar (Girls)", value: "Lavendar" },
 ];
 
+const messPreferences = [
+  { label: "Veg", value: "Veg" },
+  { label: "Non-Veg", value: "Non-Veg" },
+];
+
+const previousResidentOptions = [
+  { label: "Yes", value: "Yes" },
+  { label: "No", value: "No" },
+];
+
 export {
   admissionCategories,
   initialValues,
   grievanceCategories,
   hostelBlocks,
+  messPreferences,
+  previousResidentOptions,
 };
