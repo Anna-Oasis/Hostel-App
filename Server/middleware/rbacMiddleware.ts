@@ -91,7 +91,9 @@ export const hasPermission = (requiredPermission: string) => {
       return;
     }
 
-    const userPermissions: string[] = Array.from(PERMISSIONS[req.user.role]);
+    const userPermissions: string[] = Array.from(
+      PERMISSIONS[req.user.role as keyof typeof PERMISSIONS]
+    );
     
     if (
       userPermissions.includes('all') || 

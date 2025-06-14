@@ -5,6 +5,8 @@ import studentRouter from "./studentRoutes";
 import managerRouter from "./managerRoutes";
 import deputyRouter from './deputyWardenRoutes'
 import rcRouter from "./rcRoutes";
+import { UserRole, PERMISSIONS } from "../types/roles";
+import { authenticateUser } from "../middleware/rbacMiddleware";
 // import { generatePdf, PDFData } from "../utils/pdfGenerator"; // Uncomment if you want to use the PDF generation route
 
 const routes = Router();
@@ -50,6 +52,29 @@ routes.get("/health", (req: Request, res: Response) => {
 //     });
 //   }
 // });
+
+
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    role: UserRole;
+  };
+}
+
+routes.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) => {
+  if (req.user) {
+    res.status(200).json({
+      success: true,
+      message: "Token is valid",
+      user : req.user
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
+});
 
 routes.get(/^\/.*/, (req: Request, res: Response) => {
   res.send("👋 Welcome to Anna Oasis API!");
