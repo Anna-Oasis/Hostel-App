@@ -74,8 +74,17 @@ export default function Login() {
           })}
           onSubmit={(values) =>
             handleLogin(values, async () => {
-              const role = await getUserRole();
-              redirectByRole(role);
+              // const role = await getUserRole();
+              const token = await getToken();
+              if (token) {
+                const role = await verifyToken(token);
+                if (role) {
+                  console.log("Login successful, redirecting based on role...", role);
+                  redirectByRole(role);
+                } else {
+                  Alert.alert("Error", "Invalid token, please login again.");
+                }
+              }
             })
           }
         >
