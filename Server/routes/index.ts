@@ -14,10 +14,7 @@ routes.use("/api/details", detailsRouter);
 routes.use("/api/student/", studentRouter);
 routes.use("/api/manager/", managerRouter);
 routes.use("/api/deputy_warden/", deputyRouter);
-
-
 routes.use("/api/resident_counsellor/",rcRouter);
-
 
 routes.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
