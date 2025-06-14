@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ImagePickerField = ({ label, value, placeholder }: Props) => {
-  const { setFieldValue, values } = useFormikContext<any>();
+  const { setFieldValue, values, errors, touched } = useFormikContext<any>();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -43,6 +43,9 @@ const ImagePickerField = ({ label, value, placeholder }: Props) => {
       >
         <Text className="text-black font-medium">Upload {label}</Text>
       </Button>
+      {touched[value] && errors[value] ? (
+        <Text className="text-red-500 mt-2">{errors[value]}</Text>
+      ) : null}
     </View>
   );
 };
