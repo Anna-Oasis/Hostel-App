@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
-
-const API_BASE_URL = "http://10.0.2.2:5000";
+import api from "@/api"; // <-- import the axios instance
 
 const TOKEN_KEY = "authToken";
 
@@ -101,20 +100,9 @@ export const handleLogin = async (
   onSuccess: () => void
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const response = await api.post("/login", values);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
-    }
-
-    const data = await response.json();
+    const data = response.data;
     await saveToken(data.data.token);
     await saveCredentials(values.email, values.password);
     await saveUserRole(data.data.role);
@@ -122,7 +110,7 @@ export const handleLogin = async (
     Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Login Failed", error.message);
+    Alert.alert("Login Failed", error.response?.data?.message || error.message);
   }
 };
 
@@ -141,25 +129,22 @@ interface User {
  */
 export const verifyToken = async (token: string): Promise<User | null> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/verify-token`, {
-      method: "GET",
+    const response = await api.get("/verify-token", {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    if (response.status === 401) {
+    const data = response.data;
+    return data.user.role;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
       Alert.alert("Token Expired", "Please log in again.");
       await removeToken();
       router.replace("/Login");
       return null;
     }
-
-    const data = await response.json();
-    console.log("Token verification response:", data.user);
-    return data.user;
-  } catch (error: any) {
-    Alert.alert("Token Verification Failed", error.message);
+    Alert.alert("Token Verification Failed", error.response?.data?.message || error.message);
     return null;
   }
 };
@@ -169,23 +154,12 @@ export const handleSignup = async (
   onSuccess: () => void
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Signup failed");
-    }
+    await api.post("/register", values);
 
     Alert.alert("Signup Successful", "You can now log in.");
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Signup Failed", error.message);
+    Alert.alert("Signup Failed", error.response?.data?.message || error.message);
   }
 };
 
