@@ -1,14 +1,8 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../types/roles";
-import { ManagerService } from "../services/managerService";
+import { getAdmissionApprovals, resolveGrievance, getGrievances } from "../services/managerService";
 
 export class ManagerController {
-  private managerService: ManagerService;
-
-  constructor() {
-    this.managerService = new ManagerService();
-  }
-
   async getAdmissionApprovals(req: AuthenticatedRequest, res: Response): Promise<void> {
     if (!req.userRole || req.userRole !== "manager" || !req.userId) {
       res.status(403).json({ error: "Access denied" });
@@ -16,7 +10,7 @@ export class ManagerController {
     }
 
     try {
-      const approvals = await this.managerService.getAdmissionApprovals(Number(req.userId));
+      const approvals = await getAdmissionApprovals(Number(req.userId));
       res.json(approvals);
     } catch (err) {
       console.error(err);
@@ -38,7 +32,7 @@ export class ManagerController {
     }
 
     try {
-      const result = await this.managerService.resolveGrievance(grievanceId);
+      const result = await resolveGrievance(grievanceId);
 
       if (!result || result.length === 0) {
         res.status(404).json({ error: 'Grievance ID is not found' });
@@ -59,11 +53,11 @@ export class ManagerController {
     }
 
     try {
-      const awaitingGrievances = await this.managerService.getGrievances();
+      const awaitingGrievances = await getGrievances();
       res.status(200).json(awaitingGrievances);
     } catch (err) {
       console.error("Server Error");
       res.status(500).json({ error: "Server error" });
     }
   }
-} 
+}
