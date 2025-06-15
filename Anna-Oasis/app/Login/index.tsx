@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { View, Text, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
@@ -13,40 +12,7 @@ import {
 import { redirectByRole } from "@/utils/authUtils";
 
 export default function Login() {
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkTokenAndLogin = async () => {
-      try {
-        const token = await getToken();
-
-        if (token) {
-          const user = await verifyToken(token);
-
-          if (user) {
-            console.log("Token is valid, redirecting based on role...", user.role);
-            redirectByRole(user.role);
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error during token verification:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkTokenAndLogin();
-  }, []);
-
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-base text-gray-600">Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -71,7 +37,6 @@ export default function Login() {
           })}
           onSubmit={(values) =>
             handleLogin(values, async () => {
-              // const role = await getUserRole();
               const token = await getToken();
               if (token) {
                 const user = await verifyToken(token);
