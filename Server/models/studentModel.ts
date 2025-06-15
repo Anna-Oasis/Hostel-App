@@ -7,13 +7,13 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 import { userModel } from "./userModel";
-import { GENDER } from "./enum";
+import {gender_pgEnum} from "./enum";
 
 export const studentModel = pgTable("student", {
   // User Reference
   user_id: integer("user_id")
     .notNull()
-    .references(() => userModel.id, { onDelete: "no action" }),
+    .references(() => userModel.id, { onDelete: "no action" }).unique(),
 
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),
@@ -26,7 +26,7 @@ export const studentModel = pgTable("student", {
   emergencyContact: varchar("emergency_contact", { length: 15 }).notNull(),
   dateOfBirth: date("date_of_birth").notNull(),
   age: integer("age").notNull(),
-  gender: GENDER("gender").notNull(),
+  gender: gender_pgEnum("gender").notNull(),
   nationality: varchar("nationality", { length: 50 }).notNull(),
   govtIdType: varchar("govt_id_type", { length: 50 }).notNull(),
   govtId: varchar("govt_id", { length: 50 }).notNull(),

@@ -7,7 +7,7 @@ import {
 } from "../services/rcServices";
 import { rcDecisionSchema } from "../validation/rc.schema";
 import { ZodError } from "zod";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
 
 export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;

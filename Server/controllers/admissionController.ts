@@ -8,7 +8,7 @@ import {
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 
 export async function createAdmissionController(req: Request, res: Response) {

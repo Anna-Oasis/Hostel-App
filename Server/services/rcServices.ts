@@ -4,7 +4,7 @@ import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { studentModel } from "../models/studentModel";
 import { rcModel } from "../models/rcModel";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
 
 interface NewAdmissionApproval {
   admission_id: number;
@@ -62,7 +62,6 @@ export const updateAdmissionStatus = async ({
     .set({ 
       status,
       roomNumber,
-      floor,
     })
     .where(eq(admissionModel.id, admission_id))
     .returning();
