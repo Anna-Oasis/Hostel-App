@@ -16,6 +16,7 @@ import { approval_status } from "../constants/enum";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
 import { checkRoom, removeStudentFromRoom, updateStudentRoomNumber } from "../services/roomServices";
+import { ROOM_SIZE } from "../constants/values";
 
 export const viewAdmissionsByRCController = async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;
@@ -80,7 +81,7 @@ export const approveOrDeclineAdmissionByRCController = async (
     }
 
     // Check if room has space (max 2 students)
-    if (room.rollNo && room.rollNo.length >= 2) {
+    if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
       throw AppError("Room is already full (2 students)", httpStatus.BAD_REQUEST);
     }
 
