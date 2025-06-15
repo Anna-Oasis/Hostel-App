@@ -12,7 +12,7 @@ studentRouter.get("/admission/:admissionId", (req, res) => {
   getAdmissionByAdmissionIdController(req, res);
 });
 
-studentRouter.get("/admission/roll-number/:roll_number", (req, res) => {
+studentRouter.get("/admission/student/:roll_number", (req, res) => {
   getAdmissionByRollNumberController(req, res);
 });
 

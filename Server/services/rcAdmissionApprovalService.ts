@@ -2,7 +2,7 @@ import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { admissionModel } from "../models/admissionModel";
 import { eq, and, or } from "drizzle-orm";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
 
 export const getAdmissionsApprovedByRC = async (rcId: number) => {
   return await db

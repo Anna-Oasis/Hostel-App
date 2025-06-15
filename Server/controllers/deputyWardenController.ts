@@ -1,62 +1,58 @@
 import { Request, Response } from "express";
-import { getAdmissionsByDeputyWarden, createAdmissionApprovalByDeputyWarden, updateAdmissionStatusByDeputyWarden } from "../services/deputyWardenServices";
+import { 
+  getAdmissionsByDeputyWarden, 
+  createAdmissionApprovalByDeputyWarden, 
+  updateAdmissionStatusByDeputyWarden 
+} from "../services/deputyWardenServices";
 import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
-import { ZodError } from "zod";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
+import AppError from "../utils/AppError";
+import httpStatus from "http-status";
 
 export const viewAdmissionsByDeputyWardenController = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const admissions = await getAdmissionsByDeputyWarden();
-    res.status(200).json({ success: true, data: admissions });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    res.status(500).json({
-      success: false,
-      message,
-    });
+  const admissions = await getAdmissionsByDeputyWarden();
+  
+  if (!admissions) {
+    throw AppError("Failed to fetch admissions", httpStatus.INTERNAL_SERVER_ERROR);
   }
+
+  res.status(httpStatus.OK).json({ 
+    success: true, 
+    data: admissions,
+    message: "Fetched Admissions successfully",
+  });
 };
 
 export const approveOrDeclineAdmissionByDeputyWardenController = async (req: Request, res: Response): Promise<void> => {
   const { admission_id } = req.params;
 
-  try {
-    const validated = deputyWardenDecisionSchema.parse(req.body);
-    const status = validated.approve ? approval_status.deputyWarden : approval_status.declined;
+  const validated = deputyWardenDecisionSchema.parse(req.body);
+  const status = validated.approve ? approval_status.deputyWarden : approval_status.declined;
 
-    await createAdmissionApprovalByDeputyWarden({
-      admission_id: Number(admission_id),
-      user_id: validated.user_id,
-      approve: validated.approve,
-      comment: validated.comment,
-    });
+  const approvalResult = await createAdmissionApprovalByDeputyWarden({
+    admission_id: Number(admission_id),
+    user_id: validated.user_id,
+    approve: validated.approve,
+    comment: validated.comment,
+  });
 
-    await updateAdmissionStatusByDeputyWarden({
-      admission_id: Number(admission_id),
-      status,
-      roomNumber: validated.approve ? validated.room : ' ', // Empty string if declined
-      floor: validated.approve ? validated.floor : -1 // -1 if declined
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Admission approval submitted",
-    });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.errors,
-      });
-      return;
-    }
-
-    console.error("❌ Deputy Warden approval error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+  if (!approvalResult) {
+    throw AppError("Failed to create admission approval", httpStatus.INTERNAL_SERVER_ERROR);
   }
-};
 
+  const updateResult = await updateAdmissionStatusByDeputyWarden({
+    admission_id: Number(admission_id),
+    status,
+    roomNumber: validated.approve ? validated.room : '', // Empty string if declined
+    floor: validated.approve ? validated.floor : -1 // -1 if declined
+  });
+
+  if (!updateResult) {
+    throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "Admission approval submitted successfully",
+  });
+};
