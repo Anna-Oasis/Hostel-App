@@ -124,7 +124,7 @@ export const handleSignup = async (
 export const redirectByRole = (role: string | null) => {
   switch (role) {
     case "student":
-      router.push("/Student/Home");
+      router.push("/User/Student");
       break;
     case "warden":
       router.push("/ExecutiveWarden");

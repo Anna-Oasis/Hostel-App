@@ -1,10 +1,16 @@
 import { Router } from "express";
-import { validateJWT } from "../middleware/jwt";
-import { DeputyWardenController } from "../controllers/deputyWardenController";
+import {
+  viewAdmissionsByDeputyWarden,
+  approveOrDeclineAdmissionByDeputyWarden
+} from "../controllers/deputyWardenController";
 
-const router = Router();
-const deputyWardenController = new DeputyWardenController();
+const deputyWardenRouter = Router();
 
-router.get("/admissions/approvals", validateJWT, deputyWardenController.getAdmissionApprovals.bind(deputyWardenController));
+// Fetch all admissions waiting for RC approval by hostel block
+deputyWardenRouter.get("/admissions", viewAdmissionsByDeputyWarden);
 
-export default router;
+// Approve or decline admission by RC with admission ID in path
+deputyWardenRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByDeputyWarden);
+
+export default deputyWardenRouter;
+
