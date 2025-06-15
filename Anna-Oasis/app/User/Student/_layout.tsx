@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
-import StudentAppBar from "@/components/appbars/StudentAppBar";
+import AppBar from "@/components/appbars/AppBar";
 
 export default function StudentLayout() {
   return (
     <>
-      <StudentAppBar title="Student Dashboard" />
+      <AppBar title="Student Dashboard" />
       <Stack screenOptions={{ headerShown: false }} />
     </>
   );

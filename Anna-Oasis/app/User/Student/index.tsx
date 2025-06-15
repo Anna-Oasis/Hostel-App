@@ -11,7 +11,7 @@ import {
   LogOut,
 } from "lucide-react-native";
 import { removeToken } from "@/utils/authUtils";
-import StudentAppBar from "@/components/appbars/StudentAppBar";
+import StudentAppBar from "@/components/appbars/AppBar";
 
 export default function StudentMain() {
   const menuItems = [
