@@ -96,7 +96,6 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
               />
 
               <Button onPress={() => {
-                console.log(values);
                 handleSubmit();
               }} className="mt-6">
                 <ButtonText>Submit Leave Application</ButtonText>

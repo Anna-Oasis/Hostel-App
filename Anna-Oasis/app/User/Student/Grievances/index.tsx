@@ -3,17 +3,24 @@ import { useRouter } from "expo-router";
 import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import ModalCallable from "@/components/ModalCallable";
-import { getUserId } from "@/utils/authUtils";
+import { useUserStore } from "@/stores/userStore";
+import { getToken, verifyToken } from "@/utils/authUtils";
+import { useState, useRef } from "react";
+
 export default function GrievancesPage() {
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  const [showModal, setShowModal] = React.useState(false);
-  const [userId, setUserId] = React.useState<Number | null>(null);
-  const handleSubmit = (values: any, id : Number | null) => {
+
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  const hasInitialized = useRef(false);
+  const handleSubmit = (values: any, id: Number | null) => {
     console.log(`Grievance Form Submitted by User ID: ${id}`, values);
     setShowModal(true);
     setTimeout(() => {
       redirectToHome();
-    }, 4000); 
+    }, 4000);
   };
   const redirectToHome = () => {
     if (!showModal) {
@@ -21,18 +28,36 @@ export default function GrievancesPage() {
     }
   }
   useEffect(() => {
-    const fetchUserId = async () => {
-      const id = await getUserId();
-      setUserId(id);
+    if (hasInitialized.current || user !== null) return;
+
+    hasInitialized.current = true;
+
+    const initializeUser = async () => {
+      try {
+        const token = await getToken();
+        if (!token) {
+          router.replace("/Login");
+          return;
+        }
+
+        const verifiedUser = await verifyToken(token);
+        if (verifiedUser) {
+          setUser(verifiedUser);
+        }
+      } catch (error) {
+        console.error("Failed to verify user:", error);
+      }
     };
-    fetchUserId();
-  }, []);
+
+    initializeUser();
+  }, [user, setUser]);
+
 
   return (
     <View style={{ flex: 1, justifyContent: "center", }}>
       <GrievanceForm
         onSubmit={(values) => {
-          handleSubmit(values, userId);
+          handleSubmit(values, user ? parseInt(user.id) : null);
         }
         }
       />

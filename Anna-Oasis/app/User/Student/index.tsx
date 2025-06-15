@@ -10,7 +10,7 @@ import {
   BuildingIcon,
   LogOut,
 } from "lucide-react-native";
-import { removeCredentials, removeToken } from "@/utils/authUtils";
+import { removeToken } from "@/utils/authUtils";
 
 export default function StudentMain() {
   const menuItems = [
@@ -72,7 +72,6 @@ export default function StudentMain() {
           key={1}
           onPress={() => {
             removeToken();
-            removeCredentials();
             router.replace("/Login");
           }}
           className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"

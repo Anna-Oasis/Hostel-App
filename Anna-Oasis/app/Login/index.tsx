@@ -1,5 +1,3 @@
-// Login.tsx
-import React, { useEffect, useState } from "react";
 import { View, Text, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
@@ -9,40 +7,12 @@ import { useRouter } from "expo-router";
 import {
   handleLogin,
   getToken,
-  getCredentials,
-  getUserRole,
+  verifyToken,
 } from "@/utils/authUtils";
 import { redirectByRole } from "@/utils/authUtils";
 
 export default function Login() {
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
-
-  useEffect(() => {
-    const checkTokenAndLogin = async () => {
-      const token = await getToken();
-      const { email, password } = await getCredentials();
-
-      if (token && email && password) {
-        await handleLogin({ email, password }, async () => {
-          const userRole = await getUserRole();
-          redirectByRole(userRole);
-        });
-      }
-
-      setLoading(false);
-    };
-
-    checkTokenAndLogin();
-  }, []);
-
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-base text-gray-600">Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -60,20 +30,38 @@ export default function Login() {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={Yup.object().shape({
-            email: Yup.string().email("Invalid email address").required("Email is required"),
+            email: Yup.string()
+              .email("Invalid email address")
+              .required("Email is required"),
             password: Yup.string().required("Password is required"),
           })}
           onSubmit={(values) =>
             handleLogin(values, async () => {
-              const role = await getUserRole();
-              redirectByRole(role);
+              const token = await getToken();
+              if (token) {
+                const user = await verifyToken(token);
+                if (user) {
+                  console.log("Login successful, redirecting based on role...", user.role);
+                  redirectByRole(user.role);
+                } else {
+                  Alert.alert("Error", "Invalid token, please login again.");
+                }
+              }
             })
           }
         >
           {({ handleSubmit }) => (
             <View className="space-y-4">
-              <TextField label="Email" placeholder="Enter your email" value="email" />
-              <TextField label="Password" placeholder="Enter your password" value="password" />
+              <TextField
+                label="Email"
+                placeholder="Enter your email"
+                value="email"
+              />
+              <TextField
+                label="Password"
+                placeholder="Enter your password"
+                value="password"
+              />
 
               <Button
                 size="lg"
@@ -92,7 +80,9 @@ export default function Login() {
                 className="mt-3 rounded-lg border-2 border-slate-500"
                 onPress={() => router.push("/Signup")}
               >
-                <ButtonText className="text-slate-500 font-semibold">Create Account</ButtonText>
+                <ButtonText className="text-slate-500 font-semibold">
+                  Create Account
+                </ButtonText>
               </Button>
 
               <View>
