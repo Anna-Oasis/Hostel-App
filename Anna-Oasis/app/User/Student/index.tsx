@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react-native";
 import { removeToken } from "@/utils/authUtils";
+import StudentAppBar from "@/components/appbars/AppBar";
 
 export default function StudentMain() {
   const menuItems = [
@@ -53,9 +54,8 @@ export default function StudentMain() {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4 pt-16">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Student Services</Text>
-      <View className="flex-row flex-wrap justify-between">
+    <>
+      <View className="flex-row flex-wrap justify-between items-center p-8">
         {menuItems.map((item, idx) => (
           <Button
             key={idx}
@@ -65,23 +65,12 @@ export default function StudentMain() {
             variant="solid"
           >
             <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonText className="mt-3 text-base font-medium">
+              {item.title}
+            </ButtonText>
           </Button>
         ))}
-        <Button
-          key={1}
-          onPress={() => {
-            removeToken();
-            router.replace("/Login");
-          }}
-          className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"
-          style={{ backgroundColor: "#444444" }}
-          variant="solid"
-        >
-          <ButtonIcon as={LogOut} size="xl" color="white" />
-          <ButtonText className="mt-3 text-base font-medium">{"Logout"}</ButtonText>
-        </Button>
       </View>
-    </View>
+    </>
   );
 }
