@@ -4,7 +4,7 @@ import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
 
-export const viewAdmissionsByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
+export const viewAdmissionsByDeputyWardenController = async (req: Request, res: Response): Promise<void> => {
   try {
     const admissions = await getAdmissionsByDeputyWarden();
     res.status(200).json({ success: true, data: admissions });
@@ -17,7 +17,7 @@ export const viewAdmissionsByDeputyWarden = async (req: Request, res: Response):
   }
 };
 
-export const approveOrDeclineAdmissionByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
+export const approveOrDeclineAdmissionByDeputyWardenController = async (req: Request, res: Response): Promise<void> => {
   const { admission_id } = req.params;
 
   try {

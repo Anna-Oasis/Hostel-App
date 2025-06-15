@@ -50,6 +50,13 @@
       "when": 1749549731715,
       "tag": "0006_amused_sage",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1749881754428,
+      "tag": "0007_jittery_talisman",
+      "breakpoints": true
     }
   ]
 }

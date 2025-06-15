@@ -11,7 +11,7 @@ import { rcAdmissionDecisionSchema, rcGrievanceDecisionSchema } from "../validat
 import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
 
-export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<void> => {
+export const viewAdmissionsByRCController = async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;
 
   try {
@@ -32,7 +32,7 @@ export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<v
   }
 };
 
-export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response): Promise<void> => {
+export const approveOrDeclineAdmissionByRCController = async (req: Request, res: Response): Promise<void> => {
   const { admission_id } = req.params;
 
   try {
@@ -75,7 +75,7 @@ export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response)
   }
 };
 
-export const viewGrievancesByRC = async (req: Request, res: Response): Promise<void> => {
+export const viewGrievancesByRCController = async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;
 
   try {
@@ -96,7 +96,7 @@ export const viewGrievancesByRC = async (req: Request, res: Response): Promise<v
   }
 };
 
-export const approveOrDeclineGrievancesByRC = async (req: Request, res: Response): Promise<void> => {
+export const approveOrDeclineGrievancesByRCController= async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;
 
   try {
