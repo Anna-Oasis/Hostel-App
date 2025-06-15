@@ -3,9 +3,10 @@ import {
   integer,
   varchar,
   boolean,
-  date,
+  timestamp,
   serial,
 } from "drizzle-orm/pg-core";
+import { hostel_block_pgEnum } from "./enum";
 
 import { userModel } from "./userModel";
 
@@ -13,12 +14,10 @@ export const rcModel = pgTable("rc", {
   
   id: serial("rc_id").primaryKey().references(() => userModel.id, { onDelete: "no action" }),
   name: varchar("name", { length: 100 }).notNull(),
-  hostel: varchar("hostel", { length: 50 }).notNull(),
-  onLeave: boolean("on_leave"), // not null is not used here
+  hostel: hostel_block_pgEnum("hostel").notNull(),
+  onLeave: boolean("on_leave").notNull().default(false),
   floor: integer("floor").array().notNull(), 
-
-  // Timestamp
-  createdAt: date("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type RC = typeof rcModel.$inferSelect;

@@ -11,8 +11,6 @@ const isAppError = (error: any): error is AppErrorType => {
 };
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction): void => {
-  console.log("Inside error Handler");
-  console.error("Error occurred:", err instanceof ZodError ? "ZodError" : err.name);
   if (err instanceof ZodError) {
     res.status(400).json({
       success: false,
@@ -21,8 +19,6 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
     });
     return;
   }
-
-  // for app errors
   if (isAppError(err)) {
     res.status(err.status).json({
       success: false,
