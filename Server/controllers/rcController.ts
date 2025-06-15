@@ -2,15 +2,20 @@ import { Request, Response } from "express";
 import {
   getRCById,
   getAdmissionsByHostelBlock,
-  createAdmissionApproval,
-  updateAdmissionStatus,
   getGrievances,
   updateGrievanceApprovalStatus
 } from "../services/rcServices";
+import {
+  createAdmissionApproval, 
+  updateAdmissionStatus,
+  getRollNumberByAdmissionId,
+  getAdmissionByAdmissionId 
+} from "../services/admissionServices"
 import { rcAdmissionDecisionSchema, rcGrievanceDecisionSchema } from "../validation/rc.schema";
 import { approval_status } from "../constants/enum";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
+import { checkRoom, removeStudentFromRoom, updateStudentRoomNumber } from "../services/roomServices";
 
 export const viewAdmissionsByRCController = async (req: Request, res: Response): Promise<void> => {
   const { rc_id } = req.params;
@@ -33,14 +38,13 @@ export const viewAdmissionsByRCController = async (req: Request, res: Response):
 };
 
 export const approveOrDeclineAdmissionByRCController = async (
-  req: Request,
+  req: Request, 
   res: Response
 ): Promise<void> => {
   const { admission_id } = req.params;
-
   const validated = rcAdmissionDecisionSchema.parse(req.body);
-  const status = validated.approve ? approval_status.rc : approval_status.declined;
-
+  
+  // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
     user_id: validated.rc_id,
@@ -52,20 +56,101 @@ export const approveOrDeclineAdmissionByRCController = async (
     throw AppError("Failed to create admission approval", httpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  const updateResult = await updateAdmissionStatus({
-    admission_id: Number(admission_id),
-    status,
-    roomNumber: validated.approve ? validated.room : '',
-    floor: validated.approve ? validated.floor : -1
-  });
+  const admission = await getAdmissionByAdmissionId(Number(admission_id));
+  if (!admission || admission.length === 0) {
+    throw AppError("Admission not found", httpStatus.NOT_FOUND);
+  }
 
-  if (!updateResult) {
-    throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+  const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
+  const hostelBlock = admission[0].hostelBlock;
+  const currentYear = new Date().getFullYear().toString();
+
+  if (validated.approve) {
+    // Approval logic
+    const status = approval_status.rc;
+    
+    // Check room capacity before approval
+    const room = await checkRoom(
+      validated.room,
+      hostelBlock,
+      currentYear
+    );
+    if (!room) {
+      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
+    }
+
+    // Check if room has space (max 2 students)
+    if (room.rollNo && room.rollNo.length >= 2) {
+      throw AppError("Room is already full (2 students)", httpStatus.BAD_REQUEST);
+    }
+
+    // Update admission status
+    const admissionUpdate = await updateAdmissionStatus({
+      admission_id: Number(admission_id),
+      status
+    });
+
+    if (!admissionUpdate) {
+      throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Update student room number
+    const studentUpdate = await updateStudentRoomNumber(
+      rollNo,
+      validated.room
+    );
+
+    if (!studentUpdate) {
+      throw AppError("Failed to update student room", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+  } else {
+    // Denial logic
+    const status = approval_status.declined;
+
+    const room = await checkRoom(validated.room, hostelBlock, currentYear);
+  
+     if (!room) {
+      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
+    }
+
+    // Check if student is in this room
+    if (!room.rollNo || !room.rollNo.includes(rollNo)) {
+      throw new Error("Student is not assigned to this room");
+    }
+
+    // Remove student from room
+    const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
+    
+      await removeStudentFromRoom(
+        updatedRollNos,
+        validated.room,
+        hostelBlock,
+        currentYear
+      );
+
+    // Update admission status
+    const admissionUpdate = await updateAdmissionStatus({
+      admission_id: Number(admission_id),
+      status
+    });
+
+    if (!admissionUpdate) {
+      throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Clear student room number
+    const studentUpdate = await updateStudentRoomNumber(rollNo, null);
+
+    if (!studentUpdate) {
+      throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: "Admission approval submitted successfully",
+    message: validated.approve 
+      ? "Admission approved successfully" 
+      : "Admission declined successfully",
   });
 };
 
@@ -119,3 +204,6 @@ export const approveOrDeclineGrievancesByRCController = async (
     message: "Grievance approval submitted successfully",
   });
 };
+
+
+

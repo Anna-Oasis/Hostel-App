@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { 
   getAdmissionsByDeputyWarden, 
-  createAdmissionApprovalByDeputyWarden, 
-  updateAdmissionStatusByDeputyWarden,
-  updateStudentRoomNumber,
-  removeStudentFromRoom,
-  checkRoom
 } from "../services/deputyWardenServices";
-import { getRollNumberByAdmissionId, getAdmissionByAdmissionId } from "../services/admissionServices"
+import { checkRoom, getStudentsofRoom, removeStudentFromRoom, updateStudentRoomNumber} from "../services/roomServices";
+import {
+  createAdmissionApproval, 
+  updateAdmissionStatus,
+  getRollNumberByAdmissionId,
+  getAdmissionByAdmissionId 
+} from "../services/admissionServices"
 import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
@@ -38,7 +39,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
   const validated = deputyWardenDecisionSchema.parse(req.body);
   
   // Common approval creation
-  const approvalResult = await createAdmissionApprovalByDeputyWarden({
+  const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
     user_id: validated.user_id,
     approve: validated.approve,
@@ -73,7 +74,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
     }
 
     // Update admission status
-    const admissionUpdate = await updateAdmissionStatusByDeputyWarden({
+    const admissionUpdate = await updateAdmissionStatus({
       admission_id: Number(admission_id),
       status
     });
@@ -96,7 +97,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
     const status = approval_status.declined;
 
     // Update admission status
-    const admissionUpdate = await updateAdmissionStatusByDeputyWarden({
+    const admissionUpdate = await updateAdmissionStatus({
       admission_id: Number(admission_id),
       status
     });

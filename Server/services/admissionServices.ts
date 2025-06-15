@@ -1,7 +1,21 @@
 import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { db } from "../config/dbConnection";
 import { eq ,and} from "drizzle-orm";
+import { approval_status } from "../constants/enum";
+
+interface NewAdmissionApproval {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}
+
+interface AdmissionUpdateParams {
+  admission_id: number;
+  status: typeof approval_status[keyof typeof approval_status];
+}
 
 export async function createAdmission(admissionData: NewAdmission) {
   const result = await db
@@ -67,4 +81,22 @@ export const getRollNumberByAdmissionId = async (admission_id: number) => {
     .limit(1);
     
   return admission[0].roll_number;
+};
+
+export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
+  return await db
+    .insert(admissionApprovalsModel)
+    .values(approvalInfo)
+    .returning();
+};
+
+export const updateAdmissionStatus = async ({
+  admission_id,
+  status,
+}: AdmissionUpdateParams) => {
+  return await db
+    .update(admissionModel)
+    .set({ status })
+    .where(eq(admissionModel.id, admission_id))
+    .returning();
 };
