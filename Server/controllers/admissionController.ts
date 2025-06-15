@@ -48,7 +48,7 @@ export async function getAdmissionByRollNumberController(
     const { roll_number } = req.params;
     const admission = await getAdmissionByRollNumber(roll_number);
     if (admission.length === 0) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Admission not found for the provided roll number",
       });
@@ -72,7 +72,6 @@ export async function getAdmissionByAdmissionIdController(
   req: Request,
   res: Response
 ) {
-  try {
     const { admissionId } = req.params;
     const admission = await getAdmissionByAdmissionId(Number(admissionId));
     if (admission.length === 0) {
@@ -86,14 +85,6 @@ export async function getAdmissionByAdmissionIdController(
       data: admission,
       message: "Admission retrieved successfully",
     });
-  } catch (error) {
-    console.error("Error retrieving admission:", error);
-    res.status(500).json({
-      success: false,
-      message: "Could not retrieve admission",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
 }
 
 export async function updateAdmissionController(req: Request, res: Response) {

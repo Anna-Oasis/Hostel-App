@@ -50,6 +50,20 @@
       "when": 1749549731715,
       "tag": "0006_amused_sage",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1749991484276,
+      "tag": "0007_minor_rawhide_kid",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1749991808017,
+      "tag": "0008_tan_vision",
+      "breakpoints": true
     }
   ]
 }

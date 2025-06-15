@@ -15,6 +15,8 @@ export const studentModel = pgTable("student", {
     .notNull()
     .references(() => userModel.id, { onDelete: "no action" }).unique(),
 
+  //hostel
+  roomNumber : integer("room_number"),
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),
   rollNo: varchar("roll_no", { length: 20 }).primaryKey(),
