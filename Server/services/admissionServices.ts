@@ -38,7 +38,6 @@ export async function getAdmissionByRollNumber(rollNumber: string) {
   return result;
 }
 
-
 export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: string, academicYear: string) {
   const result = await db
     .select()
@@ -60,4 +59,12 @@ export async function getAdmissionByAdmissionId(admissionId: number) {
   return result;
 }
 
-
+export const getRollNumberByAdmissionId = async (admission_id: number) => {
+  const admission = await db
+    .select({ roll_number: admissionModel.roll_number })
+    .from(admissionModel)
+    .where(eq(admissionModel.id, admission_id))
+    .limit(1);
+    
+  return admission[0].roll_number;
+};

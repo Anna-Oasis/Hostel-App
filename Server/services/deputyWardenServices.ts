@@ -3,7 +3,9 @@ import { db } from "../config/dbConnection";
 import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { studentModel } from "../models/studentModel";
-import { approval_status, user_role } from "../models/enum";
+import { roomModel } from "../models/roomModel";
+import { approval_status } from "../constants/enum";
+import { getRollNumberByAdmissionId, getAdmissionByAdmissionId } from "./admissionServices";
 
 interface NewAdmissionApproval {
   admission_id: number;
@@ -15,57 +17,81 @@ interface NewAdmissionApproval {
 interface AdmissionUpdateParams {
   admission_id: number;
   status: typeof approval_status[keyof typeof approval_status];
-  roomNumber: string;
-  floor: number;
 }
 
-/*export async function isDeputyWarden(user_id: number) {
-  const dw = await db
-    .select()
-    .from(userModel)
-    .where(
-        and(
-            eq(userModel.id, user_id),
-            eq(userModel.role, "DEPUTY_WARDEN")
-        ));
-  return dw;
-}*/
-
 export const getAdmissionsByDeputyWarden = async () => {
-  const admissions = await db
+  return await db
     .select()
     .from(admissionModel)
     .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
-    .where(
-      and(
-        eq(admissionModel.status, approval_status.rc),
-      )
-    );
-  return admissions;
+    .where(eq(admissionModel.status, approval_status.rc));
 };
 
 export const createAdmissionApprovalByDeputyWarden = async (approvalInfo: NewAdmissionApproval) => {
-  const approvalInsert = await db
+  return await db
     .insert(admissionApprovalsModel)
     .values(approvalInfo)
     .returning();
-  return approvalInsert;
 };
 
 export const updateAdmissionStatusByDeputyWarden = async ({
   admission_id,
   status,
-  roomNumber,
-  floor,
 }: AdmissionUpdateParams) => {
-  const admissionUpdate = await db
+  return await db
     .update(admissionModel)
-    .set({ 
-      status,
-      roomNumber,
-      floor
-    })
+    .set({ status })
     .where(eq(admissionModel.id, admission_id))
     .returning();
-  return admissionUpdate;
+};
+
+export const checkRoom= async (
+  roomNumber: number, 
+  hostelBlock: string, 
+  academicYear: string
+) => {
+  const room = await db
+    .select()
+    .from(roomModel)
+    .where(
+      and(
+        eq(roomModel.roomNumber, roomNumber),
+        eq(roomModel.hostelBlock, hostelBlock),
+        eq(roomModel.academicYear, academicYear)
+      )
+    )
+    .limit(1);
+    
+  return room[0];
+};
+
+export const removeStudentFromRoom = async (
+  rollNo: string[],
+  roomNumber: number,
+  hostelBlock: string,
+  academicYear: string,
+) => {
+  
+  return await db
+    .update(roomModel)
+    .set({ rollNo })
+    .where(
+      and(
+        eq(roomModel.roomNumber, roomNumber),
+        eq(roomModel.hostelBlock, hostelBlock),
+        eq(roomModel.academicYear, academicYear)
+      )
+    )
+    .returning();
+};
+
+export const updateStudentRoomNumber = async (
+  rollNo: string, 
+  roomNumber: number | null
+) => {
+  return await db
+    .update(studentModel)
+    .set({ roomNumber })
+    .where(eq(studentModel.rollNo, rollNo))
+    .returning();
 };
