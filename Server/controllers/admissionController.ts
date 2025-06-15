@@ -1,3 +1,4 @@
+import httpStatus from "http-status";
 import {
   createAdmission,
   getAdmissionByAdmissionId,
@@ -7,53 +8,36 @@ import {
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
-import { ZodError } from "zod";
 import { approval_status } from "../models/enum";
+import AppError from "../utils/AppError";
 
 export async function createAdmissionController(req: Request, res: Response) {
-  try {
-    const admissionData = req.body;
-    const parsedData = createAdmissionSchema.parse(admissionData);
+  const admissionData = req.body;
+  const parsedData = createAdmissionSchema.parse(admissionData);
 
-    const existingAdmissions =
-      await checkForAdmissionByRollNumberAndAcademicYear(
-        parsedData.roll_number,
-        parsedData.academicYear
-      );
-    if (existingAdmissions.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Admission already exists for this roll number and academic year",
-      });
-    }
-    const newAdmission = await createAdmission({
-      ...parsedData,
-      roomNumber:"",
-      status: approval_status.submitted,
-      submission_Date: new Date(),
-      updatedAt: new Date(),
-    });
-    res.status(201).json({
-      success: true,
-      data: newAdmission,
-      message: "Admission created successfully",
-    });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        error: error.errors,
-      });
-    }
-    console.error("Error creating admission:", error);
-    res.status(500).json({
-      success: false,
-      message: "Could not create admission",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+  const existingAdmissions = await checkForAdmissionByRollNumberAndAcademicYear(
+    parsedData.roll_number,
+    parsedData.academicYear
+  );
+  if (existingAdmissions.length > 0) {
+    throw AppError(
+      "Admission already exists for the provided roll number and academic year",
+      httpStatus.BAD_REQUEST
+    );
   }
+  const newAdmission = await createAdmission({
+    ...parsedData,
+    roomNumber: "",
+    status: approval_status.submitted,
+    submission_Date: new Date(),
+    updatedAt: new Date(),
+  });
+
+  res.status(httpStatus.CREATED).json({
+    success: true,
+    data: newAdmission,
+    message: "Admission created successfully",
+  });
 }
 
 export async function getAdmissionByRollNumberController(
@@ -126,17 +110,21 @@ export async function updateAdmissionController(req: Request, res: Response) {
         message: "Admission not found for the provided admission ID",
       });
     }
-    if(existingAdmission[0].status !== approval_status.submitted && existingAdmission[0].status !== approval_status.declined) {
+    if (
+      existingAdmission[0].status !== approval_status.submitted &&
+      existingAdmission[0].status !== approval_status.declined
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Admission can only be updated if it is in submitted or declined state",
+        message:
+          "Admission can only be updated if it is in submitted or declined state",
       });
     }
 
     const updatedAdmission = await updateAdmission(Number(admissionId), {
       ...updatedData,
       updatedAt: new Date(),
-      status:approval_status.submitted, 
+      status: approval_status.submitted,
     });
     res.status(200).json({
       success: true,

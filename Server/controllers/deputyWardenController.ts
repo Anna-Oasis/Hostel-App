@@ -59,3 +59,4 @@ export const approveOrDeclineAdmissionByDeputyWarden = async (req: Request, res:
     });
   }
 };
+
