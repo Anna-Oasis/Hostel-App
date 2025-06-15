@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
-import api from "@/api"; // <-- import the axios instance
-import { User } from "../stores/userStore"; // <-- import the User type
+import api from "@/api";
+import { User } from "../stores/userStore";
 
 const TOKEN_KEY = "authToken";
 

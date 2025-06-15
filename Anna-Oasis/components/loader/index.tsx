@@ -1,8 +1,12 @@
 import React from "react";
-import { Modal } from "react-native";
-import { Box } from "@/components/ui/box";
-import { Center } from "@/components/ui/center";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalBody,
+} from "@/components/ui/modal";
+import { Center } from "@/components/ui/center";
 import useLoadingStore from "@/stores/loadingStore";
 
 const Loader = () => {
@@ -10,17 +14,18 @@ const Loader = () => {
 
   return (
     <Modal
-      visible={isLoading}
-      transparent
-      animationType="fade"
-      onRequestClose={() => {}}
-      statusBarTranslucent={true}
+      isOpen={isLoading}
+      onClose={() => {}}
+      closeOnOverlayClick={false}
     >
-      <Box className="absolute inset-0 flex-1 justify-center items-center bg-black/50 p-20 z-50">
-        <Center className="flex-1">
-          <Spinner size="large" />
-        </Center>
-      </Box>
+      <ModalBackdrop />
+      <ModalContent className="bg-transparent border-0 shadow-none m-0 p-0 w-full h-full max-w-full">
+        <ModalBody className="flex-1 justify-center items-center">
+          <Center>
+            <Spinner size="large" />
+          </Center>
+        </ModalBody>
+      </ModalContent>
     </Modal>
   );
 };
