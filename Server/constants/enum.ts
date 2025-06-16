@@ -7,6 +7,13 @@ export const approval_status = {
   declined: "-1"
 };
 
+export const rcLeave_status ={
+  submitted: "0",
+  deputyWarden:"1",
+  executiveWarden: "2",
+  declined: "-1"
+}
+
 export const hostel_block = {
   BOYS: "Flora",
   GIRLS: "Lavender"
