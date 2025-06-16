@@ -19,86 +19,74 @@ import { admissionApprovalsModel } from "../models/admissionApprovals";
 
 
 export async function getAdmissionWaitingForApprovalController(req: Request, res: Response) {
-  try {
-    const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+  const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
 
-    if (submittedAdmissions.length === 0) {
-      return res.status(404).json({ 
-        success: false,
-        message: "No admissions waiting for manager approval",
-        data: []
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: submittedAdmissions
-    });
-
-  } catch (error) {
-    console.error("Error fetching submitted admissions:", error);
-    return res.status(500).json({ 
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error"
-    });
+  if (submittedAdmissions.length === 0) {
+    throw AppError(
+      "No admissions waiting for manager approval",
+      httpStatus.NOT_FOUND
+    );
   }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: submittedAdmissions,
+    count: submittedAdmissions.length,
+    message: "Admissions retrieved successfully"
+  });
 }
 
 export async function updateApprovalStatusController(req: Request, res: Response) {
-  try {
-    const { admission_id } = req.params;
-    const { status, comment, user_id } = req.body;
+  const { admission_id } = req.params;
+  const { status, comment, user_id } = req.body;
 
-    if (!admission_id || typeof status !== 'boolean' || !user_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Admission ID, status (boolean), and user_id are required",
-      });
-    }
-
-
-    const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
-    if (existingAdmission.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Admission not found for the provided ID",
-      });
-    }
-
-    const newStatus = status ? approval_status.rc : approval_status.declined;
-
-    const updatedAdmission = await updateAdmission(Number(admission_id), {
-      status: newStatus,
-      updatedAt: new Date(),
-    });
-
-    const approvalEntry = await createAdmissionApproval({
-      admission_id: Number(admission_id),
-      user_id: Number(user_id),
-      approve: status,
-      comment: comment || null,
-    });
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        admission: updatedAdmission,
-        approval: approvalEntry[0]
-      },
-      message: status 
-        ? "Admission approved and forwarded to RC" 
-        : "Admission declined successfully",
-    });
-
-  } catch (error) {
-    console.error("Error updating admission approval status:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error"
-    });
+  if (!admission_id || typeof status !== 'boolean' || !user_id) {
+    throw AppError(
+      "Admission ID, status (boolean), and user_id are required",
+      httpStatus.BAD_REQUEST
+    );
   }
+
+  // If status is false, comment is required
+  if (status === false && (!comment || comment.trim() === '')) {
+    throw AppError(
+      "Comment is required when declining an admission",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+  if (existingAdmission.length === 0) {
+    throw AppError(
+      "Admission not found for the provided ID",
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  const newStatus = status ? approval_status.rc : approval_status.declined;
+
+  const updatedAdmission = await updateAdmission(Number(admission_id), {
+    status: newStatus,
+    updatedAt: new Date(),
+  });
+
+  const approvalEntry = await createAdmissionApproval({
+    admission_id: Number(admission_id),
+    user_id: Number(user_id),
+    approve: status,
+    comment: comment || null,
+  });
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: {
+      admission: updatedAdmission,
+      approval: approvalEntry[0]
+    },
+    message: status 
+      ? "Admission approved and forwarded to RC" 
+      : "Admission declined successfully",
+  });
 }
 
 
