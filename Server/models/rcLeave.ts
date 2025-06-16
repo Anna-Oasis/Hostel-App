@@ -8,6 +8,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { rcModel } from "./rcModel";
+import { rcLeave_status } from "../constants/enum";
+import { rcLeave_status_pgEnum } from "./enum";
 
 export const rcLeaveModel = pgTable("rc_leave", {
   id: serial("id").primaryKey(),
@@ -18,16 +20,16 @@ export const rcLeaveModel = pgTable("rc_leave", {
     .references(() => rcModel.id, { onDelete: "cascade" }),
 
   leaving: date("leaving").notNull(),
-
   arrival: date("arrival").notNull(),
-
+  
   reason: text("reason").notNull(),
 
-  approved: boolean("approved").default(false).notNull(),
+  approved: rcLeave_status_pgEnum("approved").default(rcLeave_status.submitted).notNull(),
 
-  // Timestamps
-  //created_at: timestamp("created_at").defaultNow().notNull(),
-  //updated_at: timestamp("updated_at").defaultNow().notNull(),
+   //Timestamps
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  dw_approved_at: timestamp("approved_at").defaultNow(),
+  ew_updated_at: timestamp("updated_at").defaultNow(),
 });
 
 export type RCLeave = typeof rcLeaveModel.$inferSelect;

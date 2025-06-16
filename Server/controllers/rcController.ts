@@ -1,28 +1,37 @@
 import { Request, Response } from "express";
-import {
-  getRCById,
-  getAdmissionsByHostelBlock,
-  getGrievances,
-  updateGrievanceApprovalStatus
+import { 
+  getRCById, 
+  getAdmissionsByHostelBlock, 
+  getGrievances, 
+  updateGrievanceApprovalStatus 
 } from "../services/rcServices";
-import {
+import { 
   createAdmissionApproval, 
-  updateAdmissionStatus,
-  getRollNumberByAdmissionId,
+  updateAdmissionStatus, 
+  getRollNumberByAdmissionId, 
   getAdmissionByAdmissionId 
-} from "../services/admissionServices"
-import { rcAdmissionDecisionSchema, rcGrievanceDecisionSchema } from "../validation/rc.schema";
+} from "../services/admissionServices";
+import { 
+  rcAdmissionDecisionSchema, 
+  rcGrievanceDecisionSchema 
+} from "../validation/rc.schema";
 import { approval_status } from "../constants/enum";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
-import { checkRoom, removeStudentFromRoom, updateStudentRoomNumber } from "../services/roomServices";
+import { 
+  checkRoom, 
+  setStudentinRoom, 
+  updateStudentRoomNumber 
+} from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
 import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
 import { rcExists } from "../services/rcAdmissionApprovalService";
 
-export const viewAdmissionsByRCController = async (req: Request, res: Response): Promise<void> => {
+export const viewAdmissionsByRCController = async (
+  req: Request, 
+  res: Response
+): Promise<void> => {
   const { rc_id } = req.params;
-
   const rc = await getRCById(Number(rc_id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
@@ -36,7 +45,7 @@ export const viewAdmissionsByRCController = async (req: Request, res: Response):
   res.status(httpStatus.OK).json({ 
     success: true, 
     data: admissions,
-    message: "Fetched Admissions successfully", 
+    message: "Fetched Admissions successfully",
   });
 };
 
@@ -46,7 +55,7 @@ export const approveOrDeclineAdmissionByRCController = async (
 ): Promise<void> => {
   const { admission_id } = req.params;
   const validated = rcAdmissionDecisionSchema.parse(req.body);
-  
+
   // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
@@ -72,6 +81,10 @@ export const approveOrDeclineAdmissionByRCController = async (
     // Approval logic
     const status = approval_status.rc;
     
+    if (!validated.room) {
+      throw AppError("Room number is required for approval", httpStatus.BAD_REQUEST);
+    }
+
     // Check room capacity before approval
     const room = await checkRoom(
       validated.room,
@@ -84,7 +97,21 @@ export const approveOrDeclineAdmissionByRCController = async (
 
     // Check if room has space (max 2 students)
     if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
-      throw AppError("Room is already full (2 students)", httpStatus.BAD_REQUEST);
+      throw AppError(`Room is already full (${ROOM_SIZE} students)`, httpStatus.BAD_REQUEST);
+    }
+
+    // Create updated roll numbers array
+    const updatedRollNos = room.rollNo ? [...room.rollNo, rollNo] : [rollNo];
+
+    const setStudent = await setStudentinRoom(
+      updatedRollNos,
+      validated.room,
+      hostelBlock,
+      currentYear
+    );
+
+    if (!setStudent) {
+      throw AppError("Failed to assign student to room", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // Update admission status
@@ -110,27 +137,6 @@ export const approveOrDeclineAdmissionByRCController = async (
     // Denial logic
     const status = approval_status.declined;
 
-    const room = await checkRoom(validated.room, hostelBlock, currentYear);
-  
-     if (!room) {
-      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
-    }
-
-    // Check if student is in this room
-    if (!room.rollNo || !room.rollNo.includes(rollNo)) {
-      throw new Error("Student is not assigned to this room");
-    }
-
-    // Remove student from room
-    const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
-    
-      await removeStudentFromRoom(
-        updatedRollNos,
-        validated.room,
-        hostelBlock,
-        currentYear
-      );
-
     // Update admission status
     const admissionUpdate = await updateAdmissionStatus({
       admission_id: Number(admission_id),
@@ -139,13 +145,6 @@ export const approveOrDeclineAdmissionByRCController = async (
 
     if (!admissionUpdate) {
       throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    // Clear student room number
-    const studentUpdate = await updateStudentRoomNumber(rollNo, null);
-
-    if (!studentUpdate) {
-      throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -232,3 +231,4 @@ export const fetchAdmissionsApprovedByRC = async (
   });
 };
 
+};

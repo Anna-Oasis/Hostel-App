@@ -1,30 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
-
-const API_BASE_URL = "http://localhost:5000";
+import api from "@/api";
+import { User } from "../stores/userStore";
 
 const TOKEN_KEY = "authToken";
-
-export const saveCredentials = async (email: string, password: string) => {
-  try {
-    await AsyncStorage.setItem("email", email);
-    await AsyncStorage.setItem("password", password);
-  } catch (error) {
-    console.error("Error saving credentials:", error);
-  }
-};
-
-export const getCredentials = async () => {
-  try {
-    const email = await AsyncStorage.getItem("email");
-    const password = await AsyncStorage.getItem("password");
-    return { email, password };
-  } catch (error) {
-    console.error("Error retrieving credentials:", error);
-    return { email: null, password: null };
-  }
-};
 
 export const saveToken = async (token: string) => {
   try {
@@ -51,48 +31,51 @@ export const removeToken = async () => {
   }
 };
 
-export const saveUserRole = async (role: string) => {
-  try {
-    await AsyncStorage.setItem("userRole", role);
-  } catch (error) {
-    console.error("Error saving user role:", error);
-  }
-};
-export const getUserRole = async (): Promise<string | null> => {
-  try {
-    return await AsyncStorage.getItem("userRole");
-  } catch (error) {
-    console.error("Error retrieving user role:", error);
-    return null;
-  }
-};
-
 export const handleLogin = async (
   values: { email: string; password: string },
   onSuccess: () => void
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const response = await api.post("/login", values);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
-    }
-
-    const data = await response.json();
+    const data = response.data;
     await saveToken(data.data.token);
-    await saveCredentials(values.email, values.password);
-    await saveUserRole(data.data.role);
     Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Login Failed", error.message);
+    Alert.alert("Login Failed", error.response?.data?.message || error.message);
+  }
+};
+
+
+
+/**
+ * 
+ * @param token - The JWT token to verify
+ * @description Verifies the JWT token by making a request to the backend.
+ * If the token is valid, it returns the user's role. If the token is expired or invalid,
+ * it alerts the user and redirects them to the login page.
+ * @returns {Promise<User | null>} - Returns the user's information if the token is valid, otherwise returns null.
+ */
+export const verifyToken = async (token: string): Promise<User | null> => {
+  try {
+    const response = await api.get("/verify-token", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = response.data;
+    return data.user;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      Alert.alert("Token Expired", "Please log in again.");
+      await removeToken();
+      router.replace("/Login");
+      return null;
+    }
+    Alert.alert("Token Verification Failed", error.response?.data?.message || error.message);
+    return null;
   }
 };
 
@@ -101,48 +84,38 @@ export const handleSignup = async (
   onSuccess: () => void
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Signup failed");
-    }
-
+    const response = await api.post("/register", values);
+    console.log("Signup API response:", response.data);
     Alert.alert("Signup Successful", "You can now log in.");
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Signup Failed", error.message);
+    Alert.alert("Signup Failed", error.response?.data?.message || error.message);
   }
 };
 
 export const redirectByRole = (role: string | null) => {
   switch (role) {
     case "student":
-      router.push("/User/Student");
+      router.replace("/User/Student");
       break;
     case "warden":
-      router.push("/ExecutiveWarden");
+      router.replace("/ExecutiveWarden");
       break;
     case "rc":
-      router.push("/RC");
+      router.replace("/RC");
       break;
     case "deputyWarden":
-      router.push("/DeputyWarden");
+      router.replace("/DeputyWarden");
       break;
     case "executiveWarden":
-      router.push("/ExecutiveWarden");
+      router.replace("/ExecutiveWarden");
       break;
     case "manager":
-      router.push("/Manager");
+      router.replace("/Manager");
       break;
     default:
       console.error("Unknown user role:", role);
-      router.push("/Login");
+      router.replace("/Login");
+      break;
   }
 };

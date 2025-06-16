@@ -1,8 +1,17 @@
 import { Admission } from "../models/admissionModel";
 import { Router } from "express";
-import { createAdmissionController, getAdmissionByAdmissionIdController,getAdmissionByRollNumberController,updateAdmissionController} from "../controllers/admissionController";
-import { createGrievanceController,getGrievancesByRollNumberController } from "../controllers/grievanceController";
+import {
+  createAdmissionController,
+  getAdmissionByAdmissionIdController,
+  getAdmissionByRollNumberController,
+  updateAdmissionController,
+} from "../controllers/admissionController";
+import {
+  createGrievanceController,
+  getGrievancesByRollNumberController,
+} from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
+
 import { upload } from "../middleware/multer";
 import {
   getStudentDetailsController,
@@ -10,21 +19,17 @@ import {
   updateStudentDetailsController,
 } from "../controllers/detailsController";
 
+import { error } from "console";
+
+
 const studentRouter = Router();
 
+
+//admission - students
 studentRouter.post("/admission", errorWrapper(createAdmissionController));
-
-studentRouter.get("/admission/:admissionId", (req, res) => {
-  getAdmissionByAdmissionIdController(req, res);
-});
-
-studentRouter.get("/admission/student/:roll_number", (req, res) => {
-  getAdmissionByRollNumberController(req, res);
-});
-
-studentRouter.put("/admission/:admissionId", (req, res) => {
-  updateAdmissionController(req, res);
-});
+studentRouter.get( "/admission/:admissionId",errorWrapper(getAdmissionByAdmissionIdController));
+studentRouter.get("/admission/student/:roll_number",errorWrapper(getAdmissionByRollNumberController));
+studentRouter.put("/admission/:admissionId",errorWrapper(updateAdmissionController));
 
 studentRouter.post("/grievance", errorWrapper(createGrievanceController));
 studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));

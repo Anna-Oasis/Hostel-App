@@ -83,12 +83,40 @@ export const getRollNumberByAdmissionId = async (admission_id: number) => {
   return admission[0].roll_number;
 };
 
-export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
-  return await db
+// export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
+//   return await db
+//     .insert(admissionApprovalsModel)
+//     .values(approvalInfo)
+//     .returning();
+// };
+
+export async function getAdmissionsByStatus(status: string) {
+  const result = await db
+    .select()
+    .from(admissionModel)
+    .where(eq(admissionModel.status, status))
+    .orderBy(admissionModel.submission_Date);
+  return result;
+}
+
+
+export async function createAdmissionApproval(approvalData: {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}) {
+  const result = await db
     .insert(admissionApprovalsModel)
-    .values(approvalInfo)
+    .values({
+      admission_id: approvalData.admission_id,
+      user_id: approvalData.user_id,
+      approve: approvalData.approve,
+      comment: approvalData.comment || null,
+    })
     .returning();
-};
+  return result;
+}
 
 export const updateAdmissionStatus = async ({
   admission_id,
