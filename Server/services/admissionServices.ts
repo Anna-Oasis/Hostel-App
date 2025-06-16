@@ -83,12 +83,12 @@ export const getRollNumberByAdmissionId = async (admission_id: number) => {
   return admission[0].roll_number;
 };
 
-export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
-  return await db
-    .insert(admissionApprovalsModel)
-    .values(approvalInfo)
-    .returning();
-};
+// export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
+//   return await db
+//     .insert(admissionApprovalsModel)
+//     .values(approvalInfo)
+//     .returning();
+// };
 
 export async function getAdmissionsByStatus(status: string) {
   const result = await db
