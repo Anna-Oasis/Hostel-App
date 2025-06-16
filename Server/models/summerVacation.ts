@@ -21,19 +21,13 @@ export const summerVacationModel = pgTable("summer_vacation", {
 
   // Summer vacation form details
   vacation_from: date("vacation_from").notNull(),
-  vacation_to: date("vacation_to").notNull(),
-  reason: text("reason").notNull(),
-  destination: varchar("destination", { length: 100 }).notNull(),
-  contact_during_vacation: varchar("contact_during_vacation", { length: 15 }).notNull(),
-  local_guardian_consent: boolean("local_guardian_consent").default(false).notNull(),
-
+  vacation_time: timestamp("vacation_time").notNull(),
+  address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   returned_items: varchar("returned_items", { length: 100 }).array(),
-
   // Status and timestamps
   status: approval_status_pgEnum("status")
     .notNull()
     .default(approval_status.submitted),
-    
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });
