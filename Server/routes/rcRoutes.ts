@@ -1,11 +1,13 @@
 import { Router } from "express";
-import { fetchAdmissionsApprovedByRC } from "../controllers/rcAdmissionApprovalController";
+import { fetchAdmissionsApprovedByRC } from "../controllers/rcController";
 import {
   viewAdmissionsByRCController,
   approveOrDeclineAdmissionByRCController,
   viewGrievancesByRCController,
   approveOrDeclineGrievancesByRCController
 } from "../controllers/rcController";
+import errorWrapper from "../middleware/errorWrapper";
+
 
 
 const rcRouter = Router();
@@ -24,9 +26,7 @@ rcRouter.put("/grievance/:rc_id", approveOrDeclineGrievancesByRCController);
 
 
 // Fetch the approval data reviewd by a particular RC
-rcRouter.get("/admissions/approvals/:rc_id",(req,res,next) => {
-    fetchAdmissionsApprovedByRC(req, res, next).catch(next);
-})
+rcRouter.get("/admissions/approvals/:rc_id",errorWrapper(fetchAdmissionsApprovedByRC));
 
 export default rcRouter;
 

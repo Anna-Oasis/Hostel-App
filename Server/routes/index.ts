@@ -1,6 +1,5 @@
 import { Router, Request, Response } from "express";
 import authRouter from "./authRoutes";
-import detailsRouter from "./detailsRoute";
 import studentRouter from "./studentRoutes";
 import managerRouter from "./managerRoutes";
 import rcRouter from "./rcRoutes";
@@ -12,7 +11,6 @@ import { authenticateUser } from "../middleware/rbacMiddleware";
 const routes = Router();
 
 routes.use("/", authRouter);
-routes.use("/api/details", detailsRouter);
 routes.use("/api/student/", studentRouter);
 routes.use("/api/manager/", managerRouter);
 routes.use("/api/resident_counsellor/",rcRouter);

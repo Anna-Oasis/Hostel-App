@@ -54,10 +54,6 @@
     {
       "idx": 7,
       "version": "7",
-<<<<<<< HEAD
-      "when": 1749881754428,
-      "tag": "0007_jittery_talisman",
-=======
       "when": 1749991484276,
       "tag": "0007_minor_rawhide_kid",
       "breakpoints": true
@@ -67,7 +63,6 @@
       "version": "7",
       "when": 1749991808017,
       "tag": "0008_tan_vision",
->>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
       "breakpoints": true
     }
   ]

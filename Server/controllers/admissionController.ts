@@ -13,6 +13,9 @@ import { createAdmissionSchema } from "../validation/admission.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
+
+import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
+
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 
@@ -86,6 +89,7 @@ export async function updateApprovalStatusController(req: Request, res: Response
       : "Admission declined successfully",
   });
 }
+
 
 export async function createAdmissionController(req: Request, res: Response) {
   const admissionData = req.body;  
@@ -185,3 +189,32 @@ export async function updateAdmissionController(req: Request, res: Response) {
     message: "Admission updated successfully",
   });
 }
+
+
+
+export const fetchAdmissionsApprovedByRC = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const rcId = parseInt(req.params.rc_id);
+
+    if (isNaN(rcId)) {
+      throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
+    }
+
+    const data = await getAdmissionsApprovedByRC(rcId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown error";
+    throw AppError(
+      `Failed to fetch admissions for RC: ${message}`,
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
