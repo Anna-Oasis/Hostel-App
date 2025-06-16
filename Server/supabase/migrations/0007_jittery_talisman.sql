@@ -1,0 +1,1 @@
+ALTER TABLE "admission" ADD COLUMN "floor" integer;
