@@ -14,9 +14,7 @@ app.use(express.json());
 app.use(morganLogger);
 
 app.use("/", routes);
-
-
-app.use(errorHandler);
+app.use(errorHandler); // last middleware for error handling
 
 async function startServer() {
   try {

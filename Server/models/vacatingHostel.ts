@@ -7,7 +7,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum, approval_status } from "./enum";
+import { approval_status_pgEnum } from "./enum";
+import { approval_status } from "../constants/enum";
 
 export const vacatingHostelModel = pgTable("vacating_hostel", {
   id: serial("id").primaryKey(),
@@ -25,12 +26,10 @@ export const vacatingHostelModel = pgTable("vacating_hostel", {
   room_condition: text("room_condition").notNull(),
   dues_clearance: varchar("dues_clearance", { length: 3 }).default("No").notNull(), // "Yes" or "No"
   key_submitted: varchar("key_submitted", { length: 3 }).default("No").notNull(), // "Yes" or "No"
-  
-  // Status and timestamps
+  returned_items: varchar("returned_items", { length: 100 }).array(),
   status: approval_status_pgEnum("status")
     .notNull()
-    .default(approval_status.submitted),
-    
+    .default(approval_status.submitted),   
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

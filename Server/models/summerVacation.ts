@@ -7,7 +7,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum, approval_status } from "./enum";
+import { approval_status_pgEnum } from "./enum";
+import { approval_status } from "../constants/enum";
 
 export const summerVacationModel = pgTable("summer_vacation", {
   id: serial("id").primaryKey(),

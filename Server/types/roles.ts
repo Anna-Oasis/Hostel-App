@@ -1,6 +1,13 @@
 import { Request } from "express";
 
-export type UserRole = "warden" | "rc" | "manager" | "student";
+export interface CustomRequest extends Request {
+  authUser?: {
+    id: number;
+    role: string;
+  };
+}
+
+export type UserRole = "warden" | "rc" | "manager" | "student" | "admin" | "deputyWarden" | "executiveWarden";
 
 export const PERMISSIONS = {
   warden: ["all"],
@@ -33,3 +40,8 @@ export const admissionRetreivalNumbers: Record<
   deputyWarden: "2",
   executiveWarden: "3",
 };
+
+export interface UserWithRole {
+  id: number;
+  role: UserRole;
+}
