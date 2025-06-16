@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/details";
@@ -8,10 +8,13 @@ import StudentDetails from "@/components/details/StudentDetails";
 import ParentDetails from "@/components/details/ParentDetails";
 import LocalGuardian from "@/components/details/LocalGuardian";
 import FileUploads from "@/components/details/FileUploads";
+import useLoadingStore from "@/stores/loadingStore";
+import { submitStudentDetails } from "@/utils/student/studentApi";
 
 export default function DetailsPage() {
   const [page, setPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const next = () => {
     setPage((p) => p + 1);
@@ -45,6 +48,7 @@ export default function DetailsPage() {
         if (page < 3) {
           next();
         } else {
+          setLoading(true);
           const formData = new FormData();
           formData.append("name", values.name);
           formData.append("rollNo", values.rollNo);
@@ -116,6 +120,10 @@ export default function DetailsPage() {
             }
           }
           console.log("FormData prepared for submission:", formData);
+
+          await submitStudentDetails(formData);
+
+          setLoading(false);
         }
       }}
     >

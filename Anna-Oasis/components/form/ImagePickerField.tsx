@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Image } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
