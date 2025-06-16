@@ -3,6 +3,12 @@ import { Router } from "express";
 import { createAdmissionController, getAdmissionByAdmissionIdController,getAdmissionByRollNumberController,updateAdmissionController} from "../controllers/admissionController";
 import { createGrievanceController,getGrievancesByRollNumberController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
+import { upload } from "../middleware/multer";
+import {
+  getStudentDetailsController,
+  createStudentDetailsController,
+  updateStudentDetailsController,
+} from "../controllers/detailsController";
 
 const studentRouter = Router();
 
@@ -20,13 +26,35 @@ studentRouter.put("/admission/:admissionId", (req, res) => {
   updateAdmissionController(req, res);
 });
 
-studentRouter.post("/grievance", (req, res) => {
-  createGrievanceController(req, res);
-});
+studentRouter.post("/grievance", errorWrapper(createGrievanceController));
+studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));
 
-studentRouter.get("/grievance/:roll_number", (req, res) => {
-  getGrievancesByRollNumberController(req, res);
-});
 
+const fileFields = upload.fields([
+  { name: "passportPhotoUrl", maxCount: 1 },
+  { name: "studentSignatureUrl", maxCount: 1 },
+  { name: "parentGuardianSignatureUrl", maxCount: 1 },
+  { name: "categoryProofUrl", maxCount: 1 },
+  { name: "aadhaarUrl", maxCount: 1 },
+  { name: "admissionSlipUrl", maxCount: 1 },
+]);
+
+
+studentRouter.get(
+  "/details/:rollNo",
+  errorWrapper(getStudentDetailsController)
+);
+
+studentRouter.post(
+  "/details",
+  fileFields,
+  errorWrapper(createStudentDetailsController)
+);
+
+studentRouter.put(
+  "/details/:rollNo",
+  fileFields,
+  errorWrapper(updateStudentDetailsController)
+);
 
 export default studentRouter;

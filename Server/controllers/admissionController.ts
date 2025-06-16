@@ -10,6 +10,7 @@ import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
+import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
 
 export async function createAdmissionController(req: Request, res: Response) {
   const admissionData = req.body;
@@ -27,7 +28,7 @@ export async function createAdmissionController(req: Request, res: Response) {
   }
   const newAdmission = await createAdmission({
     ...parsedData,
-    roomNumber: "",
+    // roomNumber: "",
     status: approval_status.submitted,
     submission_Date: new Date(),
     updatedAt: new Date(),
@@ -131,3 +132,32 @@ export async function updateAdmissionController(req: Request, res: Response) {
     });
   }
 }
+
+
+
+export const fetchAdmissionsApprovedByRC = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const rcId = parseInt(req.params.rc_id);
+
+    if (isNaN(rcId)) {
+      throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
+    }
+
+    const data = await getAdmissionsApprovedByRC(rcId);
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown error";
+    throw AppError(
+      `Failed to fetch admissions for RC: ${message}`,
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};

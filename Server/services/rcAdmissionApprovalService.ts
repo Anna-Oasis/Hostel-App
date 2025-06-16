@@ -3,6 +3,7 @@ import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { admissionModel } from "../models/admissionModel";
 import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
+import { rcModel } from "../models/rcModel";
 
 export const getAdmissionsApprovedByRC = async (rcId: number) => {
   return await db
@@ -12,7 +13,7 @@ export const getAdmissionsApprovedByRC = async (rcId: number) => {
       timestamp: admissionApprovalsModel.timestamp,
       admissionId: admissionApprovalsModel.admission_id,
       status: admissionModel.status,
-      roomNumber: admissionModel.roomNumber,
+      // roomNumber: admissionModel.roomNumber,
       hostelBlock: admissionModel.hostelBlock,
       rollNumber: admissionModel.roll_number,
     })
@@ -28,3 +29,12 @@ export const getAdmissionsApprovedByRC = async (rcId: number) => {
       )
     );
 };
+export const rcExists = async (rcId: number) => {
+  const rc = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.id, rcId))
+    .limit(1);
+
+  return rc;
+}
