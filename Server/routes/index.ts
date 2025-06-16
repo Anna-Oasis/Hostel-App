@@ -3,9 +3,10 @@ import authRouter from "./authRoutes";
 import detailsRouter from "./detailsRoute";
 import studentRouter from "./studentRoutes";
 import managerRouter from "./managerRoutes";
-import deputyRouter from './deputyWardenRoutes'
 import rcRouter from "./rcRoutes";
 import deputyWardenRouter from "./deputyWardenRoutes";
+import { UserRole, PERMISSIONS } from "../types/roles";
+import { authenticateUser } from "../middleware/rbacMiddleware";
 // import { generatePdf, PDFData } from "../utils/pdfGenerator"; // Uncomment if you want to use the PDF generation route
 
 const routes = Router();
@@ -14,7 +15,6 @@ routes.use("/", authRouter);
 routes.use("/api/details", detailsRouter);
 routes.use("/api/student/", studentRouter);
 routes.use("/api/manager/", managerRouter);
-routes.use("/api/deputy_warden/", deputyRouter);
 routes.use("/api/resident_counsellor/",rcRouter);
 routes.use("/api/deputy_warden/",deputyWardenRouter);
 
@@ -49,6 +49,8 @@ routes.get("/health", (req: Request, res: Response) => {
 //     });
 //   }
 // });
+
+
 
 routes.get(/^\/.*/, (req: Request, res: Response) => {
   res.send("👋 Welcome to Anna Oasis API!");

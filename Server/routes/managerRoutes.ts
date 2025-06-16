@@ -1,7 +1,6 @@
-
-import {Router} from 'express';
-import { getAdmissionWaitingForApprovalController,updateApprovalStatusController } from '../controllers/admissionController';
-import { ManagerController } from "../controllers/managerController";
+import { Router } from 'express';
+import { getAdmissionWaitingForApprovalController, updateApprovalStatusController } from '../controllers/admissionController';
+import errorWrapper from "../middleware/errorWrapper";
 
 const managerRouter = Router();
 
@@ -13,12 +12,9 @@ const managerRouter = Router();
 //update greivancesModel set resolved=true where greivancesmodel.id=greivance_id
 
 
-managerRouter.get("/admissions", (req, res) => {
-  getAdmissionWaitingForApprovalController(req,res)
-});
-managerRouter.put("/admissions/:admission_id", (req, res) => {
-  updateApprovalStatusController(req,res)
-});
+managerRouter.get("/admissions", errorWrapper(getAdmissionWaitingForApprovalController));
+
+managerRouter.put("/admissions/:admission_id", errorWrapper(updateApprovalStatusController));
 
 export default managerRouter;
 

@@ -19,7 +19,6 @@ const validationSchemas = [
     age: Yup.number().min(15).max(99).required("Required"),
     gender: Yup.string().oneOf(["Male", "Female", "Other"], "Please select a gender").required("Required"),
     nationality: Yup.string().required("Required"),
-    govtId: Yup.string().required("Required"),
     bloodGroup: Yup.string()
       .oneOf(allowedBloodGroups, "Invalid blood group")
       .required("Required"),
@@ -44,7 +43,6 @@ const validationSchemas = [
     resIndiaStreet: Yup.string().required("Required"),
     resIndiaCity: Yup.string().required("Required"),
     resIndiaState: Yup.string().required("Required"),
-    resIndiaCountry: Yup.string().required("Required"),
     resIndiaPostalCode: Yup.string().matches(pinRegex, "Invalid PIN").required("Required"),
     // Residential Foreign
     resForeignHouseNo: Yup.string().required("Required"),

@@ -8,9 +8,6 @@ const HostelMessDeclaration = () => (
       { label: "I (Student) agree to abide by hostel rules", value: "studentAgreed" },
       { label: "I (Parent/Guardian) agree to abide by hostel rules", value: "parentAgreed" },
     ]} />
-    <ImagePickerField label="Passport Photo" value="passportPhoto" placeholder="Upload" />
-    <ImagePickerField label="Student Signature" value="studentSignature" placeholder="Upload" />
-    <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignature" placeholder="Upload" />
   </>
 );
 

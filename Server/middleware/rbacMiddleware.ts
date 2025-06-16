@@ -17,6 +17,13 @@ interface AuthRequest extends Request {
   };
 }
 
+/**
+ * Middleware to authenticate users based on JWT token
+ * @param req - Express request object
+ * @param res - Express response object
+ * @param next - Express next middleware function
+ * @returns 
+ */
 export const authenticateUser = async (
   req: AuthRequest,
   res: Response,
@@ -91,7 +98,9 @@ export const hasPermission = (requiredPermission: string) => {
       return;
     }
 
-    const userPermissions: string[] = Array.from(PERMISSIONS[req.user.role]);
+    const userPermissions: string[] = Array.from(
+      PERMISSIONS[req.user.role as keyof typeof PERMISSIONS]
+    );
     
     if (
       userPermissions.includes('all') || 
