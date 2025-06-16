@@ -6,7 +6,7 @@ import {
   updateAdmission,
   checkForAdmissionByRollNumberAndAcademicYear,
   getAdmissionsByStatus,
-  createAdmissionApproval
+  createAdmissionApproval,
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -16,49 +16,55 @@ import AppError from "../utils/AppError";
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 
-
-
-export async function getAdmissionWaitingForApprovalController(req: Request, res: Response) {
+export async function getAdmissionWaitingForApprovalController(
+  req: Request,
+  res: Response
+) {
   try {
-    const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+    const submittedAdmissions = await getAdmissionsByStatus(
+      approval_status.submitted
+    );
 
     if (submittedAdmissions.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
         message: "No admissions waiting for manager approval",
-        data: []
+        data: [],
       });
     }
 
     return res.status(200).json({
       success: true,
-      data: submittedAdmissions
+      data: submittedAdmissions,
     });
-
   } catch (error) {
     console.error("Error fetching submitted admissions:", error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function updateApprovalStatusController(req: Request, res: Response) {
+export async function updateApprovalStatusController(
+  req: Request,
+  res: Response
+) {
   try {
     const { admission_id } = req.params;
     const { status, comment, user_id } = req.body;
 
-    if (!admission_id || typeof status !== 'boolean' || !user_id) {
+    if (!admission_id || typeof status !== "boolean" || !user_id) {
       return res.status(400).json({
         success: false,
         message: "Admission ID, status (boolean), and user_id are required",
       });
     }
 
-
-    const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+    const existingAdmission = await getAdmissionByAdmissionId(
+      Number(admission_id)
+    );
     if (existingAdmission.length === 0) {
       return res.status(404).json({
         success: false,
@@ -84,47 +90,42 @@ export async function updateApprovalStatusController(req: Request, res: Response
       success: true,
       data: {
         admission: updatedAdmission,
-        approval: approvalEntry[0]
+        approval: approvalEntry[0],
       },
-      message: status 
-        ? "Admission approved and forwarded to RC" 
+      message: status
+        ? "Admission approved and forwarded to RC"
         : "Admission declined successfully",
     });
-
   } catch (error) {
     console.error("Error updating admission approval status:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-
 export async function createAdmissionController(req: Request, res: Response) {
-  const admissionData = req.body;
+  const admissionData = req.body;  
   const parsedData = createAdmissionSchema.parse(admissionData);
 
   const existingAdmissions = await checkForAdmissionByRollNumberAndAcademicYear(
     parsedData.roll_number,
     parsedData.academicYear
   );
-  if (existingAdmissions.length > 0) {
-    throw AppError(
-      "Admission already exists for the provided roll number and academic year",
-      httpStatus.BAD_REQUEST
-    );
+  if (existingAdmissions.length > 0) { //checks whether an admission already exists for the provided roll number and academic year
+    throw AppError("Admission already exists for the provided roll number and academic year",httpStatus.BAD_REQUEST);
   }
+
   const newAdmission = await createAdmission({
     ...parsedData,
-    roomNumber: "",
     status: approval_status.submitted,
     submission_Date: new Date(),
     updatedAt: new Date(),
   });
 
-  res.status(httpStatus.CREATED).json({
+   res.status(httpStatus.CREATED).json({
     success: true,
     data: newAdmission,
     message: "Admission created successfully",
@@ -135,90 +136,71 @@ export async function getAdmissionByRollNumberController(
   req: Request,
   res: Response
 ) {
-  try {
-    const { roll_number } = req.params;
-    const admission = await getAdmissionByRollNumber(roll_number);
-    if (admission.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "Admission not found for the provided roll number",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      data: admission,
-      message: "Admission retrieved successfully",
-    });
-  } catch (error) {
-    console.error("Error retrieving admission:", error);
-    res.status(500).json({
-      success: false,
-      message: "Could not retrieve admission",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+  const { roll_number } = req.params;
+  if (!roll_number) {
+    throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
+  const admission = await getAdmissionByRollNumber(roll_number);
+  if (admission.length === 0) {
+    throw AppError(
+      "Admission not found for the provided roll number",
+      httpStatus.NOT_FOUND
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: admission,
+    message: "Admission retrieved successfully",
+  });
 }
 
 export async function getAdmissionByAdmissionIdController(
   req: Request,
   res: Response
 ) {
-    const { admissionId } = req.params;
-    const admission = await getAdmissionByAdmissionId(Number(admissionId));
-    if (admission.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Admission not found for the provided admission ID",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      data: admission,
-      message: "Admission retrieved successfully",
-    });
+  const { admissionId } = req.params;
+  const admission = await getAdmissionByAdmissionId(Number(admissionId));
+  if (admission.length === 0) {
+    throw AppError(
+      "Admission not found for the provided admission ID",
+      httpStatus.BAD_REQUEST
+    );
+  }
+  res.status(200).json({
+    success: true,
+    data: admission,
+    message: "Admission retrieved successfully",
+  });
 }
 
 export async function updateAdmissionController(req: Request, res: Response) {
-  try {
-    const { admissionId } = req.params;
-    const updatedData = req.body;
+  const { admissionId } = req.params;
+  const updatedData = req.body;
 
-    const existingAdmission = await getAdmissionByAdmissionId(
-      Number(admissionId)
-    );
-    if (existingAdmission.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Admission not found for the provided admission ID",
-      });
-    }
-    if (
-      existingAdmission[0].status !== approval_status.submitted &&
-      existingAdmission[0].status !== approval_status.declined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Admission can only be updated if it is in submitted or declined state",
-      });
-    }
-
-    const updatedAdmission = await updateAdmission(Number(admissionId), {
-      ...updatedData,
-      updatedAt: new Date(),
-      status: approval_status.submitted,
-    });
-    res.status(200).json({
-      success: true,
-      data: updatedAdmission,
-      message: "Admission updated successfully",
-    });
-  } catch (error) {
-    console.error("Error updating admission:", error);
-    res.status(500).json({
-      success: false,
-      message: "Could not update admission",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+  const existingAdmission = await getAdmissionByAdmissionId(
+    Number(admissionId)
+  );
+  if (existingAdmission.length === 0) {
+    throw AppError("Admission not found for the provided admission ID", httpStatus.BAD_REQUEST);
   }
+  if (
+    existingAdmission[0].status !== approval_status.submitted &&
+    existingAdmission[0].status !== approval_status.declined
+  ) {
+    throw AppError(
+      "Admission can only be updated if it is in submitted or declined status",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  const updatedAdmission = await updateAdmission(Number(admissionId), {
+    ...updatedData,
+    updatedAt: new Date(),
+    status: approval_status.submitted,
+  });
+  res.status(200).json({
+    success: true,
+    data: updatedAdmission,
+    message: "Admission updated successfully",
+  });
 }

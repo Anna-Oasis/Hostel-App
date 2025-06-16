@@ -1,7 +1,6 @@
 
 import {Router} from 'express';
 import { getAdmissionWaitingForApprovalController,updateApprovalStatusController } from '../controllers/admissionController';
-import { Router } from "express";
 import { ManagerController } from "../controllers/managerController";
 
 const managerRouter = Router();

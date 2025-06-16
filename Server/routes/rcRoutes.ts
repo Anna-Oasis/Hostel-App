@@ -7,7 +7,6 @@ import {
   approveOrDeclineGrievancesByRCController
 } from "../controllers/rcController";
 
-import { fetchAdmissionsApprovedByRC } from "../controllers/rcAdmissionApprovalController";
 
 const rcRouter = Router();
 
