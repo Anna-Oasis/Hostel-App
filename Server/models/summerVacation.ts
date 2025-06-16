@@ -5,6 +5,7 @@ import {
   text,
   date,
   timestamp,
+  boolean
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { approval_status_pgEnum } from "./enum";
@@ -24,8 +25,10 @@ export const summerVacationModel = pgTable("summer_vacation", {
   reason: text("reason").notNull(),
   destination: varchar("destination", { length: 100 }).notNull(),
   contact_during_vacation: varchar("contact_during_vacation", { length: 15 }).notNull(),
-  local_guardian_consent: varchar("local_guardian_consent", { length: 3 }).notNull(), // "Yes" or "No"
-  
+  local_guardian_consent: boolean("local_guardian_consent").default(false).notNull(),
+
+  returned_items: varchar("returned_items", { length: 100 }).array(),
+
   // Status and timestamps
   status: approval_status_pgEnum("status")
     .notNull()
