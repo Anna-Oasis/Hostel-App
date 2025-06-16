@@ -5,11 +5,102 @@ import {
   getAdmissionByRollNumber,
   updateAdmission,
   checkForAdmissionByRollNumberAndAcademicYear,
+  getAdmissionsByStatus,
+  createAdmissionApproval
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
+import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
+import { db } from "../config/dbConnection";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
+
+
+
+export async function getAdmissionWaitingForApprovalController(req: Request, res: Response) {
+  try {
+    const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+
+    if (submittedAdmissions.length === 0) {
+      return res.status(404).json({ 
+        success: false,
+        message: "No admissions waiting for manager approval",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: submittedAdmissions
+    });
+
+  } catch (error) {
+    console.error("Error fetching submitted admissions:", error);
+    return res.status(500).json({ 
+      success: false,
+      message: "Internal server error",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}
+
+export async function updateApprovalStatusController(req: Request, res: Response) {
+  try {
+    const { admission_id } = req.params;
+    const { status, comment, user_id } = req.body;
+
+    if (!admission_id || typeof status !== 'boolean' || !user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Admission ID, status (boolean), and user_id are required",
+      });
+    }
+
+
+    const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+    if (existingAdmission.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Admission not found for the provided ID",
+      });
+    }
+
+    const newStatus = status ? approval_status.rc : approval_status.declined;
+
+    const updatedAdmission = await updateAdmission(Number(admission_id), {
+      status: newStatus,
+      updatedAt: new Date(),
+    });
+
+    const approvalEntry = await createAdmissionApproval({
+      admission_id: Number(admission_id),
+      user_id: Number(user_id),
+      approve: status,
+      comment: comment || null,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        admission: updatedAdmission,
+        approval: approvalEntry[0]
+      },
+      message: status 
+        ? "Admission approved and forwarded to RC" 
+        : "Admission declined successfully",
+    });
+
+  } catch (error) {
+    console.error("Error updating admission approval status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}
+
 
 export async function createAdmissionController(req: Request, res: Response) {
   const admissionData = req.body;
