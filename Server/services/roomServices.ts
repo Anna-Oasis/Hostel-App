@@ -43,7 +43,7 @@ export const getStudentsofRoom= async (
   return room[0];
 };
 
-export const removeStudentFromRoom = async (
+export const setStudentinRoom = async (
   rollNo: string[],
   roomNumber: number,
   hostelBlock: string,
