@@ -93,26 +93,34 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
       throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    const room = await checkRoom(validated.room, hostelBlock, currentYear);
-  
-     if (!room) {
-      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
-    }
 
-    // Check if student is in this room
-    if (!room.rollNo || !room.rollNo.includes(rollNo)) {
-      throw new Error("Student is not assigned to this room");
-    }
+    // Only proceed with room removal if room number was provided
+      if (validated.room) {
+        const room = await checkRoom(
+          validated.room,
+          hostelBlock,
+          currentYear
+      );
+      
+      if (!room) {
+        throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
+      }
 
-    // Remove student from room
-    const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
-    
+      // Check if student is in this room
+      if (!room.rollNo || !room.rollNo.includes(rollNo)) {
+        throw new Error("Student is not assigned to this room");
+      }
+
+      // Remove student from room
+      const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
+      
       await setStudentinRoom(
         updatedRollNos,
-        validated.room,
+        validated.room, // Now we know this is defined
         hostelBlock,
         currentYear
       );
+    }
   }
 
   res.status(httpStatus.OK).json({
