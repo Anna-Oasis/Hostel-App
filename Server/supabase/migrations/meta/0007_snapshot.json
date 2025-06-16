@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
+  "id": "5025270f-5460-4815-bcb2-175be37eb586",
+=======
   "id": "66cb7691-f7ca-4748-af53-494c7fbfcb13",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
   "prevId": "a07f9133-2d96-4582-874a-0de816b5f619",
   "version": "7",
   "dialect": "postgresql",
@@ -127,6 +131,21 @@
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
+        "room_number": {
+          "name": "room_number",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "floor": {
+          "name": "floor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+=======
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
         "mess_preference": {
           "name": "mess_preference",
           "type": "varchar(20)",
@@ -156,7 +175,10 @@
         "status": {
           "name": "status",
           "type": "approval_status",
+<<<<<<< HEAD
+=======
           "typeSchema": "public",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -487,7 +509,10 @@
         "status": {
           "name": "status",
           "type": "approval_status",
+<<<<<<< HEAD
+=======
           "typeSchema": "public",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -682,8 +707,12 @@
         },
         "hostel": {
           "name": "hostel",
+<<<<<<< HEAD
+          "type": "varchar(50)",
+=======
           "type": "hostel_block",
           "typeSchema": "public",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true
         },
@@ -691,8 +720,12 @@
           "name": "on_leave",
           "type": "boolean",
           "primaryKey": false,
+<<<<<<< HEAD
+          "notNull": false
+=======
           "notNull": true,
           "default": false
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
         },
         "floor": {
           "name": "floor",
@@ -702,7 +735,11 @@
         },
         "created_at": {
           "name": "created_at",
+<<<<<<< HEAD
+          "type": "date",
+=======
           "type": "timestamp",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -740,12 +777,15 @@
           "primaryKey": false,
           "notNull": true
         },
+<<<<<<< HEAD
+=======
         "room_number": {
           "name": "room_number",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
         "name": {
           "name": "name",
           "type": "varchar(100)",
@@ -1100,6 +1140,12 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+<<<<<<< HEAD
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+=======
         },
         "student_room_number_room_room_number_fk": {
           "name": "student_room_number_room_room_number_fk",
@@ -1125,6 +1171,7 @@
           ]
         }
       },
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1184,7 +1231,10 @@
         "status": {
           "name": "status",
           "type": "approval_status",
+<<<<<<< HEAD
+=======
           "typeSchema": "public",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -1416,6 +1466,11 @@
           "notNull": true,
           "default": "'No'"
         },
+<<<<<<< HEAD
+        "status": {
+          "name": "status",
+          "type": "approval_status",
+=======
         "returned_items": {
           "name": "returned_items",
           "type": "varchar(100)[]",
@@ -1426,6 +1481,7 @@
           "name": "status",
           "type": "approval_status",
           "typeSchema": "public",
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -1540,6 +1596,19 @@
     }
   },
   "enums": {
+<<<<<<< HEAD
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "male",
+        "female",
+        "other",
+        "prefer not to say"
+      ]
+    },
+=======
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
     "public.approval_status": {
       "name": "approval_status",
       "schema": "public",
@@ -1552,6 +1621,8 @@
         "-1"
       ]
     },
+<<<<<<< HEAD
+=======
     "public.gender": {
       "name": "gender",
       "schema": "public",
@@ -1569,6 +1640,7 @@
         "Lavender"
       ]
     },
+>>>>>>> 2742e6325b8cc1b32ee26146274efd02d56761ed
     "public.role": {
       "name": "role",
       "schema": "public",

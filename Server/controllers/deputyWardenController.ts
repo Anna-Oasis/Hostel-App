@@ -1,62 +1,145 @@
 import { Request, Response } from "express";
-import { getAdmissionsByDeputyWarden, createAdmissionApprovalByDeputyWarden, updateAdmissionStatusByDeputyWarden } from "../services/deputyWardenServices";
+import { 
+  getAdmissionsByDeputyWarden, 
+} from "../services/deputyWardenServices";
+import { checkRoom, getStudentsofRoom, removeStudentFromRoom, updateStudentRoomNumber} from "../services/roomServices";
+import {
+  createAdmissionApproval, 
+  updateAdmissionStatus,
+  getRollNumberByAdmissionId,
+  getAdmissionByAdmissionId 
+} from "../services/admissionServices"
 import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
-import { ZodError } from "zod";
-import { approval_status } from "../models/enum";
+import { approval_status } from "../constants/enum";
+import AppError from "../utils/AppError";
+import httpStatus from "http-status";
 
-export const viewAdmissionsByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const admissions = await getAdmissionsByDeputyWarden();
-    res.status(200).json({ success: true, data: admissions });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    res.status(500).json({
-      success: false,
-      message,
-    });
+export const viewAdmissionsByDeputyWardenController = async (
+  req: Request, 
+  res: Response
+): Promise<void> => {
+  const admissions = await getAdmissionsByDeputyWarden();
+  
+  if (!admissions || admissions.length === 0) {
+    throw AppError("No admissions found for approval", httpStatus.NOT_FOUND);
   }
+
+  res.status(httpStatus.OK).json({ 
+    success: true, 
+    data: admissions,
+    message: "Admissions fetched successfully",
+  });
 };
 
-export const approveOrDeclineAdmissionByDeputyWarden = async (req: Request, res: Response): Promise<void> => {
+export const approveOrDeclineAdmissionByDeputyWardenController = async (
+  req: Request, 
+  res: Response
+): Promise<void> => {
   const { admission_id } = req.params;
+  const validated = deputyWardenDecisionSchema.parse(req.body);
+  
+  // Common approval creation
+  const approvalResult = await createAdmissionApproval({
+    admission_id: Number(admission_id),
+    user_id: validated.user_id,
+    approve: validated.approve,
+    comment: validated.comment,
+  });
 
-  try {
-    const validated = deputyWardenDecisionSchema.parse(req.body);
-    const status = validated.approve ? approval_status.deputyWarden : approval_status.declined;
+  if (!approvalResult) {
+    throw AppError("Failed to create admission approval", httpStatus.INTERNAL_SERVER_ERROR);
+  }
 
-    await createAdmissionApprovalByDeputyWarden({
-      admission_id: Number(admission_id),
-      user_id: validated.user_id,
-      approve: validated.approve,
-      comment: validated.comment,
-    });
+  const admission = await getAdmissionByAdmissionId(Number(admission_id));
+  if (!admission || admission.length === 0) {
+    throw AppError("Admission not found", httpStatus.NOT_FOUND);
+  }
 
-    await updateAdmissionStatusByDeputyWarden({
-      admission_id: Number(admission_id),
-      status,
-      roomNumber: validated.approve ? validated.room : ' ', // Empty string if declined
-      floor: validated.approve ? validated.floor : -1 // -1 if declined
-    });
+  const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
+  const hostelBlock = admission[0].hostelBlock;
+  const currentYear = new Date().getFullYear().toString();
 
-    res.status(200).json({
-      success: true,
-      message: "Admission approval submitted",
-    });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.errors,
-      });
-      return;
+  if (validated.approve) {
+    // Approval logic
+    const status = approval_status.deputyWarden;
+    
+    // Check room capacity before approval
+    const room = await checkRoom(
+      validated.room,
+      hostelBlock,
+      currentYear
+    );
+    if (!room) {
+      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
 
-    console.error("❌ Deputy Warden approval error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
+    // Update admission status
+    const admissionUpdate = await updateAdmissionStatus({
+      admission_id: Number(admission_id),
+      status
     });
-  }
-};
 
+    if (!admissionUpdate) {
+      throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Update student room number
+    const studentUpdate = await updateStudentRoomNumber(
+      rollNo,
+      validated.room
+    );
+
+    if (!studentUpdate) {
+      throw AppError("Failed to update student room", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+  } else {
+    // Denial logic
+    const status = approval_status.declined;
+
+    // Update admission status
+    const admissionUpdate = await updateAdmissionStatus({
+      admission_id: Number(admission_id),
+      status
+    });
+
+    if (!admissionUpdate) {
+      throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Clear student room number
+    const studentUpdate = await updateStudentRoomNumber(rollNo, null);
+
+    if (!studentUpdate) {
+      throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    const room = await checkRoom(validated.room, hostelBlock, currentYear);
+  
+     if (!room) {
+      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
+    }
+
+    // Check if student is in this room
+    if (!room.rollNo || !room.rollNo.includes(rollNo)) {
+      throw new Error("Student is not assigned to this room");
+    }
+
+    // Remove student from room
+    const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
+    
+      await removeStudentFromRoom(
+        updatedRollNos,
+        validated.room,
+        hostelBlock,
+        currentYear
+      );
+    //}
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: validated.approve 
+      ? "Admission approved successfully" 
+      : "Admission declined successfully",
+  });
+};
