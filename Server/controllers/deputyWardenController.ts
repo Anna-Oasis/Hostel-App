@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { 
   getAdmissionsByDeputyWarden, 
 } from "../services/deputyWardenServices";
-import { checkRoom, getStudentsofRoom, removeStudentFromRoom, updateStudentRoomNumber} from "../services/roomServices";
+import { checkRoom, getStudentsofRoom, setStudentinRoom, updateStudentRoomNumber} from "../services/roomServices";
 import {
   createAdmissionApproval, 
   updateAdmissionStatus,
@@ -41,7 +41,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
   // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
-    user_id: validated.user_id,
+    user_id: validated.student_user_id,
     approve: validated.approve,
     comment: validated.comment,
   });
@@ -63,16 +63,6 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
     // Approval logic
     const status = approval_status.deputyWarden;
     
-    // Check room capacity before approval
-    const room = await checkRoom(
-      validated.room,
-      hostelBlock,
-      currentYear
-    );
-    if (!room) {
-      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
-    }
-
     // Update admission status
     const admissionUpdate = await updateAdmissionStatus({
       admission_id: Number(admission_id),
@@ -81,16 +71,6 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
 
     if (!admissionUpdate) {
       throw AppError("Failed to update admission status", httpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    // Update student room number
-    const studentUpdate = await updateStudentRoomNumber(
-      rollNo,
-      validated.room
-    );
-
-    if (!studentUpdate) {
-      throw AppError("Failed to update student room", httpStatus.INTERNAL_SERVER_ERROR);
     }
   } else {
     // Denial logic
@@ -127,13 +107,12 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
     // Remove student from room
     const updatedRollNos = room.rollNo.filter(r => r !== rollNo);
     
-      await removeStudentFromRoom(
+      await setStudentinRoom(
         updatedRollNos,
         validated.room,
         hostelBlock,
         currentYear
       );
-    //}
   }
 
   res.status(httpStatus.OK).json({
