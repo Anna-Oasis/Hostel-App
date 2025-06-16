@@ -50,7 +50,7 @@ const validationSchemas = [
     resForeignCity: Yup.string().required("Required"),
     resForeignState: Yup.string().required("Required"),
     resForeignCountry: Yup.string().required("Required"),
-    resForeignPostalCode: Yup.string().required("Required").matches(pinRegex, "Invalid PIN"),
+    resForeignPostalCode: Yup.string().required("Required"),
   }),
   // Local Guardian
   Yup.object({
@@ -70,12 +70,12 @@ const validationSchemas = [
     isForeignNational: Yup.string().oneOf(["Yes", "No"], "Please select an option").required("Required"),
     govtId: Yup.string().required("Required"),
     govtIdType: Yup.string().required("Required"),
-    govtIdDocument: Yup.string().required("Required"),
-    passportPhoto: Yup.string().required("Required"),
-    studentSignature: Yup.string().required("Required"),
-    parentGuardianSignature: Yup.string().required("Required"),
-    aadhaar: Yup.string().required("Required"),
-    admissionSlip: Yup.string().required("Required"),
+    categoryProofUrl: Yup.string().required("Required"),
+    passportPhotoUrl: Yup.string().required("Required"),
+    studentSignatureUrl: Yup.string().required("Required"),
+    parentGuardianSignatureUrl: Yup.string().required("Required"),
+    aadhaarUrl: Yup.string().required("Required"),
+    admissionSlipUrl: Yup.string().required("Required"),
   }),
 ];
 

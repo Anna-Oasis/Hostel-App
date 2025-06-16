@@ -9,12 +9,15 @@ import ParentDetails from "@/components/details/ParentDetails";
 import LocalGuardian from "@/components/details/LocalGuardian";
 import FileUploads from "@/components/details/FileUploads";
 import useLoadingStore from "@/stores/loadingStore";
+import useUserStore  from "@/stores/userStore";
 import { submitStudentDetails } from "@/utils/student/studentApi";
+import testValues from "@/test/detailsTest";
 
 export default function DetailsPage() {
   const [page, setPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const setLoading = useLoadingStore((state) => state.setLoading);
+  const userId = useUserStore((state) => state.userId);
 
   const next = () => {
     setPage((p) => p + 1);
@@ -22,7 +25,7 @@ export default function DetailsPage() {
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }, 0);
   };
-  
+
   const prev = () => setPage((p) => p - 1);
 
   const renderPage = () => {
@@ -34,7 +37,7 @@ export default function DetailsPage() {
       case 2:
         return <LocalGuardian />;
       case 3:
-        return <FileUploads />
+        return <FileUploads />;
       default:
         return null;
     }
@@ -42,14 +45,16 @@ export default function DetailsPage() {
 
   return (
     <Formik
-      initialValues={initialValues}
+      // initialValues={initialValues}
+      initialValues={testValues} // For testing purposes, replace with initialValues in production
       validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
         } else {
-          setLoading(true);
+          // setLoading(true);
           const formData = new FormData();
+          formData.append("user_id", userId?.toString() || "");
           formData.append("name", values.name);
           formData.append("rollNo", values.rollNo);
           formData.append("course", values.course);
@@ -98,14 +103,17 @@ export default function DetailsPage() {
           formData.append("govtIdType", values.govtIdType);
           formData.append("govtId", values.govtId);
           const imageFields = [
-            { key: "passportPhoto", name: "images[passportPhoto]" },
-            { key: "studentSignature", name: "images[studentSignature]" },
-            { key: "parentGuardianSignature", name: "images[parentGuardianSignature]" },
-            { key: "govtIdDocument", name: "images[govtIdDocument]" },
-            { key: "aadhaar", name: "images[aadhaar]" },
-            { key: "admissionSlip", name: "images[admissionSlip]" }
+            { key: "passportPhotoUrl", name: "passportPhotoUrl" },
+            { key: "studentSignatureUrl", name: "studentSignatureUrl" },
+            {
+              key: "parentGuardianSignatureUrl",
+              name: "parentGuardianSignatureUrl",
+            },
+            { key: "categoryProofUrl", name: "categoryProofUrl" },
+            { key: "aadhaarUrl", name: "aadhaarUrl" },
+            { key: "admissionSlipUrl", name: "admissionSlipUrl" },
           ] as const;
-          type ImageFieldKey = typeof imageFields[number]["key"];
+          type ImageFieldKey = (typeof imageFields)[number]["key"];
           for (const field of imageFields) {
             const uri = values[field.key as ImageFieldKey];
             if (uri) {
@@ -119,36 +127,39 @@ export default function DetailsPage() {
               } as any);
             }
           }
-          console.log("FormData prepared for submission:", formData);
-
           await submitStudentDetails(formData);
-
-          setLoading(false);
+          // setLoading(false);
         }
       }}
     >
       {({ handleSubmit, validateForm }) => (
-        <ScrollView ref={scrollViewRef}>
-          <View className="m-4 flex gap-3">
-            
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={{
+            padding: 20,
+            gap: 12,
+            flexDirection: "column",
+          }}
+        >
+          <View>
             {renderPage()}
-            
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}
-            >
+
+            <View className="flex-row justify-between mt-6">
               {page > 0 && (
                 <Button onPress={prev} variant="outline">
                   <ButtonText>Back</ButtonText>
                 </Button>
               )}
-              
-              <Button onPress={async () => {
-                const formErrors = await validateForm();
-                if (Object.keys(formErrors).length > 0) {
-                  console.log("Formik validation errors:", formErrors);
-                }
-                handleSubmit();
-                }}>
+
+              <Button
+                onPress={async () => {
+                  const formErrors = await validateForm();
+                  if (Object.keys(formErrors).length > 0) {
+                    console.log("Formik validation errors:", formErrors);
+                  }
+                  handleSubmit();
+                }}
+              >
                 <ButtonText>{page < 3 ? "Next" : "Update Details"}</ButtonText>
               </Button>
             </View>

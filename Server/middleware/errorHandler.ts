@@ -41,7 +41,7 @@ const errorHandler = (err :any, req:Request , res : Response, next :NextFunction
       });
       break;
     default:
-      console.log("No Error all good!...");
+      console.log(err);
   }
 };
 

@@ -40,7 +40,7 @@ const FileUploads = () => {
           />
           <ImagePickerField
             label={`${values.govtIdType || "Government ID"} Document`}
-            value="govtIdDocument"
+            value="categoryProofUrl"
             placeholder="Upload"
           />
         </View>
@@ -53,17 +53,17 @@ const FileUploads = () => {
           />
           <ImagePickerField
             label="Passport Document"
-            value="govtIdDocument"
+            value="categoryProofUrl"
             placeholder="Upload"
           />
         </View>
       ) }
 
-      <ImagePickerField label="Passport Photo" value="passportPhoto" placeholder="Upload" />
-      <ImagePickerField label="Student Signature" value="studentSignature" placeholder="Upload" />
-      <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignature" placeholder="Upload" />
-      <ImagePickerField label="Aadhaar Card" value="aadhaar" placeholder="Upload" />
-      <ImagePickerField label="Admission Slip" value="admissionSlip" placeholder="Upload" />
+      <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
+      <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
+      <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
+      <ImagePickerField label="Aadhaar Card" value="aadhaarUrl" placeholder="Upload" />
+      <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
     </>
   );
 };

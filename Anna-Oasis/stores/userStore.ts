@@ -13,10 +13,12 @@ type UserStore = {
   resetUser: () => void;
 };
 
-export const useUserStore = create<UserStore>((set) => ({
+const useUserStore = create<UserStore>((set) => ({
     user: null,
     userId: null,
     setUser: (user) => set({ user, userId: user ? parseInt(user.id) : null }),
     setUserId: (userId) => set({ userId }),
     resetUser: () => set({ user: null, userId: null }),
 }));
+
+export default useUserStore;
