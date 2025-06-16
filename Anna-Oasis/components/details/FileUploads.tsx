@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useFormikContext } from "formik";
 import ImagePickerField from "@/components/form/ImagePickerField";
 import SelectField from "@/components/form/SelectField";
 import TextField from "@/components/form/TextField";
 import RadioField from "@/components/form/RadioField";
-import { useFormikContext } from "formik";
 import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
 
 const FileUploads = () => {
-  const { values } = useFormikContext<any>();
+  const { values, setFieldValue } = useFormikContext<any>();
+  useEffect(() => {
+    if (values.isForeignNational === "Yes" && values.govtIdType !== "Passport") {
+      setFieldValue("govtIdType", "Passport");
+    }
+  }, [values.isForeignNational, setFieldValue, values.govtIdType]);
 
   return (
     <>
