@@ -14,7 +14,89 @@ import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
-import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
+import { AuthRequest } from "../types/roles";
+import { getAdmissionsApprovedByUser } from "../services/admissionServices";
+
+import { db } from "../config/dbConnection";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
+
+
+export async function getAdmissionWaitingForApprovalController(req: AuthRequest, res: Response) {
+  const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+  
+
+  if (submittedAdmissions.length === 0) {
+    throw AppError(
+      "No admissions waiting for manager approval",
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    user: req.user,
+    data: submittedAdmissions,
+    count: submittedAdmissions.length,
+    message: "Admissions retrieved successfully"
+  });
+}
+
+export async function updateApprovalStatusController(req: AuthRequest, res: Response) {
+  const { admission_id } = req.params;
+  const { status, comment} = req.body;
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+  const user_id = req.user.id;
+
+  if (!admission_id || typeof status !== 'boolean' || !user_id) {
+    throw AppError(
+      "Admission ID, status (boolean), and user_id are required",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  // If status is false, comment is required
+  if (status === false && (!comment || comment.trim() === '')) {
+    throw AppError(
+      "Comment is required when declining an admission",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+  if (existingAdmission.length === 0) {
+    throw AppError(
+      "Admission not found for the provided ID",
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  const newStatus = status ? approval_status.rc : approval_status.declined;
+
+  const updatedAdmission = await updateAdmission(Number(admission_id), {
+    status: newStatus,
+    updatedAt: new Date(),
+  });
+
+  const approvalEntry = await createAdmissionApproval({
+    admission_id: Number(admission_id),
+    user_id: Number(user_id),
+    approve: status,
+    comment: comment || null,
+  });
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: {
+      admission: updatedAdmission,
+      approval: approvalEntry[0]
+    },
+    message: status 
+      ? "Admission approved and forwarded to RC" 
+      : "Admission declined successfully",
+  });
+}
 
 
 // student/admissions: POST – Create the admission for the student
@@ -186,31 +268,23 @@ export async function updateApprovalStatusByManagerController(req:Request, res: 
   });
 }
 
-
-export const fetchAdmissionsApprovedByRC = async (
-  req: Request,
+export const fetchAdmissionsApprovedByUser = async (
+  req: AuthRequest,
   res: Response,
 ) => {
-  try {
-    const rcId = parseInt(req.params.rc_id);
-
-    if (isNaN(rcId)) {
-      throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
-    }
-
-    const data = await getAdmissionsApprovedByRC(rcId);
-
-    res.status(httpStatus.OK).json({
-      success: true,
-      data,
-    });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error";
-    throw AppError(
-      `Failed to fetch admissions for RC: ${message}`,
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
-};
+  const userID = parseInt(req.user.id);
+  
+  if (isNaN(userID)) {
+    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
+  }
+  const data = await getAdmissionsApprovedByUser(userID);
 
+  res.status(httpStatus.OK).json({
+    success: true,
+    data,
+    message: "Admissions approved fetched successfully",
+  });
+};

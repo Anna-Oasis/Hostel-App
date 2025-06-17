@@ -45,3 +45,10 @@ export interface UserWithRole {
   id: number;
   role: UserRole;
 }
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    role: UserRole;
+  };
+}

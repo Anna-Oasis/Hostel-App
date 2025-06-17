@@ -25,8 +25,6 @@ import {
   updateStudentRoomNumber 
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
-import { rcExists } from "../services/rcAdmissionApprovalService";
 
 // \resident_counsellor\admissions: GET – \rc_id as path param, Fetch all admissions waiting for RC approval belonging to the hostel block of the rc
 export const getAdmissionWaitingForApprovalByRCController = async (
@@ -218,24 +216,25 @@ export const approveOrDeclineGrievancesByRCController = async (
 
 
 
-export const fetchAdmissionsApprovedByRC = async (
-  req: Request,
-  res: Response,
-) => {
-  const rcId = parseInt(req.params.rc_id);
+// export const fetchAdmissionsApprovedByRC = async (
+//   req: Request,
+//   res: Response,
+// ) => {
+//   const rcId = parseInt(req.params.rc_id);
 
-  if (isNaN(rcId)) {
-    throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
-  }
-  const rc = await rcExists(rcId);
-  if (!rc) {
-    throw AppError("RC not found", httpStatus.NOT_FOUND);
-  }
-  const data = await getAdmissionsApprovedByRC(rcId);
+//   if (isNaN(rcId)) {
+//     throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
+//   }
+//   const rc = await rcExists(rcId);
+//   if (!rc) {
+//     throw AppError("RC not found", httpStatus.NOT_FOUND);
+//   }
+//   const data = await getAdmissionsApprovedByRC(rcId);
 
-  res.status(httpStatus.OK).json({
-    success: true,
-    data,
-    message: "Admissions approved by RC fetched successfully",
-  });
-};
+//   res.status(httpStatus.OK).json({
+//     success: true,
+//     data,
+//     message: "Admissions approved by RC fetched successfully",
+//   });
+// };
+
