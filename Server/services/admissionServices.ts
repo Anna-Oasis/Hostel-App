@@ -98,7 +98,6 @@ export async function getAdmissionsByStatus(status: string) {
   return result;
 }
 
-
 export async function createAdmissionApproval(approvalData: {
   admission_id: number;
   user_id: number;
