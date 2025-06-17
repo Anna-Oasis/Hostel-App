@@ -133,24 +133,31 @@ export const updateAdmissionStatus = async ({
 export const getAdmissionsApprovedByUser = async (userID: number) => {
   return await db
     .select({
+      
+      
+      // Admission Model data
+      admissionId: admissionModel.id,
+      roll_number: admissionModel.roll_number,
+      academicYear: admissionModel.academicYear,
+      studentAgreed: admissionModel.studentAgreed,
+      parentAgreed: admissionModel.parentAgreed,
+      admissionCategory: admissionModel.admissionCategory,
+      previousResident: admissionModel.previousResident,
+      hostelBlock: admissionModel.hostelBlock,
+      messPreference: admissionModel.messPreference,
+      submission_Date: admissionModel.submission_Date,
+      updatedAt: admissionModel.updatedAt,
+      transaction_id: admissionModel.transaction_id,
+      status: admissionModel.status,
+
+      // Admission Approvals data
       approval: admissionApprovalsModel.approve,
       comment: admissionApprovalsModel.comment,
       timestamp: admissionApprovalsModel.timestamp,
-      admissionId: admissionApprovalsModel.admission_id,
-      status: admissionModel.status,
-      // roomNumber: admissionModel.roomNumber,
-      hostelBlock: admissionModel.hostelBlock,
-      rollNumber: admissionModel.roll_number,
+      user_id: admissionApprovalsModel.user_id,
     })
     .from(admissionApprovalsModel)
     .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
-    .where(
-      and(
-        eq(admissionApprovalsModel.user_id, userID),
-        or(
-          eq(admissionModel.status, approval_status.rc),
-          eq(admissionModel.status, approval_status.declined)
-        )
-      )
-    );
+    .where(eq(admissionApprovalsModel.user_id, userID))
+    .orderBy(admissionApprovalsModel.timestamp);
 };
