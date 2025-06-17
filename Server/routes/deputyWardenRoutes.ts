@@ -3,6 +3,9 @@ import {
   viewAdmissionsByDeputyWardenController,
   approveOrDeclineAdmissionByDeputyWardenController
 } from "../controllers/deputyWardenController";
+import { fetchAdmissionsApprovedByUser } from "../controllers/admissionController";
+import errorWrapper from "../middleware/errorWrapper";
+import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
 const deputyWardenRouter = Router();
 
@@ -12,5 +15,6 @@ deputyWardenRouter.get("/admissions", viewAdmissionsByDeputyWardenController);
 // Approve or decline admission by RC with admission ID in path
 deputyWardenRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByDeputyWardenController);
 
-export default deputyWardenRouter;
+deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
+export default deputyWardenRouter;

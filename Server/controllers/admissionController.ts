@@ -13,14 +13,16 @@ import { createAdmissionSchema } from "../validation/admission.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
-
-import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
+import { AuthRequest } from "../types/roles";
+import { getAdmissionsApprovedByUser } from "../services/admissionServices";
 
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 
-export async function getAdmissionWaitingForApprovalController(req: Request, res: Response) {
+
+export async function getAdmissionWaitingForApprovalController(req: AuthRequest, res: Response) {
   const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+  
 
   if (submittedAdmissions.length === 0) {
     throw AppError(
@@ -31,15 +33,20 @@ export async function getAdmissionWaitingForApprovalController(req: Request, res
 
   res.status(httpStatus.OK).json({
     success: true,
+    user: req.user,
     data: submittedAdmissions,
     count: submittedAdmissions.length,
     message: "Admissions retrieved successfully"
   });
 }
 
-export async function updateApprovalStatusController(req: Request, res: Response) {
+export async function updateApprovalStatusController(req: AuthRequest, res: Response) {
   const { admission_id } = req.params;
-  const { status, comment, user_id } = req.body;
+  const { status, comment} = req.body;
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+  const user_id = req.user.id;
 
   if (!admission_id || typeof status !== 'boolean' || !user_id) {
     throw AppError(
@@ -191,30 +198,23 @@ export async function updateAdmissionController(req: Request, res: Response) {
 }
 
 
-
-export const fetchAdmissionsApprovedByRC = async (
-  req: Request,
+export const fetchAdmissionsApprovedByUser = async (
+  req: AuthRequest,
   res: Response,
 ) => {
-  try {
-    const rcId = parseInt(req.params.rc_id);
-
-    if (isNaN(rcId)) {
-      throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
-    }
-
-    const data = await getAdmissionsApprovedByRC(rcId);
-
-    res.status(httpStatus.OK).json({
-      success: true,
-      data,
-    });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error";
-    throw AppError(
-      `Failed to fetch admissions for RC: ${message}`,
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
+  const userID = parseInt(req.user.id);
+  
+  if (isNaN(userID)) {
+    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
+  }
+  const data = await getAdmissionsApprovedByUser(userID);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data,
+    message: "Admissions approved fetched successfully",
+  });
 };
