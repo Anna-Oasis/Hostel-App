@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
+import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController,updateApprovalStatusByWardenController } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
@@ -9,11 +9,9 @@ executiveWardenRouter.get("/", (req, res) => {
   res.send("👋 Welcome to the executiveWarden API!");
 });
 
-// executiveWardenRouter.get("/admissions", (req, res) => {
-//   getAdmissionWaitingForExecutiveWardenApprovalController(req,res)
-// });
-// executiveWardenRouter.put("/admissions/:admission_id", (req, res) => {
-//   updateApprovalStatusController(req,res)
-// });
+executiveWardenRouter.get("/admissions", authenticateUser, hasRole(['executiveWarden']), errorWrapper(fetchAdmissionWaitingForApprovalController));
+
+executiveWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['executiveWarden']),errorWrapper(updateApprovalStatusByWardenController));
+
 executiveWardenRouter.get("/admissions/approvals",authenticateUser ,hasRole(['executiveWarden']),errorWrapper(fetchAdmissionsApprovedByUser));
 export default executiveWardenRouter;

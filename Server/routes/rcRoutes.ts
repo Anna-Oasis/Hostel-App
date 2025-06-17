@@ -1,8 +1,6 @@
 import { Router } from "express";
-import {fetchAdmissionsApprovedByUser} from "../controllers/admissionController";
+import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAdmissionWaitingForApprovalByRCController} from "../controllers/admissionController";
 import {
-  getAdmissionWaitingForApprovalByRCController,
-  updateApprovalStatusByRCController,
   viewGrievancesByRCController,
   approveOrDeclineGrievancesByRCController
 } from "../controllers/rcController";
@@ -14,10 +12,10 @@ import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 const rcRouter = Router();
 
 // Fetch all admissions waiting for RC approval by hostel block
-rcRouter.get("/admissions/:rc_id", getAdmissionWaitingForApprovalByRCController);
+rcRouter.get("/admissions",authenticateUser,hasRole(["rc"]),errorWrapper( getAdmissionWaitingForApprovalByRCController));
 
 // Approve or decline admission by RC with admission ID in path
-rcRouter.put("/admissions/:admission_id", updateApprovalStatusByRCController);
+rcRouter.put("/admissions/:admission_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateApprovalStatusByRCController));
 
 // Fetch all grievances waiting for RC approval by hostel block and floor
 rcRouter.get("/grievance/:rc_id", viewGrievancesByRCController);

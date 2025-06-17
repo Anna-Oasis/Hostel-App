@@ -1,6 +1,7 @@
 import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
+import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
 import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
@@ -72,6 +73,20 @@ export async function getAdmissionByAdmissionId(admissionId: number) {
     .where(eq(admissionModel.id, admissionId));
   return result;
 }
+
+export const getAdmissionsToBeApprovedByRcByHostelBlock = async (hostelBlock: string) => {
+  const admissions = await db
+    .select()
+    .from(admissionModel)
+    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
+    .where(
+      and(
+        eq(admissionModel.status, approval_status.manager),
+        eq(admissionModel.hostelBlock, hostelBlock)
+      ))
+    .orderBy(admissionModel.submission_Date);
+  return admissions;
+};
 
 export const getRollNumberByAdmissionId = async (admission_id: number) => {
   const admission = await db

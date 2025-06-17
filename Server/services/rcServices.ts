@@ -17,19 +17,6 @@ export async function getRCById(rc_id: number) {
   return rc;
 }
 
-export const getAdmissionsByHostelBlock = async (hostelBlock: string) => {
-  const admissions = await db
-    .select()
-    .from(admissionModel)
-    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
-    .where(
-      and(
-        eq(admissionModel.status, approval_status.manager),
-        eq(admissionModel.hostelBlock, hostelBlock)
-      ))
-    .orderBy(admissionModel.submission_Date);
-  return admissions;
-};
 
 export const getGrievances = async (hostelBlock: string, floors: number[]) => {
   const grievances = await db
