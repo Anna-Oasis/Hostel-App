@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAdmissionWaitingForApprovalController, updateApprovalStatusController } from '../controllers/admissionController';
+import { getAdmissionWaitingForApprovalController, updateApprovalStatusController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 
 const managerRouter = Router();
@@ -15,6 +15,8 @@ const managerRouter = Router();
 managerRouter.get("/admissions", errorWrapper(getAdmissionWaitingForApprovalController));
 
 managerRouter.put("/admissions/:admission_id", errorWrapper(updateApprovalStatusController));
+
+managerRouter.get("/admissions/approvals/:user_id",errorWrapper(fetchAdmissionsApprovedByUser));
 
 export default managerRouter;
 

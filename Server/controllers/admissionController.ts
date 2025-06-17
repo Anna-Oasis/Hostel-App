@@ -198,13 +198,13 @@ export const fetchAdmissionsApprovedByUser = async (
   const userID = parseInt(req.params.user_id);
 
   if (isNaN(userID)) {
-    throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
+    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
   const data = await getAdmissionsApprovedByUser(userID);
 
   res.status(httpStatus.OK).json({
     success: true,
     data,
-    message: "Admissions approved by RC fetched successfully",
+    message: "Admissions approved fetched successfully",
   });
 };
