@@ -13,6 +13,7 @@ import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 
+// \deputy_warden\admissions: GET - Fetch all admissions waiting for deputy warden approval 
 export const getAdmissionWaitingForApprovalByDeputyWardenController = async (
   req: Request, 
   res: Response
@@ -30,6 +31,7 @@ export const getAdmissionWaitingForApprovalByDeputyWardenController = async (
   });
 };
 
+// \deputy_warden\admissions: PUT – use \admission_id to approve or decline by deputy warden, entry into admission_approval table with comment(if declined) (The request body will contain the approval, student user_id, room and floor) 
 export const updateApprovalStatusByDeputyWardenController = async (
   req: Request, 
   res: Response
@@ -98,7 +100,7 @@ export const updateApprovalStatusByDeputyWardenController = async (
     if (!studentUpdate) {
       throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
     }
-    
+
     // Only proceed with room removal if room number was provided
       if (validated.room) {
         const room = await checkRoom(
