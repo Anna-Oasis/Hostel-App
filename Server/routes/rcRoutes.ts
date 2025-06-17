@@ -16,7 +16,7 @@ const rcRouter = Router();
 rcRouter.get("/admissions/:rc_id", getAdmissionWaitingForApprovalByRCController);
 
 // Approve or decline admission by RC with admission ID in path
-rcRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByRCController);
+rcRouter.put("/admissions/:admission_id", updateApprovalStatusByRCController);
 
 // Fetch all grievances waiting for RC approval by hostel block and floor
 rcRouter.get("/grievance/:rc_id", viewGrievancesByRCController);

@@ -126,3 +126,13 @@ export const updateAdmissionStatus = async ({
     .where(eq(admissionModel.id, admission_id))
     .returning();
 };
+
+export const getAcademicYearByAdmissionId = async (admission_id: number) => {
+  const admission = await db
+    .select({ academicYear: admissionModel.academicYear })
+    .from(admissionModel)
+    .where(eq(admissionModel.id, admission_id))
+    .limit(1);
+    
+  return admission[0].academicYear;
+};

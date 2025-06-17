@@ -9,7 +9,8 @@ import {
   createAdmissionApproval, 
   updateAdmissionStatus, 
   getRollNumberByAdmissionId, 
-  getAdmissionByAdmissionId 
+  getAdmissionByAdmissionId,
+  getAcademicYearByAdmissionId
 } from "../services/admissionServices";
 import { 
   rcAdmissionDecisionSchema, 
@@ -50,13 +51,19 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   });
 };
 
-
+// \resident_counsellor\admissions: PUT – use \admission_id to approve or decline by rc, entry into admission_approval table with comment(if declined) and also update the corresponding student details with the room and floor (The request body will contain the approval, rc_id, student user_id, room and floor) 
 export const updateApprovalStatusByRCController = async (
   req: Request, 
   res: Response
 ): Promise<void> => {
   const { admission_id } = req.params;
   const validated = rcAdmissionDecisionSchema.parse(req.body);
+
+  if (validated.approve === false && (!validated.comment || validated.comment.trim() === '')) {
+      throw AppError(
+        "Comment is required when declining an admission", httpStatus.BAD_REQUEST
+      );
+  }
 
   // Common approval creation
   const approvalResult = await createAdmissionApproval({
@@ -72,12 +79,12 @@ export const updateApprovalStatusByRCController = async (
 
   const admission = await getAdmissionByAdmissionId(Number(admission_id));
   if (!admission || admission.length === 0) {
-    throw AppError("Admission not found", httpStatus.NOT_FOUND);
+    throw AppError("Admission not found for the provided ID", httpStatus.NOT_FOUND);
   }
 
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const hostelBlock = admission[0].hostelBlock;
-  const currentYear = new Date().getFullYear().toString();
+  const currentYear = await getAcademicYearByAdmissionId(Number(admission_id));
 
   if (validated.approve) {
     // Approval logic
