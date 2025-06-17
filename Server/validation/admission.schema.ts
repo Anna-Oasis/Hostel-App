@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 export const createAdmissionSchema = z.object({
   roll_number: z.string().min(6, "Roll number is required"),
   academicYear: z
@@ -17,10 +16,8 @@ export const createAdmissionSchema = z.object({
     .string()
     .min(1, "Admission category is required")
     .max(30, "Admission category must be less than 30 characters"),
-
   previousResident: z.boolean(),
   hostelBlock: z.string().min(1, "Hostel block is required").max(20, "Hostel block must be less than 20 characters"),
   messPreference: z.string().min(1, "Mess preference is required").max(20, "Mess preference must be less than 20 characters"),
-
   transaction_id: z.string().min(1, "Transaction ID is required").max(100, "Transaction ID must be less than 100 characters"),
 });  

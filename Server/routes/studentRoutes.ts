@@ -27,7 +27,8 @@ const studentRouter = Router();
 
 //admission - students
 studentRouter.post("/admission", errorWrapper(createAdmissionController));
-studentRouter.get( "/admission/:admissionId",errorWrapper(getAdmissionByAdmissionIdController));
+studentRouter.get( "/admission/:roll_number",errorWrapper(getAdmissionByRollNumberController));
+
 studentRouter.get("/admission/student/:roll_number",errorWrapper(getAdmissionByRollNumberController));
 studentRouter.put("/admission/:admissionId",errorWrapper(updateAdmissionController));
 

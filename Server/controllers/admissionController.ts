@@ -90,7 +90,7 @@ export async function updateApprovalStatusController(req: Request, res: Response
   });
 }
 
-
+// student/admissions: POST – Create the admission for the student
 export async function createAdmissionController(req: Request, res: Response) {
   const admissionData = req.body;  
   const parsedData = createAdmissionSchema.parse(admissionData);
@@ -117,6 +117,7 @@ export async function createAdmissionController(req: Request, res: Response) {
   });
 }
 
+// student/admissions: GET – \roll_number as path param and fetch the admission details and status of a particular student 
 export async function getAdmissionByRollNumberController(
   req: Request,
   res: Response
@@ -125,6 +126,7 @@ export async function getAdmissionByRollNumberController(
   if (!roll_number) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
+
   const admission = await getAdmissionByRollNumber(roll_number);
   if (admission.length === 0) {
     throw AppError(

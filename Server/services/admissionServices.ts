@@ -64,7 +64,6 @@ export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: s
     return result;
 }
 
-
 export async function getAdmissionByAdmissionId(admissionId: number) {
   const result = await db
     .select()

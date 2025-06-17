@@ -230,5 +230,3 @@ export const fetchAdmissionsApprovedByRC = async (
     message: "Admissions approved by RC fetched successfully",
   });
 };
-
-};
