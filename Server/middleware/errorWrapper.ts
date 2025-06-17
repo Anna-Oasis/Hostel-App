@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+// Adjust the import path as necessary
 
 const errorWrapper = (
   controller: (req: Request, res: Response, next: NextFunction) => Promise<void>

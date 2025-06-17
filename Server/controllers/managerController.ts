@@ -1,76 +1,7 @@
 import { AuthenticatedRequest } from "../types/roles";
 import { Request, Response } from "express";
 import { getAdmissionApprovals, resolveGrievance, getGrievances } from "../services/managerService";
-import httpStatus from "http-status";
-import AppError from "../utils/AppError";
-import { getAdmissionsByStatus, getAdmissionByAdmissionId, updateAdmission, createAdmissionApproval } from "../services/admissionServices";
-import { approval_status } from "../constants/enum";
-import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
 
-
-// \manager\admissions: GET – Fetch all admissions waiting for manager approval
-export async function getAdmissionWaitingForApprovalByManagerController(req: Request, res: Response) {
-  const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
-
-  if (submittedAdmissions.length === 0) {
-    throw AppError(
-      "No admissions waiting for manager approval",
-      httpStatus.NOT_FOUND
-    );
-  }
-
-  res.status(httpStatus.OK).json({
-    success: true,
-    data: submittedAdmissions,
-    count: submittedAdmissions.length,
-    message: "Admissions retrieved successfully"
-  });
-}
-
-// \manager\admissions: PUT – use \admission_id to approve or decline by manager, entry into admission_approval table with comment(if declined) 
-export async function updateApprovalStatusByManagerController(req: Request, res: Response) {
-  const { admission_id } = req.params;
-  const parsedData=managerAdmissionDecisionSchema.parse(req.body);
-
-  // If status is false, comment is required
-  if (parsedData.approve === false && (!parsedData.comment || parsedData.comment.trim() === '')) {
-    throw AppError(
-      "Comment is required when declining an admission", httpStatus.BAD_REQUEST
-    );
-  }
-
-  const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
-  if (existingAdmission.length === 0) {
-    throw AppError(
-      "Admission not found for the provided ID", httpStatus.NOT_FOUND
-    );
-  }
-
-  const newStatus = parsedData.approve ? approval_status.manager: approval_status.declined;
-
-  const updatedAdmission = await updateAdmission(Number(admission_id), {
-    status: newStatus,
-    updatedAt: new Date(),
-  });
-
-  const approvalEntry = await createAdmissionApproval({
-    admission_id: Number(admission_id),
-    user_id: parsedData.user_id,
-    approve: parsedData.approve,
-    comment: parsedData.comment || null,
-  });
-
-  res.status(httpStatus.OK).json({
-    success: true,
-    data: {
-      admission: updatedAdmission,
-      approval: approvalEntry[0]
-    },
-    message: parsedData.approve 
-      ? "Admission approved and forwarded to RC" 
-      : "Admission declined successfully",
-  });
-}
 
 export class ManagerController {
   async getAdmissionApprovals(req: AuthenticatedRequest, res: Response): Promise<void> {

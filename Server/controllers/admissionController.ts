@@ -13,11 +13,9 @@ import { createAdmissionSchema } from "../validation/admission.schema";
 import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
-
+import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
 import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
 
-import { db } from "../config/dbConnection";
-import { admissionApprovalsModel } from "../models/admissionApprovals";
 
 // student/admissions: POST – Create the admission for the student
 export async function createAdmissionController(req: Request, res: Response) {
@@ -70,10 +68,7 @@ export async function getAdmissionByRollNumberController(
   });
 }
 
-export async function getAdmissionByAdmissionIdController(
-  req: Request,
-  res: Response
-) {
+export async function getAdmissionByAdmissionIdController(req: Request, res: Response) {
   const { admissionId } = req.params;
   const admission = await getAdmissionByAdmissionId(Number(admissionId));
   if (admission.length === 0) {
@@ -92,25 +87,26 @@ export async function getAdmissionByAdmissionIdController(
 export async function updateAdmissionController(req: Request, res: Response) {
   const { admissionId } = req.params;
   const updatedData = req.body;
+  
+   if (isNaN(Number(admissionId))) {
+    throw AppError("Invalid admission ID. It is not a number", httpStatus.BAD_REQUEST);
+  }
 
-  const existingAdmission = await getAdmissionByAdmissionId(
-    Number(admissionId)
-  );
+  const parsedData = createAdmissionSchema.parse(updatedData);
+  const existingAdmission = await getAdmissionByAdmissionId(Number(admissionId));
   if (existingAdmission.length === 0) {
     throw AppError("Admission not found for the provided admission ID", httpStatus.BAD_REQUEST);
   }
-  if (
-    existingAdmission[0].status !== approval_status.submitted &&
-    existingAdmission[0].status !== approval_status.declined
-  ) {
+  if (existingAdmission[0].status !== approval_status.submitted && existingAdmission[0].status !== approval_status.declined) {
     throw AppError(
       "Admission can only be updated if it is in submitted or declined status",
       httpStatus.BAD_REQUEST
     );
   }
 
+  const { roll_number, ...restData } = parsedData as any; // removing the roll_number updated data
   const updatedAdmission = await updateAdmission(Number(admissionId), {
-    ...updatedData,
+    ...restData,
     updatedAt: new Date(),
     status: approval_status.submitted,
   });
@@ -121,6 +117,74 @@ export async function updateAdmissionController(req: Request, res: Response) {
   });
 }
 
+
+// \manager\admissions: GET – Fetch all admissions waiting for manager approval
+export async function getAdmissionWaitingForApprovalByManagerController(req: Request, res: Response) {
+  const submittedAdmissions = await getAdmissionsByStatus(approval_status.submitted);
+
+  if (submittedAdmissions.length === 0) {
+    throw AppError(
+      "No admissions waiting for manager approval",
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: submittedAdmissions,
+    count: submittedAdmissions.length,
+    message: "Admissions retrieved successfully"
+  });
+}
+
+// \manager\admissions: PUT – use \admission_id to approve or decline by manager, entry into admission_approval table with comment(if declined) 
+export async function updateApprovalStatusByManagerController(req:Request, res: Response) {
+  const { admission_id } = req.params;
+  const user = req.user  
+  // if (!user || !user.id) {
+  //   throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
+  // }
+  const parsedData=managerAdmissionDecisionSchema.parse(req.body);
+
+  // If status is false, comment is required
+  if (parsedData.approve === false && (!parsedData.comment || parsedData.comment.trim() === '')) {
+    throw AppError(
+      "Comment is required when declining an admission", httpStatus.BAD_REQUEST
+    );
+  }
+
+  const existingAdmission = await getAdmissionByAdmissionId(Number(admission_id));
+  if (existingAdmission.length === 0) {
+    throw AppError(
+      "Admission not found for the provided ID", httpStatus.NOT_FOUND
+    );
+  }
+
+  const newStatus = parsedData.approve ? approval_status.manager: approval_status.declined;
+
+  const updatedAdmission = await updateAdmission(Number(admission_id), {
+    status: newStatus,
+    updatedAt: new Date(),
+  });
+
+  const approvalEntry = await createAdmissionApproval({
+    admission_id: Number(admission_id),
+    user_id: parsedData.user_id,
+    approve: parsedData.approve,
+    comment: parsedData.comment || null,
+  });
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: {
+      admission: updatedAdmission,
+      approval: approvalEntry[0]
+    },
+    message: parsedData.approve 
+      ? "Admission approved and forwarded to RC" 
+      : "Admission declined successfully",
+  });
+}
 
 
 export const fetchAdmissionsApprovedByRC = async (
@@ -149,3 +213,4 @@ export const fetchAdmissionsApprovedByRC = async (
     );
   }
 };
+
