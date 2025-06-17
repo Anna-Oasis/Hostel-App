@@ -62,11 +62,14 @@ studentRouter.put(
 
 studentRouter.post(
   "/leave",
+  authenticateUser,hasRole(['student']),
   errorWrapper(createLeaveFormFromController)
 );
 
 studentRouter.get(
   "/leave/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
   errorWrapper(getAllLeaveFormsFromController)
 );
 
