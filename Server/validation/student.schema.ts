@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const studentSchema = z.object({
   user_id: z.coerce.number(),
-  roomNumber : z.string(),
   // Basic Info
   name: z.string().min(1),
   rollNo: z.string().min(1),

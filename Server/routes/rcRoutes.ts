@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fetchAdmissionsApprovedByRC } from "../controllers/rcController";
+import {fetchAdmissionsApprovedByUser} from "../controllers/admissionController";
 import {
   viewAdmissionsByRCController,
   approveOrDeclineAdmissionByRCController,
@@ -7,6 +7,7 @@ import {
   approveOrDeclineGrievancesByRCController
 } from "../controllers/rcController";
 import errorWrapper from "../middleware/errorWrapper";
+import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
 
 
@@ -26,7 +27,7 @@ rcRouter.put("/grievance/:rc_id", approveOrDeclineGrievancesByRCController);
 
 
 // Fetch the approval data reviewd by a particular RC
-rcRouter.get("/admissions/approvals/:rc_id",errorWrapper(fetchAdmissionsApprovedByRC));
+rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
 
 export default rcRouter;
 

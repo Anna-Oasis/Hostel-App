@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response,NextFunction } from "express";
 import { ZodError } from "zod";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
@@ -11,6 +11,7 @@ import {
   insertStudentDetails,
   updateStudentByRollNo,
 } from "../services/detailsService";
+import { AuthRequest } from "../types/roles";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -38,7 +39,7 @@ const fileFieldToFolder: Record<
   admissionSlipUrl: { folder: "admissionSlip", signature: "admissionSlip" },
 };
 
-export async function getStudentDetailsController(req: Request, res: Response) {
+export async function getStudentDetailsController(req: AuthRequest, res: Response) {
   const { rollNo } = req.params;
 
   if (!rollNo) {
@@ -57,7 +58,7 @@ export async function getStudentDetailsController(req: Request, res: Response) {
   });
 }
 
-export async function createStudentDetailsController(req: Request, res: Response) {
+export async function createStudentDetailsController(req: AuthRequest, res: Response) {
   const { body, files } = req;
 
   const missingFile = requiredFiles.find(
@@ -104,7 +105,7 @@ export async function createStudentDetailsController(req: Request, res: Response
   });
 }
 
-export async function updateStudentDetailsController(req: Request, res: Response) {
+export async function updateStudentDetailsController(req: AuthRequest, res: Response) {
   const { rollNo } = req.params;
   const { body, files } = req;
   const existingStudent = await findStudentByRollNo(rollNo);
