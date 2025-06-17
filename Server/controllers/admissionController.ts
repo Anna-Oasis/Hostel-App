@@ -14,7 +14,7 @@ import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 
-import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
+import { getAdmissionsApprovedByUser } from "../services/rcAdmissionApprovalService";
 
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
@@ -191,30 +191,20 @@ export async function updateAdmissionController(req: Request, res: Response) {
 }
 
 
-
-export const fetchAdmissionsApprovedByRC = async (
+export const fetchAdmissionsApprovedByUser = async (
   req: Request,
   res: Response,
 ) => {
-  try {
-    const rcId = parseInt(req.params.rc_id);
+  const userID = parseInt(req.params.user_id);
 
-    if (isNaN(rcId)) {
-      throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
-    }
-
-    const data = await getAdmissionsApprovedByRC(rcId);
-
-    res.status(httpStatus.OK).json({
-      success: true,
-      data,
-    });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown error";
-    throw AppError(
-      `Failed to fetch admissions for RC: ${message}`,
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
+  if (isNaN(userID)) {
+    throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
   }
+  const data = await getAdmissionsApprovedByUser(userID);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data,
+    message: "Admissions approved by RC fetched successfully",
+  });
 };

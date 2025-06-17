@@ -5,7 +5,7 @@ import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
 import { rcModel } from "../models/rcModel";
 
-export const getAdmissionsApprovedByRC = async (rcId: number) => {
+export const getAdmissionsApprovedByUser = async (userID: number) => {
   return await db
     .select({
       approval: admissionApprovalsModel.approve,
@@ -21,7 +21,7 @@ export const getAdmissionsApprovedByRC = async (rcId: number) => {
     .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
     .where(
       and(
-        eq(admissionApprovalsModel.user_id, rcId),
+        eq(admissionApprovalsModel.user_id, userID),
         or(
           eq(admissionModel.status, approval_status.rc),
           eq(admissionModel.status, approval_status.declined)
