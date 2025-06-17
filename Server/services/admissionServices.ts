@@ -2,7 +2,7 @@ import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { db } from "../config/dbConnection";
-import { eq ,and} from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
 
 interface NewAdmissionApproval {
@@ -127,4 +127,30 @@ export const updateAdmissionStatus = async ({
     .set({ status })
     .where(eq(admissionModel.id, admission_id))
     .returning();
+};
+
+
+export const getAdmissionsApprovedByUser = async (userID: number) => {
+  return await db
+    .select({
+      approval: admissionApprovalsModel.approve,
+      comment: admissionApprovalsModel.comment,
+      timestamp: admissionApprovalsModel.timestamp,
+      admissionId: admissionApprovalsModel.admission_id,
+      status: admissionModel.status,
+      // roomNumber: admissionModel.roomNumber,
+      hostelBlock: admissionModel.hostelBlock,
+      rollNumber: admissionModel.roll_number,
+    })
+    .from(admissionApprovalsModel)
+    .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
+    .where(
+      and(
+        eq(admissionApprovalsModel.user_id, userID),
+        or(
+          eq(admissionModel.status, approval_status.rc),
+          eq(admissionModel.status, approval_status.declined)
+        )
+      )
+    );
 };

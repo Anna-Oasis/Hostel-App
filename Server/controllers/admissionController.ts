@@ -14,7 +14,7 @@ import { ZodError } from "zod";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 
-import { getAdmissionsApprovedByUser } from "../services/rcAdmissionApprovalService";
+import { getAdmissionsApprovedByUser } from "../services/admissionServices";
 
 import { db } from "../config/dbConnection";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
