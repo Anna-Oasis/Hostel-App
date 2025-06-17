@@ -196,7 +196,7 @@ export const fetchAdmissionsApprovedByUser = async (
   res: Response,
 ) => {
   const userID = parseInt(req.params.user_id);
-
+  
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
