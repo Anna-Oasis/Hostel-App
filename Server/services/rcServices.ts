@@ -26,8 +26,8 @@ export const getAdmissionsByHostelBlock = async (hostelBlock: string) => {
       and(
         eq(admissionModel.status, approval_status.manager),
         eq(admissionModel.hostelBlock, hostelBlock)
-      )
-    );
+      ))
+    .orderBy(admissionModel.submission_Date);
   return admissions;
 };
 

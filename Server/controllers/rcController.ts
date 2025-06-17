@@ -27,7 +27,8 @@ import { ROOM_SIZE } from "../constants/values";
 import { getAdmissionsApprovedByRC } from "../services/rcAdmissionApprovalService";
 import { rcExists } from "../services/rcAdmissionApprovalService";
 
-export const viewAdmissionsByRCController = async (
+// \resident_counsellor\admissions: GET – \rc_id as path param, Fetch all admissions waiting for RC approval belonging to the hostel block of the rc
+export const getAdmissionWaitingForApprovalByRCController = async (
   req: Request, 
   res: Response
 ): Promise<void> => {
@@ -49,7 +50,8 @@ export const viewAdmissionsByRCController = async (
   });
 };
 
-export const approveOrDeclineAdmissionByRCController = async (
+
+export const updateApprovalStatusByRCController = async (
   req: Request, 
   res: Response
 ): Promise<void> => {
