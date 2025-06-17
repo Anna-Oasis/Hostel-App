@@ -13,6 +13,7 @@ import {
 import errorWrapper from "../middleware/errorWrapper";
 
 import { upload } from "../middleware/multer";
+import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
   getStudentDetailsController,
   createStudentDetailsController,
@@ -46,19 +47,19 @@ const fileFields = upload.fields([
 
 
 studentRouter.get(
-  "/details/:rollNo",
+  "/details/:rollNo",authenticateUser ,hasRole(['student']),
   errorWrapper(getStudentDetailsController)
 );
 
 studentRouter.post(
   "/details",
-  fileFields,
+  fileFields,authenticateUser ,hasRole(['student']),
   errorWrapper(createStudentDetailsController)
 );
 
 studentRouter.put(
   "/details/:rollNo",
-  fileFields,
+  fileFields,authenticateUser ,hasRole(['student']),
   errorWrapper(updateStudentDetailsController)
 );
 

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
+import { AuthRequest } from "../types/roles";
 const errorWrapper = (
-  controller: (req: Request, res: Response, next: NextFunction) => Promise<void>
+  controller: (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>
 ) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         console.log("Executing controller:", controller.name);
       await controller(req, res, next);
