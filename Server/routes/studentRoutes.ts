@@ -18,10 +18,7 @@ import {
   createStudentDetailsController,
   updateStudentDetailsController,
 } from "../controllers/detailsController";
-
-import { error } from "console";
-
-
+import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveFormController";
 const studentRouter = Router();
 
 
@@ -60,6 +57,16 @@ studentRouter.put(
   "/details/:rollNo",
   fileFields,
   errorWrapper(updateStudentDetailsController)
+);
+
+studentRouter.post(
+  "/leave",
+  errorWrapper(createLeaveFormFromController)
+);
+
+studentRouter.get(
+  "/leave/:roll_number",
+  errorWrapper(getAllLeaveFormsFromController)
 );
 
 export default studentRouter;

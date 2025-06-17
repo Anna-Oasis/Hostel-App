@@ -45,7 +45,7 @@ export const getGrievances = async () => {
         grievanceType: grievancesModel.grievance_type,
         subject: grievancesModel.subject,
         description: grievancesModel.description,
-        priority: grievancesModel.priority,
+        // priority: grievancesModel.priority,
       },
       resolved: grievancesModel.resolved,
     })

@@ -3,6 +3,7 @@ import { createGrievance, getGrievancesByRollNumber } from "../services/grievanc
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
 
+
 export const createGrievanceController = async (req: Request, res: Response) => {
   const data = req.body;
   const result = await createGrievance(data);
@@ -14,8 +15,9 @@ export const createGrievanceController = async (req: Request, res: Response) => 
   });
 };
 
-export const getGrievancesByRollNumberController = async (req: Request, res: Response) => {
+export const getGrievancesByRollNumberController = async (req: Request, res: Response): Promise<void>=> {
   const rollNumber = req.params.roll_number;
+  
   const result = await getGrievancesByRollNumber(rollNumber);
 
   if (result.length === 0) {
