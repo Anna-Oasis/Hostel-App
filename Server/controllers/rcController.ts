@@ -41,7 +41,7 @@ export const getAdmissionWaitingForApprovalByRCController = async (
 
   const admissions = await getAdmissionsByHostelBlock(rc[0].hostel);
   if (!admissions) {
-    throw AppError("Failed to fetch admissions", httpStatus.INTERNAL_SERVER_ERROR);
+    throw AppError("No admissions waiting for RC approval", httpStatus.INTERNAL_SERVER_ERROR);
   }
 
   res.status(httpStatus.OK).json({ 

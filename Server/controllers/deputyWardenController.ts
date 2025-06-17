@@ -1,27 +1,26 @@
 import { Request, Response } from "express";
-import { 
-  getAdmissionsByDeputyWarden, 
-} from "../services/deputyWardenServices";
-import { checkRoom, getStudentsofRoom, setStudentinRoom, updateStudentRoomNumber} from "../services/roomServices";
+import { checkRoom, setStudentinRoom, updateStudentRoomNumber} from "../services/roomServices";
 import {
   createAdmissionApproval, 
   updateAdmissionStatus,
   getRollNumberByAdmissionId,
-  getAdmissionByAdmissionId 
+  getAdmissionByAdmissionId,
+  getAdmissionsByStatus,
+  getAcademicYearByAdmissionId
 } from "../services/admissionServices"
 import { deputyWardenDecisionSchema } from "../validation/deputy-warden.schema";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 
-export const viewAdmissionsByDeputyWardenController = async (
+export const getAdmissionWaitingForApprovalByDeputyWardenController = async (
   req: Request, 
   res: Response
 ): Promise<void> => {
-  const admissions = await getAdmissionsByDeputyWarden();
+  const admissions = await getAdmissionsByStatus(approval_status.rc);
   
   if (!admissions || admissions.length === 0) {
-    throw AppError("No admissions found for approval", httpStatus.NOT_FOUND);
+    throw AppError("No admissions waiting for deputy warden approval", httpStatus.NOT_FOUND);
   }
 
   res.status(httpStatus.OK).json({ 
@@ -31,12 +30,19 @@ export const viewAdmissionsByDeputyWardenController = async (
   });
 };
 
-export const approveOrDeclineAdmissionByDeputyWardenController = async (
+export const updateApprovalStatusByDeputyWardenController = async (
   req: Request, 
   res: Response
 ): Promise<void> => {
   const { admission_id } = req.params;
   const validated = deputyWardenDecisionSchema.parse(req.body);
+
+  // If status is false, comment is required
+  if (validated.approve === false && (!validated.comment || validated.comment.trim() === '')) {
+    throw AppError(
+      "Comment is required when declining an admission", httpStatus.BAD_REQUEST
+    );
+  }
   
   // Common approval creation
   const approvalResult = await createAdmissionApproval({
@@ -52,12 +58,12 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
 
   const admission = await getAdmissionByAdmissionId(Number(admission_id));
   if (!admission || admission.length === 0) {
-    throw AppError("Admission not found", httpStatus.NOT_FOUND);
+    throw AppError("Admission not found for the provided ID", httpStatus.NOT_FOUND);
   }
 
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const hostelBlock = admission[0].hostelBlock;
-  const currentYear = new Date().getFullYear().toString();
+  const currentYear = await getAcademicYearByAdmissionId(Number(admission_id));
 
   if (validated.approve) {
     // Approval logic
@@ -92,8 +98,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
     if (!studentUpdate) {
       throw AppError("Failed to clear student room assignment", httpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
+    
     // Only proceed with room removal if room number was provided
       if (validated.room) {
         const room = await checkRoom(
@@ -108,7 +113,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
 
       // Check if student is in this room
       if (!room.rollNo || !room.rollNo.includes(rollNo)) {
-        throw new Error("Student is not assigned to this room");
+        throw new Error("Student is not assigned to this room.");
       }
 
       // Remove student from room
@@ -116,7 +121,7 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
       
       await setStudentinRoom(
         updatedRollNos,
-        validated.room, // Now we know this is defined
+        validated.room, 
         hostelBlock,
         currentYear
       );
