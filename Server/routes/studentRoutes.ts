@@ -11,7 +11,6 @@ import {
   getGrievancesByRollNumberController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -20,17 +19,16 @@ import {
   updateStudentDetailsController,
 } from "../controllers/detailsController";
 
-import { error } from "console";
 
 
 const studentRouter = Router();
 
 
 //admission - students
-studentRouter.post("/admission", errorWrapper(createAdmissionController));
-studentRouter.get( "/admission/:admissionId",errorWrapper(getAdmissionByAdmissionIdController));
-studentRouter.get("/admission/student/:roll_number",errorWrapper(getAdmissionByRollNumberController));
-studentRouter.put("/admission/:admissionId",errorWrapper(updateAdmissionController));
+studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
+studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
+studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
+studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
 studentRouter.post("/grievance", errorWrapper(createGrievanceController));
 studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));

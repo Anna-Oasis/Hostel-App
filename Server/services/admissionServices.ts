@@ -1,6 +1,7 @@
 import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
+import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
 import { eq, and, or } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
@@ -65,7 +66,6 @@ export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: s
     return result;
 }
 
-
 export async function getAdmissionByAdmissionId(admissionId: number) {
   const result = await db
     .select()
@@ -73,6 +73,20 @@ export async function getAdmissionByAdmissionId(admissionId: number) {
     .where(eq(admissionModel.id, admissionId));
   return result;
 }
+
+export const getAdmissionsToBeApprovedByRcByHostelBlock = async (hostelBlock: string) => {
+  const admissions = await db
+    .select()
+    .from(admissionModel)
+    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
+    .where(
+      and(
+        eq(admissionModel.status, approval_status.manager),
+        eq(admissionModel.hostelBlock, hostelBlock)
+      ))
+    .orderBy(admissionModel.submission_Date);
+  return admissions;
+};
 
 export const getRollNumberByAdmissionId = async (admission_id: number) => {
   const admission = await db
@@ -99,7 +113,6 @@ export async function getAdmissionsByStatus(status: string) {
     .orderBy(admissionModel.submission_Date);
   return result;
 }
-
 
 export async function createAdmissionApproval(approvalData: {
   admission_id: number;
@@ -161,6 +174,15 @@ export const updateAdmissionStatus = async ({
     .returning();
 };
 
+export const getAcademicYearByAdmissionId = async (admission_id: number) => {
+  const admission = await db
+    .select({ academicYear: admissionModel.academicYear })
+    .from(admissionModel)
+    .where(eq(admissionModel.id, admission_id))
+    .limit(1);
+    
+  return admission[0].academicYear;
+};
 
 export const getAdmissionsApprovedByUser = async (userID: number) => {
   return await db

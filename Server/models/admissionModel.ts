@@ -9,7 +9,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum} from "./enum";
+import { approval_status_pgEnum, hostel_block_pgEnum} from "./enum";
 import { approval_status } from "../constants/enum";
 
 export const admissionModel = pgTable("admission", {
@@ -28,7 +28,7 @@ export const admissionModel = pgTable("admission", {
   admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
   // Hostel/Mess Info
   previousResident: boolean("previous_resident").notNull(),
-  hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
+  hostelBlock: hostel_block_pgEnum("hostel_block").notNull(),
   messPreference: varchar("mess_preference", { length: 20 }).notNull(),
 
   submission_Date: timestamp("submission_date",{withTimezone:true}).defaultNow().notNull(),

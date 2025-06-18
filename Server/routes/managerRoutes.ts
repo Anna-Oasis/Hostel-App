@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAdmissionWaitingForApprovalController, updateApprovalStatusController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
+import { fetchAdmissionWaitingForApprovalController, approveByManagerController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
@@ -13,9 +13,9 @@ const managerRouter = Router();
 //update greivancesModel set resolved=true where greivancesmodel.id=greivance_id
 
 
-managerRouter.get("/admissions", authenticateUser ,hasRole(['manager']),errorWrapper(getAdmissionWaitingForApprovalController));
+managerRouter.get("/admissions", authenticateUser ,hasRole(['manager']),errorWrapper(fetchAdmissionWaitingForApprovalController));
 
-managerRouter.put("/admissions/:admission_id", authenticateUser,hasRole(['manager']),errorWrapper(updateApprovalStatusController));
+managerRouter.put("/admissions/:admission_id", authenticateUser,hasRole(['manager']),errorWrapper(approveByManagerController));
 
 managerRouter.get("/admissions/approvals",authenticateUser,hasRole(['manager']),errorWrapper(fetchAdmissionsApprovedByUser));
 
