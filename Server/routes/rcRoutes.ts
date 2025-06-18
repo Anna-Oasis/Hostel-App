@@ -8,10 +8,10 @@ import {
 } from "../controllers/rcController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-// import {
-//   getVacatingFormsForRCController,
-//   approveVacatingFormByRCController
-// } from "../controllers/vacatingHostelController";
+import {
+  getVacatingFormsForRCController,
+  approveVacatingFormByRCController
+} from "../controllers/vactingHostelController";
 
 
 const rcRouter = Router();
@@ -32,8 +32,8 @@ rcRouter.put("/grievance/:rc_id", approveOrDeclineGrievancesByRCController);
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
 
-// rcRouter.get("/vacating_hostel/:rc_id",errorWrapper(getVacatingFormsForRCController));
-// rcRouter.put("/vacating_hostel/:rc_id",errorWrapper(approveVacatingFormByRCController));
+rcRouter.get("/vacating_hostel/:rc_id",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
+rcRouter.put("/vacating_hostel/:rc_id",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
 
 export default rcRouter;
 

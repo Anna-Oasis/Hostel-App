@@ -5,6 +5,11 @@ import {
   createVacatingHostelForm,
   getAllVacatingHostelForms,
 } from "../services/vacatingHostelService";
+import {
+  getPendingRCApprovals,
+  approveOrDeclineByRC,
+} from "../services/vacatingHostelService";
+import { approval_status } from "../constants/enum";
 import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 
@@ -41,5 +46,45 @@ export async function getAllVacatingHostelFormsController(req: AuthRequest, res:
     success: true,
     data: result,
     message: "Vacating hostel forms fetched successfully",
+  });
+}
+
+export async function getVacatingFormsForRCController(req: AuthRequest, res: Response) {
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+
+  const rcId = parseInt(req.user.id);
+  const forms = await getPendingRCApprovals(rcId);
+
+  if (!forms || forms.length === 0) {
+    throw AppError("No pending forms found for RC", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: forms,
+    message: "Pending vacating forms fetched successfully for RC",
+  });
+}
+
+export async function approveVacatingFormByRCController(req: AuthRequest, res: Response) {
+  const { vacating_hostel_id, approve } = req.body;
+
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+
+  if (!vacating_hostel_id || approve === undefined) {
+    throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
+  }
+
+  const rcId = parseInt(req.user.id);
+  const result = await approveOrDeclineByRC(vacating_hostel_id, rcId, approve);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result,
+    message: `Form ${approve ? "approved" : "declined"} successfully`,
   });
 }
