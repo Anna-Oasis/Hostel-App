@@ -6,7 +6,11 @@ import {
 import { fetchAdmissionsApprovedByUser } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-
+// import 
+//   {
+//     getVacatingFormsForDeputyWardenController,
+//     approveVacatingFormByDeputyWardenController
+//   } from "../controllers/vacatingHostelController";
 const deputyWardenRouter = Router();
 
 // Fetch all admissions waiting for RC approval by hostel block
@@ -16,5 +20,9 @@ deputyWardenRouter.get("/admissions", viewAdmissionsByDeputyWardenController);
 deputyWardenRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByDeputyWardenController);
 
 deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
+
+// deputyWardenRouter.get("/vacating_hostel", errorWrapper(getVacatingFormsForDeputyWardenController));
+
+// deputyWardenRouter.put("/vacating_hostel/:vacating_hostel_id", errorWrapper(approveVacatingFormByDeputyWardenController));
 
 export default deputyWardenRouter;
