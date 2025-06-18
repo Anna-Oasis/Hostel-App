@@ -6,21 +6,39 @@ import ModalCallable from "@/components/ModalCallable";
 import { useUserStore } from "@/stores/userStore";
 import { getToken, verifyToken } from "@/utils/authUtils";
 import { useState, useRef } from "react";
+import { handleGrievance } from "@/utils/grievanceUtils";
+import useLoadingStore from "@/stores/loadingStore";
+import { Button, ButtonText } from "@/components/ui/button";
 
 export default function GrievancesPage() {
   const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState("")
+  const [modalTitle, setModalTitle] = useState("")
   const router = useRouter();
 
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-
+  const setLoading = useLoadingStore((state) => state.setLoading);
   const hasInitialized = useRef(false);
-  const handleSubmit = (values: any, id: Number | null) => {
-    console.log(`Grievance Form Submitted by User ID: ${id}`, values);
-    setShowModal(true);
-    setTimeout(() => {
-      redirectToHome();
-    }, 4000);
+  const handleSubmit = async(values: any, id: Number | null) => {
+      const success = await handleGrievance(values)
+
+      if (success){
+        setShowModal(true)
+        setModalContent("Your grievance has been successfully submitted. We will review it and get back to you shortly.")
+        setModalTitle("Grievance Submitted")
+        setTimeout(() => {
+          redirectToHome();
+        }, 3000);
+      }
+      else{
+        setShowModal(true)
+        setModalContent("OOPS! Something went wrong")
+        setModalTitle("Oops!")
+        setTimeout(() => {
+          redirectToHome();
+        }, 3000);
+      }
   };
   const redirectToHome = () => {
     if (!showModal) {
@@ -54,18 +72,30 @@ export default function GrievancesPage() {
 
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", }}>
+    <View className="bg-white flex-1 p-6">
       <GrievanceForm
         onSubmit={(values) => {
+          setLoading(true)
           handleSubmit(values, user ? parseInt(user.id) : null);
-        }
-        }
+          setLoading(false)
+        }}
       />
+      <View className="mt-4">
+        <Button
+          onPress={() => {
+            setLoading(true)
+            router.push("/User/Student/Grievances/Histroy")
+            setLoading(false)
+          }}
+        >
+          <ButtonText>Show History</ButtonText>
+        </Button>
+      </View>
       <ModalCallable
         show={showModal}
         onClose={() => setShowModal(false)}
-        title="Grievance Submitted"
-        message="Your grievance has been successfully submitted. We will review it and get back to you shortly."
+        title={modalTitle}
+        message={modalContent}
       />
     </View>
   );
