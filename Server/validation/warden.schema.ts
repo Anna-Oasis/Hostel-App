@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-export const deputyWardenDecisionSchema = z.object({
-  student_user_id: z.coerce.number({ invalid_type_error: "student user_id must be a number" }),
+export const wardenDecisionSchema = z.object({
   approve: z.boolean(),
   comment: z.string().optional(),
   room: z.coerce.number({ invalid_type_error: "room must be a number" }).optional(),

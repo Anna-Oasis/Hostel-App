@@ -5,7 +5,7 @@ const errorWrapper = (
 ) => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-        console.log("Executing controller:", controller.name);
+      console.log("Executing controller:", controller.name);
       await controller(req, res, next);
     } catch (error) {
       console.error("Error occurred in controller:", controller.name, error);

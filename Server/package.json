@@ -10,7 +10,8 @@
     "drizzle:generate": "drizzle-kit generate:pg",
     "drizzle:push": "drizzle-kit push:pg",
     "test": "jest",
-    "suhaib": "nodemon --exec ts-node server.ts"
+    "suhaib": "nodemon --exec ts-node server.ts",
+    "setup-rooms": "ts-node roomStructure.ts"
   },
   "author": "",
   "license": "ISC",

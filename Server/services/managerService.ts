@@ -29,4 +29,3 @@ export const getAdmissionApprovals = async (userId: number) => {
 };
 
 
-
