@@ -1,11 +1,19 @@
 import { z } from "zod";
 import { grievancesModel } from "../models/grievances";
+import { hostel_block } from "../constants/enum";
 
 export const rcAdmissionDecisionSchema = z.object({
   approve: z.boolean(),
   comment: z.string().optional(),
   room: z.coerce.number({ invalid_type_error: "room must be a number" }).optional(),
   floor: z.coerce.number({ invalid_type_error: "floor must be a number" }).optional(),
+  hostel_block: z.enum(["Flora", "Lavender"]).optional(),
+});
+
+export const rcLeaveDecisionSchema = z.object({
+  leaveForm_id: z.coerce.number({ invalid_type_error: "leave_form id must be a number" }),
+  approve: z.boolean(),
+  comment: z.string().optional(),
 });
 
 export const rcGrievanceDecisionSchema = z.object({

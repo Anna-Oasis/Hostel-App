@@ -25,7 +25,7 @@ import { rcAdmissionDecisionSchema } from "../validation/rc.schema";
 import {
   checkRoom,
   setStudentinRoom,
-  updateStudentRoomNumber,
+  updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
 import { getRCById } from "../services/rcServices";
@@ -439,22 +439,20 @@ export const updateApprovalStatusByRCController = async (
   }
 
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
-  const hostelBlock = admission[0].hostelBlock;
   const currentYear = admission[0].academicYear;
-
   if (validated.approve) {
     // Approval logic
     const status = approval_status.rc;
 
-    if (!validated.room) {
+    if (!validated.room || !validated.floor || !validated.hostel_block) {
       throw AppError(
-        "Room number is required for approval",
+        "Room number, Floor and Hostel block are required for approval",
         httpStatus.BAD_REQUEST
       );
     }
 
     // Check room capacity before approval
-    const room = await checkRoom(validated.room, hostelBlock, currentYear);
+    const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
@@ -473,7 +471,7 @@ export const updateApprovalStatusByRCController = async (
     const setStudent = await setStudentinRoom(
       updatedRollNos,
       validated.room,
-      hostelBlock,
+      validated.hostel_block,
       currentYear
     );
 
@@ -498,11 +496,11 @@ export const updateApprovalStatusByRCController = async (
     }
 
     // Update student room number
-    const studentUpdate = await updateStudentRoomNumber(rollNo, validated.room);
+    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block);
 
     if (!studentUpdate) {
       throw AppError(
-        "Failed to update student room",
+        "Failed to update student room and floor",
         httpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -639,7 +637,7 @@ export const updateApprovalStatusByWardenController = async (
     }
 
     // Clear student room number
-    const studentUpdate = await updateStudentRoomNumber(rollNo, null);
+    const studentUpdate = await updateStudentHostelDetails(rollNo, null, null, '');
 
     if (!studentUpdate) {
       throw AppError(
