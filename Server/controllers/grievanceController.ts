@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { createGrievance, getGrievancesByRollNumber } from "../services/grievanceService";
+import { createGrievance, getGreivancesForDeputyWarden, getGrievancesByRollNumber } from "../services/grievanceService";
 import { AuthRequest } from "../types/roles";
 import { getGrievancesForManager, resolveGrievanceByManager } from "../services/grievanceService";
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
-
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
   const data = req.body;
@@ -68,6 +67,26 @@ export const resolveGrievanceFromController = async (req: AuthRequest,res:Respon
         success:true,
         data:data,
         message:"Greivance Resolved Successfully"
+      }
+    );
+}
+
+export const getGrievancesFromDeputyWardenController = async (req:AuthRequest,res:Response)=>
+{
+
+    const data = await getGreivancesForDeputyWarden();
+
+    if(data.length === 0)
+    {
+      throw AppError("Error Fetching Greivances From Deputy Warden Side",httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        message:"Greivances all are fetched from Deputy Warden Side",
+        data:data
       }
     );
 }

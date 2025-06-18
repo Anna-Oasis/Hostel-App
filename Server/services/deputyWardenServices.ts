@@ -41,20 +41,4 @@ export const getAdmissionApprovals = async (userId: number) => {
     );
 };
 
-export const getGreivances = async ()=>
-{
-    return db
-        .select({
-          greivanceId: grievancesModel.id,
-          rollNo: grievancesModel.roll_number,
-          formDetails: {
-            grievanceType: grievancesModel.grievance_type,
-            subject: grievancesModel.subject,
-            description: grievancesModel.description,
-            // priority: grievancesModel.priority,
-          },
-          resolved: grievancesModel.resolved,
-        })
-        .from(grievancesModel);
-}
 

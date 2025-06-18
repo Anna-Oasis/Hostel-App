@@ -37,3 +37,19 @@ export const resolveGrievanceByManager = async (grievanceId: number) => {
     .where(eq(grievancesModel.id, grievanceId))
     .returning();
 };
+
+export const getGreivancesForDeputyWarden = async ()=>
+{
+    return db
+        .select({
+          greivanceId: grievancesModel.id,
+          rollNo: grievancesModel.roll_number,
+          formDetails: {
+            grievanceType: grievancesModel.grievance_type,
+            subject: grievancesModel.subject,
+            description: grievancesModel.description,
+          },
+          resolved: grievancesModel.resolved,
+        })
+        .from(grievancesModel);
+}

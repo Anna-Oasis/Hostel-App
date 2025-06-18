@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { 
-  getAdmissionsByDeputyWarden,getGreivances
+  getAdmissionsByDeputyWarden
 } from "../services/deputyWardenServices";
 import { checkRoom, getStudentsofRoom, setStudentinRoom, updateStudentRoomNumber} from "../services/roomServices";
 import {
@@ -130,23 +130,3 @@ export const approveOrDeclineAdmissionByDeputyWardenController = async (
       : "Admission declined successfully",
   });
 };
-
-export const getGrievancesFromDeputyWardenController = async (req:Request,res:Response)=>
-{
-
-    const data = await getGreivances();
-
-    if(data.length === 0)
-    {
-      throw AppError("Error Fetching Greivances From Deputy Warden Side",httpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        message:"Greivances all are fetched from Deputy Warden Side",
-        data:data
-      }
-    );
-}
