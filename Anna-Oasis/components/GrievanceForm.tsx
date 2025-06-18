@@ -9,7 +9,7 @@ import SelectField from "./form/SelectField";
 
 const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   return (
-    <View className="flex-1 bg-white p-6">
+    <View className="flex bg-white ">
       <Text className="text-3xl font-bold text-gray-900 mb-4">File a Grievance</Text>
       <Formik
         initialValues={{
