@@ -1,47 +1,16 @@
-import { Router, Response } from "express";
-import { db } from "../config/dbConnection";
-import { admissionModel } from "../models/admissionModel";
-import { admissionApprovalsModel } from "../models/admissionApprovals";
-import { eq, and } from "drizzle-orm";
-import { AuthenticatedRequest } from "../types/roles"; 
-import { validateJWT } from "../middleware/jwt";
+import { Router } from "express";
+import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
+import errorWrapper from "../middleware/errorWrapper";
+import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
-const router = Router();
+const deputyWardenRouter = Router();
 
-router.get("/admissions/approvals", validateJWT, async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.userRole || req.userRole !== "deputyWarden" || !req.userId) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
+// Fetch all admissions waiting for deputy warden approval by hostel block
+deputyWardenRouter.get("/admissions", authenticateUser, hasRole(['deputyWarden']), errorWrapper(fetchAdmissionWaitingForApprovalController));
 
-    try {
-      const approvals = await db
-        .select({
-          admissionId: admissionModel.id,
-          rollNumber: admissionModel.roll_number,
-          academicYear: admissionModel.academicYear,
-          status: admissionModel.status,
-          approved: admissionApprovalsModel.approve,
-          comment: admissionApprovalsModel.comment,
-          timestamp: admissionApprovalsModel.timestamp,
-        })
-        .from(admissionApprovalsModel)
-        .innerJoin(
-          admissionModel,
-          eq(admissionApprovalsModel.admission_id, admissionModel.id)
-        )
-        .where(
-          and(
-            eq(admissionApprovalsModel.user_id, Number(req.userId)),
-            eq(admissionApprovalsModel.approve, true)
-          )
-        );
+// Approve or decline admission by RC with admission ID in path
+deputyWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateApprovalStatusByWardenController));
 
-      res.json(approvals);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Server error" });
-    }
-});
+deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
-export default router;
+export default deputyWardenRouter;

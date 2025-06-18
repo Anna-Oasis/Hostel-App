@@ -1,48 +1,39 @@
-import { constants } from "../constants/error"
 import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
+import { AppErrorType } from "../utils/AppError";
+import { morganLogger } from "../utils/logger";
 
-const errorHandler = (err :any, req:Request , res : Response, next :NextFunction) => {
-  const statusCode = res.statusCode ? res.statusCode : 500;
+const isAppError = (error: any): error is AppErrorType => {
+  return error && 
+         error.name === 'AppError' && 
+         typeof error.status === 'number' &&
+         typeof error.message === 'string';
+};
 
-  switch (statusCode) {
-    case constants.VALIDATION_ERROR:
-      res.json({
-        title: "Validation Failed",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    case constants.NOT_FOUND:
-      res.json({
-        title: "Not Found",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    case constants.UNAUTHORIZED:
-      res.json({
-        title: "Unauthorized User",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    case constants.FORBIDDEN:
-      res.json({
-        title: "Forbidden",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    case constants.SERVER_ERROR:
-      res.json({
-        title: "Server Error",
-        message: err.message,
-        stackTrace: err.stack,
-      });
-      break;
-    default:
-      console.log(err);
+const errorHandler = (err: any, req: Request, res: Response, next: NextFunction): void => {
+  if (err instanceof ZodError) {
+    res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      errors: err.errors,
+    });
+    return;
   }
+  if (isAppError(err)) {
+    res.status(err.status).json({
+      success: false,
+      message: err.message,
+    });
+    return;
+  }
+  // for other errors
+  const statusCode = err.status || err.statusCode || 500;
+  const message = err.message || "Internal server error";
+
+  res.status(statusCode).json({
+    success: false,
+    message
+  });
 };
 
 export default errorHandler;

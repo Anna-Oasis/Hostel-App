@@ -1,7 +1,23 @@
 import { NewAdmission } from "./../models/admissionModel";
 import { admissionModel } from "../models/admissionModel";
+import { admissionApprovalsModel } from "../models/admissionApprovals";
+import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
-import { eq ,and} from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
+import { approval_status } from "../constants/enum";
+// import { eq, and } from "drizzle-orm";
+
+interface NewAdmissionApproval {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}
+
+interface AdmissionUpdateParams {
+  admission_id: number;
+  status: typeof approval_status[keyof typeof approval_status];
+}
 
 export async function createAdmission(admissionData: NewAdmission) {
   const result = await db
@@ -38,7 +54,6 @@ export async function getAdmissionByRollNumber(rollNumber: string) {
   return result;
 }
 
-
 export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: string, academicYear: string) {
   const result = await db
     .select()
@@ -51,7 +66,6 @@ export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: s
     return result;
 }
 
-
 export async function getAdmissionByAdmissionId(admissionId: number) {
   const result = await db
     .select()
@@ -60,4 +74,144 @@ export async function getAdmissionByAdmissionId(admissionId: number) {
   return result;
 }
 
+export const getAdmissionsToBeApprovedByRcByHostelBlock = async (hostelBlock: string) => {
+  const admissions = await db
+    .select()
+    .from(admissionModel)
+    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
+    .where(
+      and(
+        eq(admissionModel.status, approval_status.manager),
+        eq(admissionModel.hostelBlock, hostelBlock)
+      ))
+    .orderBy(admissionModel.submission_Date);
+  return admissions;
+};
 
+export const getRollNumberByAdmissionId = async (admission_id: number) => {
+  const admission = await db
+    .select({ roll_number: admissionModel.roll_number })
+    .from(admissionModel)
+    .where(eq(admissionModel.id, admission_id))
+    .limit(1);
+    
+  return admission[0].roll_number;
+};
+
+// export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
+//   return await db
+//     .insert(admissionApprovalsModel)
+//     .values(approvalInfo)
+//     .returning();
+// };
+
+export async function getAdmissionsByStatus(status: string) {
+  const result = await db
+    .select()
+    .from(admissionModel)
+    .where(eq(admissionModel.status, status))
+    .orderBy(admissionModel.submission_Date);
+  return result;
+}
+
+export async function createAdmissionApproval(approvalData: {
+  admission_id: number;
+  user_id: number;
+  approve: boolean;
+  comment?: string | null;
+}) {
+  // Check if record already exists
+  const existingApproval = await db
+    .select()
+    .from(admissionApprovalsModel)
+    .where(
+      and(
+        eq(admissionApprovalsModel.admission_id, approvalData.admission_id),
+        eq(admissionApprovalsModel.user_id, approvalData.user_id)
+      )
+    );
+
+  if (existingApproval.length > 0) {
+    // Update existing record
+    const result = await db
+      .update(admissionApprovalsModel)
+      .set({
+        approve: approvalData.approve,
+        comment: approvalData.comment || null,
+        timestamp: new Date(), // Update timestamp
+      })
+      .where(
+        and(
+          eq(admissionApprovalsModel.admission_id, approvalData.admission_id),
+          eq(admissionApprovalsModel.user_id, approvalData.user_id)
+        )
+      )
+      .returning();
+    return result;
+  } else {
+    // Insert new record
+    const result = await db
+      .insert(admissionApprovalsModel)
+      .values({
+        admission_id: approvalData.admission_id,
+        user_id: approvalData.user_id,
+        approve: approvalData.approve,
+        comment: approvalData.comment || null,
+      })
+      .returning();
+    return result;
+  }
+}
+
+export const updateAdmissionStatus = async ({
+  admission_id,
+  status,
+}: AdmissionUpdateParams) => {
+  return await db
+    .update(admissionModel)
+    .set({ status })
+    .where(eq(admissionModel.id, admission_id))
+    .returning();
+};
+
+export const getAcademicYearByAdmissionId = async (admission_id: number) => {
+  const admission = await db
+    .select({ academicYear: admissionModel.academicYear })
+    .from(admissionModel)
+    .where(eq(admissionModel.id, admission_id))
+    .limit(1);
+    
+  return admission[0].academicYear;
+};
+
+export const getAdmissionsApprovedByUser = async (userID: number) => {
+  return await db
+    .select({
+      
+      
+      // Admission Model data
+      admissionId: admissionModel.id,
+      roll_number: admissionModel.roll_number,
+      academicYear: admissionModel.academicYear,
+      studentAgreed: admissionModel.studentAgreed,
+      parentAgreed: admissionModel.parentAgreed,
+      admissionCategory: admissionModel.admissionCategory,
+      previousResident: admissionModel.previousResident,
+      hostelBlock: admissionModel.hostelBlock,
+      messPreference: admissionModel.messPreference,
+      submission_Date: admissionModel.submission_Date,
+      updatedAt: admissionModel.updatedAt,
+      transaction_id: admissionModel.transaction_id,
+      status: admissionModel.status,
+
+      // Admission Approvals data
+      approval: admissionApprovalsModel.approve,
+      comment: admissionApprovalsModel.comment,
+      timestamp: admissionApprovalsModel.timestamp,
+      user_id: admissionApprovalsModel.user_id,
+    })
+    .from(admissionApprovalsModel)
+    .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
+    .where(eq(admissionApprovalsModel.user_id, userID))
+    .orderBy(admissionApprovalsModel.timestamp);
+};
