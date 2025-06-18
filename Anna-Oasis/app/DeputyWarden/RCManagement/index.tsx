@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Plus } from "lucide-react-native";
+import { View, TouchableOpacity, ScrollView } from "react-native";
+import { Plus , Trash2} from "lucide-react-native";
+import { ActivityIndicator } from "react-native-paper";
 import RCListTable from "@/components/rcmanagement/RCListTable";
 import RCManagementForm from "@/components/rcmanagement/RCManagementForm";
 import AssignFloorsModal from "@/components/rcmanagement/AssignFloorsModal";
-import { initialRcList, floors , plusButtonStyles } from "@/constants/rcManagementValidation";
-import { ActivityIndicator } from "react-native-paper";
+import RemoveRCModal from "@/components/rcmanagement/RemoveRCModal";
+import { initialRcList, floors , plusButtonStyles, trashButtonStyles } from "@/constants/rcManagementValidation";
+
 
 export default function RCManagementPage() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,6 +17,12 @@ export default function RCManagementPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+
+const handleRemoveRC = (rcId: string) => {
+    setRcList((prev) => prev.filter((rc) => rc.id !== rcId));
+    setRemoveModalVisible(false);
+  };
 
   const openAssignModal = (rc: any) => {
     setSelectedRC(rc);
@@ -79,15 +87,31 @@ export default function RCManagementPage() {
   />
       ) : (
         <>
-          <RCListTable rcList={rcList} onAssign={openAssignModal} />
-          <TouchableOpacity
-            style={plusButtonStyles.fab}
-            onPress={() => setShowAddForm(true)}
-          >
-            <Plus color="#fff" size={28} />
-          </TouchableOpacity>
+          <ScrollView style={{ flex: 1 }}>
+            <RCListTable rcList={rcList} onAssign={openAssignModal} />
+            </ScrollView>
+            <TouchableOpacity
+              style={plusButtonStyles.fab}
+              onPress={() => setShowAddForm(true)}
+            >
+              <Plus color="#fff" size={28} />
+            </TouchableOpacity>
+          
         </>
+      )}{!showAddForm && (
+        <TouchableOpacity
+          style={trashButtonStyles.trashButton}
+          onPress={() => setRemoveModalVisible(true)}
+        >
+          <Trash2 color="#fff" size={28} />
+        </TouchableOpacity>
       )}
+      <RemoveRCModal
+        visible={removeModalVisible}
+        rcList={rcList}
+        onRemove={handleRemoveRC}
+        onCancel={() => setRemoveModalVisible(false)}
+      />
       <AssignFloorsModal
         visible={modalVisible}
         rc={selectedRC}

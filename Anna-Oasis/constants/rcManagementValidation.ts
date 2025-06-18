@@ -27,7 +27,15 @@ const validationSchema = Yup.object().shape({
 const initialRcList = [
   { id: "1", name: "John Doe", hostel: "LAVENDER", assignedFloors: [] as string[] },
   { id: "2", name: "Jane Smith", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "3", name: "Alex Leeeeeeeeeeeeeeeeeeeeeeeee eeeeeeeee", hostel: "FLORA", assignedFloors: [] as string[] },
+  { id: "3", name: "Alex Lee", hostel: "FLORA", assignedFloors: [] as string[] },
+  { id: "4", name: "Emily Carter", hostel: "LAVENDER", assignedFloors: [] as string[] },
+  { id: "5", name: "Michael Brown", hostel: "FLORA", assignedFloors: [] as string[] },
+  { id: "6", name: "Sarah Wilson", hostel: "LAVENDER", assignedFloors: [] as string[] },
+  { id: "7", name: "David Kim", hostel: "FLORA", assignedFloors: [] as string[] },
+  { id: "8", name: "Olivia Chen", hostel: "LAVENDER", assignedFloors: [] as string[] },
+  { id: "9", name: "Chris Evans", hostel: "FLORA", assignedFloors: [] as string[] },
+  { id: "10", name: "Sophia Patel", hostel: "LAVENDER", assignedFloors: [] as string[] },
+  { id: "11", name: "Daniel Lee", hostel: "FLORA", assignedFloors: [] as string[] },
 ];
 
 const floors = ["Ground Floor", "First Floor", "Second Floor", "Third Floor"];
@@ -65,6 +73,25 @@ const plusButtonStyles = StyleSheet.create({
     right: width * 0.08,
     bottom: height * 0.06,
     backgroundColor: "#2563eb",
+    width: width * 0.14,
+    height: width * 0.14,
+    borderRadius: (width * 0.14) / 2,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+});
+
+const trashButtonStyles = StyleSheet.create({
+  trashButton: {
+    position: "absolute",
+    left: width * 0.08,
+    bottom: height * 0.06,
+    backgroundColor: "#dc2626",
     width: width * 0.14,
     height: width * 0.14,
     borderRadius: (width * 0.14) / 2,
@@ -143,5 +170,6 @@ export {
   floordisplayStyles,
   spacing,
   fontSizes,
+  trashButtonStyles,
     floorShort,
 };
