@@ -20,14 +20,25 @@ export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], host
     .select()
     .from(leaveFormModel)
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
-    .innerJoin(admissionModel, eq(admissionModel.roll_number, studentModel.rollNo))
     .where(
     and(
         // Use inArray instead of any for array comparison
         inArray(studentModel.floor, floor),
         eq(leaveFormModel.status, approval_status.submitted),
-        eq(admissionModel.hostelBlock, hostel_block)
+        eq(studentModel.hostelBlock, hostel_block)
     ))
+    .orderBy(leaveFormModel.created_at);
+  return leave_form;
+};
+
+export const getLeaveFormsToBeApprovedByDeputyWarden = async () => {
+  const leave_form = await db
+    .select()
+    .from(leaveFormModel)
+    .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
+    .where(
+      eq(leaveFormModel.status, approval_status.rc)
+    )
     .orderBy(leaveFormModel.created_at);
   return leave_form;
 };

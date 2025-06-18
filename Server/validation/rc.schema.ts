@@ -10,14 +10,7 @@ export const rcAdmissionDecisionSchema = z.object({
   hostel_block: z.enum(["Flora", "Lavender"]).optional(),
 });
 
-export const rcLeaveDecisionSchema = z.object({
-  leaveForm_id: z.coerce.number({ invalid_type_error: "leave_form id must be a number" }),
-  approve: z.boolean(),
-  comment: z.string().optional(),
-});
-
 export const rcGrievanceDecisionSchema = z.object({
   approve: z.boolean(),
   grievances_id: z.coerce.number({ invalid_type_error: "grievance_id must be a number" }),
 });
-

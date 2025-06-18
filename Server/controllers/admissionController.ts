@@ -8,6 +8,7 @@ import {
   getAdmissionsByStatus,
   createAdmissionApproval,
   getAdmissionsToBeApprovedByRcByHostelBlock,
+  getRoomByRollNo,
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -399,12 +400,13 @@ export const updateApprovalStatusByRCController = async (
     );
   }
   const rc_userId = await getRCidfromUserId(Number(req.user.id));
-  const validated = rcAdmissionDecisionSchema.parse(req.body);
 
   const rc = await getRCById(Number(rc_userId));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found ", httpStatus.NOT_FOUND);
   }
+
+  const validated = rcAdmissionDecisionSchema.parse(req.body);
   if (
     validated.approve === false &&
     (!validated.comment || validated.comment.trim() === "")
@@ -646,9 +648,11 @@ export const updateApprovalStatusByWardenController = async (
       );
     }
 
-    // Only proceed with room removal if room number was provided
-    if (validated.room) {
-      const room = await checkRoom(validated.room, hostelBlock, currentYear);
+    const roomNo=await getRoomByRollNo(rollNo);
+
+    // Only proceed with room removal
+    if (roomNo) {
+      const room = await checkRoom(roomNo, hostelBlock, currentYear);
 
       if (!room) {
         throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
@@ -664,7 +668,7 @@ export const updateApprovalStatusByWardenController = async (
 
       await setStudentinRoom(
         updatedRollNos,
-        validated.room,
+        roomNo,
         hostelBlock,
         currentYear
       );
