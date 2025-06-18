@@ -1,4 +1,7 @@
-CREATE TYPE "public"."approval_status" AS ENUM('0', '1', '2', '3', '4', '-1,');--> statement-breakpoint
+CREATE TYPE "public"."approval_status" AS ENUM('0', '1', '2', '3', '4', '-1');--> statement-breakpoint
+CREATE TYPE "public"."gender" AS ENUM('male', 'female', 'other');--> statement-breakpoint
+CREATE TYPE "public"."hostel_block" AS ENUM('Flora', 'Lavender');--> statement-breakpoint
+CREATE TYPE "public"."rcLeave_status" AS ENUM('0', '1', '2', '-1');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('STUDENT', 'MANAGER', 'RC', 'DEPUTY_WARDEN', 'EXECUTIVE_WARDEN');--> statement-breakpoint
 CREATE TABLE "admission_approvals" (
 	"admission_id" integer NOT NULL,
@@ -12,7 +15,14 @@ CREATE TABLE "admission" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"roll_number" varchar(20) NOT NULL,
 	"academic_year" varchar(9) NOT NULL,
-	"declaration" boolean NOT NULL,
+	"student_agreed" boolean NOT NULL,
+	"parent_agreed" boolean NOT NULL,
+	"admission_category" varchar(20) NOT NULL,
+	"previous_resident" boolean NOT NULL,
+	"hostel_block" varchar(20) NOT NULL,
+	"mess_preference" varchar(20) NOT NULL,
+	"submission_date" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"transaction_id" varchar(100) NOT NULL,
 	"status" "approval_status" DEFAULT '0' NOT NULL
 );
@@ -45,7 +55,6 @@ CREATE TABLE "grievances" (
 	"grievance_type" varchar(50) NOT NULL,
 	"subject" varchar(200) NOT NULL,
 	"description" text NOT NULL,
-	"priority" varchar(20) DEFAULT 'medium' NOT NULL,
 	"rc_approval" boolean DEFAULT false NOT NULL,
 	"resolved" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -59,7 +68,7 @@ CREATE TABLE "leave_form" (
 	"from_date" date NOT NULL,
 	"to_date" date NOT NULL,
 	"reason" text NOT NULL,
-	"destination" varchar(100) NOT NULL,
+	"address_of_stay" varchar(100) NOT NULL,
 	"emergency_contact" varchar(15) NOT NULL,
 	"status" "approval_status" DEFAULT '0' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -80,39 +89,43 @@ CREATE TABLE "rc_leave" (
 	"leaving" date NOT NULL,
 	"arrival" date NOT NULL,
 	"reason" text NOT NULL,
-	"approved" boolean DEFAULT false NOT NULL
+	"approved" "rcLeave_status" DEFAULT '0' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"approved_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "rc" (
 	"rc_id" serial PRIMARY KEY NOT NULL,
+	"user_id" integer NOT NULL,
 	"name" varchar(100) NOT NULL,
-	"hostel" varchar(50) NOT NULL,
-	"on_leave" boolean,
+	"hostel" "hostel_block" NOT NULL,
+	"on_leave" boolean DEFAULT false NOT NULL,
 	"floor" integer[] NOT NULL,
-	"created_at" date DEFAULT now() NOT NULL
+	"alternate_rc_id" integer,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "rc_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "student" (
 	"user_id" integer NOT NULL,
+	"room_number" integer,
 	"name" varchar(100) NOT NULL,
 	"roll_no" varchar(20) PRIMARY KEY NOT NULL,
 	"course" varchar(50) NOT NULL,
 	"branch" varchar(50) NOT NULL,
 	"semester" varchar(10) NOT NULL,
-	"date_of_birth" date NOT NULL,
-	"age" integer NOT NULL,
 	"mobile" varchar(15) NOT NULL,
 	"email" varchar(100) NOT NULL,
 	"emergency_contact" varchar(15) NOT NULL,
+	"date_of_birth" date NOT NULL,
+	"age" integer NOT NULL,
+	"gender" "gender" NOT NULL,
 	"nationality" varchar(50) NOT NULL,
+	"govt_id_type" varchar(50) NOT NULL,
 	"govt_id" varchar(50) NOT NULL,
-	"admission_category" varchar(20) NOT NULL,
 	"blood_group" varchar(10) NOT NULL,
 	"medical_history" text NOT NULL,
-	"previous_resident" boolean NOT NULL,
-	"hostel_block" varchar(20) NOT NULL,
-	"room_number" varchar(10) NOT NULL,
-	"mess_preference" varchar(20) NOT NULL,
 	"father_name" varchar(100) NOT NULL,
 	"father_occupation" varchar(100) NOT NULL,
 	"father_mobile" varchar(15) NOT NULL,
@@ -146,20 +159,23 @@ CREATE TABLE "student" (
 	"guardian_country" varchar(50),
 	"guardian_postal_code" varchar(20),
 	"created_at" date DEFAULT now() NOT NULL,
+	"updated_at" date DEFAULT now() NOT NULL,
 	"passport_photo_url" text,
 	"student_signature_url" text,
-	"parent_guardian_signature_url" text
+	"parent_guardian_signature_url" text,
+	"category_proof_url" text,
+	"aadhaar_url" text,
+	"admission_slip_url" text,
+	CONSTRAINT "student_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "summer_vacation" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"roll_number" varchar(20) NOT NULL,
 	"vacation_from" date NOT NULL,
-	"vacation_to" date NOT NULL,
-	"reason" text NOT NULL,
-	"destination" varchar(100) NOT NULL,
-	"contact_during_vacation" varchar(15) NOT NULL,
-	"local_guardian_consent" varchar(3) NOT NULL,
+	"vacation_time" timestamp NOT NULL,
+	"address_of_stay" varchar(100) NOT NULL,
+	"returned_items" varchar(100)[],
 	"status" "approval_status" DEFAULT '0' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -186,13 +202,10 @@ CREATE TABLE "users" (
 CREATE TABLE "vacating_hostel" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"roll_number" varchar(20) NOT NULL,
-	"reason_for_vacating" varchar(100) NOT NULL,
-	"last_date_of_stay" date NOT NULL,
-	"forwarding_address" text NOT NULL,
-	"contact_after_vacating" varchar(15) NOT NULL,
-	"room_condition" text NOT NULL,
-	"dues_clearance" varchar(3) DEFAULT 'No' NOT NULL,
-	"key_submitted" varchar(3) DEFAULT 'No' NOT NULL,
+	"vacating_date" date NOT NULL,
+	"vacating_time" timestamp NOT NULL,
+	"future_address" text NOT NULL,
+	"returned_items" varchar(100)[],
 	"status" "approval_status" DEFAULT '0' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -216,7 +229,7 @@ ALTER TABLE "leave_form" ADD CONSTRAINT "leave_form_roll_number_student_roll_no_
 ALTER TABLE "leave_form_approvals" ADD CONSTRAINT "leave_form_approvals_leave_form_id_leave_form_id_fk" FOREIGN KEY ("leave_form_id") REFERENCES "public"."leave_form"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "leave_form_approvals" ADD CONSTRAINT "leave_form_approvals_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "rc_leave" ADD CONSTRAINT "rc_leave_rc_id_rc_rc_id_fk" FOREIGN KEY ("rc_id") REFERENCES "public"."rc"("rc_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "rc" ADD CONSTRAINT "rc_rc_id_users_id_fk" FOREIGN KEY ("rc_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "rc" ADD CONSTRAINT "rc_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "student" ADD CONSTRAINT "student_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "summer_vacation" ADD CONSTRAINT "summer_vacation_roll_number_student_roll_no_fk" FOREIGN KEY ("roll_number") REFERENCES "public"."student"("roll_no") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "summer_vacation_approvals" ADD CONSTRAINT "summer_vacation_approvals_summer_vacation_id_summer_vacation_id_fk" FOREIGN KEY ("summer_vacation_id") REFERENCES "public"."summer_vacation"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

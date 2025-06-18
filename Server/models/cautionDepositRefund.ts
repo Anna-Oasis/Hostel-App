@@ -21,7 +21,7 @@ export const cautionDepositRefundModel = pgTable("caution_deposit_refund", {
 
   refund_amount: decimal("refund_amount", { precision: 10, scale: 2 }).notNull(),
 
-  deduction_details: text("deduction_details"), // Optional field to explain deductions
+  deduction_details: text("deduction_details"),
 
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });

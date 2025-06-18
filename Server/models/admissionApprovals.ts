@@ -17,7 +17,6 @@ export const admissionApprovalsModel = pgTable("admission_approvals", {
     .notNull()
     .references(() => admissionModel.id, { onDelete: "cascade" }),
 
-  // Foreign key to users
   user_id: integer("user_id")
     .notNull()
     .references(() => userModel.id, { onDelete: "no action" }),

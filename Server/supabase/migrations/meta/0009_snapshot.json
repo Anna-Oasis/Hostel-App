@@ -1,6 +1,6 @@
 {
-  "id": "9fd7f535-0422-4058-bc69-359e2eec81dd",
-  "prevId": "be75e221-898f-4443-96b7-8f666c4d120c",
+  "id": "5281424f-7e00-424a-91a7-7bf208e8fda1",
+  "prevId": "7e38a1a5-a66c-42a4-9c03-2fa32c70537a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -127,12 +127,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "room_number": {
-          "name": "room_number",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "mess_preference": {
           "name": "mess_preference",
           "type": "varchar(20)",
@@ -141,14 +135,14 @@
         },
         "submission_date": {
           "name": "submission_date",
-          "type": "date",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "date",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -162,6 +156,7 @@
         "status": {
           "name": "status",
           "type": "approval_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -379,13 +374,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "priority": {
-          "name": "priority",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'medium'"
-        },
         "rc_approval": {
           "name": "rc_approval",
           "type": "boolean",
@@ -477,8 +465,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "destination": {
-          "name": "destination",
+        "address_of_stay": {
+          "name": "address_of_stay",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
@@ -492,6 +480,7 @@
         "status": {
           "name": "status",
           "type": "approval_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -640,10 +629,32 @@
         },
         "approved": {
           "name": "approved",
-          "type": "boolean",
+          "type": "rcLeave_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": false
+          "default": "'0'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -678,6 +689,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "varchar(100)",
@@ -686,7 +703,8 @@
         },
         "hostel": {
           "name": "hostel",
-          "type": "varchar(50)",
+          "type": "hostel_block",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -694,7 +712,8 @@
           "name": "on_leave",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": false
         },
         "floor": {
           "name": "floor",
@@ -702,9 +721,15 @@
           "primaryKey": false,
           "notNull": true
         },
+        "alternate_rc_id": {
+          "name": "alternate_rc_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
@@ -712,22 +737,30 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "rc_rc_id_users_id_fk": {
-          "name": "rc_rc_id_users_id_fk",
+        "rc_user_id_users_id_fk": {
+          "name": "rc_user_id_users_id_fk",
           "tableFrom": "rc",
           "tableTo": "users",
           "columnsFrom": [
-            "rc_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "rc_user_id_unique": {
+          "name": "rc_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -741,6 +774,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "room_number": {
+          "name": "room_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -1099,7 +1138,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "student_user_id_unique": {
+          "name": "student_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1126,39 +1173,28 @@
           "primaryKey": false,
           "notNull": true
         },
-        "vacation_to": {
-          "name": "vacation_to",
-          "type": "date",
+        "vacation_time": {
+          "name": "vacation_time",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": true
         },
-        "reason": {
-          "name": "reason",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "destination": {
-          "name": "destination",
+        "address_of_stay": {
+          "name": "address_of_stay",
           "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
         },
-        "contact_during_vacation": {
-          "name": "contact_during_vacation",
-          "type": "varchar(15)",
+        "returned_items": {
+          "name": "returned_items",
+          "type": "varchar(100)[]",
           "primaryKey": false,
-          "notNull": true
-        },
-        "local_guardian_consent": {
-          "name": "local_guardian_consent",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "status": {
           "name": "status",
           "type": "approval_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -1346,53 +1382,34 @@
           "primaryKey": false,
           "notNull": true
         },
-        "reason_for_vacating": {
-          "name": "reason_for_vacating",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "last_date_of_stay": {
-          "name": "last_date_of_stay",
+        "vacating_date": {
+          "name": "vacating_date",
           "type": "date",
           "primaryKey": false,
           "notNull": true
         },
-        "forwarding_address": {
-          "name": "forwarding_address",
+        "vacating_time": {
+          "name": "vacating_time",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "future_address": {
+          "name": "future_address",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "contact_after_vacating": {
-          "name": "contact_after_vacating",
-          "type": "varchar(15)",
+        "returned_items": {
+          "name": "returned_items",
+          "type": "varchar(100)[]",
           "primaryKey": false,
-          "notNull": true
-        },
-        "room_condition": {
-          "name": "room_condition",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "dues_clearance": {
-          "name": "dues_clearance",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'No'"
-        },
-        "key_submitted": {
-          "name": "key_submitted",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'No'"
+          "notNull": false
         },
         "status": {
           "name": "status",
           "type": "approval_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'0'"
@@ -1507,16 +1524,6 @@
     }
   },
   "enums": {
-    "public.gender": {
-      "name": "gender",
-      "schema": "public",
-      "values": [
-        "male",
-        "female",
-        "other",
-        "prefer not to say"
-      ]
-    },
     "public.approval_status": {
       "name": "approval_status",
       "schema": "public",
@@ -1526,6 +1533,33 @@
         "2",
         "3",
         "4",
+        "-1"
+      ]
+    },
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "male",
+        "female",
+        "other"
+      ]
+    },
+    "public.hostel_block": {
+      "name": "hostel_block",
+      "schema": "public",
+      "values": [
+        "Flora",
+        "Lavender"
+      ]
+    },
+    "public.rcLeave_status": {
+      "name": "rcLeave_status",
+      "schema": "public",
+      "values": [
+        "0",
+        "1",
+        "2",
         "-1"
       ]
     },

@@ -1,47 +1,24 @@
-import { Router, Response } from "express";
-import { db } from "../config/dbConnection";
-import { admissionModel } from "../models/admissionModel";
-import { admissionApprovalsModel } from "../models/admissionApprovals";
-import { eq, and } from "drizzle-orm";
-import { AuthenticatedRequest } from "../types/roles"; 
-import { validateJWT } from "../middleware/jwt";
+import { Router } from 'express';
+import { fetchAdmissionWaitingForApprovalController, approveByManagerController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
+import errorWrapper from "../middleware/errorWrapper";
+import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
-const router = Router();
+const managerRouter = Router();
 
-router.get("/admissions/approvals", validateJWT, async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.userRole || req.userRole !== "manager" || !req.userId) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
+//const managerController = new ManagerController();
 
-    try {
-      const approvals = await db
-        .select({
-          admissionId: admissionModel.id,
-          rollNumber: admissionModel.roll_number,
-          academicYear: admissionModel.academicYear,
-          status: admissionModel.status,
-          approved: admissionApprovalsModel.approve,
-          comment: admissionApprovalsModel.comment,
-          timestamp: admissionApprovalsModel.timestamp,
-        })
-        .from(admissionApprovalsModel)
-        .innerJoin(
-          admissionModel,
-          eq(admissionApprovalsModel.admission_id, admissionModel.id)
-        )
-        .where(
-          and(
-            eq(admissionApprovalsModel.user_id, Number(req.userId)),
-            eq(admissionApprovalsModel.approve, true)
-          )
-        );
+//router.get("/admissions/approvals", validateJWT, managerController.getAdmissionApprovals.bind(managerController));
+//router.put("/grievance/:id", validateJWT, managerController.resolveGrievance.bind(managerController));
+//router.get("/grievance", validateJWT, managerController.getGrievances.bind(managerController));
+//update greivancesModel set resolved=true where greivancesmodel.id=greivance_id
 
-      res.json(approvals);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Server error" });
-    }
-});
 
-export default router;
+managerRouter.get("/admissions", authenticateUser ,hasRole(['manager']),errorWrapper(fetchAdmissionWaitingForApprovalController));
+
+managerRouter.put("/admissions/:admission_id", authenticateUser,hasRole(['manager']),errorWrapper(approveByManagerController));
+
+managerRouter.get("/admissions/approvals",authenticateUser,hasRole(['manager']),errorWrapper(fetchAdmissionsApprovedByUser));
+
+export default managerRouter;
+
+

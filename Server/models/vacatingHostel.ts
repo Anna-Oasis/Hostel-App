@@ -7,7 +7,9 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum, approval_status } from "./enum";
+import { approval_status_pgEnum } from "./enum";
+import { approval_status } from "../constants/enum";
+import { time } from "console";
 
 export const vacatingHostelModel = pgTable("vacating_hostel", {
   id: serial("id").primaryKey(),
@@ -18,19 +20,13 @@ export const vacatingHostelModel = pgTable("vacating_hostel", {
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
 
   // Vacating hostel form details
-  reason_for_vacating: varchar("reason_for_vacating", { length: 100 }).notNull(),
-  last_date_of_stay: date("last_date_of_stay").notNull(),
-  forwarding_address: text("forwarding_address").notNull(),
-  contact_after_vacating: varchar("contact_after_vacating", { length: 15 }).notNull(),
-  room_condition: text("room_condition").notNull(),
-  dues_clearance: varchar("dues_clearance", { length: 3 }).default("No").notNull(), // "Yes" or "No"
-  key_submitted: varchar("key_submitted", { length: 3 }).default("No").notNull(), // "Yes" or "No"
-  
-  // Status and timestamps
+  vacating_date: date("vacating_date").notNull(),
+  vacating_time: timestamp("vacating_time").notNull(),
+  future_address: text("future_address").notNull(),
+  returned_items: varchar("returned_items", { length: 100 }).array(),
   status: approval_status_pgEnum("status")
     .notNull()
-    .default(approval_status.submitted),
-    
+    .default(approval_status.submitted),   
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

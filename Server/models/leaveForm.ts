@@ -7,7 +7,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum, approval_status } from "./enum";
+import { approval_status_pgEnum } from "./enum";
+import { approval_status } from "../constants/enum";
 
 export const leaveFormModel = pgTable("leave_form", {
   id: serial("id").primaryKey(),
@@ -18,11 +19,11 @@ export const leaveFormModel = pgTable("leave_form", {
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
 
   // Leave form details
-  leave_type: varchar("leave_type", { length: 50 }).notNull(), // e.g., "Medical", "Personal", "Emergency"
+  leave_type: varchar("leave_type", { length: 50 }).notNull(),
   from_date: date("from_date").notNull(),
   to_date: date("to_date").notNull(),
   reason: text("reason").notNull(),
-  destination: varchar("destination", { length: 100 }).notNull(),
+  address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   emergency_contact: varchar("emergency_contact", { length: 15 }).notNull(),
   
   // Status and timestamps

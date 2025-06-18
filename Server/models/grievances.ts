@@ -20,7 +20,6 @@ export const grievancesModel = pgTable("grievances", {
   grievance_type: varchar("grievance_type", { length: 50 }).notNull(), // e.g., "Mess", "Hostel", "Administration"
   subject: varchar("subject", { length: 200 }).notNull(),
   description: text("description").notNull(),
-  
   // Approval and resolution status
   rc_approval: boolean("rc_approval").default(false).notNull(),
   resolved: boolean("resolved").default(false).notNull(),

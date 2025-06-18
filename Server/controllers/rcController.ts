@@ -1,74 +1,89 @@
 import { Request, Response } from "express";
-import {
-  getRCById,
-  getAdmissionsByHostelBlock,
-  createAdmissionApproval,
-  updateAdmissionStatus,
+import { 
+  getGrievances, 
+  updateGrievanceApprovalStatus 
 } from "../services/rcServices";
-import { rcDecisionSchema } from "../validation/rc.schema";
-import { ZodError } from "zod";
-import { approval_status } from "../models/enum";
+import {  
+  rcGrievanceDecisionSchema 
+} from "../validation/rc.schema";
+import httpStatus from "http-status";
+import AppError from "../utils/AppError";
+import { getRCById } from "../services/rcServices";
 
-export const viewAdmissionsByRC = async (req: Request, res: Response): Promise<void> => {
+
+
+export const viewGrievancesByRCController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { rc_id } = req.params;
 
-  try {
-    const rc = await getRCById(Number(rc_id));
-    if (rc.length === 0) {
-      res.status(404).json({ success: false, message: "RC not found" });
-      return;
-    }
-
-    const admissions = await getAdmissionsByHostelBlock(rc[0].hostel);
-    res.status(200).json({ success: true, data: admissions });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal Server Error";
-    res.status(500).json({
-      success: false,
-      message,
-    });
+  const rc = await getRCById(Number(rc_id));
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
+
+  const grievances = await getGrievances(rc[0].hostel, rc[0].floor);
+  if (!grievances) {
+    throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({ 
+    success: true, 
+    data: grievances,
+    message: "Fetched Grievances successfully",
+  });
 };
 
-export const approveOrDeclineAdmissionByRC = async (req: Request, res: Response): Promise<void> => {
-  const { admission_id } = req.params;
+export const approveOrDeclineGrievancesByRCController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { rc_id } = req.params;
 
-  try {
-    const validated = rcDecisionSchema.parse(req.body);
-    const status = validated.approve ? approval_status.rc : approval_status.declined;
-
-    await createAdmissionApproval({
-      admission_id: Number(admission_id),
-      user_id: validated.rc_id,
-      approve: validated.approve,
-      comment: validated.comment,
-    });
-
-    await updateAdmissionStatus({
-      admission_id: Number(admission_id),
-      status,
-      roomNumber: validated.room,
-      floor: validated.floor,
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Admission approval submitted",
-    });
-  } catch (error) {
-    if (error instanceof ZodError) {
-      res.status(400).json({
-        success: false,
-        message: "Validation failed",
-        errors: error.errors,
-      });
-      return;
-    }
-
-    console.error("❌ RC approval error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+  const validated = rcGrievanceDecisionSchema.parse(req.body);
+  
+  const rc = await getRCById(Number(rc_id));
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
+
+  const updateResult = await updateGrievanceApprovalStatus({
+    grievance_id: validated.grievances_id,
+    rc_approval: validated.approve
+  });
+
+  if (!updateResult) {
+    throw AppError("Failed to update grievance status", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "Grievance approval submitted successfully",
+  });
 };
+
+
+
+// export const fetchAdmissionsApprovedByRC = async (
+//   req: Request,
+//   res: Response,
+// ) => {
+//   const rcId = parseInt(req.params.rc_id);
+
+//   if (isNaN(rcId)) {
+//     throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
+//   }
+//   const rc = await rcExists(rcId);
+//   if (!rc) {
+//     throw AppError("RC not found", httpStatus.NOT_FOUND);
+//   }
+//   const data = await getAdmissionsApprovedByRC(rcId);
+
+//   res.status(httpStatus.OK).json({
+//     success: true,
+//     data,
+//     message: "Admissions approved by RC fetched successfully",
+//   });
+// };
+
