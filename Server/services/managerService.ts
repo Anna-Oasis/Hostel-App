@@ -28,27 +28,5 @@ export const getAdmissionApprovals = async (userId: number) => {
     );
 };
 
-export const resolveGrievance = async (grievanceId: number) => {
-  return await db
-    .update(grievancesModel)
-    .set({ resolved: true })
-    .where(eq(grievancesModel.id, grievanceId))
-    .returning();
-};
 
-export const getGrievances = async () => {
-  return await db
-    .select({
-      greivanceId: grievancesModel.id,
-      rollNo: grievancesModel.roll_number,
-      formDetails: {
-        grievanceType: grievancesModel.grievance_type,
-        subject: grievancesModel.subject,
-        description: grievancesModel.description,
-        // priority: grievancesModel.priority,
-      },
-      resolved: grievancesModel.resolved,
-    })
-    .from(grievancesModel)
-    .where(eq(grievancesModel.rc_approval, true));
-};
+

@@ -13,3 +13,27 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
     .from(grievancesModel)
     .where(eq(grievancesModel.roll_number, rollNumber));
 };
+
+export const getGrievancesForManager = async () => {
+  return await db
+    .select({
+      greivanceId: grievancesModel.id,
+      rollNo: grievancesModel.roll_number,
+      formDetails: {
+        grievanceType: grievancesModel.grievance_type,
+        subject: grievancesModel.subject,
+        description: grievancesModel.description,
+      },
+      resolved: grievancesModel.resolved,
+    })
+    .from(grievancesModel)
+    .where(eq(grievancesModel.rc_approval, true));
+};
+
+export const resolveGrievanceByManager = async (grievanceId: number) => {
+  return await db
+    .update(grievancesModel)
+    .set({ resolved: true })
+    .where(eq(grievancesModel.id, grievanceId))
+    .returning();
+};
