@@ -41,3 +41,17 @@ export const approveOrDeclineByRC = async (
 
   return { message: approve ? "Approved by RC" : "Declined by RC" };
 };
+
+export const getVacatingFormsApprovedByRC = async () => {
+  return await db
+    .select()
+    .from(vacatingHostelModel)
+    .where(eq(vacatingHostelModel.status, approval_status.rc));
+};
+
+export const getVacatingFormsApprovedByManager = async () => {
+  return await db
+    .select()
+    .from(vacatingHostelModel)
+    .where(eq(vacatingHostelModel.status, approval_status.manager));
+};

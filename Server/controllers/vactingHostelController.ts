@@ -4,6 +4,8 @@ import { vacatingFormSchema } from "../validation/vacatingHostel.schema";
 import {
   createVacatingHostelForm,
   getAllVacatingHostelForms,
+  getVacatingFormsApprovedByManager,
+  getVacatingFormsApprovedByRC,
 } from "../services/vacatingHostelService";
 import {
   getPendingRCApprovals,
@@ -88,3 +90,36 @@ export async function approveVacatingFormByRCController(req: AuthRequest, res: R
     message: `Form ${approve ? "approved" : "declined"} successfully`,
   });
 }
+
+export async function getVacatingFormsForManagerController(req: AuthRequest, res: Response) {
+  const forms = await getVacatingFormsApprovedByRC();
+
+  if (!forms || forms.length === 0) {
+    throw AppError("No vacating forms waiting for manager approval", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: forms,
+    count: forms.length,
+    message: "Vacating forms waiting for manager approval fetched successfully",
+  });
+}
+
+
+export async function getVacatingFormsForDeputyWardenController(req: AuthRequest, res: Response) {
+  const forms = await getVacatingFormsApprovedByManager();
+
+  if (!forms || forms.length === 0) {
+    throw AppError("No vacating forms waiting for deputy warden approval", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: forms,
+    count: forms.length,
+    message: "Vacating forms waiting for deputy warden approval fetched successfully",
+  });
+}
+
+//export async function approveVacatingFormByDeputyWardenController(req: AuthRequest, res: Response) {

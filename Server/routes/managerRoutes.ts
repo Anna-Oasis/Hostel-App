@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getAdmissionWaitingForApprovalController, updateApprovalStatusController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import { getVacatingFormsForManagerController } from '../controllers/vactingHostelController';
 // import {
 //   enterCautionDepositAndApproveController,
 //   getVacatingFormsForManagerController
@@ -22,9 +23,9 @@ managerRouter.put("/admissions/:admission_id", authenticateUser,hasRole(['manage
 
 managerRouter.get("/admissions/approvals",authenticateUser,hasRole(['manager']),errorWrapper(fetchAdmissionsApprovedByUser));
 
-// managerRouter.put("/vacating_hostel/vacating_hostel_id",errorWrapper(enterCautionDepositAndApproveController));
+managerRouter.put("/vacating_hostel/:vacating_hostel_id",authenticateUser,hasRole(['manager']),errorWrapper(enterCautionDepositAndApproveController));
 
-// managerRouter.get("/vacating_hostel",errorWrapper(getVacatingFormsForManagerController));
+managerRouter.get("/vacating_hostel",authenticateUser,hasRole(['manager']),errorWrapper(getVacatingFormsForManagerController));
 
 export default managerRouter;
 
