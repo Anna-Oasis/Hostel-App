@@ -66,7 +66,7 @@ studentRouter.put(
   errorWrapper(updateStudentDetailsController)
 );
 
-studentRouter.get("/vacating_hostel",errorWrapper(getAllVacatingHostelFormsController));
-studentRouter.post("/vacating_hostel",errorWrapper(createVacatingHostelFormController));
+studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
+studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
 export default studentRouter;

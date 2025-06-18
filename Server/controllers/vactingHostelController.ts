@@ -6,8 +6,9 @@ import {
   getAllVacatingHostelForms,
 } from "../services/vacatingHostelService";
 import { AppError } from "../utils/AppError";
+import { AuthRequest } from "../types/roles";
 
-export async function createVacatingHostelFormController(req: Request, res: Response) {
+export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
   if (!req.body) {
     throw AppError("Request body is required", httpStatus.BAD_REQUEST);
   }
@@ -29,7 +30,7 @@ export async function createVacatingHostelFormController(req: Request, res: Resp
   });
 }
 
-export async function getAllVacatingHostelFormsController(_req: Request, res: Response) {
+export async function getAllVacatingHostelFormsController(req: AuthRequest, res: Response) {
   const result = await getAllVacatingHostelForms();
 
   if (!result || result.length === 0) {
