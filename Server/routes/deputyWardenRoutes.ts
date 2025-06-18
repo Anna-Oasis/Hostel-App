@@ -1,12 +1,8 @@
 import { Router } from "express";
-import {
-  viewAdmissionsByDeputyWardenController,
-  approveOrDeclineAdmissionByDeputyWardenController
-} from "../controllers/deputyWardenController";
-import { fetchAdmissionsApprovedByUser } from "../controllers/admissionController";
+import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-import { getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
+import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
 // import 
 //   {
 //     getVacatingFormsForDeputyWardenController,
@@ -14,16 +10,16 @@ import { getVacatingFormsForDeputyWardenController } from "../controllers/vactin
 //   } from "../controllers/vacatingHostelController";
 const deputyWardenRouter = Router();
 
-// Fetch all admissions waiting for RC approval by hostel block
-deputyWardenRouter.get("/admissions", viewAdmissionsByDeputyWardenController);
+// Fetch all admissions waiting for deputy warden approval by hostel block
+deputyWardenRouter.get("/admissions", authenticateUser, hasRole(['deputyWarden']), errorWrapper(fetchAdmissionWaitingForApprovalController));
 
 // Approve or decline admission by RC with admission ID in path
-deputyWardenRouter.put("/admissions/:admission_id", approveOrDeclineAdmissionByDeputyWardenController);
+deputyWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateApprovalStatusByWardenController));
 
 deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
 deputyWardenRouter.get("/vacating_hostel", authenticateUser,hasRole(['deputyWarden']),errorWrapper(getVacatingFormsForDeputyWardenController));
 
-// deputyWardenRouter.put("/vacating_hostel/:vacating_hostel_id", authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveVacatingFormByDeputyWardenController));
+deputyWardenRouter.put("/vacating_hostel/:vacating_hostel_id", authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveVacatingFormByDeputyWardenController));
 
 export default deputyWardenRouter;

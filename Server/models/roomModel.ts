@@ -7,8 +7,7 @@ export const roomModel = pgTable("room", {
   hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
   academicYear: varchar("academic_year", { length: 9 }).notNull(),
   floor : integer("floor").notNull(),
-  rollNo: varchar("rollNo", { length: 20})
-    .notNull().references(() => studentModel.rollNo, { onDelete: "no action" }).array(),
+  rollNo: varchar("rollNo", { length: 20}).array(),
   }, (table) => ({
   pk: primaryKey({ columns: [table.roomNumber, table.hostelBlock, table.academicYear] })
 }));

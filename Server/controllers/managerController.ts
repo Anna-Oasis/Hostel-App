@@ -1,6 +1,7 @@
-import { Response } from "express";
 import { AuthenticatedRequest } from "../types/roles";
+import { Request, Response } from "express";
 import { getAdmissionApprovals, resolveGrievance, getGrievances } from "../services/managerService";
+
 
 export class ManagerController {
   async getAdmissionApprovals(req: AuthenticatedRequest, res: Response): Promise<void> {

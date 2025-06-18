@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { vacatingFormSchema } from "../validation/vacatingHostel.schema";
 import {
+  approveOrDeclineByDeputyWarden,
+  approveOrDeclineByManager,
   createVacatingHostelForm,
   getAllVacatingHostelForms,
-  getVacatingFormsApprovedByManager,
-  getVacatingFormsApprovedByRC,
+  getVacatingFormsWaitingForDeputyWarden,
+  getVacatingFormsWaitingForManager,
 } from "../services/vacatingHostelService";
 import {
   getPendingRCApprovals,
@@ -92,7 +94,7 @@ export async function approveVacatingFormByRCController(req: AuthRequest, res: R
 }
 
 export async function getVacatingFormsForManagerController(req: AuthRequest, res: Response) {
-  const forms = await getVacatingFormsApprovedByRC();
+  const forms = await getVacatingFormsWaitingForManager();
 
   if (!forms || forms.length === 0) {
     throw AppError("No vacating forms waiting for manager approval", httpStatus.NOT_FOUND);
@@ -108,7 +110,7 @@ export async function getVacatingFormsForManagerController(req: AuthRequest, res
 
 
 export async function getVacatingFormsForDeputyWardenController(req: AuthRequest, res: Response) {
-  const forms = await getVacatingFormsApprovedByManager();
+  const forms = await getVacatingFormsWaitingForDeputyWarden();
 
   if (!forms || forms.length === 0) {
     throw AppError("No vacating forms waiting for deputy warden approval", httpStatus.NOT_FOUND);
@@ -122,4 +124,75 @@ export async function getVacatingFormsForDeputyWardenController(req: AuthRequest
   });
 }
 
-//export async function approveVacatingFormByDeputyWardenController(req: AuthRequest, res: Response) {
+export async function approveVacatingFormByDeputyWardenController(req: AuthRequest, res: Response) {
+  const { vacating_hostel_id } = req.params;
+  const { approve, comment } = req.body;
+
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+
+  if (!vacating_hostel_id || approve === undefined) {
+    throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
+  }
+
+  // If declining, comment is required
+  if (approve === false && (!comment || comment.trim() === '')) {
+    throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
+  }
+
+  const deputyWardenId = parseInt(req.user.id);
+  const result = await approveOrDeclineByDeputyWarden(
+    parseInt(vacating_hostel_id), 
+    deputyWardenId, 
+    approve, 
+    comment
+  );
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result,
+    message: `Form ${approve ? "approved" : "declined"} successfully by Deputy Warden`,
+  });
+}
+
+export async function approveVacatingFormByManagerController(req: AuthRequest, res: Response) {
+  const { vacating_hostel_id } = req.params;
+  const { approve, comment, deductions, refund_amount, deduction_details } = req.body;
+
+  if (!req.user || !req.user.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+
+  if (!vacating_hostel_id || approve === undefined) {
+    throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
+  }
+
+  if (!deductions || !refund_amount || !deduction_details) {
+    throw AppError("All caution deposit refund details are required", httpStatus.BAD_REQUEST);
+  }
+
+  // If declining, comment is required
+  if (approve === false && (!comment || comment.trim() === '')) {
+    throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
+  }
+
+  const managerId = parseInt(req.user.id);
+  const result = await approveOrDeclineByManager(
+    parseInt(vacating_hostel_id), 
+    managerId, 
+    approve, 
+    comment,
+    {
+      deductions,
+      refund_amount,
+      deduction_details
+    }
+  );
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result,
+    message: `Form ${approve ? "approved" : "declined"} successfully by Manager`,
+  });
+}
