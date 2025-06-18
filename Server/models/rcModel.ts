@@ -3,22 +3,21 @@ import {
   integer,
   varchar,
   boolean,
-  date,
+  timestamp,
   serial,
 } from "drizzle-orm/pg-core";
-
+import { hostel_block_pgEnum } from "./enum";
 import { userModel } from "./userModel";
 
 export const rcModel = pgTable("rc", {
-  
-  id: serial("rc_id").primaryKey().references(() => userModel.id, { onDelete: "no action" }),
+  id: serial("rc_id").primaryKey(),
+  userId: integer("user_id").notNull().unique().references(() => userModel.id, { onDelete: "set null" }),
   name: varchar("name", { length: 100 }).notNull(),
-  hostel: varchar("hostel", { length: 50 }).notNull(),
-  onLeave: boolean("on_leave"), // not null is not used here
-  floor: integer("floor").array().notNull(), 
-
-  // Timestamp
-  createdAt: date("created_at").defaultNow().notNull(),
+  hostel: hostel_block_pgEnum("hostel").notNull(),
+  onLeave: boolean("on_leave").notNull().default(false),
+  floor: integer("floor").array().notNull(),
+  alternateRCId: integer("alternate_rc_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type RC = typeof rcModel.$inferSelect;

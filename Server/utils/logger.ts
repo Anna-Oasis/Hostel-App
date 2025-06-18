@@ -12,10 +12,9 @@ if (!fs.existsSync(LOG_DIR)) {
 
 const accessLogStream = fs.createWriteStream(LOG_FILE, { flags: 'a' });
 
-morgan.token('date', () => new Date().toISOString());
 // Morgan middleware for HTTP request logging (logs to both file and console)
 export const morganLogger = morgan(
-    '[:date] [:method] :url :status :res[content-length] - :response-time ms',
+    'combined',
     {
         stream: {
             write: (message: string) => {

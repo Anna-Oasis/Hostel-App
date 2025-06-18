@@ -7,7 +7,7 @@ export interface CustomRequest extends Request {
   };
 }
 
-export type UserRole = "warden" | "rc" | "manager" | "student" | "admin";
+export type UserRole = "warden" | "rc" | "manager" | "student" | "admin" | "deputyWarden" | "executiveWarden";
 
 export const PERMISSIONS = {
   warden: ["all"],
@@ -44,4 +44,11 @@ export const admissionRetreivalNumbers: Record<
 export interface UserWithRole {
   id: number;
   role: UserRole;
+}
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    role: UserRole;
+  };
 }

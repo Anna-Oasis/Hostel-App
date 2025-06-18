@@ -10,7 +10,7 @@ export const findStudentByRollNo = async (rollNo: string) => {
 };
 
 export const insertStudentDetails = async (data: any) => {
-  return await db.insert(studentModel).values(data);
+  return await db.insert(studentModel).values(data).returning();
 };
 
 export const updateStudentByRollNo = async (rollNo: string, data: any) => {
