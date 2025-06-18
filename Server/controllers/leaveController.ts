@@ -1,40 +1,20 @@
 import httpStatus from "http-status";
-import {
-  createAdmission,
-  getAdmissionByAdmissionId,
-  getAdmissionByRollNumber,
-  updateAdmission,
-  checkForAdmissionByRollNumberAndAcademicYear,
-  getAdmissionsByStatus,
-  createAdmissionApproval,
-  getAdmissionsToBeApprovedByRcByHostelBlock,
-} from "../services/admissionServices";
 import { Request, Response } from "express";
-import { createAdmissionSchema } from "../validation/admission.schema";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
-import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
 import { AuthRequest } from "../types/roles";
-import { getAdmissionsApprovedByUser } from "../services/admissionServices";
-import {
-  updateAdmissionStatus,
-  getRollNumberByAdmissionId,
-  getAcademicYearByAdmissionId,
-} from "../services/admissionServices";
-import { LeaveDecisionSchema } from "../validation/leave.validation";
-import {
-  checkRoom,
-  setStudentinRoom,
-  updateStudentRoomNumber,
-} from "../services/roomServices";
-import { ROOM_SIZE } from "../constants/values";
 import { getRCById } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
-import { wardenDecisionSchema } from "../validation/warden.schema";
 import { getLeaveFormsToBeApprovedByRcByFloor, getLeaveFormByLeaveFormId, updateLeaveForm, createLeaveFormApproval, getLeaveFormsToBeApprovedByDeputyWarden } from "../services/leaveServices";
-import { leaveFormModel } from "../models/leaveForm";
-import { leaveFormApprovalsModel } from "../models/leaveFormApprovals";
+import { LeaveDecisionSchema } from "../validation/leave.validation";
 
+// RC: \resident_counsellor\student_leave 
+// Deputy Warden: \deputy_warden\student_leave
+
+/*
+RC: GET - Fetch all student leave forms waiting for RC approval by floor
+Deputy Warden: GET - Fetch all leave forms waiting for approval from deputy warden
+*/
 export const getLeaveFormWaitingForApprovalController = async (
   req: AuthRequest,
   res: Response
@@ -87,6 +67,10 @@ export const getLeaveFormWaitingForApprovalController = async (
 };
 
 
+
+/*
+PUT - \leave_form_id as path param, approve the leave_form_id by RC and Deputy warden and entry into leave_form_id_approvals (request body will contain approve/decline with comment) 
+*/
 export const updateLeaveFormApprovalStatusController = async (
   req: AuthRequest,
   res: Response
@@ -174,7 +158,7 @@ export const updateLeaveFormApprovalStatusController = async (
       leaveForm: updatedLeaveForm,
       leaveFormApprovalsapproval: approvalResult[0],
     },
-    message: "Admission status updated successfully",
+    message: "Leave form status updated successfully",
   });
 };
 

@@ -1,19 +1,9 @@
 import { leaveFormModel, NewLeaveForm } from "../models/leaveForm";
 import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
-import { roomModel } from "../models/roomModel";
 import { eq, and, inArray } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
-import { admissionModel } from "../models/admissionModel";
 import { leaveFormApprovalsModel } from "../models/leaveFormApprovals";
-
-interface NewAdmissionApproval {
-  leave_form_id: number;
-  user_id: number;
-  approve: boolean;
-  comment?: string | null;
-}
-
 
 export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], hostel_block: string) => {
   const leave_form = await db
@@ -22,7 +12,6 @@ export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], host
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
     .where(
     and(
-        // Use inArray instead of any for array comparison
         inArray(studentModel.floor, floor),
         eq(leaveFormModel.status, approval_status.submitted),
         eq(studentModel.hostelBlock, hostel_block)

@@ -497,7 +497,7 @@ export const updateApprovalStatusByRCController = async (
       );
     }
 
-    // Update student room number
+    // Update student hostel details
     const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block);
 
     if (!studentUpdate) {
@@ -638,7 +638,7 @@ export const updateApprovalStatusByWardenController = async (
       );
     }
 
-    // Clear student room number
+    // Clear student hostel details
     const studentUpdate = await updateStudentHostelDetails(rollNo, null, null, '');
 
     if (!studentUpdate) {
