@@ -1,4 +1,3 @@
-import { Admission } from "../models/admissionModel";
 import { Router } from "express";
 import {
   createAdmissionController,

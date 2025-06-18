@@ -1,9 +1,6 @@
 import { Router } from "express";
 import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAdmissionWaitingForApprovalByRCController} from "../controllers/admissionController";
-import {
-  viewGrievancesByRCController,
-  approveOrDeclineGrievancesByRCController
-} from "../controllers/rcController";
+import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 
@@ -18,10 +15,10 @@ rcRouter.get("/admissions",authenticateUser,hasRole(["rc"]),errorWrapper( getAdm
 rcRouter.put("/admissions/:admission_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateApprovalStatusByRCController));
 
 // Fetch all grievances waiting for RC approval by hostel block and floor
-rcRouter.get("/grievance/:rc_id", viewGrievancesByRCController);
+rcRouter.get("/grievance/:rc_id",authenticateUser,hasRole(["rc"]), errorWrapper(viewGrievancesByRCController));
 
 // Approve or decline grievance by RC with grievance ID in body
-rcRouter.put("/grievance/:rc_id", approveOrDeclineGrievancesByRCController);
+rcRouter.put("/grievance/:rc_id", authenticateUser,hasRole(["rc"]), errorWrapper(approveOrDeclineGrievancesByRCController));
 
 
 // Fetch the approval data reviewd by a particular RC

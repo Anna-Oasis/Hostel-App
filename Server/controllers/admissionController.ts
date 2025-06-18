@@ -303,7 +303,7 @@ export async function updateAdmissionController(
 
 // \manager\admissions: PUT – use \admission_id to approve or decline by manager, entry into admission_approval table with comment(if declined)
 export async function updateApprovalStatusByManagerController(
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) {
   const { admission_id } = req.params;
