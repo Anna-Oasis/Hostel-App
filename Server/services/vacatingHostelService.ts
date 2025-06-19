@@ -8,6 +8,30 @@ import { cautionDepositRefundModel } from "../models/cautionDepositRefund";
 export const createVacatingHostelForm = async (formData: NewVacatingHostel) => {
   return await db.insert(vacatingHostelModel).values(formData).returning();
 };
+export const createCautionDepositRefund = async (data: any) => {
+  const {
+    vacating_hostel_id,
+    accountHolderName,
+    accountNumber,
+    bankName,
+    addressOfTheBank,
+    IFSCode,
+  } = data;
+
+  return await db
+    .insert(cautionDepositRefundModel)
+    .values({
+      vacating_hostel_id,
+      accountHolderName,
+      accountNumber,
+      bankName,
+      addressOfTheBank,
+      IFSCode,
+      deductions: "0.00",        // add default values explicitly
+      refund_amount: "0.00",
+    })
+    .returning();
+};
 
 export const getAllVacatingHostelForms = async () => {
   return await db.select().from(vacatingHostelModel);

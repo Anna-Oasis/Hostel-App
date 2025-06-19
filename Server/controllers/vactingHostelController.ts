@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { vacatingFormSchema } from "../validation/vacatingHostel.schema";
 import {
-  approveOrDeclineByDeputyWarden,
   approveOrDeclineByManager,
+  createCautionDepositRefund,
   createVacatingHostelForm,
   getAllVacatingHostelForms,
   getVacatingFormsWaitingForDeputyWarden,
@@ -16,28 +16,43 @@ import {
 import { approval_status } from "../constants/enum";
 import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
+import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
 
 export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
-  if (!req.body) {
-    throw AppError("Request body is required", httpStatus.BAD_REQUEST);
+  const { vacatingForm, cautionDeposit } = req.body;
+
+  if (!vacatingForm || !cautionDeposit) {
+    throw AppError("Both vacatingForm and cautionDeposit are required", httpStatus.BAD_REQUEST);
   }
 
-  const validatedData = vacatingFormSchema.parse(req.body);
+  const validatedVacatingForm = vacatingFormSchema.parse(vacatingForm);
+  const validatedCautionDeposit = cautionDepositSchema.parse(cautionDeposit);
 
-  const dbReadyData = {
-    ...validatedData,
-    vacating_date: validatedData.vacating_date.toISOString().split("T")[0],
-    vacating_time: validatedData.vacating_time,
+  const vacatingData = {
+    ...validatedVacatingForm,
+    vacating_date: validatedVacatingForm.vacating_date.toISOString().split("T")[0],
+    vacating_time: validatedVacatingForm.vacating_time,
   };
 
-  const result = await createVacatingHostelForm(dbReadyData);
+  const [vacatingRecord] = await createVacatingHostelForm(vacatingData);
+
+  const cautionData = {
+    ...validatedCautionDeposit,
+    vacating_hostel_id: vacatingRecord.id,
+  };
+
+  const [refundRecord] = await createCautionDepositRefund(cautionData);
 
   res.status(httpStatus.CREATED).json({
     success: true,
-    data: result,
-    message: "Vacating hostel form submitted successfully",
+    message: "Vacating hostel and caution deposit form submitted successfully",
+    data: {
+      vacatingHostel: vacatingRecord,
+      cautionDeposit: refundRecord,
+    },
   });
 }
+
 
 export async function getAllVacatingHostelFormsController(req: AuthRequest, res: Response) {
   const result = await getAllVacatingHostelForms();
@@ -142,7 +157,7 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
   }
 
   const deputyWardenId = parseInt(req.user.id);
-  const result = await approveOrDeclineByDeputyWarden(
+  const result = await approveOrDeclineByRC(
     parseInt(vacating_hostel_id), 
     deputyWardenId, 
     approve, 
