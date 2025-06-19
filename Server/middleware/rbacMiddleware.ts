@@ -4,18 +4,8 @@ import { UserRole, PERMISSIONS } from "../types/roles";
 import { db } from "../config/dbConnection";
 import { userModel } from "../models/userModel";
 import { eq } from "drizzle-orm";
-
-interface JwtPayload {
-  id: string;
-  role: UserRole;
-}
-
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    role: UserRole;
-  };
-}
+import { AuthRequest } from "../types/roles";
+import { JwtPayload } from "../types/roles";
 
 /**
  * Middleware to authenticate users based on JWT token
@@ -62,7 +52,7 @@ export const authenticateUser = async (
 
     const user = userResult[0];
 
-    req.user = {
+    req.User = {
       id: user.id.toString(),
       role: user.role as UserRole
     };
@@ -73,14 +63,18 @@ export const authenticateUser = async (
   }
 };
 
+/**
+ * Middleware to check if the user has a specific role
+ * @param allowedRoles - Array of roles that are allowed to access the resource
+ * @returns Middleware function
+ */
 export const hasRole = (allowedRoles: UserRole[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
+    if (!req.User) {
       res.status(401).json({ success: false, message: "Unauthorized" });
       return;
     }
-
-    if (allowedRoles.includes(req.user.role)) {
+    if (allowedRoles.includes(req.User.role)) {
       next();
     } else {
       res.status(403).json({ 
@@ -91,15 +85,19 @@ export const hasRole = (allowedRoles: UserRole[]) => {
   };
 };
 
+/**
+ * Middleware to check if the user has a specific permission
+ * @param requiredPermission - The permission that is required to access the resource
+ * @returns Middleware function
+ */
 export const hasPermission = (requiredPermission: string) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      res.status(401).json({ success: false, message: "Unauthorized" });
+    if (!req.User) {
+      res.status(401).json({ success: false, message: "User not found" });
       return;
     }
-
     const userPermissions: string[] = Array.from(
-      PERMISSIONS[req.user.role as keyof typeof PERMISSIONS]
+      PERMISSIONS[req.User.role as keyof typeof PERMISSIONS]
     );
     
     if (

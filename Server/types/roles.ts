@@ -47,8 +47,13 @@ export interface UserWithRole {
 }
 
 export interface AuthRequest extends Request {
-  user?: {
+  User?: {
     id: string;
     role: UserRole;
   };
+}
+
+export interface JwtPayload {
+  id: string;
+  role: UserRole;
 }
