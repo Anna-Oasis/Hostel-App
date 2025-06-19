@@ -98,6 +98,15 @@ export const getRollNumberByAdmissionId = async (admission_id: number) => {
   return admission[0].roll_number;
 };
 
+export const getRoomByRollNo = async (roll_number: string) => {
+  const result = await db
+    .select({ room: studentModel.roomNumber })
+    .from(studentModel)
+    .where(eq(studentModel.rollNo, roll_number))
+    .limit(1);
+    
+  return result[0].room;
+};
 // export const createAdmissionApproval = async (approvalInfo: NewAdmissionApproval) => {
 //   return await db
 //     .insert(admissionApprovalsModel)
