@@ -38,13 +38,13 @@ export async function fetchAdmissionWaitingForApprovalController(
   req: AuthRequest,
   res: Response
 ) {
-  if (!req.user || !req.user.role) {
+  if (!req.User || !req.User.role) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const userRole = req.user.role;
+  const userRole = req.User.role;
   let reqStatus: string;
 
   if (userRole === "manager") {
@@ -68,7 +68,7 @@ export async function fetchAdmissionWaitingForApprovalController(
 
   res.status(httpStatus.OK).json({
     success: true,
-    user: req.user,
+    user: req.User,
     data: submittedAdmissions,
     count: submittedAdmissions.length,
     message: "Admissions retrieved successfully",
@@ -80,11 +80,11 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.user.id));
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
   if (!rc_id) {
     throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
   }
@@ -122,13 +122,13 @@ export async function approveByManagerController(
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
 
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const user_id = req.user.id;
+  const user_id = req.User.id;
 
   if (!admission_id || typeof approve !== "boolean") {
     throw AppError(
@@ -367,10 +367,10 @@ export const fetchAdmissionsApprovedByUser = async (
   req: AuthRequest,
   res: Response
 ) => {
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
-  const userID = parseInt(req.user.id);
+  const userID = parseInt(req.User.id);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
@@ -393,13 +393,15 @@ export const updateApprovalStatusByRCController = async (
   if (!admission_id || isNaN(Number(admission_id))) {
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
+
   const rc_userId = await getRCidfromUserId(Number(req.user.id));
+
 
   const rc = await getRCById(Number(rc_userId));
   if (!rc || rc.length === 0) {
@@ -543,14 +545,14 @@ export const updateApprovalStatusByWardenController = async (
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
 
-  if (!req.user || !req.user.role || !req.user.id) {
+  if (!req.User || !req.User.role || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const role = req.user.role;
-  const user_id = req.user.id;
+  const role = req.User.role;
+  const user_id = req.User.id;
   const validated = wardenDecisionSchema.parse(req.body);
 
   // If status is false, comment is required
