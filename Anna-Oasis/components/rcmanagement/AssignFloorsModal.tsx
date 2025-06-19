@@ -1,8 +1,17 @@
 import React from "react";
-import { View, Text, Modal, TouchableOpacity } from "react-native";
-import { Button, ButtonText } from "@/components/ui/button";
+import {  TouchableOpacity, ScrollView } from "react-native";
+import { Button , ButtonText} from "@/components/ui/button";
 import { Checkbox, CheckboxIndicator, CheckboxLabel, CheckboxIcon } from "@/components/ui/checkbox";
-import { floorModalStyles } from "@/constants/rcManagementValidation";
+import { Text } from "@/components/ui/text";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+} from "@/components/ui/modal";
 
 export default function AssignFloorsModal({
   visible,
@@ -25,21 +34,23 @@ export default function AssignFloorsModal({
 }) {
   return (
     <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onCancel}
+      isOpen={visible}
+      onClose={onCancel}
+      size="md"
+      className="items-center justify-center"
     >
-      <View style={floorModalStyles.modalOverlay}>
-        <View style={floorModalStyles.modalContent}>
-          <Text style={floorModalStyles.modalTitle}>
-            Assign Floors to {rc?.name}
-          </Text>
-          <View style={{ width: "100%" }}>
+      <ModalBackdrop />
+      <ModalContent>
+        <ModalHeader>
+          <Text className="text-lg font-semibold">Assign Floors to {rc?.name}</Text>
+          <ModalCloseButton onPress={onCancel} />
+        </ModalHeader>
+        <ModalBody>
+          <ScrollView className="w-full">
             {floors.map((floor) => (
               <TouchableOpacity
                 key={floor}
-                style={floorModalStyles.floorItem}
+                className="w-full p-4 rounded bg-gray-100 mb-2 flex-row items-center"
                 activeOpacity={0.7}
                 onPress={() => onToggleFloor(floor)}
               >
@@ -52,23 +63,21 @@ export default function AssignFloorsModal({
                   <CheckboxIndicator>
                     <CheckboxIcon />
                   </CheckboxIndicator>
-                  <CheckboxLabel style={{ marginLeft: 8 }}>{floor}</CheckboxLabel>
+                  <CheckboxLabel className="ml-2">{floor}</CheckboxLabel>
                 </Checkbox>
               </TouchableOpacity>
             ))}
-          </View>
-          <Button style={{ marginTop: 16 }} onPress={onAssign} disabled={submitting}>
+          </ScrollView>
+        </ModalBody>
+        <ModalFooter>
+            <Button onPress={onAssign} disabled={submitting}>
             <ButtonText>{submitting ? "Assigning..." : "Assign"}</ButtonText>
-          </Button>
-          <Button
-            style={{ marginTop: 8, backgroundColor: "#eee" }}
-            onPress={onCancel}
-          >
-            <ButtonText style={{ color: "#333" }}>Cancel</ButtonText>
-          </Button>
-        </View>
-      </View>
+            </Button>
+            <Button className="bg-gray-200" onPress={onCancel}>
+            <ButtonText className="text-gray-800">Cancel</ButtonText>
+            </Button>
+        </ModalFooter>
+      </ModalContent>
     </Modal>
   );
 }
-

@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View} from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { ClipboardCheckIcon , UserCircle2Icon} from "lucide-react-native";
 import { router } from "expo-router";

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, ScrollView } from "react-native";
-import { Plus , Trash2} from "lucide-react-native";
-import { ActivityIndicator } from "react-native-paper";
+import { Plus, Trash2 } from "lucide-react-native";
 import RCListTable from "@/components/rcmanagement/RCListTable";
 import RCManagementForm from "@/components/rcmanagement/RCManagementForm";
 import AssignFloorsModal from "@/components/rcmanagement/AssignFloorsModal";
 import RemoveRCModal from "@/components/rcmanagement/RemoveRCModal";
-import { initialRcList, floors , plusButtonStyles, trashButtonStyles } from "@/constants/rcManagementValidation";
-
+import { Spinner } from "@/components/ui/spinner";
+import { initialRcList, floors } from "@/constants/rcManagementValidation";
 
 export default function RCManagementPage() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,7 +18,7 @@ export default function RCManagementPage() {
   const [submitting, setSubmitting] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
 
-const handleRemoveRC = (rcId: string) => {
+  const handleRemoveRC = (rcId: string) => {
     setRcList((prev) => prev.filter((rc) => rc.id !== rcId));
     setRemoveModalVisible(false);
   };
@@ -38,18 +37,14 @@ const handleRemoveRC = (rcId: string) => {
 
   const handleFloorToggle = (floor: string) => {
     setSelectedFloors((prev) =>
-      prev.includes(floor)
-        ? prev.filter((f) => f !== floor)
-        : [...prev, floor]
+      prev.includes(floor) ? prev.filter((f) => f !== floor) : [...prev, floor]
     );
   };
 
   const handleAssign = () => {
     setRcList((prevList) =>
       prevList.map((rc) =>
-        rc.id === selectedRC.id
-          ? { ...rc, assignedFloors: selectedFloors }
-          : rc
+        rc.id === selectedRC.id ? { ...rc, assignedFloors: selectedFloors } : rc
       )
     );
     closeAssignModal();
@@ -66,41 +61,38 @@ const handleRemoveRC = (rcId: string) => {
     setShowAddForm(false);
   };
 
-
-
-    if (loading) {
+  if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#2563eb" />
+      <View className="flex-1 justify-center items-center">
+        <Spinner size="large" color="#2563eb" />
       </View>
     );
   }
 
-
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff", padding: 16 }}>
+    <View className="flex-1 bg-white p-4">
       {showAddForm ? (
         <RCManagementForm
-    onSubmit={handleAddRC}
-    onBack={() => setShowAddForm(false)}
-    submitting={submitting}
-  />
+          onSubmit={handleAddRC}
+          onBack={() => setShowAddForm(false)}
+          submitting={submitting}
+        />
       ) : (
         <>
-          <ScrollView style={{ flex: 1 }}>
+          <ScrollView>
             <RCListTable rcList={rcList} onAssign={openAssignModal} />
-            </ScrollView>
-            <TouchableOpacity
-              style={plusButtonStyles.fab}
-              onPress={() => setShowAddForm(true)}
-            >
-              <Plus color="#fff" size={28} />
-            </TouchableOpacity>
-          
+          </ScrollView>
+          <TouchableOpacity
+            className="absolute right-10 bottom-10 bg-blue-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+            onPress={() => setShowAddForm(true)}
+          >
+            <Plus color="#fff" size={28} />
+          </TouchableOpacity>
         </>
-      )}{!showAddForm && (
+      )}
+      {!showAddForm && (
         <TouchableOpacity
-          style={trashButtonStyles.trashButton}
+          className="absolute left-10 bottom-10 bg-red-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
           onPress={() => setRemoveModalVisible(true)}
         >
           <Trash2 color="#fff" size={28} />
@@ -125,4 +117,3 @@ const handleRemoveRC = (rcId: string) => {
     </View>
   );
 }
-

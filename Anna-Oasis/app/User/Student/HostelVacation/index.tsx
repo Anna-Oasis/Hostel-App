@@ -20,7 +20,7 @@ const VacatingForm = () => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 12, backgroundColor: "#fff" }}>
+    <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
