@@ -93,23 +93,24 @@ export async function getVacatingFormsForRCController(req: AuthRequest, res: Res
 }
 
 export async function approveVacatingFormByRCController(req: AuthRequest, res: Response) {
-  const { vacating_hostel_id, approve } = req.body;
+  const { vacating_hostel_id, approve, comment } = req.body;
 
   if (!req.User || !req.User.id) {
-    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+    throw AppError("User ID missing", httpStatus.UNAUTHORIZED);
   }
 
-  if (!vacating_hostel_id || approve === undefined) {
-    throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
+  if (vacating_hostel_id === undefined || typeof approve !== "boolean") {
+    throw AppError("vacating_hostel_id and approve are required", httpStatus.BAD_REQUEST);
   }
 
-  const rcId = parseInt(req.User.id);
-  const result = await approveOrDeclineByRC(vacating_hostel_id, rcId, approve);
+  const rcUserId = Number(req.User.id);
+
+  const result = await approveOrDeclineByRC(vacating_hostel_id, rcUserId, approve, comment);
 
   res.status(httpStatus.OK).json({
     success: true,
     data: result,
-    message: `Form ${approve ? "approved" : "declined"} successfully`,
+    message: result.message,
   });
 }
 

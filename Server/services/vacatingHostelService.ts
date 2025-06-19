@@ -6,7 +6,8 @@ import { vacatingHostelApprovalsModel } from "../models/vacatingHostelApprovals"
 import { cautionDepositRefundModel } from "../models/cautionDepositRefund";
 import { rcModel } from "../models/rcModel";
 import { studentModel } from "../models/studentModel";
-
+import AppError from "../utils/AppError";
+import httpStatus from "http-status";
 export const createVacatingHostelForm = async (formData: NewVacatingHostel) => {
   return await db.insert(vacatingHostelModel).values(formData).returning();
 };
@@ -55,7 +56,7 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     .from(rcModel)
     .where(eq(rcModel.userId, rcUserId));
 
-  if (!rc) throw new Error("RC not found for this user");
+  if (!rc) throw AppError("RC not found", httpStatus.FORBIDDEN);
 
   return await db
     .select({
@@ -76,22 +77,69 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
 
 export const approveOrDeclineByRC = async (
   vacating_hostel_id: number,
-  rcId: number,
-  approve: boolean
+  rcUserId: number,
+  approve: boolean,
+  comment?: string
 ) => {
+  // 1. Get RC details
+  const [rc] = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.userId, rcUserId));
+
+  if (!rc) {
+    throw AppError("RC not found", httpStatus.FORBIDDEN);
+  }
+
+  // 2. Get Vacating Form
+  const [form] = await db
+    .select({ roll_number: vacatingHostelModel.roll_number })
+    .from(vacatingHostelModel)
+    .where(eq(vacatingHostelModel.id, vacating_hostel_id));
+
+  if (!form) {
+    throw AppError("Vacating hostel form not found", httpStatus.NOT_FOUND);
+  }
+
+  // 3. Get Student Info
+  const [student] = await db
+    .select({ hostelBlock: studentModel.hostelBlock, floor: studentModel.floor })
+    .from(studentModel)
+    .where(eq(studentModel.rollNo, form.roll_number));
+
+  if (!student) {
+    throw AppError("Student not found", httpStatus.NOT_FOUND);
+  }
+
+  // 4. Check permission
+  const isHostelMatch = rc.hostel === student.hostelBlock;
+  if(!student.floor) {
+    throw AppError("Student floor information is missing", httpStatus.BAD_REQUEST);
+  }
+  const isFloorMatch = rc.floor.includes(student.floor);
+
+  if (!isHostelMatch || !isFloorMatch) {
+    throw AppError("RC not authorized for this student", httpStatus.FORBIDDEN);
+  }
+
+  // 5. Insert into approvals table
   await db.insert(vacatingHostelApprovalsModel).values({
     vacating_hostel_id,
-    user_id: rcId,
+    user_id: rcUserId,
     approve,
+    comment,
   });
 
+  // 6. Update status in vacating_hostel
   const newStatus = approve ? approval_status.rc : approval_status.declined;
   await db
     .update(vacatingHostelModel)
     .set({ status: newStatus })
     .where(eq(vacatingHostelModel.id, vacating_hostel_id));
 
-  return { message: approve ? "Approved by RC" : "Declined by RC" };
+  return {
+    message: approve ? "Approved by RC" : "Declined by RC",
+  };
 };
 
 export const getVacatingFormsWaitingForManager = async () => {
