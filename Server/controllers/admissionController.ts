@@ -400,7 +400,7 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.user.id));
+  const rc_userId = await getRCidfromUserId(Number(req.User.id));
 
 
   const rc = await getRCById(Number(rc_userId));
