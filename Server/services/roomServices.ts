@@ -73,3 +73,16 @@ export const updateStudentRoomNumber = async (
     .where(eq(studentModel.rollNo, rollNo))
     .returning();
 };
+
+export const updateStudentHostelDetails = async (
+  rollNo: string, 
+  roomNumber: number | null,
+  floor:  number | null,
+  hostelBlock: string,
+) => {
+  return await db
+    .update(studentModel)
+    .set({ roomNumber, floor, hostelBlock})
+    .where(eq(studentModel.rollNo, rollNo))
+    .returning();
+};
