@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { vacatingFormSchema } from "../validation/vacatingHostel.schema";
 import {
+  approveOrDeclineByDeputyWarden,
   approveOrDeclineByManager,
   createCautionDepositRefund,
   createVacatingHostelForm,
@@ -163,11 +164,11 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
   }
 
   const deputyWardenId = parseInt(req.User.id);
-  const result = await approveOrDeclineByRC(
+  const result = await approveOrDeclineByDeputyWarden(
     parseInt(vacating_hostel_id), 
     deputyWardenId, 
     approve, 
-    //comment
+    comment
   );
 
   res.status(httpStatus.OK).json({

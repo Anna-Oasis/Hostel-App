@@ -282,3 +282,35 @@ export const approveOrDeclineByManager = async (
     updatedForm: updatedForm[0]
   };
 };
+export const approveOrDeclineByDeputyWarden = async (
+  vacating_hostel_id: number,
+  deputyWardenId: number,
+  approve: boolean,
+  comment?: string
+) => {
+  // Create entry in vacating hostel approvals with optional comment
+  await db.insert(vacatingHostelApprovalsModel).values({
+    vacating_hostel_id,
+    user_id: deputyWardenId,
+    approve,
+    comment: comment || null,
+  });
+
+  // Determine new status based on approval
+  const newStatus = approve ? approval_status.executiveWarden : approval_status.declined;
+  
+  // Update vacating hostel model status
+  const updatedForm = await db
+    .update(vacatingHostelModel)
+    .set({ 
+      status: newStatus,
+      updated_at: new Date()
+    })
+    .where(eq(vacatingHostelModel.id, vacating_hostel_id))
+    .returning();
+
+  return { 
+    message: approve ? "Approved by Deputy Warden" : "Declined by Deputy Warden",
+    updatedForm: updatedForm[0]
+  };
+};
