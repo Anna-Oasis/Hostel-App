@@ -10,6 +10,8 @@ import {
   getVacatingFormsForRCController,
   approveVacatingFormByRCController
 } from "../controllers/vactingHostelController";
+import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+
 
 
 const rcRouter = Router();
@@ -29,6 +31,12 @@ rcRouter.put("/grievance/:rc_id", approveOrDeclineGrievancesByRCController);
 
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
+
+// Fetch all leave forms waiting for RC approval by hostel block and floor 
+rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
+
+// Approve or decline leave form by RC with leave form ID in path
+rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateLeaveFormApprovalStatusController));
 
 rcRouter.get("/vacating_hostel/:rc_id",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
 rcRouter.put("/vacating_hostel/:rc_id",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
