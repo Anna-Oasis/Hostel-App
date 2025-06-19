@@ -19,7 +19,7 @@ export const studentModel = pgTable("student", {
   //hostel
   roomNumber : integer("room_number"),
   floor: integer("floor"),
-  hostelBlock: hostel_block_pgEnum("hostel_block").notNull(),
+  hostelBlock: hostel_block_pgEnum("hostel_block"),
   
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),

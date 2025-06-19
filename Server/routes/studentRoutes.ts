@@ -4,7 +4,7 @@ import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
-  updateAdmissionController,
+  updateAdmissionController
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
@@ -17,8 +17,8 @@ import {
   getStudentDetailsController,
   createStudentDetailsController,
   updateStudentDetailsController,
+  getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
-
 
 
 const studentRouter = Router();
@@ -44,10 +44,17 @@ const fileFields = upload.fields([
 ]);
 
 
+
+studentRouter.get(
+  "/details", authenticateUser, hasRole(['student']),
+  errorWrapper(getStudentDetailsUsingUserIdController)
+)
+
 studentRouter.get(
   "/details/:rollNo",authenticateUser ,hasRole(['student']),
   errorWrapper(getStudentDetailsController)
 );
+
 
 studentRouter.post(
   "/details",
