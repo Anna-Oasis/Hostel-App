@@ -132,13 +132,15 @@ export const approveOrDeclineByRC = async (
 
   // 6. Update status in vacating_hostel
   const newStatus = approve ? approval_status.rc : approval_status.declined;
-  await db
+  const [updatedForm] =await db
     .update(vacatingHostelModel)
     .set({ status: newStatus })
-    .where(eq(vacatingHostelModel.id, vacating_hostel_id));
+    .where(eq(vacatingHostelModel.id, vacating_hostel_id))
+    .returning();
 
   return {
     message: approve ? "Approved by RC" : "Declined by RC",
+    updatedForm: updatedForm,
   };
 };
 
@@ -147,7 +149,7 @@ export const getVacatingFormsWaitingForManager = async () => {
   const approvedForms = await db
     .select({ id: vacatingHostelModel.id })
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, approval_status.rc));
+    .where(eq(vacatingHostelModel.status, approval_status.submitted));
 
   if (approvedForms.length === 0) {
     return [];
@@ -169,7 +171,7 @@ export const getVacatingFormsWaitingForDeputyWarden = async () => {
   return await db
     .select()
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, approval_status.manager));
+    .where(eq(vacatingHostelModel.status, approval_status.rc));
 };
 
 /*
@@ -265,7 +267,7 @@ export const approveOrDeclineByManager = async (
   });
 
   // Determine new status based on approval
-  const newStatus = approve ? approval_status.deputyWarden : approval_status.declined;
+  const newStatus = approve ? approval_status.manager : approval_status.declined;
   
   // Update vacating hostel model status
   const updatedForm = await db
@@ -297,7 +299,7 @@ export const approveOrDeclineByDeputyWarden = async (
   });
 
   // Determine new status based on approval
-  const newStatus = approve ? approval_status.executiveWarden : approval_status.declined;
+  const newStatus = approve ? approval_status.deputyWarden : approval_status.declined;
   
   // Update vacating hostel model status
   const updatedForm = await db
