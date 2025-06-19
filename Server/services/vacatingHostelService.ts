@@ -1,9 +1,11 @@
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, and } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { approval_status } from "../constants/enum";
 import { vacatingHostelModel, NewVacatingHostel } from "../models/vacatingHostel";
 import { vacatingHostelApprovalsModel } from "../models/vacatingHostelApprovals";
 import { cautionDepositRefundModel } from "../models/cautionDepositRefund";
+import { rcModel } from "../models/rcModel";
+import { studentModel } from "../models/studentModel";
 
 export const createVacatingHostelForm = async (formData: NewVacatingHostel) => {
   return await db.insert(vacatingHostelModel).values(formData).returning();
@@ -34,18 +36,43 @@ export const createCautionDepositRefund = async (data: any) => {
 };
 
 export const getAllVacatingHostelForms = async () => {
-  return await db.select().from(vacatingHostelModel);
-};
-
-
-export const getPendingRCApprovals = async (rcId: number) => {
   return await db
-    .select()
+    .select({
+      vacating: vacatingHostelModel,
+      caution: cautionDepositRefundModel,
+    })
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, approval_status.manager))
-    // .where(eq(vacatingHostelModel.rc_id, rcId));  //No particular field for RC ID in the model, ONLY if the rcID is present we can fetch the pending requests
-                                                     //of that particular RC
+    .leftJoin(
+      cautionDepositRefundModel,
+      eq(cautionDepositRefundModel.vacating_hostel_id, vacatingHostelModel.id)
+    );
 };
+
+
+export const getPendingRCApprovals = async (rcUserId: number) => {
+  const [rc] = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.userId, rcUserId));
+
+  if (!rc) throw new Error("RC not found for this user");
+
+  return await db
+    .select({
+      vacating: vacatingHostelModel,
+      student: studentModel,
+    })
+    .from(vacatingHostelModel)
+    .innerJoin(studentModel, eq(vacatingHostelModel.roll_number, studentModel.rollNo))
+    .where(
+      and(
+        eq(vacatingHostelModel.status, approval_status.manager),
+        eq(studentModel.hostelBlock, rc.hostel),
+        inArray(studentModel.floor, rc.floor)
+      )
+    );
+};
+
 
 export const approveOrDeclineByRC = async (
   vacating_hostel_id: number,

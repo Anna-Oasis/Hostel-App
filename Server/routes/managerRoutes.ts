@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { fetchAdmissionWaitingForApprovalController, approveByManagerController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-import { getVacatingFormsForManagerController } from '../controllers/vactingHostelController';
+import { approveVacatingFormByManagerController, getVacatingFormsForManagerController } from '../controllers/vactingHostelController';
 // import {
 //   enterCautionDepositAndApproveController,
 //   getVacatingFormsForManagerController

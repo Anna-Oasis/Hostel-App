@@ -27,6 +27,10 @@ export async function createVacatingHostelFormController(req: AuthRequest, res: 
 
   const validatedVacatingForm = vacatingFormSchema.parse(vacatingForm);
   const validatedCautionDeposit = cautionDepositSchema.parse(cautionDeposit);
+  // const [hours, minutes, seconds] = validatedVacatingForm.vacating_time.split(":").map(Number);
+  // const now = new Date();
+  // now.setHours(hours, minutes, seconds, 0);
+  // const timeUTC = new Date(Date.UTC(1970, 0, 1, hours, minutes, seconds));
 
   const vacatingData = {
     ...validatedVacatingForm,
@@ -69,11 +73,12 @@ export async function getAllVacatingHostelFormsController(req: AuthRequest, res:
 }
 
 export async function getVacatingFormsForRCController(req: AuthRequest, res: Response) {
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const rcId = parseInt(req.user.id);
+  const rcId = parseInt(req.User.id);
+  console.log("RC ID:", rcId);
   const forms = await getPendingRCApprovals(rcId);
 
   if (!forms || forms.length === 0) {
@@ -90,7 +95,7 @@ export async function getVacatingFormsForRCController(req: AuthRequest, res: Res
 export async function approveVacatingFormByRCController(req: AuthRequest, res: Response) {
   const { vacating_hostel_id, approve } = req.body;
 
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
@@ -98,7 +103,7 @@ export async function approveVacatingFormByRCController(req: AuthRequest, res: R
     throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
   }
 
-  const rcId = parseInt(req.user.id);
+  const rcId = parseInt(req.User.id);
   const result = await approveOrDeclineByRC(vacating_hostel_id, rcId, approve);
 
   res.status(httpStatus.OK).json({
@@ -143,7 +148,7 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
   const { vacating_hostel_id } = req.params;
   const { approve, comment } = req.body;
 
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
@@ -156,12 +161,12 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
     throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
   }
 
-  const deputyWardenId = parseInt(req.user.id);
+  const deputyWardenId = parseInt(req.User.id);
   const result = await approveOrDeclineByRC(
     parseInt(vacating_hostel_id), 
     deputyWardenId, 
     approve, 
-    comment
+    //comment
   );
 
   res.status(httpStatus.OK).json({
@@ -175,7 +180,7 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
   const { vacating_hostel_id } = req.params;
   const { approve, comment, deductions, refund_amount, deduction_details } = req.body;
 
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
@@ -192,7 +197,7 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
     throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
   }
 
-  const managerId = parseInt(req.user.id);
+  const managerId = parseInt(req.User.id);
   const result = await approveOrDeclineByManager(
     parseInt(vacating_hostel_id), 
     managerId, 
