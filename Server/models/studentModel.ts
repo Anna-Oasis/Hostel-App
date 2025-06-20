@@ -17,6 +17,8 @@ export const studentModel = pgTable("student", {
 
   //hostel
   roomNumber : integer("room_number"),
+  hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
+  floor: integer("floor").notNull(),
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),
   rollNo: varchar("roll_no", { length: 20 }).primaryKey(),

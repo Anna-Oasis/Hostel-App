@@ -7,7 +7,7 @@ import { studentModel } from "../models/studentModel";
 import { rcModel } from "../models/rcModel";
 import { approval_status } from "../constants/enum";
 import { roomModel } from "../models/roomModel";
-
+import {summerVacationModel } from "../models/summerVacation";
 export async function getRCById(rc_id: number) {
   const rc = await db
     .select()
@@ -61,3 +61,4 @@ export const updateGrievanceApprovalStatus = async (params: {
     .returning();
   return grievanceUpdate;
 };
+

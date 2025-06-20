@@ -11,7 +11,7 @@ import {
   getGrievancesByRollNumberController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-
+import {createSummerVacationFromController,getAllSummerVacationFormsFromController} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -60,17 +60,34 @@ studentRouter.put(
   errorWrapper(updateStudentDetailsController)
 );
 
+//create a new Leave Form
 studentRouter.post(
   "/leave",
   authenticateUser,hasRole(['student']),
   errorWrapper(createLeaveFormFromController)
 );
 
+//get all the leave forms
 studentRouter.get(
   "/leave/:roll_number",
   authenticateUser,
   hasRole(['student']),
   errorWrapper(getAllLeaveFormsFromController)
+);
+
+//create a new Summer vacation form
+studentRouter.post(
+  "/summer_vacation",
+  authenticateUser,
+  hasRole(['student']),
+  errorWrapper(createSummerVacationFromController)
+);
+
+//fetch all applied summer vacation forms
+studentRouter.get("/summer_vacation/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
+    errorWrapper(getAllSummerVacationFormsFromController)
 );
 
 export default studentRouter;
