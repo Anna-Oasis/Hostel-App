@@ -29,6 +29,10 @@ export const fetchStudentDetailsForRcController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
+    if(!rc[0].floor || !rc[0].hostel){
+    throw AppError("RC hostel details not found", httpStatus.NOT_FOUND);
+    }
+
     const students=fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel)
     if (!students) {
         throw AppError(
