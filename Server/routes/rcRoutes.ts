@@ -6,6 +6,10 @@ import {
 } from "../controllers/rcController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import {
+  getVacatingFormsForRCController,
+  approveVacatingFormByRCController
+} from "../controllers/vactingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/studentController";
@@ -41,6 +45,9 @@ rcRouter.get("/rooms", authenticateUser,hasRole(['rc']), errorWrapper(fetchRoomD
 
 // Fetch all student and room details by hostel block and floor 
 rcRouter.get("/students", authenticateUser,hasRole(['rc']), errorWrapper(fetchStudentDetailsForRcController));
+
+rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
+rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
 
 export default rcRouter;
 

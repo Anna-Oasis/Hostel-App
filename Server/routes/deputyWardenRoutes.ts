@@ -2,6 +2,12 @@ import { Router } from "express";
 import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
+// import 
+//   {
+//     getVacatingFormsForDeputyWardenController,
+//     approveVacatingFormByDeputyWardenController
+//   } from "../controllers/vacatingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 
@@ -22,4 +28,9 @@ deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarde
 deputyWardenRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(updateLeaveFormApprovalStatusController));
 
 deputyWardenRouter.get("/rooms", authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
+
+deputyWardenRouter.get("/vacating_hostel", authenticateUser,hasRole(['deputyWarden']),errorWrapper(getVacatingFormsForDeputyWardenController));
+
+deputyWardenRouter.put("/vacating_hostel/:vacating_hostel_id", authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveVacatingFormByDeputyWardenController));
+
 export default deputyWardenRouter;
