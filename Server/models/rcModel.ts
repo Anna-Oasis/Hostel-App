@@ -15,9 +15,10 @@ export const rcModel = pgTable("rc", {
   name: varchar("name", { length: 100 }).notNull(),
   hostel: hostel_block_pgEnum("hostel").notNull(),
   onLeave: boolean("on_leave").notNull().default(false),
-  floor: integer("floor").array().notNull(),
-  alternateRCId: integer("alternate_rc_id"),
+  floor: integer("floor").array(),
+  alternatingToRCId: integer("alternating_to_rc_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
 });
 
 export type RC = typeof rcModel.$inferSelect;

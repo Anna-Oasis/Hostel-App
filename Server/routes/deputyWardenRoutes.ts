@@ -3,7 +3,18 @@ import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalControll
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 import { getGrievancesFromDeputyWardenController } from "../controllers/grievanceController";
+import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
+// import 
+//   {
+//     getVacatingFormsForDeputyWardenController,
+//     approveVacatingFormByDeputyWardenController
+//   } from "../controllers/vacatingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+
+import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
+
+import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+
 
 const deputyWardenRouter = Router();
 
@@ -24,5 +35,16 @@ deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarde
 // Approve or decline leave form by Deputy Warden with leave form ID in path
 deputyWardenRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(updateLeaveFormApprovalStatusController));
 
+deputyWardenRouter.get("/rooms", authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
+
+deputyWardenRouter.get("/vacating_hostel", authenticateUser,hasRole(['deputyWarden']),errorWrapper(getVacatingFormsForDeputyWardenController));
+
+deputyWardenRouter.put("/vacating_hostel/:vacating_hostel_id", authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveVacatingFormByDeputyWardenController));
+
+//RC management
+deputyWardenRouter.post("/rc", authenticateUser, hasRole(['deputyWarden']),  errorWrapper(createRCController));
+deputyWardenRouter.get("/rc", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getRCsController));
+deputyWardenRouter.put("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateRCController));
+deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(deleteRCController));
 
 export default deputyWardenRouter;

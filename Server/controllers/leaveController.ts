@@ -27,7 +27,7 @@ export const getLeaveFormWaitingForApprovalController = async (
   }
 
   const userRole = req.User.role;
-  let leave_form: any; 
+  let leave_form: any;
 
   if (userRole === "rc") {
     const rc_id = await getRCidfromUserId(Number(req.User.id));

@@ -5,11 +5,11 @@ import {
   text,
   date,
   timestamp,
+  time,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { approval_status_pgEnum } from "./enum";
 import { approval_status } from "../constants/enum";
-import { time } from "console";
 
 export const vacatingHostelModel = pgTable("vacating_hostel", {
   id: serial("id").primaryKey(),
@@ -21,7 +21,7 @@ export const vacatingHostelModel = pgTable("vacating_hostel", {
 
   // Vacating hostel form details
   vacating_date: date("vacating_date").notNull(),
-  vacating_time: timestamp("vacating_time").notNull(),
+  vacating_time: time("vacating_time").notNull(),
   future_address: text("future_address").notNull(),
   returned_items: varchar("returned_items", { length: 100 }).array(),
   status: approval_status_pgEnum("status")

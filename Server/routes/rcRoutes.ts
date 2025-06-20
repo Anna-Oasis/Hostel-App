@@ -3,7 +3,13 @@ import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAd
 import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import {
+  getVacatingFormsForRCController,
+  approveVacatingFormByRCController
+} from "../controllers/vactingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { fetchStudentDetailsForRcController } from "../controllers/studentController";
 
 
 
@@ -29,7 +35,16 @@ rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrap
 rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
 
 // Approve or decline leave form by RC with leave form ID in path
-rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateLeaveFormApprovalStatusController));
+rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['rc']),errorWrapper(updateLeaveFormApprovalStatusController));
+
+// Fetch all room details by hostel block and academic year 
+rcRouter.get("/rooms", authenticateUser,hasRole(['rc']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
+
+// Fetch all student and room details by hostel block and floor 
+rcRouter.get("/students", authenticateUser,hasRole(['rc']), errorWrapper(fetchStudentDetailsForRcController));
+
+rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
+rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
 
 export default rcRouter;
 
