@@ -19,6 +19,10 @@ import {
   updateStudentDetailsController,
 } from "../controllers/detailsController";
 
+import {
+  createVacatingHostelFormController,
+  getAllVacatingHostelFormsController,
+} from "../controllers/vactingHostelController";
 
 
 const studentRouter = Router();
@@ -60,5 +64,8 @@ studentRouter.put(
   fileFields,authenticateUser ,hasRole(['student']),
   errorWrapper(updateStudentDetailsController)
 );
+
+studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
+studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
 export default studentRouter;

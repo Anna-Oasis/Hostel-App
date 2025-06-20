@@ -6,6 +6,10 @@ import {
 } from "../controllers/rcController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import {
+  getVacatingFormsForRCController,
+  approveVacatingFormByRCController
+} from "../controllers/vactingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 
@@ -33,6 +37,9 @@ rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(ge
 
 // Approve or decline leave form by RC with leave form ID in path
 rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateLeaveFormApprovalStatusController));
+
+rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
+rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
 
 export default rcRouter;
 
