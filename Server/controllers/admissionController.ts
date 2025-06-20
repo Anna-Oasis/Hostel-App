@@ -308,7 +308,7 @@ export async function updateApprovalStatusByManagerController(
   res: Response
 ) {
   const { admission_id } = req.params;
-  const user = req.user;
+  const user = req.User;
   // if (!user || !user.id) {
   //   throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
   // }
@@ -400,7 +400,7 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.user.id));
+  const rc_userId = await getRCidfromUserId(Number(req.User.id));
 
 
   const rc = await getRCById(Number(rc_userId));
