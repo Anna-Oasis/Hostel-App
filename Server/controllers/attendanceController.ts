@@ -51,7 +51,18 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
 }
 
 export async function getAllAttendanceController(req: AuthRequest, res: Response) {
-  const attendanceRecords = await fetchAllAttendance();
+  
+  const date = req.params.date
+    if (!date) {
+    throw AppError("Date is required as query parameter", httpStatus.BAD_REQUEST);
+  }
+
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(date as string)) {
+    throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
+  }
+
+  const attendanceRecords = await fetchAllAttendanceByDate(date as string);
 
   if (attendanceRecords.length === 0) {
     throw AppError("No attendance records found", httpStatus.NOT_FOUND);

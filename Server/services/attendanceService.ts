@@ -48,10 +48,11 @@ export const createAttendanceByRc = async (attendanceData: NewAttendance) => {
   }
 };
 
-export const fetchAllAttendance = async () => {
+export const fetchAllAttendance = async (date:string) => {
   const result = await db
     .select()
     .from(attendanceModel)
+    .where(eq(attendanceModel.date, date))
     .orderBy(desc(attendanceModel.date), attendanceModel.hostel, attendanceModel.floor);
   
   return result;
