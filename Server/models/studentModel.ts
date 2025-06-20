@@ -7,7 +7,8 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 import { userModel } from "./userModel";
-import {gender_pgEnum} from "./enum";
+import {gender_pgEnum, hostel_block_pgEnum} from "./enum";
+import { hostel_block } from "../constants/enum";
 
 export const studentModel = pgTable("student", {
   // User Reference
@@ -17,6 +18,9 @@ export const studentModel = pgTable("student", {
 
   //hostel
   roomNumber : integer("room_number"),
+  floor: integer("floor"),
+  hostelBlock: hostel_block_pgEnum("hostel_block").notNull(),
+  
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),
   rollNo: varchar("roll_no", { length: 20 }).primaryKey(),

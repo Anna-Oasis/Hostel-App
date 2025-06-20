@@ -3,6 +3,7 @@ import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAd
 import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 
 
@@ -23,6 +24,12 @@ rcRouter.put("/grievance/:rc_id", authenticateUser,hasRole(["rc"]), errorWrapper
 
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
+
+// Fetch all leave forms waiting for RC approval by hostel block and floor 
+rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
+
+// Approve or decline leave form by RC with leave form ID in path
+rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateLeaveFormApprovalStatusController));
 
 export default rcRouter;
 

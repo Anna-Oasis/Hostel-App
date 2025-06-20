@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { register, login } from "../controllers/authController";
 import { UserRole, PERMISSIONS } from "../types/roles";
 import { authenticateUser } from "../middleware/rbacMiddleware";
+import { AuthRequest } from "../types/roles";
 
 const router = Router();
 
@@ -23,13 +24,6 @@ router.post("/login", login);
 //   hasPermission('approve_admission'),
 // );
 
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    role: UserRole;
-  };
-}
-
 /**
  * Route to verify the token and return user information
  * @param req - Express request object
@@ -37,11 +31,11 @@ interface AuthRequest extends Request {
  * @returns JSON response with user information if token is valid
  */
 router.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) => {
-  if (req.user) {
+  if (req.User) {
     res.status(200).json({
       success: true,
       message: "Token is valid",
-      user : req.user
+      user: req.User
     });
   } else {
     res.status(401).json({
