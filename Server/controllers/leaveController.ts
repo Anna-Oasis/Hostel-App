@@ -19,18 +19,18 @@ export const getLeaveFormWaitingForApprovalController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.user || !req.user.id || !req.user.role) {
+  if (!req.User || !req.User.id || !req.User.role) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
 
-  const userRole = req.user.role;
-  let leave_form: any; 
+  const userRole = req.User.role;
+  let leave_form: any;
 
   if (userRole === "rc") {
-    const rc_id = await getRCidfromUserId(Number(req.user.id));
+    const rc_id = await getRCidfromUserId(Number(req.User.id));
     if (!rc_id) {
       throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
     }
@@ -81,19 +81,19 @@ export const updateLeaveFormApprovalStatusController = async (
     throw AppError("Invalid or missing Leave Form ID", httpStatus.BAD_REQUEST);
   }
 
-  if (!req.user || !req.user.id || !req.user.role) {
+  if (!req.User || !req.User.id || !req.User.role) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
 
-  const user_id=req.user.id;
-  const userRole = req.user.role;
+  const user_id=req.User.id;
+  const userRole = req.User.role;
   let updateStatus: string;
 
   if (userRole === "rc") {
-    const rc_id = await getRCidfromUserId(Number(req.user.id));
+    const rc_id = await getRCidfromUserId(Number(req.User.id));
     if (!rc_id) {
       throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
     }
