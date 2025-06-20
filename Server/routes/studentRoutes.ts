@@ -1,4 +1,3 @@
-import { Admission } from "../models/admissionModel";
 import { Router } from "express";
 import {
   createAdmissionController,
@@ -19,6 +18,8 @@ import {
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
+import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveFormController";
+
 
 import {
   createVacatingHostelFormController,
@@ -74,5 +75,18 @@ studentRouter.put(
 
 studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
 studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
+
+studentRouter.post(
+  "/leave",
+  authenticateUser,hasRole(['student']),
+  errorWrapper(createLeaveFormFromController)
+);
+
+studentRouter.get(
+  "/leave/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
+  errorWrapper(getAllLeaveFormsFromController)
+);
 
 export default studentRouter;
