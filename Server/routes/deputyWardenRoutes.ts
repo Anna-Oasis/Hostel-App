@@ -9,6 +9,7 @@ import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyW
 //     approveVacatingFormByDeputyWardenController
 //   } from "../controllers/vacatingHostelController";
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 
 const deputyWardenRouter = Router();
 
@@ -26,6 +27,7 @@ deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarde
 // Approve or decline leave form by Deputy Warden with leave form ID in path
 deputyWardenRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(updateLeaveFormApprovalStatusController));
 
+deputyWardenRouter.get("/rooms", authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
 
 deputyWardenRouter.get("/vacating_hostel", authenticateUser,hasRole(['deputyWarden']),errorWrapper(getVacatingFormsForDeputyWardenController));
 

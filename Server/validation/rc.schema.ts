@@ -7,7 +7,8 @@ export const rcAdmissionDecisionSchema = z.object({
   comment: z.string().optional(),
   room: z.coerce.number({ invalid_type_error: "room must be a number" }).optional(),
   floor: z.coerce.number({ invalid_type_error: "floor must be a number" }).optional(),
-  hostel_block: z.enum(["Flora", "Lavender"]).optional(),
+  hostel_block: z
+    .enum(Object.values(hostel_block) as [string, ...string[]]).optional(),
 });
 
 export const rcGrievanceDecisionSchema = z.object({
