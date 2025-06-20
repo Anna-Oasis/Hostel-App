@@ -39,5 +39,34 @@ const markPresent = (index : number) => {
     sampleStudents = updated
 }
 
-export {sampleStudents, markPresent}
+
+
+//for submiting the attendance list
+type attendanceListType = {
+  hostel : typeof hostelBlock[keyof typeof hostelBlock];
+  floor : number;
+  no_present : number;
+  no_absent : number;
+  absentees : number[]
+}
+
+const handelRCAttendance = (floor : number) => {
+     const attendance : attendanceListType = {
+        hostel: "",
+        floor,
+        no_present: 0,
+        no_absent: 0,
+        absentees: [] as number[], // assuming rollNo is a string
+      };
+    (sampleStudents.filter(val => val.floor === floor)).
+    forEach(item => {
+      attendance.hostel = item.block
+      item.present ? attendance.no_present += 1 : attendance.no_absent += 1
+      !item.present && attendance.absentees.push(item.rollNo)
+    })
+
+    console.log(attendance)
+}
+
+export {sampleStudents, markPresent, handelRCAttendance}
 
