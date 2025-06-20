@@ -10,7 +10,8 @@
     "drizzle:generate": "drizzle-kit generate:pg",
     "drizzle:push": "drizzle-kit push:pg",
     "test": "jest",
-    "suhaib": "nodemon --exec ts-node server.ts"
+    "suhaib": "nodemon --exec ts-node server.ts",
+    "setup-rooms": "ts-node roomStructure.ts"
   },
   "author": "",
   "license": "ISC",
@@ -27,7 +28,6 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^2.0.0",
-    "nodemon": "^3.1.10",
     "pdf-lib": "^1.17.1",
     "postgres": "^3.4.7",
     "supabase": "^2.23.4",

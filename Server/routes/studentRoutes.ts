@@ -1,10 +1,9 @@
-import { Admission } from "../models/admissionModel";
 import { Router } from "express";
 import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
-  updateAdmissionController,
+  updateAdmissionController
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
@@ -18,16 +17,24 @@ import {
   getStudentDetailsController,
   createStudentDetailsController,
   updateStudentDetailsController,
+  getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
 import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveFormController";
+
+
+import {
+  createVacatingHostelFormController,
+  getAllVacatingHostelFormsController,
+} from "../controllers/vactingHostelController";
+
 const studentRouter = Router();
 
 
 //admission - students
-studentRouter.post("/admission", errorWrapper(createAdmissionController));
-studentRouter.get( "/admission/:admissionId",errorWrapper(getAdmissionByAdmissionIdController));
-studentRouter.get("/admission/student/:roll_number",errorWrapper(getAdmissionByRollNumberController));
-studentRouter.put("/admission/:admissionId",errorWrapper(updateAdmissionController));
+studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
+studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
+studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
+studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
 studentRouter.post("/grievance", errorWrapper(createGrievanceController));
 studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));
@@ -43,10 +50,17 @@ const fileFields = upload.fields([
 ]);
 
 
+
+studentRouter.get(
+  "/details", authenticateUser, hasRole(['student']),
+  errorWrapper(getStudentDetailsUsingUserIdController)
+)
+
 studentRouter.get(
   "/details/:rollNo",authenticateUser ,hasRole(['student']),
   errorWrapper(getStudentDetailsController)
 );
+
 
 studentRouter.post(
   "/details",
@@ -60,7 +74,9 @@ studentRouter.put(
   errorWrapper(updateStudentDetailsController)
 );
 
-//create a new Leave Form
+studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
+studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
+
 studentRouter.post(
   "/leave",
   authenticateUser,hasRole(['student']),

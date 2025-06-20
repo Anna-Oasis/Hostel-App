@@ -1,2 +1,0 @@
--- ALTER TABLE "student" RENAME COLUMN "passport_url" TO "govt_id_type";--> statement-breakpoint
--- ALTER TABLE "student" ADD COLUMN "category_proof_url" text;

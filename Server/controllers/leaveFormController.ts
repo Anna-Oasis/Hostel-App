@@ -42,7 +42,13 @@ export const getAllLeaveFormsFromController = async (req:AuthRequest,res:Respons
 
     if(!result || result.length === 0)
     {
-        throw AppError("No Data Found for Leave Form",httpStatus.NOT_FOUND);
+        res.status(httpStatus.NOT_FOUND)
+        .json(
+            {
+                success:true,
+                message:"No Leave Form Exists",
+            }
+        )
     }
 
     res.status(httpStatus.FOUND)

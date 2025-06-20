@@ -14,4 +14,4 @@ export * from './summerVacationApprovals';
 export * from './userModel';
 export * from './vacatingHostel';
 export * from './vacatingHostelApprovals';
-
+export * from './roomModel';
