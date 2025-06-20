@@ -10,6 +10,7 @@ import {
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import { createAttendanceByRcController, getAttendanceByRcController } from "../controllers/attendanceController";
 
 
 
@@ -45,6 +46,10 @@ rcRouter.get("/students", authenticateUser,hasRole(['rc']), errorWrapper(fetchSt
 
 rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
 rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
+
+
+rcRouter.get("/attendance/:rc_id",authenticateUser,hasRole(['rc']),errorWrapper(getAttendanceByRcController));
+rcRouter.post("/attendance/:rc_id",authenticateUser,hasRole(['rc']),errorWrapper(createAttendanceByRcController));
 
 export default rcRouter;
 
