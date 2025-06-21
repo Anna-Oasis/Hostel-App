@@ -19,10 +19,10 @@ export default function CautionDepositManager() {
       console.log(`${key}: ${value}`);
     }
     setApplications((prev) =>
-      prev.map((app) =>
-        app.id === formData.get("applicationId") ? { ...app, status: badgeStatus.Approved } : app
-      )
-    );
+    prev.map((app) =>
+    app.rollNumber === formData.get("studentRollNumber") ? { ...app, status: badgeStatus.Approved } : app
+  )
+);
     setRefundModalOpen(false);
     setSelectedApp(null);
   };
