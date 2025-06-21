@@ -37,10 +37,9 @@ export const getStudentsofRoom= async (
         eq(roomModel.hostelBlock, hostelBlock),
         eq(roomModel.academicYear, academicYear)
       )
-    )
-    .limit(1);
+    );
     
-  return room[0];
+  return room;
 };
 
 export const setStudentinRoom = async (
@@ -72,4 +71,49 @@ export const updateStudentRoomNumber = async (
     .set({ roomNumber })
     .where(eq(studentModel.rollNo, rollNo))
     .returning();
+};
+
+export const updateStudentHostelDetails = async (
+  rollNo: string, 
+  roomNumber: number | null,
+  floor:  number | null,
+  hostelBlock: string,
+) => {
+  return await db
+    .update(studentModel)
+    .set({ roomNumber, floor, hostelBlock})
+    .where(eq(studentModel.rollNo, rollNo))
+    .returning();
+};
+
+export const fetchRoomDetailsByBlockAndAcademicYear= async (
+  hostelBlock: string, 
+  academicYear: string
+) => {
+  const room = await db
+    .select()
+    .from(roomModel)
+    .where(
+      and(
+        eq(roomModel.hostelBlock, hostelBlock),
+        eq(roomModel.academicYear, academicYear)
+      )
+    );
+    
+  // Room Details with Student Details
+
+  /*
+  const room = await db
+    .select()
+    .from(roomModel)
+    .innerJoin(studentModel, eq(studentModel.roomNumber,roomModel.roomNumber))
+    .where(
+      and(
+        eq(roomModel.hostelBlock, hostelBlock),
+        eq(roomModel.academicYear, academicYear)
+      )
+    );
+  */
+ 
+  return room;
 };

@@ -8,6 +8,7 @@ import {
   getAdmissionsByStatus,
   createAdmissionApproval,
   getAdmissionsToBeApprovedByRcByHostelBlock,
+  getRoomByRollNo,
 } from "../services/admissionServices";
 import { Request, Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -25,7 +26,7 @@ import { rcAdmissionDecisionSchema } from "../validation/rc.schema";
 import {
   checkRoom,
   setStudentinRoom,
-  updateStudentRoomNumber,
+  updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
 import { getRCById } from "../services/rcServices";
@@ -37,13 +38,13 @@ export async function fetchAdmissionWaitingForApprovalController(
   req: AuthRequest,
   res: Response
 ) {
-  if (!req.user || !req.user.role) {
+  if (!req.User || !req.User.role) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const userRole = req.user.role;
+  const userRole = req.User.role;
   let reqStatus: string;
 
   if (userRole === "manager") {
@@ -67,7 +68,7 @@ export async function fetchAdmissionWaitingForApprovalController(
 
   res.status(httpStatus.OK).json({
     success: true,
-    user: req.user,
+    user: req.User,
     data: submittedAdmissions,
     count: submittedAdmissions.length,
     message: "Admissions retrieved successfully",
@@ -79,11 +80,11 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.user.id));
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
   if (!rc_id) {
     throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
   }
@@ -121,13 +122,13 @@ export async function approveByManagerController(
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
 
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const user_id = req.user.id;
+  const user_id = req.User.id;
 
   if (!admission_id || typeof approve !== "boolean") {
     throw AppError(
@@ -303,11 +304,11 @@ export async function updateAdmissionController(
 
 // \manager\admissions: PUT – use \admission_id to approve or decline by manager, entry into admission_approval table with comment(if declined)
 export async function updateApprovalStatusByManagerController(
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) {
   const { admission_id } = req.params;
-  const user = req.user;
+  const user = req.User;
   // if (!user || !user.id) {
   //   throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
   // }
@@ -366,10 +367,10 @@ export const fetchAdmissionsApprovedByUser = async (
   req: AuthRequest,
   res: Response
 ) => {
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
-  const userID = parseInt(req.user.id);
+  const userID = parseInt(req.User.id);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
@@ -392,19 +393,22 @@ export const updateApprovalStatusByRCController = async (
   if (!admission_id || isNaN(Number(admission_id))) {
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
-  if (!req.user || !req.user.id) {
+  if (!req.User || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const rc_userId = await getRCidfromUserId(Number(req.user.id));
-  const validated = rcAdmissionDecisionSchema.parse(req.body);
+
+  const rc_userId = await getRCidfromUserId(Number(req.User.id));
+
 
   const rc = await getRCById(Number(rc_userId));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found ", httpStatus.NOT_FOUND);
   }
+
+  const validated = rcAdmissionDecisionSchema.parse(req.body);
   if (
     validated.approve === false &&
     (!validated.comment || validated.comment.trim() === "")
@@ -439,22 +443,20 @@ export const updateApprovalStatusByRCController = async (
   }
 
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
-  const hostelBlock = admission[0].hostelBlock;
   const currentYear = admission[0].academicYear;
-
   if (validated.approve) {
     // Approval logic
     const status = approval_status.rc;
 
-    if (!validated.room) {
+    if (!validated.room || !validated.floor || !validated.hostel_block) {
       throw AppError(
-        "Room number is required for approval",
+        "Room number, Floor and Hostel block are required for approval",
         httpStatus.BAD_REQUEST
       );
     }
 
     // Check room capacity before approval
-    const room = await checkRoom(validated.room, hostelBlock, currentYear);
+    const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
@@ -473,7 +475,7 @@ export const updateApprovalStatusByRCController = async (
     const setStudent = await setStudentinRoom(
       updatedRollNos,
       validated.room,
-      hostelBlock,
+      validated.hostel_block,
       currentYear
     );
 
@@ -497,12 +499,12 @@ export const updateApprovalStatusByRCController = async (
       );
     }
 
-    // Update student room number
-    const studentUpdate = await updateStudentRoomNumber(rollNo, validated.room);
+    // Update student hostel details
+    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block);
 
     if (!studentUpdate) {
       throw AppError(
-        "Failed to update student room",
+        "Failed to update student room and floor",
         httpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -543,14 +545,14 @@ export const updateApprovalStatusByWardenController = async (
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
 
-  if (!req.user || !req.user.role || !req.user.id) {
+  if (!req.User || !req.User.role || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const role = req.user.role;
-  const user_id = req.user.id;
+  const role = req.User.role;
+  const user_id = req.User.id;
   const validated = wardenDecisionSchema.parse(req.body);
 
   // If status is false, comment is required
@@ -638,8 +640,8 @@ export const updateApprovalStatusByWardenController = async (
       );
     }
 
-    // Clear student room number
-    const studentUpdate = await updateStudentRoomNumber(rollNo, null);
+    // Clear student hostel details
+    const studentUpdate = await updateStudentHostelDetails(rollNo, null, null, '');
 
     if (!studentUpdate) {
       throw AppError(
@@ -648,9 +650,11 @@ export const updateApprovalStatusByWardenController = async (
       );
     }
 
-    // Only proceed with room removal if room number was provided
-    if (validated.room) {
-      const room = await checkRoom(validated.room, hostelBlock, currentYear);
+    const roomNo=await getRoomByRollNo(rollNo);
+
+    // Only proceed with room removal
+    if (roomNo) {
+      const room = await checkRoom(roomNo, hostelBlock, currentYear);
 
       if (!room) {
         throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
@@ -666,7 +670,7 @@ export const updateApprovalStatusByWardenController = async (
 
       await setStudentinRoom(
         updatedRollNos,
-        validated.room,
+        roomNo,
         hostelBlock,
         currentYear
       );

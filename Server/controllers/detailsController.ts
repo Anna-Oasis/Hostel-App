@@ -2,7 +2,7 @@ import { Request, Response,NextFunction } from "express";
 import { ZodError } from "zod";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
-
+import { getRollNoFromUserId } from "../services/helper";
 import { AppError } from "../utils/AppError";
 import { studentSchema } from "../validation/student.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
@@ -46,6 +46,31 @@ export async function getStudentDetailsController(req: AuthRequest, res: Respons
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
 
+  const student = await findStudentByRollNo(rollNo);
+  if (!student.length) {
+    throw AppError("Student not found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: student[0],
+    message: "Student details fetched successfully",
+  });
+}
+
+export async function getStudentDetailsUsingUserIdController(req: AuthRequest, res: Response) {
+
+  if (!req.User || !req.User.id) {
+    throw AppError("User not authenticated or user ID is missing", httpStatus.UNAUTHORIZED);
+  }
+  const userId = req.User.id;
+  if (!userId) {
+    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
+  }
+  const  rollNo = await getRollNoFromUserId(Number(userId));
+  if (!rollNo) {
+    throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
+  }
   const student = await findStudentByRollNo(rollNo);
   if (!student.length) {
     throw AppError("Student not found", httpStatus.NOT_FOUND);
