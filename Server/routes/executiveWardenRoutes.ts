@@ -3,6 +3,8 @@ import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalControll
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 import { fetchRoomDetailsByBlockAndAcademicYearController } from '../controllers/roomController';
+import { getRCLeaves, updateLeaveStatusForRC } from '../controllers/rcLeaveController';
+
 
 const executiveWardenRouter = Router();
 
@@ -17,4 +19,7 @@ executiveWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole
 executiveWardenRouter.get("/admissions/approvals",authenticateUser ,hasRole(['executiveWarden']),errorWrapper(fetchAdmissionsApprovedByUser));
 
 executiveWardenRouter.get("/rooms", authenticateUser,hasRole(['executiveWarden']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
+
+executiveWardenRouter.get("/rc/leave", authenticateUser,hasRole(['executiveWarden']), errorWrapper(getRCLeaves))
+executiveWardenRouter.put("/rc/leave/:leave_id", authenticateUser, hasRole(['executiveWarden']), errorWrapper(updateLeaveStatusForRC));
 export default executiveWardenRouter;

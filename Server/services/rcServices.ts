@@ -63,6 +63,8 @@ export async function updateRC(
   return updatedRC;
 }
 
+
+
 export async function getRCById(rc_id: number) {
   const rc = await db
     .select()

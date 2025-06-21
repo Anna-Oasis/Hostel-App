@@ -12,6 +12,7 @@ import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatus
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
 
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { getRCLeaves, updateLeaveStatusForRC } from "../controllers/rcLeaveController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
 
 
@@ -51,6 +52,8 @@ deputyWardenRouter.get("/rc", authenticateUser, hasRole(['deputyWarden']), error
 deputyWardenRouter.put("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateRCController));
 deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(deleteRCController));
 
+deputyWardenRouter.get("/rc/leave", authenticateUser,hasRole(['deputyWarden']), errorWrapper(getRCLeaves))
+deputyWardenRouter.put("/rc/leave/:leave_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateLeaveStatusForRC));
 //Attendance
 deputyWardenRouter.get("/attendance/", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getAllAttendanceController));
 

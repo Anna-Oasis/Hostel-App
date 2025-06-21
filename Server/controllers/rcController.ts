@@ -10,12 +10,14 @@ import AppError from "../utils/AppError";
 import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
-import { createUser ,deleteUser } from "../services/helper";
+import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
+import { createRcLeaveForm, getRCLeaveApprovals } from "../services/rcLeaveService";
+import {  updateAlternateRCtoId, updateAlternateRCtoNull,} from "../services/rcLeaveService"
 
-export async function createRCController(req:AuthRequest,res:Response): Promise<void> {
+export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
 
-  const  user = await createUser(
+  const user = await createUser(
     validated.email,
     validated.name,
     validated.password,
@@ -26,7 +28,7 @@ export async function createRCController(req:AuthRequest,res:Response): Promise<
 
   const rc = await createRC(
     validated.name,
-     user[0].id,
+    user[0].id,
     validated.hostel
   );
   if (!rc || rc.length === 0) {
@@ -54,7 +56,7 @@ export async function getRCsController(req: AuthRequest, res: Response): Promise
   });
 }
 
-export async function updateRCController (req: AuthRequest, res: Response): Promise<void> {
+export async function updateRCController(req: AuthRequest, res: Response): Promise<void> {
   const { rc_id } = req.params;
   if (!rc_id || isNaN(Number(rc_id))) {
     throw AppError("RC id is not in search param or id is NaN", httpStatus.BAD_REQUEST);

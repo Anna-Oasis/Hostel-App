@@ -21,6 +21,8 @@ export const authenticateUser = async (
 ): Promise<void> => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+
+    console.log("Token received:", token);
     
     if (!token) {
       res.status(401).json({ success: false, message: "No token provided" });
@@ -34,6 +36,7 @@ export const authenticateUser = async (
     }
 
     const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+    console.log("Decoded JWT:", decoded);
 
     // Query user from database using Drizzle
     const userResult = await db

@@ -10,6 +10,7 @@ import {
 import { rcModel } from "./rcModel";
 import { rcLeave_status } from "../constants/enum";
 import { rcLeave_status_pgEnum } from "./enum";
+import { userModel } from "./userModel";
 
 export const rcLeaveModel = pgTable("rc_leave", {
   id: serial("id").primaryKey(),
@@ -17,7 +18,7 @@ export const rcLeaveModel = pgTable("rc_leave", {
   // Foreign key to RC
   rc_id: integer("rc_id")
     .notNull()
-    .references(() => rcModel.id, { onDelete: "cascade" }),
+    .references(() => rcModel.userId, { onDelete: "cascade" }),
 
   leaving: date("leaving").notNull(),
   arrival: date("arrival").notNull(),
@@ -25,7 +26,6 @@ export const rcLeaveModel = pgTable("rc_leave", {
   reason: text("reason").notNull(),
 
   approved: rcLeave_status_pgEnum("approved").default(rcLeave_status.submitted).notNull(),
-
    //Timestamps
   created_at: timestamp("created_at").defaultNow().notNull(),
   dw_approved_at: timestamp("approved_at").defaultNow(),
