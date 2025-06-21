@@ -2,19 +2,15 @@ import { Stack, useSegments } from "expo-router";
 import AppBar from "@/components/appbars/AppBar";
 
 const TITLES: Record<string, string> = {
-  "": "Student Dashboard",
-  Details: "Personal Details",
-  Admission: "Admission",
-  LeaveForm: "Leave Form",
-  SummerVacation: "Summer Vacation",
-  Grievances: "Grievances",
-  HostelVacation: "Hostel Vacation",
+  "": "Executive Warden",
+  AdmissionVerification: "Admission Verification",
+  RCManagement: "RC Management",
 };
 
-export default function StudentLayout() {
+export default function ExecutiveWardenLayout() {
   const segments = useSegments();
   const current = segments[segments.length - 1] || "";
-  const title = TITLES[current] || "Student";
+  const title = TITLES[current] || "Executive Warden";
 
   return (
     <>

@@ -304,11 +304,11 @@ export async function updateAdmissionController(
 
 // \manager\admissions: PUT – use \admission_id to approve or decline by manager, entry into admission_approval table with comment(if declined)
 export async function updateApprovalStatusByManagerController(
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) {
   const { admission_id } = req.params;
-  const user = req.user;
+  const user = req.User;
   // if (!user || !user.id) {
   //   throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
   // }
@@ -400,7 +400,7 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.user.id));
+  const rc_userId = await getRCidfromUserId(Number(req.User.id));
 
 
   const rc = await getRCById(Number(rc_userId));

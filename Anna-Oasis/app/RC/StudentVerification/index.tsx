@@ -38,7 +38,6 @@ export default function StudentVerificationPage() {
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Student Verification</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
