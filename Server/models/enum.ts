@@ -4,7 +4,8 @@ import {
   hostel_block,
   gender,
   user_role,
-  rcLeave_status
+  rcLeave_status,
+  grievance_status
 } from "../constants/enum";
 
 export const approval_status_pgEnum = pgEnum(
@@ -30,4 +31,9 @@ export const gender_pgEnum = pgEnum(
 export const user_role_pgEnum = pgEnum(
   "role",
   Object.values(user_role) as [string, ...string[]]
+);
+
+export const grievance_status_pgEnum = pgEnum(
+  "grievance_status",
+  Object.values(grievance_status) as [string, ...string[]]
 );

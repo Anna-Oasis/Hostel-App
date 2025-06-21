@@ -1,17 +1,44 @@
 import { Request, Response } from "express";
-import { createGrievance, getGreivancesForDeputyWarden, getGrievancesByRollNumber } from "../services/grievanceService";
+import { createGrievance, getGrievancesForDeputyWarden, getGrievancesByRollNumber} from "../services/grievanceService";
+//import {updateGrievanceStatusByManager, updateGrievanceStatusByRC} from "../services/grievanceService";
+import { updateGrievanceStatus } from "../services/grievanceService";
 import { AuthRequest } from "../types/roles";
-import { getGrievancesForManager, resolveGrievanceByManager, getGrievancesForRC, updateGrievanceApprovalStatusByRC } from "../services/grievanceService";
+import { getGrievancesForManager, getGrievancesForRC } from "../services/grievanceService";
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
 import {  
   rcGrievanceDecisionSchema 
-} from "../validation/rc.schema";
+} from "../validation/grievance.schema";
 import { getRCById } from "../services/rcServices";
+import { createGrievanceSchema } from "../validation/grievance.schema";
+import { getRCidfromUserId } from "../services/helper";
+import { grievance_status } from "../constants/enum";
+
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
-  const data = req.body;
-  const result = await createGrievance(data);
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  if(req.User.role !== "student"){
+    throw AppError(
+      "Invalid User!",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const validated = createGrievanceSchema.parse(req.body);
+  const result = await createGrievance(validated);
+
+  if(!result){
+    throw AppError(
+      "Failed to create grievance",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
 
   res.status(httpStatus.CREATED).json({
     success: true,
@@ -21,6 +48,20 @@ export const createGrievanceController = async (req: AuthRequest, res: Response)
 };
 
 export const getGrievancesByRollNumberController = async (req: AuthRequest, res: Response): Promise<void>=> {
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  if(req.User.role !== "student"){
+    throw AppError(
+      "Invalid User!",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
   const rollNumber = req.params.roll_number;
   
   const result = await getGrievancesByRollNumber(rollNumber);
@@ -36,76 +77,32 @@ export const getGrievancesByRollNumberController = async (req: AuthRequest, res:
   });
 };
 
-export const getGreivancesForManagerFromController=async (req:AuthRequest,res:Response)=>
-{
-    const data=await getGrievancesForManager();
-
-    if(data.length===0)
-    {
-      throw AppError("No Greivances Found",httpStatus.NOT_FOUND);
-    }
-
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        data:data,
-        message:"Greivances Fetched Successfully"
-      }
-    )
-}
-
-export const resolveGrievanceFromController = async (req: AuthRequest,res:Response)=>
-{
-    const greivanceId=Number(req.params.grievance_id);
-    const data=await resolveGrievanceByManager(greivanceId);
-
-    if(data.length===0)
-    {
-      throw AppError("Greivance with Greivance ID not Found",httpStatus.NOT_FOUND);
-    }
-
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        data:data,
-        message:"Greivance Resolved Successfully"
-      }
-    );
-}
-
-export const getGrievancesFromDeputyWardenController = async (req:AuthRequest,res:Response)=>
-{
-
-    const data = await getGreivancesForDeputyWarden();
-
-    if(data.length === 0)
-    {
-      throw AppError("Error Fetching Greivances From Deputy Warden Side",httpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        message:"Greivances all are fetched from Deputy Warden Side",
-        data:data
-      }
-    );
-}
-
 export const viewGrievancesByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { rc_id } = req.params;
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
 
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
+  if (!rc_id) {
+    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
+  }
+  
   const rc = await getRCById(Number(rc_id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
+
   console.log("RC Details:", rc);
+
+  if(!rc[0].hostel || !rc[0].floor){
+    throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
+  }
 
   const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
   if (!grievances) {
@@ -124,18 +121,39 @@ export const approveOrDeclineGrievancesByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { rc_id } = req.params;
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
 
-  const validated = rcGrievanceDecisionSchema.parse(req.body);
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
+  if (!rc_id) {
+    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
+  }
   
   const rc = await getRCById(Number(rc_id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  const updateResult = await updateGrievanceApprovalStatusByRC({
-    grievance_id: validated.grievances_id,
-    rc_approval: validated.approve
+  console.log("RC Details:", rc);
+
+  const grievanceId=Number(req.params.grievance_id);
+
+  const validated=rcGrievanceDecisionSchema.parse(req.body);
+  let status;
+
+  if(validated.approve)
+    status=grievance_status.rc;
+  else
+    status=grievance_status.declined;
+
+  const updateResult = await updateGrievanceStatus({
+    grievance_id: grievanceId,
+    status,
+    updatedBy: req.User.role
   });
 
   if (!updateResult) {
@@ -147,3 +165,108 @@ export const approveOrDeclineGrievancesByRCController = async (
     message: "Grievance approval submitted successfully",
   });
 };
+
+
+export const getGrievancesForManagerController=async (req:AuthRequest,res:Response)=>
+{
+    if (!req.User || !req.User.id || !req.User.role) {
+      throw AppError(
+        "User information is missing from request",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    if(req.User.role !== "manager"){
+      throw AppError(
+        "Invalid User!",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    const data=await getGrievancesForManager();
+
+    if(data.length===0)
+    {
+      throw AppError("No Grievances Found",httpStatus.NOT_FOUND);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        data:data,
+        message:"Grievances Fetched Successfully"
+      }
+    )
+}
+
+export const resolveGrievanceByManagerController = async (req: AuthRequest,res:Response)=>
+{
+    if (!req.User || !req.User.id || !req.User.role) {
+      throw AppError(
+        "User information is missing from request",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    if(req.User.role !== "manager"){
+      throw AppError(
+        "Invalid User!",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    const grievanceId=Number(req.params.grievance_id);
+    const data = await updateGrievanceStatus({
+      grievance_id: grievanceId,
+      status: grievance_status.manager,
+      updatedBy: req.User.role
+    });
+
+    if(data.length===0)
+    {
+      throw AppError("Grievance with Grievance ID not Found",httpStatus.NOT_FOUND);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        data:data,
+        message:"Grievance Resolved Successfully"
+      }
+    );
+}
+
+export const getGrievancesForDeputyWardenController = async (req:AuthRequest,res:Response)=>
+{
+    if (!req.User || !req.User.id || !req.User.role) {
+      throw AppError(
+        "User information is missing from request",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    if(req.User.role !== "deputyWarden"){
+      throw AppError(
+        "Invalid User!",
+        httpStatus.UNAUTHORIZED
+      );
+    }
+
+    const data = await getGrievancesForDeputyWarden();
+
+    if(data.length === 0)
+    {
+      throw AppError("Error Fetching Grievances For Deputy Warden",httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        message:"All grievances are fetched for Deputy Warden",
+        data:data
+      }
+    );
+}

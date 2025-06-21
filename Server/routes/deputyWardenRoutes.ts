@@ -2,7 +2,7 @@ import { Router } from "express";
 import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-import { getGrievancesFromDeputyWardenController } from "../controllers/grievanceController";
+import { getGrievancesForDeputyWardenController } from "../controllers/grievanceController";
 import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
 // import 
 //   {
@@ -27,7 +27,7 @@ deputyWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['
 deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
 //get All the greivance data
-deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesFromDeputyWardenController));
+deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesForDeputyWardenController));
 
 // Fetch all leave forms waiting for Deputy Warden approval by hostel block and floor 
 deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarden']),errorWrapper(getLeaveFormWaitingForApprovalController));

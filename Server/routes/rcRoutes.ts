@@ -22,11 +22,10 @@ rcRouter.get("/admissions",authenticateUser,hasRole(["rc"]),errorWrapper( getAdm
 rcRouter.put("/admissions/:admission_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateApprovalStatusByRCController));
 
 // Fetch all grievances waiting for RC approval by hostel block and floor
-rcRouter.get("/grievance/:rc_id",authenticateUser,hasRole(["rc"]), errorWrapper(viewGrievancesByRCController));
+rcRouter.get("/grievance",authenticateUser,hasRole(["rc"]), errorWrapper(viewGrievancesByRCController));
 
 // Approve or decline grievance by RC with grievance ID in body
-rcRouter.put("/grievance/:rc_id", authenticateUser,hasRole(["rc"]), errorWrapper(approveOrDeclineGrievancesByRCController));
-
+rcRouter.put("/grievance/:grievance_id", authenticateUser,hasRole(["rc"]), errorWrapper(approveOrDeclineGrievancesByRCController));
 
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
