@@ -3,7 +3,7 @@ import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import { fetchRoomsSchema } from "../validation/room.schema";
 import httpStatus from "http-status";
-import { Request, Response } from "express";
+import { Response } from "express";
 
 export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,

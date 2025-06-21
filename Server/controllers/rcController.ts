@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { 
   createRC,
   getAllRCs,
@@ -44,7 +44,12 @@ export async function createRCController(req:AuthRequest,res:Response): Promise<
 export async function getRCsController(req: AuthRequest, res: Response): Promise<void> {
   const rcs = await getAllRCs();
   if (!rcs || rcs.length === 0) {
-    throw AppError("No RCs found", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: "No RCs found",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -107,27 +112,4 @@ export async function deleteRCController(req: AuthRequest, res: Response): Promi
     message: "RC deleted successfully",
   });
 }
-
-
-// export const fetchAdmissionsApprovedByRC = async (
-//   req: Request,
-//   res: Response,
-// ) => {
-//   const rcId = parseInt(req.params.rc_id);
-
-//   if (isNaN(rcId)) {
-//     throw AppError("Invalid RC ID", httpStatus.BAD_REQUEST);
-//   }
-//   const rc = await rcExists(rcId);
-//   if (!rc) {
-//     throw AppError("RC not found", httpStatus.NOT_FOUND);
-//   }
-//   const data = await getAdmissionsApprovedByRC(rcId);
-
-//   res.status(httpStatus.OK).json({
-//     success: true,
-//     data,
-//     message: "Admissions approved by RC fetched successfully",
-//   });
-// };
 

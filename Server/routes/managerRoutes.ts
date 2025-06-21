@@ -16,7 +16,7 @@ import { authenticateUser, hasRole } from '../middleware/rbacMiddleware';
 import {
   approveVacatingFormByManagerController,
   getVacatingFormsForManagerController
-} from '../controllers/vactingHostelController';
+} from '../controllers/vacatingHostelController';
 
 const managerRouter = Router();
 

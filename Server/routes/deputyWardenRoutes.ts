@@ -17,7 +17,7 @@ import {
 import {
   approveVacatingFormByDeputyWardenController,
   getVacatingFormsForDeputyWardenController
-} from "../controllers/vactingHostelController";
+} from "../controllers/vacatingHostelController";
 import {
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController

@@ -1,5 +1,4 @@
-import { User } from "./../models/userModel";
-import express, { raw, Request, Response } from "express";
+import { Response } from "express";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { summerVacationSchema } from "../validation/summerVacation.schema";
@@ -63,12 +62,18 @@ export const getAllSummerVacationFormsOfStudent = async (
 
   const result = await getAllSummerVacationForms(rollNumber);
 
-  res.status(httpStatus.FOUND).json({
+  if (!result || result.length === 0) {
+    res.status(httpStatus.OK).json({
+      success: false,
+      message: "No Summer vacation forms found",
+      data: [],
+    });
+    return;
+  }
+
+  res.status(httpStatus.OK).json({
     success: true,
-    message:
-      result.length === 0
-        ? "No Summer vacation forms found"
-        : "All available Summer Vacation forms are fetched Successfully",
+    message: "All available Summer Vacation forms are fetched Successfully",
     data: result,
   });
 };
@@ -162,12 +167,18 @@ export const getSummerVacationFormsForDeputyWardenController = async (
 ) => {
   const result = await getSummerVacationFormsForDeputyWarden();
 
+  if (!result || result.length === 0) {
+    res.status(httpStatus.OK).json({
+      success: false,
+      message: "Nothing to approve",
+      data: [],
+    });
+    return;
+  }
+
   res.status(httpStatus.OK).json({
-    message:
-      result.length === 0
-        ? "Nothing to approve"
-        : "Data has been Fetched successfully",
     success: true,
+    message: "Data has been Fetched successfully",
     data: result,
   });
 };
@@ -183,11 +194,7 @@ export const getSummerVacationFormsForRCController = async (
     );
   }
 
-  console.log("Fetching summer vacation forms for RC");
-  console.log(req.User);
-
   const rcId = await getRCidfromUserId(Number(req.User.id));
-  console.log("RC ID:", rcId);
   if (!rcId || isNaN(rcId)) {
     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
   }
@@ -205,12 +212,18 @@ export const getSummerVacationFormsForRCController = async (
       floors
     );
 
+  if (!result || result.length === 0) {
+    res.status(httpStatus.OK).json({
+      success: false,
+      message: "No records found",
+      data: [],
+    });
+    return;
+  }
+
   res.status(httpStatus.OK).json({
     success: true,
-    message:
-      result.length === 0
-        ? "No records found"
-        : "All Summer Vacation Forms are fetched Successfully",
+    message: "All Summer Vacation Forms are fetched Successfully",
     data: result,
   });
 };

@@ -32,7 +32,7 @@ import {
 import {
   createVacatingHostelFormController,
   getAllVacatingHostelFormsController,
-} from "../controllers/vactingHostelController";
+} from "../controllers/vacatingHostelController";
 
 const studentRouter = Router();
 

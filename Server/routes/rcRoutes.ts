@@ -20,7 +20,7 @@ import {
 import {
   getVacatingFormsForRCController,
   approveVacatingFormByRCController
-} from "../controllers/vactingHostelController";
+} from "../controllers/vacatingHostelController";
 import {
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController
