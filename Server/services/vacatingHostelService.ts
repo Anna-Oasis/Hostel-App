@@ -58,6 +58,8 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
 
   if (!rc) throw AppError("RC not found", httpStatus.FORBIDDEN);
 
+  if(!rc.floor) throw AppError("RC floor information is missing or invalid", httpStatus.BAD_REQUEST);
+
   return await db
     .select({
       vacating: vacatingHostelModel,
@@ -73,7 +75,6 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
       )
     );
 };
-
 
 export const approveOrDeclineByRC = async (
   vacating_hostel_id: number,
@@ -116,6 +117,10 @@ export const approveOrDeclineByRC = async (
   if(!student.floor) {
     throw AppError("Student floor information is missing", httpStatus.BAD_REQUEST);
   }
+  if (!rc.floor || !Array.isArray(rc.floor)) {
+    throw AppError("RC floor information is missing or invalid", httpStatus.BAD_REQUEST);
+  }
+
   const isFloorMatch = rc.floor.includes(student.floor);
 
   if (!isHostelMatch || !isFloorMatch) {
