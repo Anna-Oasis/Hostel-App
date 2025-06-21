@@ -12,7 +12,7 @@ import {
 import { getRCById } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
-import { grievance_status } from "../constants/enum";
+import { grievance_status, hostel_block } from "../constants/enum";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
@@ -114,7 +114,9 @@ export const viewGrievancesByRCController = async (
     throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
   }
 
-  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
+  const hostelKey = rc[0].hostel === hostel_block.BOYS ? 'BOYS' : 'GIRLS';
+
+  const grievances = await getGrievancesForRC(hostelKey, rc[0].floor);
   if (!grievances) {
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
   }
