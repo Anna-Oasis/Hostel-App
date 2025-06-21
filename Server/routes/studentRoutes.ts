@@ -73,7 +73,7 @@ studentRouter.put(
   errorWrapper(updateStudentDetailsController)
 );
 
-studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
+studentRouter.get("/vacating_hostel/:no",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
 studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
 studentRouter.post(

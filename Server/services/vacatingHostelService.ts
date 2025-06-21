@@ -1,4 +1,4 @@
-import { eq, inArray, and } from "drizzle-orm";
+import { eq, inArray, and} from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { approval_status } from "../constants/enum";
 import {
@@ -39,13 +39,14 @@ export const createCautionDepositRefund = async (data: any) => {
     .returning();
 };
 
-export const getAllVacatingHostelForms = async () => {
+export const getAllVacatingHostelForms = async (no : string) => {
   return await db
     .select({
       vacating: vacatingHostelModel,
       caution: cautionDepositRefundModel,
     })
     .from(vacatingHostelModel)
+    .where(eq(vacatingHostelModel.roll_number, no))
     .leftJoin(
       cautionDepositRefundModel,
       eq(cautionDepositRefundModel.vacating_hostel_id, vacatingHostelModel.id)
