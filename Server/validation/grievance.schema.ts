@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const createGrievanceSchema = z.object({
-  roll_number: z.string().min(6, "Roll number is required"),
   grievance_type: z.string().min(2, "Grievance type is required").max(50, "Grievancve type  must be less than 50 characters"),
   subject: z.string().min(2, "Grievance subject is required").max(200, "Grievancve subject  must be less than 200 characters"),
   description: z.string().min(2, "Grievance description is required")

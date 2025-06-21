@@ -35,10 +35,14 @@
 //       throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
 //     }
 
-//     const rc = await getRCById(Number(rc_id));
-//     if (!rc || rc.length === 0) {
-//       throw AppError("RC not found", httpStatus.NOT_FOUND);
-//     }
+    const rc = await getRCById(Number(rc_id));
+    if (!rc || rc.length === 0) {
+      throw AppError("RC not found", httpStatus.NOT_FOUND);
+    }
+
+    if(!rc[0].hostel || !rc[0].floor){
+      throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
+    }
 
 //     leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
 //       rc[0].floor, rc[0].hostel

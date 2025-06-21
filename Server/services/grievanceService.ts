@@ -4,6 +4,8 @@ import { studentModel } from "../models/studentModel";
 import { eq, and , inArray} from "drizzle-orm";
 import { NewGrievance } from "../models/grievances";
 import { grievance_status, hostel_block} from "../constants/enum";
+import { userModel } from "../models/userModel";
+import { grievance_status, hostel_block} from "../constants/enum";
 import { hostel_block_pgEnum } from "../models/enum";
 import { sql } from "drizzle-orm";
 
@@ -12,6 +14,14 @@ interface GrievanceUpdateParams {
   status: typeof grievance_status[keyof typeof grievance_status];
   updatedBy: string;
 }
+
+export const getRollNumberByUserId = async (id: number) => {
+  return await db
+  .select({rollNo: studentModel.rollNo})
+  .from(userModel)
+  .innerJoin(studentModel, eq(userModel.id, studentModel.user_id))
+  .where(eq(userModel.id, id));
+};
 
 export const createGrievance = async (data: NewGrievance) => {
   return await db.insert(grievancesModel).values(data).returning();
@@ -24,7 +34,7 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
     .where(eq(grievancesModel.roll_number, rollNumber));
 };
 
-export const getGrievancesForRC = async (hostelBlock: string, floors: number[]) => {
+export const getGrievancesForRC = async (hostelBlock: keyof typeof hostel_block, floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
   console.log("Grievance Query Params:");
   console.log("Hostel Block:", hostelBlock);
