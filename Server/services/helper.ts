@@ -6,12 +6,13 @@ import { db } from "../config/dbConnection";
 import {hashPassword} from "../utils/hashPassword";
 
 export async function getRCidfromUserId(userId: number) {
+  console.log("Fetching RC ID for user ID:", userId);
   const queryRes = await db
     .select()
     .from(rcModel)
-    .where(eq(rcModel.userId, userId))
+    .where(eq(rcModel.userId
+      , userId))
     .limit(1);
-
   return queryRes[0].id;
 }
 
@@ -23,6 +24,20 @@ export async function getRollNoFromUserId(userId:number){
     .limit(1);
 
   return queryRes[0].rollNo;
+}
+
+/**
+ * 
+ * @param hostel Name of the Hostel
+ * @returns rcModel[]
+ */
+export async function getRCsbyHostel(hostel: string) {
+  console.log("Fetching RC for hostel:", hostel);
+  const queryRes = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.hostel, hostel))
+  return queryRes;
 }
 
 

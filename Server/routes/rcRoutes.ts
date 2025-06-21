@@ -31,6 +31,11 @@ import {
   createAttendanceByRcController,
   getAttendanceByRcController
 } from "../controllers/attendanceController";
+import {  getRCsController } from "../controllers/rcController";
+import { getRCLeaveApprovals } from "../services/rcLeaveService";
+import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
+
+
 
 const rcRouter = Router();
 
@@ -137,6 +142,13 @@ rcRouter.post(
   hasRole(['rc']),
   errorWrapper(createAttendanceByRcController)
 );
+
+rcRouter.post("/leave", authenticateUser, hasRole(['rc']), errorWrapper(createRCLeaveFormFromController));
+rcRouter.get("/leave", authenticateUser, hasRole(['rc']), errorWrapper(getRCLeaveController));
+rcRouter.get("/leave/complete", authenticateUser, hasRole(['rc']), errorWrapper(updateCompleteLeave))
+
+// Fetch the all the RCs as same as the RC's own hostel
+rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyHostelController))
 
 export default rcRouter;
 

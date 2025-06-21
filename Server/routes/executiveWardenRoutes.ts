@@ -1,15 +1,19 @@
 // executiveWardenRoutes.ts - Executive Warden related routes for the Hostel App API
 // Handles admissions and room details for Executive Wardens
 
-import { Router } from 'express';
+import { Router } from "express";
 import {
   fetchAdmissionsApprovedByUser,
   fetchAdmissionWaitingForApprovalController,
-  updateApprovalStatusByWardenController
-} from '../controllers/admissionController';
+  updateApprovalStatusByWardenController,
+} from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
-import { authenticateUser, hasRole } from '../middleware/rbacMiddleware';
-import { fetchRoomDetailsByBlockAndAcademicYearController } from '../controllers/roomController';
+import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
+import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import {
+  getRCLeaves,
+  updateLeaveStatusForRC,
+} from "../controllers/rcLeaveController";
 
 const executiveWardenRouter = Router();
 
@@ -22,19 +26,19 @@ executiveWardenRouter.get("/", (req, res) => {
 executiveWardenRouter.get(
   "/admissions",
   authenticateUser,
-  hasRole(['executiveWarden']),
+  hasRole(["executiveWarden"]),
   errorWrapper(fetchAdmissionWaitingForApprovalController)
 );
 executiveWardenRouter.put(
   "/admissions/:admission_id",
   authenticateUser,
-  hasRole(['executiveWarden']),
+  hasRole(["executiveWarden"]),
   errorWrapper(updateApprovalStatusByWardenController)
 );
 executiveWardenRouter.get(
   "/admissions/approvals",
   authenticateUser,
-  hasRole(['executiveWarden']),
+  hasRole(["executiveWarden"]),
   errorWrapper(fetchAdmissionsApprovedByUser)
 );
 
@@ -42,8 +46,20 @@ executiveWardenRouter.get(
 executiveWardenRouter.get(
   "/rooms",
   authenticateUser,
-  hasRole(['executiveWarden']),
+  hasRole(["executiveWarden"]),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
 );
 
+executiveWardenRouter.get(
+  "/rc/leave",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(getRCLeaves)
+);
+executiveWardenRouter.put(
+  "/rc/leave/:leave_id",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(updateLeaveStatusForRC)
+);
 export default executiveWardenRouter;
