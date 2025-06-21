@@ -157,7 +157,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                     setViewDetails(false);
                     props.onApprove?.();
                   }}
-                  className="bg-green-600 w-[90px] h-10 rounded-lg justify-center"
+                  className="bg-green-600 w-[95px] h-10 items-centerrounded-lg justify-center"
                 >
                   <ButtonText className="text-white text-center">Approve</ButtonText>
                 </Button>
