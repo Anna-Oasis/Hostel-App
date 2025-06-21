@@ -3,6 +3,8 @@ import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalControll
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 import { getGrievancesForDeputyWardenController } from "../controllers/grievanceController";
+import {approveSummerVacationDeputyWardenController,getSummerVacationFormsForDeputyWardenController} from '../controllers/summerVacationController';
+
 import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
 
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
@@ -10,6 +12,7 @@ import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatus
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
 
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { getAllAttendanceController } from "../controllers/attendanceController";
 
 
 const deputyWardenRouter = Router();
@@ -22,6 +25,11 @@ deputyWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['
 
 deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
+//approve the summer vacation id by Deputy Warden
+deputyWardenRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveSummerVacationDeputyWardenController));
+
+//get all summer vacation waiting for approval by Deputy Warden
+deputyWardenRouter.get("/summer_vacation",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getSummerVacationFormsForDeputyWardenController))
 //get All the greivance data
 deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesForDeputyWardenController));
 
@@ -42,5 +50,9 @@ deputyWardenRouter.post("/rc", authenticateUser, hasRole(['deputyWarden']),  err
 deputyWardenRouter.get("/rc", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getRCsController));
 deputyWardenRouter.put("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateRCController));
 deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(deleteRCController));
+
+//Attendance
+deputyWardenRouter.get("/attendance/", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getAllAttendanceController));
+
 
 export default deputyWardenRouter;

@@ -11,4 +11,3 @@ coverage/
 .DS_Store
 .vscode
 **/migrations
-

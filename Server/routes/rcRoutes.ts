@@ -3,6 +3,7 @@ import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAd
 import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import {approveSummerVacationFormByRCController,getSummerVacationFormsForRCController} from '../controllers/summerVacationController';
 import {
   getVacatingFormsForRCController,
   approveVacatingFormByRCController
@@ -10,6 +11,7 @@ import {
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import { createAttendanceByRcController, getAttendanceByRcController } from "../controllers/attendanceController";
 
 
 
@@ -30,7 +32,14 @@ rcRouter.put("/grievance/:grievance_id", authenticateUser,hasRole(["rc"]), error
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
 
-// // Fetch all leave forms waiting for RC approval by hostel block and floor 
+// rcRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['rc']),errorWrapper(approveSummerVacationFormByRCController))
+
+//get all the summer vacation forms for RC
+rcRouter.get("/summer_vacation",authenticateUser,hasRole(['rc']),errorWrapper(getSummerVacationFormsForRCController));
+
+//approve or decline summer vacation form by RC
+rcRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['rc']),errorWrapper(approveSummerVacationFormByRCController));
+// Fetch all leave forms waiting for RC approval by hostel block and floor 
 rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
 
 // Approve or decline leave form by RC with leave form ID in path
@@ -44,6 +53,10 @@ rcRouter.get("/students", authenticateUser,hasRole(['rc']), errorWrapper(fetchSt
 
 rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
 rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
+
+
+rcRouter.get("/attendance/:rc_id",authenticateUser,hasRole(['rc']),errorWrapper(getAttendanceByRcController));
+rcRouter.post("/attendance/:rc_id",authenticateUser,hasRole(['rc']),errorWrapper(createAttendanceByRcController));
 
 export default rcRouter;
 
