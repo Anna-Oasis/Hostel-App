@@ -47,8 +47,14 @@ export async function getStudentDetailsController(req: AuthRequest, res: Respons
   }
 
   const student = await findStudentByRollNo(rollNo);
+
   if (!student.length) {
-    throw AppError("Student not found", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: {},
+      message: "Student not found",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -67,13 +73,23 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
   if (!userId) {
     throw AppError("User ID is required", httpStatus.BAD_REQUEST);
   }
-  const  rollNo = await getRollNoFromUserId(Number(userId));
+  const rollNo = await getRollNoFromUserId(Number(userId));
   if (!rollNo) {
-    throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: {},
+      message: "Roll number not found for the user",
+    });
+    return;
   }
   const student = await findStudentByRollNo(rollNo);
   if (!student.length) {
-    throw AppError("Student not found", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: {},
+      message: "Student not found",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({

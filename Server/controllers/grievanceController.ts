@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { createGrievance, getGrievancesForDeputyWarden, getGrievancesByRollNumber} from "../services/grievanceService";
-//import {updateGrievanceStatusByManager, updateGrievanceStatusByRC} from "../services/grievanceService";
 import { updateGrievanceStatus } from "../services/grievanceService";
 import { AuthRequest } from "../types/roles";
 import { getGrievancesForManager, getGrievancesForRC } from "../services/grievanceService";
@@ -12,7 +11,7 @@ import {
 import { getRCById } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
-import { grievance_status, hostel_block } from "../constants/enum";
+import { grievance_status } from "../constants/enum";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
@@ -80,7 +79,12 @@ export const getGrievancesByUserController = async (
   const result = await getGrievancesByRollNumber(rollNumber);
 
   if (result.length === 0) {
-    throw AppError("No grievances found for this user", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: "No grievances found for this user",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -112,17 +116,20 @@ export const viewGrievancesByRCController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  console.log("RC Details:", rc);
-
   if(!rc[0].hostel || !rc[0].floor){
     throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
   }
 
   const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
-  if (!grievances) {
-    throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
+
+  if (!grievances || grievances.length === 0) {
+    res.status(httpStatus.OK).json({ 
+      success: false, 
+      data: [],
+      message: "No grievances found",
+    });
+    return;
   }
-  console.log("Grievances:", grievances);
 
   res.status(httpStatus.OK).json({ 
     success: true, 
@@ -199,21 +206,22 @@ export const getGrievancesForManagerController=async (req:AuthRequest,res:Respon
       );
     }
 
-    const data=await getGrievancesForManager();
+    const data = await getGrievancesForManager();
 
-    if(data.length===0)
-    {
-      throw AppError("No Grievances Found",httpStatus.NOT_FOUND);
+    if (data.length === 0) {
+      res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: "No Grievances Found"
+      });
+      return;
     }
 
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        data:data,
-        message:"Grievances Fetched Successfully"
-      }
-    )
+    res.status(httpStatus.OK).json({
+      success: true,
+      data: data,
+      message: "Grievances Fetched Successfully"
+    });
 }
 
 export const resolveGrievanceByManagerController = async (req: AuthRequest,res:Response)=>
@@ -272,17 +280,18 @@ export const getGrievancesForDeputyWardenController = async (req:AuthRequest,res
 
     const data = await getGrievancesForDeputyWarden();
 
-    if(data.length === 0)
-    {
-      throw AppError("Error Fetching Grievances For Deputy Warden",httpStatus.INTERNAL_SERVER_ERROR);
+    if (data.length === 0) {
+      res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: "No grievances found for Deputy Warden"
+      });
+      return;
     }
 
-    res.status(httpStatus.OK)
-    .json(
-      {
-        success:true,
-        message:"All grievances are fetched for Deputy Warden",
-        data:data
-      }
-    );
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "All grievances are fetched for Deputy Warden",
+      data: data
+    });
 }

@@ -28,7 +28,7 @@ import {
 import {
   createLeaveFormFromController,
   getAllLeaveFormsFromController
-} from "../controllers/leaveFormController";
+} from "../controllers/leaveController";
 import {
   createVacatingHostelFormController,
   getAllVacatingHostelFormsController,

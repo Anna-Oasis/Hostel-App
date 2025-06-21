@@ -58,13 +58,6 @@ export async function fetchAdmissionWaitingForApprovalController(
 
   const submittedAdmissions = await getAdmissionsByStatus(reqStatus);
 
-  if (submittedAdmissions.length === 0) {
-    throw AppError(
-      `No admissions waiting for ${userRole} approval`,
-      httpStatus.NOT_FOUND
-    );
-  }
-
   res.status(httpStatus.OK).json({
     success: true,
     user: req.User,
@@ -95,16 +88,10 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   const admissions = await getAdmissionsToBeApprovedByRcByHostelBlock(
     rc[0].hostel
   );
-  if (!admissions) {
-    throw AppError(
-      "No admissions waiting for RC approval",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: admissions,
+    data: admissions || [],
     message: "Fetched Admissions successfully",
   });
 };
@@ -223,10 +210,12 @@ export async function getAdmissionByRollNumberController(
 
   const admission = await getAdmissionByRollNumber(roll_number);
   if (admission.length === 0) {
-    throw AppError(
-      "Admission not found for the provided roll number",
-      httpStatus.NOT_FOUND
-    );
+    res.status(200).json({
+      success: false,
+      data: [],
+      message: "No admission found for the provided roll number",
+    });
+    return;
   }
   res.status(200).json({
     success: true,
@@ -242,10 +231,12 @@ export async function getAdmissionByAdmissionIdController(
   const { admissionId } = req.params;
   const admission = await getAdmissionByAdmissionId(Number(admissionId));
   if (admission.length === 0) {
-    throw AppError(
-      "Admission not found for the provided admission ID",
-      httpStatus.BAD_REQUEST
-    );
+    res.status(200).json({
+      success: false,
+      data: [],
+      message: "No admission found for the provided admission ID",
+    });
+    return;
   }
   res.status(200).json({
     success: true,
