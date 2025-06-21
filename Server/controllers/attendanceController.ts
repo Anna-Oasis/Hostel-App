@@ -9,6 +9,7 @@ import {
   fetchAllAttendanceByDate
 } from "../services/attendanceService";
 import { AuthRequest } from "../types/roles";
+import { getRCById } from "../services/rcServices";
 
 export async function createAttendanceByRcController(req: AuthRequest, res: Response) {
 
@@ -29,7 +30,6 @@ export async function createAttendanceByRcController(req: AuthRequest, res: Resp
     message: result.length > 1 ? "Attendance updated successfully" : "Attendance created successfully",
   });
 }
-
 export async function getAttendanceByRcController(req: AuthRequest, res: Response) {
   const rc_id = Number(req.params.rc_id);
 
@@ -37,7 +37,30 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     throw AppError("RC ID is required", httpStatus.BAD_REQUEST);
   }
 
-  const attendanceRecords = await getAttendanceByRc(rc_id);
+  // First check the RC model to get RC details and alternate RC ID
+  const rcDetailsArray = await getRCById(rc_id);
+  const alternatingRCId = rcDetailsArray[0].alternatingToRCId;
+  
+  let attendanceRecords;
+  let message;
+
+  if (alternatingRCId) {
+    const [currentRCAttendance, alternateRCAttendance] = await Promise.all([
+      getAttendanceByRc(rc_id),
+      getAttendanceByRc(alternatingRCId)
+    ]);
+
+    attendanceRecords = [...currentRCAttendance, ...alternateRCAttendance];
+    
+    attendanceRecords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    message = `Attendance records retrieved successfully for RC ${rc_id} and alternate RC ${alternatingRCId}`;
+  } else {
+
+    // Fetch attendance only for current RC
+    attendanceRecords = await getAttendanceByRc(rc_id);
+    message = "Attendance records retrieved successfully";
+  }
 
   if (attendanceRecords.length === 0) {
     throw AppError("No attendance records found for this RC", httpStatus.NOT_FOUND);
@@ -47,10 +70,9 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     success: true,
     data: attendanceRecords,
     count: attendanceRecords.length,
-    message: "Attendance records retrieved successfully",
+    message: message,
   });
 }
-
 // export async function getAllAttendanceController(req: AuthRequest, res: Response) {
   
 //   const date = req.params.date
