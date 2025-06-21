@@ -10,6 +10,7 @@ import {
   getGrievancesByRollNumberController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
+import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -82,11 +83,27 @@ studentRouter.post(
   errorWrapper(createLeaveFormFromController)
 );
 
+//get all the leave forms
 studentRouter.get(
   "/leave/:roll_number",
   authenticateUser,
   hasRole(['student']),
   errorWrapper(getAllLeaveFormsFromController)
+);
+
+//create a new Summer vacation form
+studentRouter.post(
+  "/summer_vacation",
+  authenticateUser,
+  hasRole(['student']),
+  errorWrapper(createSummerVacationFromController)
+);
+
+//fetch all applied summer vacation forms
+studentRouter.get("/summer_vacation/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
+    errorWrapper(getAllSummerVacationFormsOfStudent)
 );
 
 export default studentRouter;
