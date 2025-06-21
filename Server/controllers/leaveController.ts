@@ -1,3 +1,4 @@
+
 import httpStatus from "http-status";
 import { Request, Response } from "express";
 import { approval_status } from "../constants/enum";
@@ -38,6 +39,10 @@ export const getLeaveFormWaitingForApprovalController = async (
     const rc = await getRCById(Number(rc_id));
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
+    }
+
+    if(!rc[0].hostel || !rc[0].floor){
+      throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
     }
 
     leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
@@ -161,4 +166,3 @@ export const updateLeaveFormApprovalStatusController = async (
     message: "Leave form status updated successfully",
   });
 };
-

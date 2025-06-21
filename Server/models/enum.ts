@@ -5,6 +5,7 @@ import {
   gender,
   user_role,
   rcLeave_status,
+  grievance_status,
   summer_vacation_status
 } from "../constants/enum";
 
@@ -37,4 +38,9 @@ export const gender_pgEnum = pgEnum(
 export const user_role_pgEnum = pgEnum(
   "role",
   Object.values(user_role) as [string, ...string[]]
+);
+
+export const grievance_status_pgEnum = pgEnum(
+  "grievance_status",
+  Object.values(grievance_status) as [string, ...string[]]
 );

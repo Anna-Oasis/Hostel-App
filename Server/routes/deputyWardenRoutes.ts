@@ -2,14 +2,11 @@ import { Router } from "express";
 import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import { getGrievancesForDeputyWardenController } from "../controllers/grievanceController";
 import {approveSummerVacationDeputyWardenController,getSummerVacationFormsForDeputyWardenController} from '../controllers/summerVacationController';
-import { getGrievancesFromDeputyWardenController } from "../controllers/grievanceController";
+
 import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
-// import 
-//   {
-//     getVacatingFormsForDeputyWardenController,
-//     approveVacatingFormByDeputyWardenController
-//   } from "../controllers/vacatingHostelController";
+
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
@@ -34,7 +31,7 @@ deputyWardenRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,h
 //get all summer vacation waiting for approval by Deputy Warden
 deputyWardenRouter.get("/summer_vacation",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getSummerVacationFormsForDeputyWardenController))
 //get All the greivance data
-deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesFromDeputyWardenController));
+deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesForDeputyWardenController));
 
 // Fetch all leave forms waiting for Deputy Warden approval by hostel block and floor 
 deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarden']),errorWrapper(getLeaveFormWaitingForApprovalController));

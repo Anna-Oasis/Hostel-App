@@ -11,12 +11,6 @@ export const rcAdmissionDecisionSchema = z.object({
     .enum(Object.values(hostel_block) as [string, ...string[]]).optional(),
 });
 
-export const rcGrievanceDecisionSchema = z.object({
-  approve: z.boolean(),
-  grievances_id: z.coerce.number({ invalid_type_error: "grievance_id must be a number" }),
-});
-
-
 export const rcCreateSchema = z.object({
   name: z.string().min(1, "RC name is required"),
   email:z.string().email("Invalid email format"),

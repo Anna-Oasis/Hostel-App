@@ -7,7 +7,7 @@ import {
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
-  getGrievancesByRollNumberController,
+  getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
@@ -36,8 +36,8 @@ studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole([
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
 studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
-studentRouter.post("/grievance", errorWrapper(createGrievanceController));
-studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));
+studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
+studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
 
 
 const fileFields = upload.fields([

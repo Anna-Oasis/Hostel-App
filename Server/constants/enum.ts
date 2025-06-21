@@ -39,3 +39,9 @@ export const user_role = {
   DEPUTY_WARDEN: "DEPUTY_WARDEN",
   EXECUTIVE_WARDEN: "EXECUTIVE_WARDEN",
 };
+export const grievance_status = {
+  submitted: "0",
+  rc: "1",
+  manager: "2",
+  declined: "-1"
+};
