@@ -131,6 +131,7 @@ export const viewGrievancesByRCController = async (
   });
 };
 
+
 export const approveOrDeclineGrievancesByRCController = async (
   req: AuthRequest,
   res: Response
