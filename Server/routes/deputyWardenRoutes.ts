@@ -49,7 +49,7 @@ deputyWardenRouter.put("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden'])
 deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(deleteRCController));
 
 //Attendance
-deputyWardenRouter.get("/attendance/:date", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getAllAttendanceController));
+deputyWardenRouter.get("/attendance/", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getAllAttendanceController));
 
 
 export default deputyWardenRouter;

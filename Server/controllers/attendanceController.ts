@@ -5,7 +5,8 @@ import { createAttendanceSchema } from "../validation/attendance.schema";
 import { 
   createAttendanceByRc, 
   getAttendanceByRc, 
-  fetchAllAttendance 
+  fetchAllAttendance, 
+  fetchAllAttendanceByDate
 } from "../services/attendanceService";
 import { AuthRequest } from "../types/roles";
 
@@ -50,28 +51,63 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
   });
 }
 
-export async function getAllAttendanceController(req: AuthRequest, res: Response) {
+// export async function getAllAttendanceController(req: AuthRequest, res: Response) {
   
-  const date = req.params.date
-    if (!date) {
-    throw AppError("Date is required as query parameter", httpStatus.BAD_REQUEST);
-  }
+//   const date = req.params.date
+//     if (!date) {
+//     throw AppError("Date is required as query parameter", httpStatus.BAD_REQUEST);
+//   }
 
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(date as string)) {
-    throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
-  }
+//   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+//   if (!dateRegex.test(date as string)) {
+//     throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
+//   }
 
-  const attendanceRecords = await fetchAllAttendanceByDate(date as string);
+//   const attendanceRecords = await fetchAllAttendanceByDate(date as string);
+
+//   if (attendanceRecords.length === 0) {
+//     throw AppError("No attendance records found", httpStatus.NOT_FOUND);
+//   }
+
+//   res.status(httpStatus.OK).json({
+//     success: true,
+//     data: attendanceRecords,
+//     count: attendanceRecords.length,
+//     message: "All attendance records retrieved successfully",
+//   });
+// }
+
+export async function getAllAttendanceController(req: AuthRequest, res: Response) {
+  const { date } = req.query;
+  let attendanceRecords;
+  let message;
+
+  if (date) {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(date as string)) {
+      throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
+    }
+
+    attendanceRecords = await fetchAllAttendanceByDate(date as string);
+    message = `Attendance records for ${date} retrieved successfully`;
+  } else {
+    attendanceRecords = await fetchAllAttendance();
+    message = "All attendance records retrieved successfully";
+  }
 
   if (attendanceRecords.length === 0) {
-    throw AppError("No attendance records found", httpStatus.NOT_FOUND);
+    const errorMessage = date 
+      ? `No attendance records found for date: ${date}` 
+      : "No attendance records found";
+    throw AppError(errorMessage, httpStatus.NOT_FOUND);
   }
 
   res.status(httpStatus.OK).json({
     success: true,
     data: attendanceRecords,
     count: attendanceRecords.length,
-    message: "All attendance records retrieved successfully",
+    // ...(date && { date: date }), 
+    message: message,
   });
 }
+
