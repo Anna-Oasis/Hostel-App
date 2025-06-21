@@ -33,9 +33,8 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
     .where(eq(grievancesModel.roll_number, rollNumber));
 };
 
-export const getGrievancesForRC = async (hostelBlock: keyof typeof hostel_block, floors: number[]) => {
+export const getGrievancesForRC = async (hostelBlock: typeof hostel_block[keyof typeof hostel_block], floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
-  
   const grievances = await db
     .select()
     .from(grievancesModel)
@@ -47,7 +46,6 @@ export const getGrievancesForRC = async (hostelBlock: keyof typeof hostel_block,
         eq(grievancesModel.status, grievance_status.submitted),       
       )
     );
-
   return grievances;
 };
 

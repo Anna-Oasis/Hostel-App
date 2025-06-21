@@ -57,7 +57,10 @@ export const createGrievanceController = async (req: AuthRequest, res: Response)
   });
 };
 
-export const getGrievancesByRollNumberController = async (req: AuthRequest, res: Response): Promise<void>=> {
+export const getGrievancesByUserController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
   if (!req.User || !req.User.id || !req.User.role) {
     throw AppError(
       "User information is missing from request",
@@ -65,19 +68,19 @@ export const getGrievancesByRollNumberController = async (req: AuthRequest, res:
     );
   }
 
-  if(req.User.role !== "student"){
-    throw AppError(
-      "Invalid User!",
-      httpStatus.UNAUTHORIZED
-    );
+  if (req.User.role !== "student") {
+    throw AppError("Invalid User!", httpStatus.UNAUTHORIZED);
   }
 
-  const rollNumber = req.params.roll_number;
-  
+  const rollNumber = await getRollNoFromUserId(Number(req.User.id));
+  if (!rollNumber) {
+    throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
+  }
+  console.log("Roll Number:", rollNumber);
   const result = await getGrievancesByRollNumber(rollNumber);
 
   if (result.length === 0) {
-    throw AppError("No grievances found for the provided roll number", httpStatus.NOT_FOUND);
+    throw AppError("No grievances found for this user", httpStatus.NOT_FOUND);
   }
 
   res.status(httpStatus.OK).json({
@@ -86,6 +89,7 @@ export const getGrievancesByRollNumberController = async (req: AuthRequest, res:
     message: "Grievances fetched successfully",
   });
 };
+
 
 export const viewGrievancesByRCController = async (
   req: AuthRequest,
@@ -114,9 +118,7 @@ export const viewGrievancesByRCController = async (
     throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
   }
 
-  const hostelKey = rc[0].hostel === hostel_block.BOYS ? 'BOYS' : 'GIRLS';
-
-  const grievances = await getGrievancesForRC(hostelKey, rc[0].floor);
+  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
   if (!grievances) {
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
   }

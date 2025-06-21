@@ -7,7 +7,7 @@ import {
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
-  getGrievancesByRollNumberController,
+  getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { upload } from "../middleware/multer";
@@ -36,7 +36,7 @@ studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student
 studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
 studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
-studentRouter.get("/grievance/:roll_number",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByRollNumberController));
+studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
 
 
 const fileFields = upload.fields([
