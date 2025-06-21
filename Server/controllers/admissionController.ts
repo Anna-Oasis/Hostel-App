@@ -10,7 +10,7 @@ import {
   getAdmissionsToBeApprovedByRcByHostelBlock,
   getRoomByRollNo,
 } from "../services/admissionServices";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
 import { approval_status } from "../constants/enum";
 import AppError from "../utils/AppError";
@@ -20,7 +20,6 @@ import { getAdmissionsApprovedByUser } from "../services/admissionServices";
 import {
   updateAdmissionStatus,
   getRollNumberByAdmissionId,
-  getAcademicYearByAdmissionId,
 } from "../services/admissionServices";
 import { rcAdmissionDecisionSchema } from "../validation/rc.schema";
 import {
@@ -309,9 +308,6 @@ export async function updateApprovalStatusByManagerController(
 ) {
   const { admission_id } = req.params;
   const user = req.User;
-  // if (!user || !user.id) {
-  //   throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
-  // }
   const parsedData = managerAdmissionDecisionSchema.parse(req.body);
 
   // If status is false, comment is required
@@ -341,7 +337,7 @@ export async function updateApprovalStatusByManagerController(
 
   const updatedAdmission = await updateAdmission(Number(admission_id), {
     status: newStatus,
-    updatedAt: new Date("Asia/Kolkata"), // Set the updatedAt to current date in Asia/Kolkata timezone
+    updatedAt: new Date("Asia/Kolkata"),
   });
 
   const approvalEntry = await createAdmissionApproval({

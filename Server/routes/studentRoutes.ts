@@ -1,3 +1,6 @@
+// studentRoutes.ts - Student-related routes for the Hostel App API
+// Handles admissions, grievances, details, leave, vacating hostel, and summer vacation forms
+
 import { Router } from "express";
 import {
   createAdmissionController,
@@ -10,7 +13,10 @@ import {
   getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
+import {
+  createSummerVacationFromController,
+  getAllSummerVacationFormsOfStudent
+} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -19,26 +25,16 @@ import {
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
-import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveFormController";
-
-
+import {
+  createLeaveFormFromController,
+  getAllLeaveFormsFromController
+} from "../controllers/leaveFormController";
 import {
   createVacatingHostelFormController,
   getAllVacatingHostelFormsController,
 } from "../controllers/vactingHostelController";
 
 const studentRouter = Router();
-
-
-//admission - students
-studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
-studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
-studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
-studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
-
-studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
-studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
-
 
 const fileFields = upload.fields([
   { name: "passportPhotoUrl", maxCount: 1 },
@@ -49,61 +45,114 @@ const fileFields = upload.fields([
   { name: "admissionSlipUrl", maxCount: 1 },
 ]);
 
-
-
+// Admission routes
+studentRouter.post(
+  "/admission",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(createAdmissionController)
+);
 studentRouter.get(
-  "/details", authenticateUser, hasRole(['student']),
+  "/admission/student/:roll_number",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getAdmissionByRollNumberController)
+);
+studentRouter.get(
+  "/admission/:admissionId",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getAdmissionByAdmissionIdController)
+);
+studentRouter.put(
+  "/admission/:admissionId",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(updateAdmissionController)
+);
+
+// Grievance routes
+studentRouter.post(
+  "/grievance",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(createGrievanceController)
+);
+studentRouter.get(
+  "/grievance",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getGrievancesByUserController)
+);
+
+// Student details routes
+studentRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(["student"]),
   errorWrapper(getStudentDetailsUsingUserIdController)
-)
-
+);
 studentRouter.get(
-  "/details/:rollNo",authenticateUser ,hasRole(['student']),
+  "/details/:rollNo",
+  authenticateUser,
+  hasRole(["student"]),
   errorWrapper(getStudentDetailsController)
 );
-
-
 studentRouter.post(
   "/details",
-  fileFields,authenticateUser ,hasRole(['student']),
+  fileFields,
+  authenticateUser,
+  hasRole(["student"]),
   errorWrapper(createStudentDetailsController)
 );
-
 studentRouter.put(
   "/details/:rollNo",
-  fileFields,authenticateUser ,hasRole(['student']),
+  fileFields,
+  authenticateUser,
+  hasRole(["student"]),
   errorWrapper(updateStudentDetailsController)
 );
 
-studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
-studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
-
+// Vacating hostel routes
+studentRouter.get(
+  "/vacating_hostel",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getAllVacatingHostelFormsController)
+);
 studentRouter.post(
-  "/leave",
-  authenticateUser,hasRole(['student']),
-  errorWrapper(createLeaveFormFromController)
+  "/vacating_hostel",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(createVacatingHostelFormController)
 );
 
-//get all the leave forms
+// Leave form routes
+studentRouter.post(
+  "/leave",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(createLeaveFormFromController)
+);
 studentRouter.get(
   "/leave/:roll_number",
   authenticateUser,
-  hasRole(['student']),
+  hasRole(["student"]),
   errorWrapper(getAllLeaveFormsFromController)
 );
 
-//create a new Summer vacation form
+// Summer vacation form routes
 studentRouter.post(
   "/summer_vacation",
   authenticateUser,
-  hasRole(['student']),
+  hasRole(["student"]),
   errorWrapper(createSummerVacationFromController)
 );
-
-//fetch all applied summer vacation forms
-studentRouter.get("/summer_vacation/:roll_number",
+studentRouter.get(
+  "/summer_vacation/:roll_number",
   authenticateUser,
-  hasRole(['student']),
-    errorWrapper(getAllSummerVacationFormsOfStudent)
+  hasRole(["student"]),
+  errorWrapper(getAllSummerVacationFormsOfStudent)
 );
 
 export default studentRouter;
