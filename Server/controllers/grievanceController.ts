@@ -107,6 +107,9 @@ export const viewGrievancesByRCController = async (
   }
   console.log("RC Details:", rc);
 
+  if (rc[0].hostel == null || rc[0].floor == null) {
+    throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
+  }
   const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
   if (!grievances) {
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
