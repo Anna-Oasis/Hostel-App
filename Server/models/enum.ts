@@ -31,3 +31,5 @@ export const user_role_pgEnum = pgEnum(
   "role",
   Object.values(user_role) as [string, ...string[]]
 );
+
+export { rcLeave_status };

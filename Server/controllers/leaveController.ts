@@ -1,12 +1,14 @@
 import httpStatus from "http-status";
 import { Request, Response } from "express";
-import { approval_status } from "../constants/enum";
+import { approval_status, rcLeave_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { getRCById } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { getLeaveFormsToBeApprovedByRcByFloor, getLeaveFormByLeaveFormId, updateLeaveForm, createLeaveFormApproval, getLeaveFormsToBeApprovedByDeputyWarden } from "../services/leaveServices";
 import { LeaveDecisionSchema } from "../validation/leave.validation";
+import { getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, updateRCLeaveStatus } from "../services/rcLeaveService";
+import { date } from "drizzle-orm/mysql-core";
 
 // RC: \resident_counsellor\student_leave 
 // Deputy Warden: \deputy_warden\student_leave
@@ -162,3 +164,66 @@ export const updateLeaveFormApprovalStatusController = async (
   });
 };
 
+export const updateLeaveStatusForRC = async (
+  req : AuthRequest,
+  res : Response
+) => {
+  const { leave_id } = req.params;
+  if (!leave_id) {
+    throw AppError("Invalid Leave Selected")
+  }
+  if (!req.User) {
+    throw AppError("Invalid User");
+  }
+  const {status} = req.body;
+  if (!status) {
+    throw AppError("Invalid Status");
+  }
+
+  if (req.User.role == "deputyWarden") {
+    var result;
+    if (status == "true") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.deputyWarden)
+    } else if (status == "false") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.declined)
+    }
+    res.status(httpStatus.OK).json({
+      success : true,
+      data : result,
+      message : "Leave Approved"
+    })
+  } else if(req.User.role == "executiveWarden") {
+    const result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.executiveWarden)
+    res.status(httpStatus.OK).json({
+      success : true,
+      data : result,
+      message : "Leave Approved"
+    })
+  }
+}
+
+export const getRCLeaves = async (
+  req : AuthRequest,
+  res : Response
+) => {
+  if (!req.User) {
+    throw AppError("Invalid User or User missing");
+  }
+  switch (req.User.role) {
+    case "deputyWarden" :
+      const result = await getRCLeaveToBeApprovedByDeputyWarden()
+      res.status(httpStatus.OK).json({
+        success : true,
+        data : result
+      })
+      break;
+    case "executiveWarden" :
+      const ewResult = await getRCLeaveToBeApprovedByExecutiveWarden()
+      res.status(httpStatus.OK).json({
+        success : true,
+        data : ewResult
+      })
+      break;
+
+  }
+}

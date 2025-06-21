@@ -1,26 +1,28 @@
 import { Request, Response } from "express";
-import { 
-  getGrievances, 
-  updateGrievanceApprovalStatus ,
+import {
+  getGrievances,
+  updateGrievanceApprovalStatus,
   createRC,
   getAllRCs,
   deleteRC,
   updateRC,
 } from "../services/rcServices";
-import {  
-  rcGrievanceDecisionSchema 
+import {
+  rcGrievanceDecisionSchema
 } from "../validation/rc.schema";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
 import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
-import { createUser ,deleteUser } from "../services/helper";
+import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
+import { createRcLeaveForm, getRCLeaveApprovals } from "../services/rcLeaveService";
+import {  updateAlternateRCtoId, updateAlternateRCtoNull,} from "../services/rcLeaveService"
 
-export async function createRCController(req:AuthRequest,res:Response): Promise<void> {
+export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
 
-  const  user = await createUser(
+  const user = await createUser(
     validated.email,
     validated.name,
     validated.password,
@@ -31,7 +33,7 @@ export async function createRCController(req:AuthRequest,res:Response): Promise<
 
   const rc = await createRC(
     validated.name,
-     user[0].id,
+    user[0].id,
     validated.hostel
   );
   if (!rc || rc.length === 0) {
@@ -59,7 +61,7 @@ export async function getRCsController(req: AuthRequest, res: Response): Promise
   });
 }
 
-export async function updateRCController (req: AuthRequest, res: Response): Promise<void> {
+export async function updateRCController(req: AuthRequest, res: Response): Promise<void> {
   const { rc_id } = req.params;
   if (!rc_id || isNaN(Number(rc_id))) {
     throw AppError("RC id is not in search param or id is NaN", httpStatus.BAD_REQUEST);
@@ -129,8 +131,8 @@ export const viewGrievancesByRCController = async (
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  res.status(httpStatus.OK).json({ 
-    success: true, 
+  res.status(httpStatus.OK).json({
+    success: true,
     data: grievances,
     message: "Fetched Grievances successfully",
   });
@@ -143,7 +145,7 @@ export const approveOrDeclineGrievancesByRCController = async (
   const { rc_id } = req.params;
 
   const validated = rcGrievanceDecisionSchema.parse(req.body);
-  
+
   const rc = await getRCById(Number(rc_id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
@@ -164,8 +166,82 @@ export const approveOrDeclineGrievancesByRCController = async (
   });
 };
 
+export const createRCLeaveFormFromController = async (req: AuthRequest, res: Response) => {
+  const data = req.body;
 
+  console.log("Data received for RC Leave Form:", data);
+  console.log("User ID from request:", req.User);
 
+  if (!data || data.length === 0) {
+    throw AppError("Undefined Data Passed here", httpStatus.BAD_REQUEST);
+  }
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
+  }
+
+  const result = await createRcLeaveForm(data);
+  const _rc = await getRCidfromUserId(Number(data.alternate))
+  console.log("test",_rc)
+  const rc = await getRCById(_rc)
+  console.log("alternate RC ",rc)
+  const updatedRC = await updateAlternateRCtoId(Number(data.rc_id), Number(data.alternate))
+
+  res.status(httpStatus.OK)
+    .json({
+      success: true,
+      message: "New Leave Form Created",
+      data: result,
+      updatedRc : updatedRC
+    });
+}
+
+export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
+  }
+
+  const leaveForms = await getRCLeaveApprovals(Number(req.User.id));
+  if (!leaveForms || leaveForms.length === 0) {
+    throw AppError("No leave forms found for this RC", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: leaveForms,
+    message: "Fetched RC Leave forms successfully",
+  });
+}
+
+export const fetchRCbyHostelController = async (req: AuthRequest, res: Response) => {
+  if (!req.User) {
+    throw AppError("User is invalid");
+  } 
+  const _rc  = await getRCidfromUserId(Number(req.User.id))
+  const rc  = await getRCById(_rc);
+  
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
+  }
+
+  const rcs = await getRCsbyHostel(rc[0].hostel);
+  res.status(httpStatus.OK).json({
+    success : true,
+    data : rcs,
+    message : "Feched Successfully"
+  })
+}
+
+export const updateCompleteLeave = async (req : AuthRequest, res : Response) => {
+  if (!req.User || !req.User.id) {
+    throw AppError("User is not valid", httpStatus.FORBIDDEN)
+  }
+  const updatedRC = await updateAlternateRCtoNull(Number(req.User.id))
+  res.status(httpStatus.OK).json({
+    success : true,
+    data : updatedRC,
+    message : "Updated the Leave Status"
+  })
+}
 // export const fetchAdmissionsApprovedByRC = async (
 //   req: Request,
 //   res: Response,

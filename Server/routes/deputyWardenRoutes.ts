@@ -9,7 +9,7 @@ import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyW
 //     getVacatingFormsForDeputyWardenController,
 //     approveVacatingFormByDeputyWardenController
 //   } from "../controllers/vacatingHostelController";
-import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+import { getLeaveFormWaitingForApprovalController, getRCLeaves, updateLeaveFormApprovalStatusController, updateLeaveStatusForRC } from "../controllers/leaveController";
 
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
 
@@ -46,5 +46,8 @@ deputyWardenRouter.post("/rc", authenticateUser, hasRole(['deputyWarden']),  err
 deputyWardenRouter.get("/rc", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getRCsController));
 deputyWardenRouter.put("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateRCController));
 deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(deleteRCController));
+
+deputyWardenRouter.get("/rc/leave", authenticateUser,hasRole(['deputyWarden']), errorWrapper(getRCLeaves))
+deputyWardenRouter.get("/rc/leave/:leave_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateLeaveStatusForRC));
 
 export default deputyWardenRouter;
