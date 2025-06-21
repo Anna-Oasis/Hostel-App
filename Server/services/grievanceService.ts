@@ -4,13 +4,21 @@ import { studentModel } from "../models/studentModel";
 import { eq, and , inArray} from "drizzle-orm";
 import { NewGrievance } from "../models/grievances";
 import { grievance_status} from "../constants/enum";
-
+import { userModel } from "../models/userModel";
 
 interface GrievanceUpdateParams {
   grievance_id: number;
   status: typeof grievance_status[keyof typeof grievance_status];
   updatedBy: string;
 }
+
+export const getRollNumberByUserId = async (id: number) => {
+  return await db
+  .select({rollNo: studentModel.rollNo})
+  .from(userModel)
+  .innerJoin(studentModel, eq(userModel.id, studentModel.user_id))
+  .where(eq(userModel.id, id));
+};
 
 export const createGrievance = async (data: NewGrievance) => {
   return await db.insert(grievancesModel).values(data).returning();

@@ -11,7 +11,7 @@ import {
 } from "../validation/grievance.schema";
 import { getRCById } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
-import { getRCidfromUserId } from "../services/helper";
+import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
 import { grievance_status } from "../constants/enum";
 
 
@@ -30,8 +30,18 @@ export const createGrievanceController = async (req: AuthRequest, res: Response)
     );
   }
 
+  const rollNo = await getRollNoFromUserId(Number(req.User.id));
+  if (!rollNo) {
+    throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
+  }
+
   const validated = createGrievanceSchema.parse(req.body);
-  const result = await createGrievance(validated);
+
+  const grievanceData = {
+    ...validated,
+    roll_number: rollNo,
+  };
+  const result = await createGrievance(grievanceData);
 
   if(!result){
     throw AppError(
