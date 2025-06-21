@@ -4,11 +4,7 @@ import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 import { getGrievancesForDeputyWardenController } from "../controllers/grievanceController";
 import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
-// import 
-//   {
-//     getVacatingFormsForDeputyWardenController,
-//     approveVacatingFormByDeputyWardenController
-//   } from "../controllers/vacatingHostelController";
+
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";

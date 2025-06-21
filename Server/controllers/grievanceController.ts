@@ -174,6 +174,7 @@ export const approveOrDeclineGrievancesByRCController = async (
   res.status(httpStatus.OK).json({
     success: true,
     message: "Grievance approval submitted successfully",
+    status: validated.approve ? "Approved" : "Declined",
   });
 };
 

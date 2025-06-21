@@ -30,7 +30,7 @@ rcRouter.put("/grievance/:grievance_id", authenticateUser,hasRole(["rc"]), error
 // Fetch the approval data reviewd by a particular RC
 rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
 
-// Fetch all leave forms waiting for RC approval by hostel block and floor 
+// // Fetch all leave forms waiting for RC approval by hostel block and floor 
 rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
 
 // Approve or decline leave form by RC with leave form ID in path

@@ -56,7 +56,7 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     .from(rcModel)
     .where(eq(rcModel.userId, rcUserId));
 
-  if (!rc) throw AppError("RC not found", httpStatus.FORBIDDEN);
+  if (!rc || !rc.floor) throw AppError("RC not found", httpStatus.FORBIDDEN);
 
   if(!rc.floor) throw AppError("RC floor information is missing or invalid", httpStatus.BAD_REQUEST);
 
@@ -88,7 +88,7 @@ export const approveOrDeclineByRC = async (
     .from(rcModel)
     .where(eq(rcModel.userId, rcUserId));
 
-  if (!rc) {
+  if (!rc || !rc.floor) {
     throw AppError("RC not found", httpStatus.FORBIDDEN);
   }
 

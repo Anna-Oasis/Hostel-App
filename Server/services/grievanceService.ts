@@ -5,6 +5,8 @@ import { eq, and , inArray} from "drizzle-orm";
 import { NewGrievance } from "../models/grievances";
 import { grievance_status, hostel_block} from "../constants/enum";
 import { userModel } from "../models/userModel";
+import { hostel_block_pgEnum } from "../models/enum";
+import { sql } from "drizzle-orm";
 
 interface GrievanceUpdateParams {
   grievance_id: number;
@@ -33,6 +35,7 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
 
 export const getGrievancesForRC = async (hostelBlock: typeof hostel_block[keyof typeof hostel_block], floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
+  
   const grievances = await db
     .select()
     .from(grievancesModel)
@@ -44,6 +47,7 @@ export const getGrievancesForRC = async (hostelBlock: typeof hostel_block[keyof 
         eq(grievancesModel.status, grievance_status.submitted),       
       )
     );
+
   return grievances;
 };
 
