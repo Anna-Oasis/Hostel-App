@@ -4,13 +4,20 @@ import {
   hostel_block,
   gender,
   user_role,
-  rcLeave_status
+  rcLeave_status,
+  summer_vacation_status
 } from "../constants/enum";
 
 export const approval_status_pgEnum = pgEnum(
   "approval_status",
   Object.values(approval_status) as [string, ...string[]]
 );
+
+export const summer_vacation_status_pgEnum = pgEnum(
+  "summer_vacation_status",
+  Object.values(summer_vacation_status) as [string, ...string[]]
+);
+
 
 export const rcLeave_status_pgEnum = pgEnum(
   "rcLeave_status",
