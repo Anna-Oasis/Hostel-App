@@ -3,7 +3,7 @@ import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAd
 import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-import {approveSummerVacationFormByRCController,getSummerVacationFormsForRCFromController} from '../controllers/summerVacationController';
+import {approveSummerVacationFormByRCController,getSummerVacationFormsForRCController} from '../controllers/summerVacationController';
 import {
   getVacatingFormsForRCController,
   approveVacatingFormByRCController
@@ -35,7 +35,7 @@ rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrap
 // rcRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['rc']),errorWrapper(approveSummerVacationFormByRCController))
 
 //get all the summer vacation forms for RC
-rcRouter.get("/summer_vacation/:rc_id",authenticateUser,hasRole(['rc']),errorWrapper(getSummerVacationFormsForRCFromController));
+rcRouter.get("/summer_vacation",authenticateUser,hasRole(['rc']),errorWrapper(getSummerVacationFormsForRCController));
 
 //approve or decline summer vacation form by RC
 rcRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['rc']),errorWrapper(approveSummerVacationFormByRCController));

@@ -1,13 +1,20 @@
-import express,{raw, Request,Response} from 'express';
-import {createSummerVacationForm,getSummerVacationFormsForRC} from '../services/summerVacationServices';
-import AppError from '../utils/AppError';
-import httpStatus from 'http-status';
-import { summerVacationSchema } from '../validation/summerVacation.schema';
-import {approveSummerVacationFormByRC,
-    approveSummerVacationByDeputyWarden,getSummerVacationFormsForDeputyWarden,getAllSummerVacationForms
-} from '../services/summerVacationServices';
-import { AuthRequest} from '../types/roles';
-import { isBooleanObject } from 'node:util/types';
+import { User } from "./../models/userModel";
+import express, { raw, Request, Response } from "express";
+import AppError from "../utils/AppError";
+import httpStatus from "http-status";
+import { summerVacationSchema } from "../validation/summerVacation.schema";
+import {
+  createSummerVacationForm,
+  approveSummerVacationFormByRC,
+  approveSummerVacationByDeputyWarden,
+  getSummerVacationFormsForDeputyWarden,
+  getAllSummerVacationForms,
+  getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor,
+} from "../services/summerVacationServices";
+import { AuthRequest } from "../types/roles";
+import { isBooleanObject } from "node:util/types";
+import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
+import { getRCById } from "../services/rcServices";
 
 export const createSummerVacationFromController = async (
   req: AuthRequest,
@@ -19,19 +26,15 @@ export const createSummerVacationFromController = async (
     throw AppError("No data provided", httpStatus.BAD_REQUEST);
   }
 
-  const validation = summerVacationSchema.safeParse(data);
+  const validatedData = summerVacationSchema.parse(data);
 
-  if (!validation.success) {
-    const message =
-      validation.error.errors[0]?.message || "Validation failed";
-    throw AppError(message, httpStatus.NOT_ACCEPTABLE);
-  }
-
-  
-  const result = await createSummerVacationForm(validation.data);
+  const result = await createSummerVacationForm(validatedData);
 
   if (!result || result.length === 0) {
-    throw AppError("Internal error while generating leave form", httpStatus.INTERNAL_SERVER_ERROR);
+    throw AppError(
+      "Internal error while generating leave form",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
   }
 
   res.status(httpStatus.OK).json({
@@ -41,120 +44,173 @@ export const createSummerVacationFromController = async (
   });
 };
 
-export const getAllSummerVacationFormsFromController = async (req:AuthRequest,res:Response): Promise<void> =>
-{ 
-    const rollNumber=req.params.roll_number;
-
-    if(!rollNumber)
-    {
-        throw AppError("No Data is passed",httpStatus.BAD_REQUEST);
-    }
-
-    const result=await getAllSummerVacationForms(rollNumber);
-
-    if(!result || result.length === 0)
-    {
-        throw AppError("No Data Found for Summer Vacation Form",httpStatus.NOT_FOUND);
-    }
-
-    res.status(httpStatus.FOUND)
-    .json(
-        {
-            success:true,
-            message:"All available Summer Vacation forms are fetched Successfully",
-            data:result
-        }
+export const getAllSummerVacationFormsOfStudent = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
     );
-} 
+  }
+  const UserId = req.User.id;
+  const rollNumber = await getRollNoFromUserId(Number(UserId));
 
-export const approveSummerVacationFormByRCController = async (req:AuthRequest,res:Response) =>
-{
-    const summerVacationID = Number(req.params.summer_vacation_id);
-    const approval = Boolean(req.body.approve);
+  if (!rollNumber) {
+    throw AppError("No Data is passed", httpStatus.BAD_REQUEST);
+  }
 
-    if(!summerVacationID || isNaN(summerVacationID) || typeof approval !== "boolean")
-    {
-        throw AppError("Inconsistent Data passed",httpStatus.BAD_REQUEST);
-    }
+  const result = await getAllSummerVacationForms(rollNumber);
 
-    const user_id = Number(req.user?.id);
-    const {comment} =req.body;
+  res.status(httpStatus.FOUND).json({
+    success: true,
+    message:
+      result.length === 0
+        ? "No Summer vacation forms found"
+        : "All available Summer Vacation forms are fetched Successfully",
+    data: result,
+  });
+};
 
-    await approveSummerVacationFormByRC(summerVacationID,user_id,approval,comment);
-
-    res.status(httpStatus.OK)
-    .json(
-        {
-            success:true,
-            message: `The summer vacation form has been ${approval ? "approved" : "declined"} successfully.`
-        }
+export const approveSummerVacationFormByRCController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
     );
-}
-
-export const approveSummerVacationDeputyWardenController = async(req:AuthRequest,res:Response) =>
-{
-    const summerVacationID=Number(req.params.summer_vacation_id);
-
-    if(isNaN(summerVacationID))
-    {
-        throw AppError("Inconsistent Data passed here",httpStatus.BAD_REQUEST);
-    }
-    
-    const user_id = Number(req.user?.id);
-
-   await approveSummerVacationByDeputyWarden(user_id,summerVacationID);
-
-    res.status(httpStatus.OK)
-    .json(
-        {
-            success:true,
-            message:"Vacation form approved by deputy Warden",
-        }
+  }
+  const userId = req.User.id;
+  const summerVacationID = Number(req.params.summer_vacation_id);
+  const { approve, comment } = req.body;
+  if (
+    !summerVacationID ||
+    isNaN(summerVacationID) ||
+    typeof approve !== "boolean"
+  ) {
+    throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
+  }
+  if (approve === false && !comment) {
+    throw AppError(
+      "Comment is required when declining the form",
+      httpStatus.BAD_REQUEST
     );
-}
+  }
+  await approveSummerVacationFormByRC(
+    summerVacationID,
+    Number(userId),
+    approve,
+    comment
+  );
 
-export const getSummerVacationFormsForDeputyWardenController = async (req:AuthRequest,res:Response)=>
-{
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: `The summer vacation form has been ${
+      approve ? "approved" : "declined"
+    } successfully.`,
+  });
+};
 
-    const result = await getSummerVacationFormsForDeputyWarden();
-
-    if(!result || result.length === 0)
-    {
-        throw AppError("No pending summer vacation forms for Deputy Warden",httpStatus.NOT_FOUND);
-    }
-
-    res.status(httpStatus.OK)
-    .json(
-        {
-            message:"Data has been Fetched successfully",
-            success:true,
-            data:result
-        }
+export const approveSummerVacationDeputyWardenController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
     );
-}
+  }
+  const userId = req.User.id;
+  const summerVacationID = Number(req.params.summer_vacation_id);
+  const { approve, comment } = req.body;
+  if (
+    !summerVacationID ||
+    isNaN(summerVacationID) ||
+    typeof approve !== "boolean"
+  ) {
+    throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
+  }
+  if (approve === false && !comment) {
+    throw AppError(
+      "Comment is required when declining the form",
+      httpStatus.BAD_REQUEST
+    );
+  }
 
-export const getSummerVacationFormsForRCFromController = async(req:AuthRequest,res:Response) =>
-{
-    const rc_id=Number(req.params.id);
+  await approveSummerVacationByDeputyWarden(
+    Number(userId),
+    Number(summerVacationID),
+    approve,
+    comment
+  );
 
-    if(isNaN(rc_id))
-    {
-        throw AppError("Invalid RC ID has been passed",httpStatus.BAD_REQUEST);
-    }
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: `Vacation form ${
+      approve ? "approved" : "declined"
+    } by deputy warden successfully`,
+  });
+};
 
-    const result = await getSummerVacationFormsForRC(rc_id);
+export const getSummerVacationFormsForDeputyWardenController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  const result = await getSummerVacationFormsForDeputyWarden();
 
-    if(result.length === 0)
-    {
-        throw AppError("There are no Summer Vacation form Available or Internal Server Error",httpStatus.INTERNAL_SERVER_ERROR);
-    }
+  res.status(httpStatus.OK).json({
+    message:
+      result.length === 0
+        ? "Nothing to approve"
+        : "Data has been Fetched successfully",
+    success: true,
+    data: result,
+  });
+};
 
-    res.status(httpStatus.OK)
-        .json(
-            {
-                success:true,
-                message:"All Summer Vacation Forms are fetched Successfully",
-                data:result
-            }
-        );
-}
+export const getSummerVacationFormsForRCController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  console.log("Fetching summer vacation forms for RC");
+  console.log(req.User);
+
+  const rcId = await getRCidfromUserId(Number(req.User.id));
+  console.log("RC ID:", rcId);
+  if (!rcId || isNaN(rcId)) {
+    throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
+  }
+  const RCs = await getRCById(rcId);
+  if (!RCs || RCs.length === 0) {
+    throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
+  }
+  const RC = RCs[0];
+  const floors = RC.floor ? RC.floor : [];
+  const hostelBlock = RC.hostel;
+
+  const result =
+    await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
+      hostelBlock,
+      floors
+    );
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message:
+      result.length === 0
+        ? "No records found"
+        : "All Summer Vacation Forms are fetched Successfully",
+    data: result,
+  });
+};

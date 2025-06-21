@@ -20,8 +20,7 @@ export const summerVacationModel = pgTable("summer_vacation", {
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
 
   // Summer vacation form details
-  vacation_from: date("vacation_from").notNull(),
-  vacation_time: timestamp("vacation_time").notNull(),
+  vacation_from: timestamp("vacation_from").notNull(),
   address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   returned_items: varchar("returned_items", { length: 100 }).array(),
   // Status and timestamps

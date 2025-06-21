@@ -9,10 +9,6 @@ export const summerVacationSchema = z.object({
     .max(20, "Roll number too long"),
 
   vacation_from: z.string()
-    .regex(dateRegex, "vacation_from must be in YYYY-MM-DD format"),
-    
-
-  vacation_time: z.string()
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid ISO timestamp for vacation_time"
     })
@@ -22,5 +18,5 @@ export const summerVacationSchema = z.object({
     .min(3, "Address is too short")
     .max(100, "Address too long"),
 
-  returned_items: z.array(z.string().max(100)).optional()
+  returned_items: z.array(z.string().max(100)).optional().default([]),
 });
