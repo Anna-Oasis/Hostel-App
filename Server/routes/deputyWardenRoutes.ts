@@ -9,7 +9,7 @@ import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyW
 //     getVacatingFormsForDeputyWardenController,
 //     approveVacatingFormByDeputyWardenController
 //   } from "../controllers/vacatingHostelController";
-import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+// import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
 
@@ -30,10 +30,10 @@ deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputy
 deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesForDeputyWardenController));
 
 // Fetch all leave forms waiting for Deputy Warden approval by hostel block and floor 
-deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarden']),errorWrapper(getLeaveFormWaitingForApprovalController));
+// deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarden']),errorWrapper(getLeaveFormWaitingForApprovalController));
 
-// Approve or decline leave form by Deputy Warden with leave form ID in path
-deputyWardenRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(updateLeaveFormApprovalStatusController));
+// // Approve or decline leave form by Deputy Warden with leave form ID in path
+// deputyWardenRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(updateLeaveFormApprovalStatusController));
 
 deputyWardenRouter.get("/rooms", authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
 

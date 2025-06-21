@@ -3,8 +3,9 @@ import { grievancesModel } from "../models/grievances";
 import { studentModel } from "../models/studentModel";
 import { eq, and , inArray} from "drizzle-orm";
 import { NewGrievance } from "../models/grievances";
-import { grievance_status} from "../constants/enum";
-
+import { grievance_status, hostel_block} from "../constants/enum";
+import { hostel_block_pgEnum } from "../models/enum";
+import { sql } from "drizzle-orm";
 
 interface GrievanceUpdateParams {
   grievance_id: number;
@@ -25,6 +26,15 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
 
 export const getGrievancesForRC = async (hostelBlock: string, floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
+  console.log("Grievance Query Params:");
+  console.log("Hostel Block:", hostelBlock);
+  console.log("Floors:", floors);
+  console.log("hostelBlock typeof:", typeof hostelBlock, "value:", hostelBlock);
+  console.log("studentModel.hostelBlock typeof:", typeof studentModel.hostelBlock);
+  console.log("enum values:", hostel_block_pgEnum.enumValues);
+  // const hostelBlockEnumValue = hostelBlock as (typeof hostel_block_pgEnum.enumValues)[number];
+  const hostelBlockEnumValue = hostelBlock as (typeof hostel_block_pgEnum.enumValues)[number];
+  console.log("Converted hostelBlockEnumValue:", hostelBlockEnumValue);
   const grievances = await db
     .select()
     .from(grievancesModel)
@@ -32,10 +42,11 @@ export const getGrievancesForRC = async (hostelBlock: string, floors: number[]) 
     .where(
       and(
         inArray(studentModel.floor, floors),
-        eq(studentModel.hostelBlock, hostelBlock),   
+        eq(studentModel.hostelBlock, hostelBlockEnumValue),   
         eq(grievancesModel.status, grievance_status.submitted),       
       )
     );
+
   return grievances;
 };
 

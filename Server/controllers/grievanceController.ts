@@ -103,7 +103,7 @@ export const viewGrievancesByRCController = async (
   if(!rc[0].hostel || !rc[0].floor){
     throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
   }
-
+  console.log("Fetching grievances for hostel:", rc[0].hostel, "on floor:", rc[0].floor);
   const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
   if (!grievances) {
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
@@ -163,6 +163,7 @@ export const approveOrDeclineGrievancesByRCController = async (
   res.status(httpStatus.OK).json({
     success: true,
     message: "Grievance approval submitted successfully",
+    status: validated.approve ? "Approved" : "Declined",
   });
 };
 
