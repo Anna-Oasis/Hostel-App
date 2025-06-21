@@ -40,6 +40,9 @@ export const getLeaveFormWaitingForApprovalController = async (
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
+    if (rc[0].floor == null || rc[0].hostel == null) {
+      throw AppError("RC floor or hostel information is missing", httpStatus.NOT_FOUND);
+    }
     leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
       rc[0].floor, rc[0].hostel
     );

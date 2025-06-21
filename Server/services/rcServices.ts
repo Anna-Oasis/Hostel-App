@@ -3,9 +3,6 @@ import { db } from "../config/dbConnection";
 
 import { rcModel } from "../models/rcModel";
 
-
-
-
 export async function createRC(
   name: string,
   userId: number,

@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { 
-  getGrievances, 
-  updateGrievanceApprovalStatus ,
+import {
   createRC,
   getAllRCs,
   deleteRC,
@@ -16,6 +14,7 @@ import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
 import { createUser ,deleteUser } from "../services/helper";
+import { getGrievancesForRC, updateGrievanceApprovalStatusByRC } from "../services/grievanceService";
 
 export async function createRCController(req:AuthRequest,res:Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
@@ -124,7 +123,7 @@ export const viewGrievancesByRCController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  const grievances = await getGrievances(rc[0].hostel, rc[0].floor ?? []);
+  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor ?? []);
   if (!grievances) {
     throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -149,7 +148,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  const updateResult = await updateGrievanceApprovalStatus({
+  const updateResult = await updateGrievanceApprovalStatusByRC({
     grievance_id: validated.grievances_id,
     rc_approval: validated.approve
   });

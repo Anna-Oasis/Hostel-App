@@ -1,7 +1,10 @@
 import { eq, inArray, and } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { approval_status } from "../constants/enum";
-import { vacatingHostelModel, NewVacatingHostel } from "../models/vacatingHostel";
+import {
+  vacatingHostelModel,
+  NewVacatingHostel,
+} from "../models/vacatingHostel";
 import { vacatingHostelApprovalsModel } from "../models/vacatingHostelApprovals";
 import { cautionDepositRefundModel } from "../models/cautionDepositRefund";
 import { rcModel } from "../models/rcModel";
@@ -30,7 +33,7 @@ export const createCautionDepositRefund = async (data: any) => {
       bankName,
       addressOfTheBank,
       IFSCode,
-      deductions: "0.00",        // add default values explicitly
+      deductions: "0.00", // add default values explicitly
       refund_amount: "0.00",
     })
     .returning();
@@ -49,7 +52,6 @@ export const getAllVacatingHostelForms = async () => {
     );
 };
 
-
 export const getPendingRCApprovals = async (rcUserId: number) => {
   const [rc] = await db
     .select()
@@ -58,13 +60,19 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
 
   if (!rc) throw AppError("RC not found", httpStatus.FORBIDDEN);
 
+  if (!rc.floor) {
+    throw AppError("RC floor information is missing", httpStatus.BAD_REQUEST);
+  }
   return await db
     .select({
       vacating: vacatingHostelModel,
       student: studentModel,
     })
     .from(vacatingHostelModel)
-    .innerJoin(studentModel, eq(vacatingHostelModel.roll_number, studentModel.rollNo))
+    .innerJoin(
+      studentModel,
+      eq(vacatingHostelModel.roll_number, studentModel.rollNo)
+    )
     .where(
       and(
         eq(vacatingHostelModel.status, approval_status.manager),
@@ -73,7 +81,6 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
       )
     );
 };
-
 
 export const approveOrDeclineByRC = async (
   vacating_hostel_id: number,
@@ -103,7 +110,10 @@ export const approveOrDeclineByRC = async (
 
   // 3. Get Student Info
   const [student] = await db
-    .select({ hostelBlock: studentModel.hostelBlock, floor: studentModel.floor })
+    .select({
+      hostelBlock: studentModel.hostelBlock,
+      floor: studentModel.floor,
+    })
     .from(studentModel)
     .where(eq(studentModel.rollNo, form.roll_number));
 
@@ -113,10 +123,13 @@ export const approveOrDeclineByRC = async (
 
   // 4. Check permission
   const isHostelMatch = rc.hostel === student.hostelBlock;
-  if(!student.floor) {
-    throw AppError("Student floor information is missing", httpStatus.BAD_REQUEST);
+  if (!student.floor) {
+    throw AppError(
+      "Student floor information is missing",
+      httpStatus.BAD_REQUEST
+    );
   }
-  const isFloorMatch = rc.floor.includes(student.floor);
+  const isFloorMatch = rc.floor ? rc.floor.includes(student.floor) : false;
 
   if (!isHostelMatch || !isFloorMatch) {
     throw AppError("RC not authorized for this student", httpStatus.FORBIDDEN);
@@ -132,7 +145,7 @@ export const approveOrDeclineByRC = async (
 
   // 6. Update status in vacating_hostel
   const newStatus = approve ? approval_status.rc : approval_status.declined;
-  const [updatedForm] =await db
+  const [updatedForm] = await db
     .update(vacatingHostelModel)
     .set({ status: newStatus })
     .where(eq(vacatingHostelModel.id, vacating_hostel_id))
@@ -156,13 +169,15 @@ export const getVacatingFormsWaitingForManager = async () => {
   }
 
   // Extract the IDs
-  const approvedFormIds = approvedForms.map(form => form.id);
+  const approvedFormIds = approvedForms.map((form) => form.id);
 
   // Get only caution deposit refund data for these IDs
   const cautionDepositData = await db
     .select()
     .from(cautionDepositRefundModel)
-    .where(inArray(cautionDepositRefundModel.vacating_hostel_id, approvedFormIds));
+    .where(
+      inArray(cautionDepositRefundModel.vacating_hostel_id, approvedFormIds)
+    );
 
   return cautionDepositData;
 };
@@ -236,26 +251,28 @@ export const approveOrDeclineByManager = async (
   // First update only the provided fields in caution deposit refund
   if (cautionDepositData) {
     const updateData: any = {};
-    
+
     if (cautionDepositData.deductions !== undefined) {
       updateData.deductions = cautionDepositData.deductions;
     }
-    
+
     if (cautionDepositData.refund_amount !== undefined) {
       updateData.refund_amount = cautionDepositData.refund_amount;
     }
-    
+
     if (cautionDepositData.deduction_details !== undefined) {
       updateData.deduction_details = cautionDepositData.deduction_details;
     }
-    
+
     // Always update timestamp when making changes
     updateData.timestamp = new Date();
 
     await db
       .update(cautionDepositRefundModel)
       .set(updateData)
-      .where(eq(cautionDepositRefundModel.vacating_hostel_id, vacating_hostel_id));
+      .where(
+        eq(cautionDepositRefundModel.vacating_hostel_id, vacating_hostel_id)
+      );
   }
 
   // Create entry in vacating hostel approvals
@@ -267,21 +284,23 @@ export const approveOrDeclineByManager = async (
   });
 
   // Determine new status based on approval
-  const newStatus = approve ? approval_status.manager : approval_status.declined;
-  
+  const newStatus = approve
+    ? approval_status.manager
+    : approval_status.declined;
+
   // Update vacating hostel model status
   const updatedForm = await db
     .update(vacatingHostelModel)
-    .set({ 
+    .set({
       status: newStatus,
-      updated_at: new Date()
+      updated_at: new Date(),
     })
     .where(eq(vacatingHostelModel.id, vacating_hostel_id))
     .returning();
 
-  return { 
+  return {
     message: approve ? "Approved by Manager" : "Declined by Manager",
-    updatedForm: updatedForm[0]
+    updatedForm: updatedForm[0],
   };
 };
 export const approveOrDeclineByDeputyWarden = async (
@@ -299,20 +318,24 @@ export const approveOrDeclineByDeputyWarden = async (
   });
 
   // Determine new status based on approval
-  const newStatus = approve ? approval_status.deputyWarden : approval_status.declined;
-  
+  const newStatus = approve
+    ? approval_status.deputyWarden
+    : approval_status.declined;
+
   // Update vacating hostel model status
   const updatedForm = await db
     .update(vacatingHostelModel)
-    .set({ 
+    .set({
       status: newStatus,
-      updated_at: new Date()
+      updated_at: new Date(),
     })
     .where(eq(vacatingHostelModel.id, vacating_hostel_id))
     .returning();
 
-  return { 
-    message: approve ? "Approved by Deputy Warden" : "Declined by Deputy Warden",
-    updatedForm: updatedForm[0]
+  return {
+    message: approve
+      ? "Approved by Deputy Warden"
+      : "Declined by Deputy Warden",
+    updatedForm: updatedForm[0],
   };
 };
