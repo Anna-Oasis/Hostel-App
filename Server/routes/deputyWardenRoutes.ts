@@ -2,19 +2,18 @@ import { Router } from "express";
 import { fetchAdmissionsApprovedByUser, fetchAdmissionWaitingForApprovalController, updateApprovalStatusByWardenController } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
-import { getGrievancesFromDeputyWardenController } from "../controllers/grievanceController";
+import { getGrievancesForDeputyWardenController } from "../controllers/grievanceController";
+import {approveSummerVacationDeputyWardenController,getSummerVacationFormsForDeputyWardenController} from '../controllers/summerVacationController';
+
 import { approveVacatingFormByDeputyWardenController, getVacatingFormsForDeputyWardenController } from "../controllers/vactingHostelController";
-// import 
-//   {
-//     getVacatingFormsForDeputyWardenController,
-//     approveVacatingFormByDeputyWardenController
-//   } from "../controllers/vacatingHostelController";
+
 import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
 
 import { createRCController, deleteRCController, getRCsController, updateRCController } from "../controllers/rcController";
 
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { getRCLeaves, updateLeaveStatusForRC } from "../controllers/rcLeaveController";
+import { getAllAttendanceController } from "../controllers/attendanceController";
 
 
 const deputyWardenRouter = Router();
@@ -27,8 +26,13 @@ deputyWardenRouter.put("/admissions/:admission_id", authenticateUser, hasRole(['
 
 deputyWardenRouter.get("/admissions/approvals",authenticateUser,hasRole(['deputyWarden']), errorWrapper(fetchAdmissionsApprovedByUser));
 
+//approve the summer vacation id by Deputy Warden
+deputyWardenRouter.put("/summer_vacation/:summer_vacation_id",authenticateUser,hasRole(['deputyWarden']),errorWrapper(approveSummerVacationDeputyWardenController));
+
+//get all summer vacation waiting for approval by Deputy Warden
+deputyWardenRouter.get("/summer_vacation",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getSummerVacationFormsForDeputyWardenController))
 //get All the greivance data
-deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesFromDeputyWardenController));
+deputyWardenRouter.get("/grievance",authenticateUser,hasRole(['deputyWarden']),errorWrapper(getGrievancesForDeputyWardenController));
 
 // Fetch all leave forms waiting for Deputy Warden approval by hostel block and floor 
 deputyWardenRouter.get("/student_leave", authenticateUser ,hasRole(['deputyWarden']),errorWrapper(getLeaveFormWaitingForApprovalController));
@@ -50,5 +54,8 @@ deputyWardenRouter.delete("/rc/:rc_id", authenticateUser, hasRole(['deputyWarden
 
 deputyWardenRouter.get("/rc/leave", authenticateUser,hasRole(['deputyWarden']), errorWrapper(getRCLeaves))
 deputyWardenRouter.put("/rc/leave/:leave_id", authenticateUser, hasRole(['deputyWarden']), errorWrapper(updateLeaveStatusForRC));
+//Attendance
+deputyWardenRouter.get("/attendance/", authenticateUser, hasRole(['deputyWarden']), errorWrapper(getAllAttendanceController));
+
 
 export default deputyWardenRouter;

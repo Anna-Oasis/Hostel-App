@@ -2,17 +2,23 @@ import { Request,Response } from "express";
 import { createLeaveForm,getLeaveFormApprovals} from "../services/leaveFormServices";
 import AppError from "../utils/AppError";
 import  httpStatus  from "http-status";
+import { leaveFormSchema } from "../validation/leaveform.schema";
+import { AuthRequest } from "../types/roles";
 
-export const createLeaveFormFromController = async (req:Request,res:Response) =>
+export const createLeaveFormFromController = async (req:AuthRequest,res:Response) =>
 {
-    const data=req.body;
+    //validation
+    const validatedData=leaveFormSchema.safeParse(req.body);
 
-    if(!data || data.length === 0)
+    if(!validatedData.success)
     {
-        throw AppError("Undefined Data Passed here",httpStatus.BAD_REQUEST);
+        throw AppError(
+            validatedData.error.issues.map((issue) => issue.message).join(", "),
+            httpStatus.BAD_REQUEST
+        );
     }
 
-    const result = await createLeaveForm(data);
+    const result = await createLeaveForm(validatedData.data);
 
     res.status(httpStatus.OK)
     .json({
@@ -23,7 +29,7 @@ export const createLeaveFormFromController = async (req:Request,res:Response) =>
 
 }
 
-export const getAllLeaveFormsFromController = async (req:Request,res:Response) :Promise<void> =>
+export const getAllLeaveFormsFromController = async (req:AuthRequest,res:Response) :Promise<void> =>
 {
     const rollNumber=req.params.roll_number;
 

@@ -7,9 +7,10 @@ import {
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
-  getGrievancesByRollNumberController,
+  getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
+import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -35,8 +36,8 @@ studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole([
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
 studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
-studentRouter.post("/grievance", errorWrapper(createGrievanceController));
-studentRouter.get("/grievance/:roll_number", errorWrapper(getGrievancesByRollNumberController));
+studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
+studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
 
 
 const fileFields = upload.fields([
@@ -82,11 +83,27 @@ studentRouter.post(
   errorWrapper(createLeaveFormFromController)
 );
 
+//get all the leave forms
 studentRouter.get(
   "/leave/:roll_number",
   authenticateUser,
   hasRole(['student']),
   errorWrapper(getAllLeaveFormsFromController)
+);
+
+//create a new Summer vacation form
+studentRouter.post(
+  "/summer_vacation",
+  authenticateUser,
+  hasRole(['student']),
+  errorWrapper(createSummerVacationFromController)
+);
+
+//fetch all applied summer vacation forms
+studentRouter.get("/summer_vacation/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
+    errorWrapper(getAllSummerVacationFormsOfStudent)
 );
 
 export default studentRouter;

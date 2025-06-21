@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { fetchAdmissionWaitingForApprovalController, approveByManagerController,fetchAdmissionsApprovedByUser } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
-import { resolveGrievanceFromController, getGreivancesForManagerFromController } from '../controllers/grievanceController';
+import { resolveGrievanceByManagerController, getGrievancesForManagerController } from '../controllers/grievanceController';
 import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
 import { approveVacatingFormByManagerController, getVacatingFormsForManagerController } from '../controllers/vactingHostelController';
 // import {
@@ -28,11 +28,11 @@ managerRouter.put("/vacating_hostel/:vacating_hostel_id",authenticateUser,hasRol
 
 managerRouter.get("/vacating_hostel",authenticateUser,hasRole(['manager']),errorWrapper(getVacatingFormsForManagerController));
 
-//PUT-manager/grievance
-managerRouter.put("/grievance/:grievance_id",authenticateUser,hasRole(['manager']),errorWrapper(resolveGrievanceFromController));
+//PUT-manager/grievance/:grievance_id
+managerRouter.put("/grievance/:grievance_id",authenticateUser,hasRole(['manager']),errorWrapper(resolveGrievanceByManagerController));
 
 //GET-manager/grievance
-managerRouter.get("/grievance",authenticateUser,hasRole(['manager']),errorWrapper(getGreivancesForManagerFromController));
+managerRouter.get("/grievance",authenticateUser,hasRole(['manager']),errorWrapper(getGrievancesForManagerController));
 
 export default managerRouter;
 
