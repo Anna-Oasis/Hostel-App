@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useFormikContext } from "formik";
 import ImagePickerField from "@/components/form/ImagePickerField";
 import SelectField from "@/components/form/SelectField";
 import TextField from "@/components/form/TextField";
 import RadioField from "@/components/form/RadioField";
-import { useFormikContext } from "formik";
 import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
 
 const FileUploads = () => {
-  const { values } = useFormikContext<any>();
+  const { values, setFieldValue } = useFormikContext<any>();
+  useEffect(() => {
+    if (values.isForeignNational === "Yes" && values.govtIdType !== "Passport") {
+      setFieldValue("govtIdType", "Passport");
+    }
+  }, [values.isForeignNational, setFieldValue, values.govtIdType]);
 
   return (
     <>
@@ -35,7 +40,7 @@ const FileUploads = () => {
           />
           <ImagePickerField
             label={`${values.govtIdType || "Government ID"} Document`}
-            value="govtIdDocument"
+            value="categoryProofUrl"
             placeholder="Upload"
           />
         </View>
@@ -48,17 +53,17 @@ const FileUploads = () => {
           />
           <ImagePickerField
             label="Passport Document"
-            value="govtIdDocument"
+            value="categoryProofUrl"
             placeholder="Upload"
           />
         </View>
       ) }
 
-      <ImagePickerField label="Passport Photo" value="passportPhoto" placeholder="Upload" />
-      <ImagePickerField label="Student Signature" value="studentSignature" placeholder="Upload" />
-      <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignature" placeholder="Upload" />
-      <ImagePickerField label="Aadhaar Card" value="aadhaar" placeholder="Upload" />
-      <ImagePickerField label="Admission Slip" value="admissionSlip" placeholder="Upload" />
+      <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
+      <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
+      <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
+      <ImagePickerField label="Aadhaar Card" value="aadhaarUrl" placeholder="Upload" />
+      <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
     </>
   );
 };

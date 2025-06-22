@@ -1,33 +1,41 @@
-import React from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalBody,
-} from "@/components/ui/modal";
-import { Center } from "@/components/ui/center";
 import useLoadingStore from "@/stores/loadingStore";
 
 const Loader = () => {
   const isLoading = useLoadingStore((state) => state.isLoading);
 
+  if (!isLoading) return null;
+
   return (
-    <Modal
-      isOpen={isLoading}
-      onClose={() => {}}
-      closeOnOverlayClick={false}
-    >
-      <ModalBackdrop />
-      <ModalContent className="bg-transparent border-0 shadow-none m-0 p-0 w-full h-full max-w-full">
-        <ModalBody className="flex-1 justify-center items-center">
-          <Center>
-            <Spinner size="large" />
-          </Center>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <View style={styles.overlay}>
+      <View style={styles.center}>
+        <Spinner size="large" />
+      </View>
+    </View>
   );
 };
 
+const { width, height } = Dimensions.get("window");
+const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width,
+    height,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    zIndex: 9999,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+  },
+});
+
 export default Loader;
+

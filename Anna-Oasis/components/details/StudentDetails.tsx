@@ -32,7 +32,7 @@ const StudentDetails = () => {
       />
       <SelectField label="Nationality" value="nationality" options={nationalities} />
       <SelectField label="Blood Group" value="bloodGroup" options={bloodGroups} />
-      <TextField label="Medical History" value="medicalHistory" placeholder="Optional" />
+      <TextField label="Medical History (Type NIL if none)" value="medicalHistory" placeholder="Optional" />
     </>
   );
 };

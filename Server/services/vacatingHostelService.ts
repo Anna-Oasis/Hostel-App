@@ -46,11 +46,11 @@ export const getVacatingHostelFormsOfStudent = async (rollNo:string) => {
       caution: cautionDepositRefundModel,
     })
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.roll_number, no))
+    .where(eq(vacatingHostelModel.roll_number, rollNo))
     .leftJoin(
       cautionDepositRefundModel,
       eq(cautionDepositRefundModel.vacating_hostel_id, vacatingHostelModel.id)
-    ).where(eq(vacatingHostelModel.roll_number, rollNo));
+    );
 };
 
 export const getPendingRCApprovals = async (rcUserId: number) => {

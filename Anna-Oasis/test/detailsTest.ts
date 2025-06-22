@@ -1,0 +1,68 @@
+const testValues = {
+  name: "John Doe",
+  rollNo: "123456",
+  course: "B.E.",
+  branch: "Computer Science and Engineering",
+  semester: "Semester 1",
+  mobile: "+919876543210",
+  email: "john.doe@example.com",
+  emergencyContact: "+919876543211",
+  dateOfBirth: "2000-01-01",
+  age: "22",
+  nationality: "Indian",
+  bloodGroup: "A+",
+  medicalHistory: "None",
+  gender: "Male",
+
+  fatherName: "Robert Doe",
+  fatherOccupation: "Engineer",
+  fatherMobile: "+919876543212",
+  fatherEmail: "robert.doe@example.com",
+  fatherCountry: "India",
+
+  motherName: "Jane Doe",
+  motherOccupation: "Teacher",
+  motherMobile: "+919876543213",
+  motherEmail: "jane.doe@example.com",
+  motherCountry: "India",
+
+  resIndiaHouseNo: "123",
+  resIndiaStreet: "MG Road",
+  resIndiaCity: "Chennai",
+  resIndiaState: "Tamil Nadu",
+  resIndiaPostalCode: "600001",
+
+  resForeignHouseNo: "456",
+  resForeignStreet: "Baker Street",
+  resForeignCity: "London",
+  resForeignState: "Greater London",
+  resForeignCountry: "UK",
+  resForeignPostalCode: "NW16XE",
+
+  guardianName: "Uncle Sam",
+  guardianRelationship: "Uncle",
+  guardianMobile: "+919876543214",
+  guardianEmail: "uncle.sam@example.com",
+  guardianHouseNo: "789",
+  guardianStreet: "Park Avenue",
+  guardianCity: "Mumbai",
+  guardianState: "Maharashtra",
+  guardianCountry: "India",
+  guardianPostalCode: "400001",
+
+  passportPhotoUrl: "passport_photo.jpg",
+  studentSignatureUrl: "student_signature.jpg",
+  parentGuardianSignatureUrl: "parent_signature.jpg",
+  govtIdType: "aadhaar",
+  govtId: "1234-5678-9012",
+  categoryProofUrl: "aadhaar_card.pdf",
+  aadhaarUrl: "123456789012",
+  admissionSlipUrl: "admission_slip.pdf",
+  declaration: ["I agree"],
+  transactionId: "TXN123456",
+
+  roomNumber: "101",
+  isForeignNational: "No"
+};
+
+export default testValues;

@@ -189,7 +189,7 @@ const initialValues = {
   guardianStreet: "",
   guardianCity: "",
   guardianState: "",
-  guardianCountry: "",
+  guardianCountry: "India",
   guardianPostalCode: "",
 
   passportPhoto: "",
