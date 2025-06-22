@@ -6,7 +6,7 @@ import {
   approveOrDeclineByManager,
   createCautionDepositRefund,
   createVacatingHostelForm,
-  getAllVacatingHostelForms,
+  getVacatingHostelFormsOfStudent,
   getVacatingFormsWaitingForDeputyWarden,
   getVacatingFormsWaitingForManager,
 } from "../services/vacatingHostelService";
@@ -17,6 +17,7 @@ import {
 import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
+import { getRollNoFromUserId } from "../services/helper";
 
 export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
   const { vacatingForm, cautionDeposit } = req.body;
@@ -54,22 +55,21 @@ export async function createVacatingHostelFormController(req: AuthRequest, res: 
 }
 
 
-export async function getAllVacatingHostelFormsController(req: AuthRequest, res: Response) {
-  const result = await getAllVacatingHostelForms();
+export async function getVacatingHostelFormsOfaStudentController(req: AuthRequest, res: Response) {
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No vacating hostel forms found",
-    });
-    return;
+  if (!req.User || !req.User.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
-
+  const userId = parseInt(req.User.id);
+  const rollNo =await getRollNoFromUserId(userId);
+  if (!rollNo) {
+    throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
+  }
+  const result = await getVacatingHostelFormsOfStudent(rollNo);
   res.status(httpStatus.OK).json({
     success: true,
     data: result,
-    message: "Vacating hostel forms fetched successfully",
+    message: result.length > 0 ? "Vacating hostel forms fetched successfully" : "No vacating hostel forms found for the student",
   });
 }
 

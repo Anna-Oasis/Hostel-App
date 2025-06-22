@@ -20,7 +20,6 @@ const requiredFiles = [
   "studentSignatureUrl",
   "parentGuardianSignatureUrl",
   "categoryProofUrl",
-  "aadhaarUrl",
   "admissionSlipUrl",
 ];
 
@@ -35,7 +34,6 @@ const fileFieldToFolder: Record<
     signature: "parentGuardianSignature",
   },
   categoryProofUrl: { folder: "categoryProof", signature: "categoryProof" },
-  aadhaarUrl: { folder: "aadhaar", signature: "aadhaar" },
   admissionSlipUrl: { folder: "admissionSlip", signature: "admissionSlip" },
 };
 
