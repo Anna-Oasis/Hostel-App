@@ -9,20 +9,20 @@ import { Text } from "../ui/text";
 const LocalGuardian = () => (
   <>
     <Text className="text-lg font-semibold mb-4">Local Guardian Details</Text>
-    <TextField label="Guardian Name" value="guardianName" placeholder="Name" />
+    <TextField label="Guardian Name" value="localGuardianName" placeholder="Name" />
     <TextField
       label="Relationship"
-      value="guardianRelationship"
+      value="localGuardianRelationship"
       placeholder="Relationship"
     />
     <PhoneInputField
       label="Guardian Mobile"
-      value="guardianMobile"
+      value="localGuardianMobile"
       placeholder="Guardian's phone number"
     />
     <TextField
       label="Guardian Email"
-      value="guardianEmail"
+      value="localGuardianEmail"
       placeholder="Email"
     />
     <TextField

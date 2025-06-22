@@ -54,10 +54,10 @@ const validationSchemas = [
   }),
   // Local Guardian
   Yup.object({
-    guardianName: Yup.string().required("Required"),
-    guardianRelationship: Yup.string().required("Required"),
-    guardianMobile: Yup.string().matches(phoneRegex, "Invalid mobile number").required("Required"),
-    guardianEmail: Yup.string().email("Invalid email").required("Required"),
+    localGuardianName: Yup.string().required("Required"),
+    localGuardianRelationship: Yup.string().required("Required"),
+    localGuardianMobile: Yup.string().matches(phoneRegex, "Invalid mobile number").required("Required"),
+    localGuardianEmail: Yup.string().email("Invalid email").required("Required"),
     guardianHouseNo: Yup.string().required("Required"),
     guardianStreet: Yup.string().required("Required"),
     guardianCity: Yup.string().required("Required"),
