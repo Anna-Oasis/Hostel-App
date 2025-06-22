@@ -96,6 +96,7 @@ export const getLeaveFormWaitingForApprovalController = async (
     }
 
     const rc = await getRCById(Number(rc_id));
+    console.log("RC:", rc);
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }

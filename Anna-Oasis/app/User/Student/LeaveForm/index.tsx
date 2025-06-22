@@ -3,7 +3,7 @@ import { View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import ModalCallable from "@/components/ModalCallable";
 import { useRouter } from "expo-router";
-import { useUserStore } from "@/stores/userStore"
+import useUserStore from "@/stores/userStore";
 import { getToken } from "@/utils/authUtils";
 import { verifyToken } from "@/utils/authUtils"; 
 
