@@ -1,13 +1,12 @@
-import { Request, Response,NextFunction } from "express";
-import { ZodError } from "zod";
+import { Response } from "express";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
-import { getRollNoFromUserId } from "../services/helper";
 import { AppError } from "../utils/AppError";
 import { studentSchema } from "../validation/student.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
   findStudentByRollNo,
+  findStudentByUserId,
   insertStudentDetails,
   updateStudentByRollNo,
 } from "../services/detailsService";
@@ -72,16 +71,8 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
     throw AppError("User ID is required", httpStatus.BAD_REQUEST);
   }
   console.log("User ID:", userId);
-  const rollNo = await getRollNoFromUserId(Number(userId));
-  if (!rollNo) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: {},
-      message: "Roll number not found for the user",
-    });
-    return;
-  }
-  const student = await findStudentByRollNo(rollNo);
+
+  const student = await findStudentByUserId(Number(userId));
   if (!student.length) {
     res.status(httpStatus.OK).json({
       success: false,
