@@ -5,6 +5,19 @@ import { eq, and, inArray } from "drizzle-orm";
 import { approval_status } from "../constants/enum";
 import { leaveFormApprovalsModel } from "../models/leaveFormApprovals";
 
+export const getLeaveFormApprovals=async(rollNumber:string)=>
+{
+    return await db
+            .select()
+            .from(leaveFormModel)
+            .where(eq(leaveFormModel.roll_number,rollNumber));
+}
+
+export const createLeaveForm = async(data:NewLeaveForm)=>
+{
+    return await db.insert(leaveFormModel).values(data).returning();
+}
+
 export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], hostel_block: string) => {
   const leave_form = await db
     .select()

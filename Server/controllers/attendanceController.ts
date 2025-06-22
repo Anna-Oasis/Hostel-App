@@ -56,14 +56,19 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     
     message = `Attendance records retrieved successfully for RC ${rc_id} and alternate RC ${alternatingRCId}`;
   } else {
-
     // Fetch attendance only for current RC
     attendanceRecords = await getAttendanceByRc(rc_id);
     message = "Attendance records retrieved successfully";
   }
 
   if (attendanceRecords.length === 0) {
-    throw AppError("No attendance records found for this RC", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      count: 0,
+      message: "No attendance records found for this RC",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -73,31 +78,6 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     message: message,
   });
 }
-// export async function getAllAttendanceController(req: AuthRequest, res: Response) {
-  
-//   const date = req.params.date
-//     if (!date) {
-//     throw AppError("Date is required as query parameter", httpStatus.BAD_REQUEST);
-//   }
-
-//   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-//   if (!dateRegex.test(date as string)) {
-//     throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
-//   }
-
-//   const attendanceRecords = await fetchAllAttendanceByDate(date as string);
-
-//   if (attendanceRecords.length === 0) {
-//     throw AppError("No attendance records found", httpStatus.NOT_FOUND);
-//   }
-
-//   res.status(httpStatus.OK).json({
-//     success: true,
-//     data: attendanceRecords,
-//     count: attendanceRecords.length,
-//     message: "All attendance records retrieved successfully",
-//   });
-// }
 
 export async function getAllAttendanceController(req: AuthRequest, res: Response) {
   const { date } = req.query;
@@ -121,14 +101,19 @@ export async function getAllAttendanceController(req: AuthRequest, res: Response
     const errorMessage = date 
       ? `No attendance records found for date: ${date}` 
       : "No attendance records found";
-    throw AppError(errorMessage, httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      count: 0,
+      message: errorMessage,
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
     success: true,
     data: attendanceRecords,
     count: attendanceRecords.length,
-    // ...(date && { date: date }), 
     message: message,
   });
 }

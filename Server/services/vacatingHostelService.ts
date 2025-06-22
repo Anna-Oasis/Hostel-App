@@ -36,7 +36,7 @@ export const createCautionDepositRefund = async (data: any) => {
     .returning();
 };
 
-export const getAllVacatingHostelForms = async () => {
+export const getVacatingHostelFormsOfStudent = async (rollNo:string) => {
   return await db
     .select({
       vacating: vacatingHostelModel,
@@ -46,7 +46,7 @@ export const getAllVacatingHostelForms = async () => {
     .leftJoin(
       cautionDepositRefundModel,
       eq(cautionDepositRefundModel.vacating_hostel_id, vacatingHostelModel.id)
-    );
+    ).where(eq(vacatingHostelModel.roll_number, rollNo));
 };
 
 
