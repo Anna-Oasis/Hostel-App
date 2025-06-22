@@ -45,14 +45,14 @@ export default function DetailsPage() {
 
   return (
     <Formik
-      // initialValues={initialValues}
-      initialValues={testValues} // For testing purposes, replace with initialValues in production
+      initialValues={initialValues}
+      // initialValues={testValues} // For testing purposes, replace with initialValues in production
       validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
         } else {
-          // setLoading(true);
+          setLoading(true);
           const formData = new FormData();
           formData.append("user_id", userId?.toString() || "");
           formData.append("name", values.name);
@@ -83,6 +83,7 @@ export default function DetailsPage() {
           formData.append("resIndiaStreet", values.resIndiaStreet);
           formData.append("resIndiaCity", values.resIndiaCity);
           formData.append("resIndiaState", values.resIndiaState);
+          formData.append("resIndiaCountry", "India");
           formData.append("resIndiaPostalCode", values.resIndiaPostalCode);
           formData.append("resForeignHouseNo", values.resForeignHouseNo);
           formData.append("resForeignStreet", values.resForeignStreet);
@@ -110,7 +111,6 @@ export default function DetailsPage() {
               name: "parentGuardianSignatureUrl",
             },
             { key: "categoryProofUrl", name: "categoryProofUrl" },
-            { key: "aadhaarUrl", name: "aadhaarUrl" },
             { key: "admissionSlipUrl", name: "admissionSlipUrl" },
           ] as const;
           type ImageFieldKey = (typeof imageFields)[number]["key"];
@@ -128,7 +128,7 @@ export default function DetailsPage() {
             }
           }
           await submitStudentDetails(formData);
-          // setLoading(false);
+          setLoading(false);
         }
       }}
     >

@@ -62,7 +62,6 @@ const FileUploads = () => {
       <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
       <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
       <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
-      <ImagePickerField label="Aadhaar Card" value="aadhaarUrl" placeholder="Upload" />
       <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
     </>
   );

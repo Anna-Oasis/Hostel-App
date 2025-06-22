@@ -172,6 +172,7 @@ const initialValues = {
   resIndiaStreet: "",
   resIndiaCity: "",
   resIndiaState: "",
+  resIndiaCountry: "India",
   resIndiaPostalCode: "",
 
   resForeignHouseNo: "",
@@ -192,14 +193,13 @@ const initialValues = {
   guardianCountry: "India",
   guardianPostalCode: "",
 
-  passportPhoto: "",
-  studentSignature: "",
-  parentGuardianSignature: "",
+  passportPhotoUrl: "",
+  studentSignatureUrl: "",
+  parentGuardianSignatureUrl: "",
   govtIdType: "",
   govtId: "",
-  govtIdDocument: "",
-  aadhaar: "",
-  admissionSlip: "",
+  categoryProofUrl: "",
+  admissionSlipUrl: "",
   declaration: [] as string[],
   transactionId: "",
 
