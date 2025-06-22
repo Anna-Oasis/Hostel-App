@@ -1,34 +1,32 @@
-import { Router, Request, Response } from "express";
+// authRoutes.ts - Authentication-related routes for the Hostel App API
+// Handles user registration, login, and token verification
+
+import { Router, Response } from "express";
 import { register, login } from "../controllers/authController";
-import { UserRole, PERMISSIONS } from "../types/roles";
 import { authenticateUser } from "../middleware/rbacMiddleware";
 import { AuthRequest } from "../types/roles";
 
 const router = Router();
 
-
+/**
+ * @route   POST /register
+ * @desc    Register a new user
+ * @access  Public
+ */
 router.post("/register", register);
-router.post("/login", login);
-
-// Protected routes examples
-// router.get(
-//   "/admin/users",
-//   authenticateUser,
-//   hasRole(['warden']),
-// );
-
-// router.post(
-//   "/admission/approve",
-//   authenticateUser,
-//   hasRole(['warden', 'rc']),
-//   hasPermission('approve_admission'),
-// );
 
 /**
- * Route to verify the token and return user information
- * @param req - Express request object
- * @param res - Express response object
- * @returns JSON response with user information if token is valid
+ * @route   POST /login
+ * @desc    Authenticate user and return token
+ * @access  Public
+ */
+router.post("/login", login);
+
+/**
+ * @route   GET /verify-token
+ * @desc    Verify JWT token and return user info if valid
+ * @access  Protected
+ * @middleware authenticateUser - Verifies JWT and attaches user to request
  */
 router.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) => {
   if (req.User) {
@@ -44,7 +42,5 @@ router.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) 
     });
   }
 });
-
-
 
 export default router;

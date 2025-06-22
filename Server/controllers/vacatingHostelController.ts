@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import httpStatus from "http-status";
 import { vacatingFormSchema } from "../validation/vacatingHostel.schema";
 import {
@@ -6,7 +6,7 @@ import {
   approveOrDeclineByManager,
   createCautionDepositRefund,
   createVacatingHostelForm,
-  getAllVacatingHostelForms,
+  getVacatingHostelFormsOfStudent,
   getVacatingFormsWaitingForDeputyWarden,
   getVacatingFormsWaitingForManager,
 } from "../services/vacatingHostelService";
@@ -14,10 +14,10 @@ import {
   getPendingRCApprovals,
   approveOrDeclineByRC,
 } from "../services/vacatingHostelService";
-import { approval_status } from "../constants/enum";
 import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
+import { getRollNoFromUserId } from "../services/helper";
 
 export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
   const { vacatingForm, cautionDeposit } = req.body;
@@ -28,10 +28,6 @@ export async function createVacatingHostelFormController(req: AuthRequest, res: 
 
   const validatedVacatingForm = vacatingFormSchema.parse(vacatingForm);
   const validatedCautionDeposit = cautionDepositSchema.parse(cautionDeposit);
-  // const [hours, minutes, seconds] = validatedVacatingForm.vacating_time.split(":").map(Number);
-  // const now = new Date();
-  // now.setHours(hours, minutes, seconds, 0);
-  // const timeUTC = new Date(Date.UTC(1970, 0, 1, hours, minutes, seconds));
 
   const vacatingData = {
     ...validatedVacatingForm,
@@ -59,16 +55,21 @@ export async function createVacatingHostelFormController(req: AuthRequest, res: 
 }
 
 
-export async function getAllVacatingHostelFormsController(req: AuthRequest, res: Response) {
-  const result = await getAllVacatingHostelForms(req.params.no);
-  if (!result || result.length === 0) {
-    throw AppError("No vacating hostel forms found", httpStatus.NOT_FOUND);
-  }
+export async function getVacatingHostelFormsOfaStudentController(req: AuthRequest, res: Response) {
 
+  if (!req.User || !req.User.id) {
+    throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
+  }
+  const userId = parseInt(req.User.id);
+  const rollNo =await getRollNoFromUserId(userId);
+  if (!rollNo) {
+    throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
+  }
+  const result = await getVacatingHostelFormsOfStudent(rollNo);
   res.status(httpStatus.OK).json({
     success: true,
     data: result,
-    message: "Vacating hostel forms fetched successfully",
+    message: result.length > 0 ? "Vacating hostel forms fetched successfully" : "No vacating hostel forms found for the student",
   });
 }
 
@@ -78,11 +79,15 @@ export async function getVacatingFormsForRCController(req: AuthRequest, res: Res
   }
 
   const rcId = parseInt(req.User.id);
-  console.log("RC ID:", rcId);
   const forms = await getPendingRCApprovals(rcId);
 
   if (!forms || forms.length === 0) {
-    throw AppError("No pending forms found for RC", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: "No pending forms found for RC",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -118,7 +123,13 @@ export async function getVacatingFormsForManagerController(req: AuthRequest, res
   const forms = await getVacatingFormsWaitingForManager();
 
   if (!forms || forms.length === 0) {
-    throw AppError("No vacating forms waiting for manager approval", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      count: 0,
+      message: "No vacating forms waiting for manager approval",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -134,7 +145,13 @@ export async function getVacatingFormsForDeputyWardenController(req: AuthRequest
   const forms = await getVacatingFormsWaitingForDeputyWarden();
 
   if (!forms || forms.length === 0) {
-    throw AppError("No vacating forms waiting for deputy warden approval", httpStatus.NOT_FOUND);
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      count: 0,
+      message: "No vacating forms waiting for deputy warden approval",
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -157,7 +174,6 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
     throw AppError("Both vacating_hostel_id and approve status are required", httpStatus.BAD_REQUEST);
   }
 
-  // If declining, comment is required
   if (approve === false && (!comment || comment.trim() === '')) {
     throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
   }
@@ -193,7 +209,6 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
     throw AppError("All caution deposit refund details are required", httpStatus.BAD_REQUEST);
   }
 
-  // If declining, comment is required
   if (approve === false && (!comment || comment.trim() === '')) {
     throw AppError("Comment is required when declining a form", httpStatus.BAD_REQUEST);
   }

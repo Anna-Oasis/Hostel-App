@@ -1,14 +1,74 @@
 import httpStatus from "http-status";
-import { Request, Response } from "express";
-import { approval_status } from "../constants/enum";
+import { Response } from "express";
+import { approval_status, rcLeave_status } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { getRCById } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
-import { getLeaveFormsToBeApprovedByRcByFloor, getLeaveFormByLeaveFormId, updateLeaveForm, createLeaveFormApproval, getLeaveFormsToBeApprovedByDeputyWarden } from "../services/leaveServices";
+import {
+  getLeaveFormsToBeApprovedByRcByFloor,
+  getLeaveFormByLeaveFormId,
+  updateLeaveForm,
+  createLeaveFormApproval,
+  getLeaveFormsToBeApprovedByDeputyWarden,
+  createLeaveForm,
+  getLeaveFormApprovals,
+} from "../services/leaveServices";
 import { LeaveDecisionSchema } from "../validation/leave.validation";
+import { leaveFormSchema } from "../validation/leaveform.schema";
+import { getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, updateRCLeaveStatus } from "../services/rcLeaveService";
+import { date } from "drizzle-orm/mysql-core";
 
-// RC: \resident_counsellor\student_leave 
+export const createLeaveFormFromController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  //validation
+  const validatedData = leaveFormSchema.safeParse(req.body);
+
+  if (!validatedData.success) {
+    throw AppError(
+      validatedData.error.issues.map((issue) => issue.message).join(", "),
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  const result = await createLeaveForm(validatedData.data);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "New Leave Form Created",
+    data: result,
+  });
+};
+
+export const getAllLeaveFormsFromController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const rollNumber = req.params.roll_number;
+
+  if (!rollNumber) {
+    throw AppError("Invalid or No Data is passed", httpStatus.BAD_REQUEST);
+  }
+
+  const result = await getLeaveFormApprovals(rollNumber);
+
+  if (!result || result.length === 0) {
+    res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "No Leave Form Exists",
+    });
+  }
+
+  res.status(httpStatus.FOUND).json({
+    success: true,
+    message: "All available leave forms are fetched Successfully",
+    data: result,
+  });
+};
+
+// RC: \resident_counsellor\student_leave
 // Deputy Warden: \deputy_warden\student_leave
 
 /*
@@ -40,26 +100,30 @@ export const getLeaveFormWaitingForApprovalController = async (
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
-    if (rc[0].floor == null || rc[0].hostel == null) {
-      throw AppError("RC floor or hostel information is missing", httpStatus.NOT_FOUND);
+    if (!rc[0].hostel || !rc[0].floor) {
+      throw AppError(
+        "Hostel or floor is not assigned to RC",
+        httpStatus.NOT_FOUND
+      );
     }
-    leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
-      rc[0].floor, rc[0].hostel
-    );
 
-  } 
-  else if (userRole === "deputyWarden") {
+    leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
+      rc[0].floor,
+      rc[0].hostel
+    );
+  } else if (userRole === "deputyWarden") {
     leave_form = await getLeaveFormsToBeApprovedByDeputyWarden();
-  } 
-  else {
+  } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 
-  if (!leave_form) {
-    throw AppError(
-      `No Leave Forms waiting for ${userRole} approval`,
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
+  if (!leave_form || leave_form.length === 0) {
+    res.status(httpStatus.OK).json({
+      success: false,
+      data: [],
+      message: `No Leave Forms waiting for ${userRole} approval`,
+    });
+    return;
   }
 
   res.status(httpStatus.OK).json({
@@ -68,8 +132,6 @@ export const getLeaveFormWaitingForApprovalController = async (
     message: "Fetched Leave forms successfully",
   });
 };
-
-
 
 /*
 PUT - \leave_form_id as path param, approve the leave_form_id by RC and Deputy warden and entry into leave_form_id_approvals (request body will contain approve/decline with comment) 
@@ -91,7 +153,7 @@ export const updateLeaveFormApprovalStatusController = async (
     );
   }
 
-  const user_id=req.User.id;
+  const user_id = req.User.id;
   const userRole = req.User.role;
   let updateStatus: string;
 
@@ -112,7 +174,6 @@ export const updateLeaveFormApprovalStatusController = async (
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
-
 
   const validated = LeaveDecisionSchema.parse(req.body);
   if (
@@ -164,4 +225,3 @@ export const updateLeaveFormApprovalStatusController = async (
     message: "Leave form status updated successfully",
   });
 };
-

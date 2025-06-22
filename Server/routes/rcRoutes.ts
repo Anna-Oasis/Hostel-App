@@ -1,50 +1,154 @@
+// rcRoutes.ts - RC (Resident Coordinator) related routes for the Hostel App API
+// Handles admissions, grievances, summer vacation, leave, room, student, vacating hostel, and attendance management for RCs
+
 import { Router } from "express";
-import {fetchAdmissionsApprovedByUser , updateApprovalStatusByRCController,getAdmissionWaitingForApprovalByRCController} from "../controllers/admissionController";
-import { approveOrDeclineGrievancesByRCController, viewGrievancesByRCController } from "../controllers/grievanceController";
+import {
+  fetchAdmissionsApprovedByUser,
+  updateApprovalStatusByRCController,
+  getAdmissionWaitingForApprovalByRCController
+} from "../controllers/admissionController";
+import {
+  approveOrDeclineGrievancesByRCController,
+  viewGrievancesByRCController
+} from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-import { authenticateUser,hasRole } from '../middleware/rbacMiddleware';
+import { authenticateUser, hasRole } from '../middleware/rbacMiddleware';
+import {
+  approveSummerVacationFormByRCController,
+  getSummerVacationFormsForRCController
+} from '../controllers/summerVacationController';
 import {
   getVacatingFormsForRCController,
   approveVacatingFormByRCController
-} from "../controllers/vactingHostelController";
-import { getLeaveFormWaitingForApprovalController, updateLeaveFormApprovalStatusController } from "../controllers/leaveController";
+} from "../controllers/vacatingHostelController";
+import {
+  getLeaveFormWaitingForApprovalController,
+  updateLeaveFormApprovalStatusController
+} from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import {
+  createAttendanceByRcController,
+  getAttendanceByRcController
+} from "../controllers/attendanceController";
+import {  getRCsController } from "../controllers/rcController";
+import { getRCLeaveApprovals } from "../services/rcLeaveService";
+import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
 
 
 
 const rcRouter = Router();
 
-// Fetch all admissions waiting for RC approval by hostel block
-rcRouter.get("/admissions",authenticateUser,hasRole(["rc"]),errorWrapper( getAdmissionWaitingForApprovalByRCController));
+// Admission routes
+rcRouter.get(
+  "/admissions",
+  authenticateUser,
+  hasRole(["rc"]),
+  errorWrapper(getAdmissionWaitingForApprovalByRCController)
+);
+rcRouter.put(
+  "/admissions/:admission_id",
+  authenticateUser,
+  hasRole(["rc"]),
+  errorWrapper(updateApprovalStatusByRCController)
+);
+rcRouter.get(
+  "/admissions/approvals",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(fetchAdmissionsApprovedByUser)
+);
 
-// Approve or decline admission by RC with admission ID in path
-rcRouter.put("/admissions/:admission_id",authenticateUser,hasRole(["rc"]),errorWrapper(updateApprovalStatusByRCController));
+// Grievance routes
+rcRouter.get(
+  "/grievance",
+  authenticateUser,
+  hasRole(["rc"]),
+  errorWrapper(viewGrievancesByRCController)
+);
+rcRouter.put(
+  "/grievance/:grievance_id",
+  authenticateUser,
+  hasRole(["rc"]),
+  errorWrapper(approveOrDeclineGrievancesByRCController)
+);
 
-// Fetch all grievances waiting for RC approval by hostel block and floor
-rcRouter.get("/grievance/:rc_id",authenticateUser,hasRole(["rc"]), errorWrapper(viewGrievancesByRCController));
+// Summer vacation routes
+rcRouter.get(
+  "/summer_vacation",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getSummerVacationFormsForRCController)
+);
+rcRouter.put(
+  "/summer_vacation/:summer_vacation_id",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(approveSummerVacationFormByRCController)
+);
 
-// Approve or decline grievance by RC with grievance ID in body
-rcRouter.put("/grievance/:rc_id", authenticateUser,hasRole(["rc"]), errorWrapper(approveOrDeclineGrievancesByRCController));
+// Leave form routes
+rcRouter.get(
+  "/student_leave",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getLeaveFormWaitingForApprovalController)
+);
+rcRouter.put(
+  "/student_leave/:leave_form_id",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(updateLeaveFormApprovalStatusController)
+);
 
+// Room and student details routes
+rcRouter.get(
+  "/rooms",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
+);
+rcRouter.get(
+  "/students",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(fetchStudentDetailsForRcController)
+);
 
-// Fetch the approval data reviewd by a particular RC
-rcRouter.get("/admissions/approvals",authenticateUser ,hasRole(['rc']),errorWrapper(fetchAdmissionsApprovedByUser));
+// Vacating hostel routes
+rcRouter.get(
+  "/vacating_hostel",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getVacatingFormsForRCController)
+);
+rcRouter.put(
+  "/vacating_hostel",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(approveVacatingFormByRCController)
+);
 
-// Fetch all leave forms waiting for RC approval by hostel block and floor 
-rcRouter.get("/student_leave", authenticateUser ,hasRole(['rc']),errorWrapper(getLeaveFormWaitingForApprovalController));
+// Attendance routes
+rcRouter.get(
+  "/attendance/:rc_id",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getAttendanceByRcController)
+);
+rcRouter.post(
+  "/attendance/:rc_id",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(createAttendanceByRcController)
+);
 
-// Approve or decline leave form by RC with leave form ID in path
-rcRouter.put("/student_leave/:leave_form_id",authenticateUser,hasRole(['rc']),errorWrapper(updateLeaveFormApprovalStatusController));
+rcRouter.post("/leave", authenticateUser, hasRole(['rc']), errorWrapper(createRCLeaveFormFromController));
+rcRouter.get("/leave", authenticateUser, hasRole(['rc']), errorWrapper(getRCLeaveController));
+rcRouter.get("/leave/complete", authenticateUser, hasRole(['rc']), errorWrapper(updateCompleteLeave))
 
-// Fetch all room details by hostel block and academic year 
-rcRouter.get("/rooms", authenticateUser,hasRole(['rc']), errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController));
-
-// Fetch all student and room details by hostel block and floor 
-rcRouter.get("/students", authenticateUser,hasRole(['rc']), errorWrapper(fetchStudentDetailsForRcController));
-
-rcRouter.get("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(getVacatingFormsForRCController));
-rcRouter.put("/vacating_hostel",authenticateUser ,hasRole(['rc']),errorWrapper(approveVacatingFormByRCController));
+// Fetch the all the RCs as same as the RC's own hostel
+rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyHostelController))
 
 export default rcRouter;
 
