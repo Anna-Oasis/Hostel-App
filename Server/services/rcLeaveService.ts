@@ -2,7 +2,7 @@ import { NewRCLeave } from "../models/rcLeave";
 import { db } from "../config/dbConnection";
 import { eq, and } from "drizzle-orm";
 import { rcLeaveModel } from "../models/rcLeave";
-import {rcLeave_status} from "../models/enum"
+import { rcLeave_status } from "../constants/enum";
 import { rcModel } from "../models/rcModel";
 
 export const getRCLeaveApprovals = async (rcId: number) => {
