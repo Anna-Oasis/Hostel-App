@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import SignupForm from "@/components/signup";
+import SignupForm from "@/components/auth/SignupCard";
 import { handleSignup } from "@/utils/authUtils";
 import useLoadingStore from "@/stores/loadingStore";
 import { router } from "expo-router";

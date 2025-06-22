@@ -69,7 +69,7 @@ export const verifyToken = async (token: string): Promise<User | null> => {
     return data.user;
   } catch (error: any) {
     if (error.response?.status === 401) {
-      Alert.alert("Token Expired", "Please log in again.");
+      Alert.alert("Session Expired", "Please log in again.");
       await removeToken();
       router.replace("/Login");
       return null;

@@ -25,7 +25,7 @@ export default function Index() {
         
         router.replace("/Login");
       } catch (error) {
-        console.error("Error during token verification:", error);
+        console.error("Session expired - Please login", error);
         router.replace("/Login");
       } finally {
         setLoading(false);
