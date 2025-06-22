@@ -1,9 +1,7 @@
-import { fetchRoomDetailsByBlockAndAcademicYear } from "../services/roomServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
-import { fetchRoomsSchema } from "../validation/room.schema";
 import httpStatus from "http-status";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { getRCidfromUserId } from "../services/helper";
 import { getRCById } from "../services/rcServices";
 import { fetchStudentDetailsForRC } from "../services/studentServices";
@@ -29,18 +27,19 @@ export const fetchStudentDetailsForRcController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
-    if (rc[0].floor == null || rc[0].hostel == null) {
-        throw AppError(
-        "RC floor or hostel information is missing",
-        httpStatus.INTERNAL_SERVER_ERROR
-        );
+    if(!rc[0].floor || !rc[0].hostel){
+    throw AppError("RC hostel details not found", httpStatus.NOT_FOUND);
     }
-    const students = fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
-    if (!students) {
-        throw AppError(
-        "Can't fetch student details",
-        httpStatus.INTERNAL_SERVER_ERROR
-        );
+
+    const students = await fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
+
+    if (!students || students.length === 0) {
+        res.status(httpStatus.OK).json({
+            success: false,
+            data: [],
+            message: "No student records found",
+        });
+        return;
     }
 
     res.status(httpStatus.OK).json({

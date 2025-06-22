@@ -2,6 +2,9 @@ import { eq } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 
 import { rcModel } from "../models/rcModel";
+import { approval_status } from "../constants/enum";
+import { roomModel } from "../models/roomModel";
+import {summerVacationModel } from "../models/summerVacation";
 
 export async function createRC(
   name: string,
@@ -56,6 +59,8 @@ export async function updateRC(
     .returning();
   return updatedRC;
 }
+
+
 
 export async function getRCById(rc_id: number) {
   const rc = await db

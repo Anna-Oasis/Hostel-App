@@ -39,7 +39,7 @@ export const createCautionDepositRefund = async (data: any) => {
     .returning();
 };
 
-export const getAllVacatingHostelForms = async (no : string) => {
+export const getVacatingHostelFormsOfStudent = async (rollNo:string) => {
   return await db
     .select({
       vacating: vacatingHostelModel,
@@ -50,7 +50,7 @@ export const getAllVacatingHostelForms = async (no : string) => {
     .leftJoin(
       cautionDepositRefundModel,
       eq(cautionDepositRefundModel.vacating_hostel_id, vacatingHostelModel.id)
-    );
+    ).where(eq(vacatingHostelModel.roll_number, rollNo));
 };
 
 export const getPendingRCApprovals = async (rcUserId: number) => {
@@ -59,7 +59,9 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     .from(rcModel)
     .where(eq(rcModel.userId, rcUserId));
 
-  if (!rc) throw AppError("RC not found", httpStatus.FORBIDDEN);
+  if (!rc || !rc.floor) throw AppError("RC not found", httpStatus.FORBIDDEN);
+
+  if(!rc.floor) throw AppError("RC floor information is missing or invalid", httpStatus.BAD_REQUEST);
 
   if (!rc.floor) {
     throw AppError("RC floor information is missing", httpStatus.BAD_REQUEST);
@@ -95,7 +97,7 @@ export const approveOrDeclineByRC = async (
     .from(rcModel)
     .where(eq(rcModel.userId, rcUserId));
 
-  if (!rc) {
+  if (!rc || !rc.floor) {
     throw AppError("RC not found", httpStatus.FORBIDDEN);
   }
 
@@ -130,7 +132,11 @@ export const approveOrDeclineByRC = async (
       httpStatus.BAD_REQUEST
     );
   }
-  const isFloorMatch = rc.floor ? rc.floor.includes(student.floor) : false;
+  if (!rc.floor || !Array.isArray(rc.floor)) {
+    throw AppError("RC floor information is missing or invalid", httpStatus.BAD_REQUEST);
+  }
+
+  const isFloorMatch = rc.floor.includes(student.floor);
 
   if (!isHostelMatch || !isFloorMatch) {
     throw AppError("RC not authorized for this student", httpStatus.FORBIDDEN);

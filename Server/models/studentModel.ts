@@ -95,7 +95,6 @@ export const studentModel = pgTable("student", {
   studentSignatureUrl: text("student_signature_url"),
   parentGuardianSignatureUrl: text("parent_guardian_signature_url"),
   categoryProofUrl: text("category_proof_url"),
-  aadhaarUrl: text("aadhaar_url"),
   admissionSlipUrl: text("admission_slip_url")
 });
 

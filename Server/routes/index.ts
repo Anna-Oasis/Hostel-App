@@ -4,9 +4,6 @@ import studentRouter from "./studentRoutes";
 import managerRouter from "./managerRoutes";
 import rcRouter from "./rcRoutes";
 import deputyWardenRouter from "./deputyWardenRoutes";
-import { UserRole, PERMISSIONS } from "../types/roles";
-import { authenticateUser } from "../middleware/rbacMiddleware";
-import { exec } from "child_process";
 import executiveWardenRouter from "./executiveWardenRoutes";
 // import { generatePdf, PDFData } from "../utils/pdfGenerator"; // Uncomment if you want to use the PDF generation route
 
@@ -50,8 +47,6 @@ routes.get("/health", (req: Request, res: Response) => {
 //     });
 //   }
 // });
-
-
 
 routes.get(/^\/.*/, (req: Request, res: Response) => {
   res.send("👋 Welcome to Anna Oasis API!");

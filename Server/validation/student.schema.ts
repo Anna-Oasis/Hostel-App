@@ -74,7 +74,6 @@ export const studentSchema = z.object({
   passportPhotoUrl: z.string().optional(),
   studentSignatureUrl: z.string().optional(),
   parentGuardianSignatureUrl: z.string().optional(),
-  aadhaarUrl: z.string().optional(),
   admissionSlipUrl: z.string().optional(),
   categoryProofUrl: z.string().optional(),
 
