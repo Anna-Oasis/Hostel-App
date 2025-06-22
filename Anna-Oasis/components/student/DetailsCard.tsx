@@ -1,7 +1,7 @@
 import { Alert, View, Image } from 'react-native'
 import { Text } from '@/components/ui/text'
 import { useEffect } from 'react'
-import { getStudentDetails } from '@/utils/student/studentApi'
+import { getStudentDetails } from '@/utils/student/studentDetailsApi'
 import { router } from 'expo-router'
 import useUserStore from '@/stores/userStore'
 import { Button, ButtonIcon } from '@/components/ui/button'
@@ -25,8 +25,11 @@ const DetailsCard = () => {
             console.error("Error fetching student details:", error);
         }
     }
+
     useEffect(()=>{
-        fetchDetails();
+        if (!details) {
+            fetchDetails();
+        }
     },[])
 
     return (

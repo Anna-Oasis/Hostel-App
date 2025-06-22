@@ -15,7 +15,7 @@ export const handleFileUpload = async (
   const timestampMatch = file.filename.match(/-(\d+)\./);
   const timestamp = timestampMatch ? timestampMatch[1] : Date.now();
   const newFileName = `${userId}-${signature}-${timestamp}${ext}`;
-  console.log(`📤 Uploading ${signature} as: ${newFileName} to ${folder}`);
+  // console.log(`📤 Uploading ${signature} as: ${newFileName} to ${folder}`);
 
   try {
     const fileBuffer = await fs.readFile(file.path);
@@ -26,12 +26,12 @@ export const handleFileUpload = async (
     }
 
     const publicUrl = getPublicUrl(newFileName, folder);
-    console.log(`✅ Uploaded ${signature} => ${publicUrl}`);
+    // console.log(`✅ Uploaded ${signature} => ${publicUrl}`);
     return publicUrl;
   } finally {
     try {
       await fs.unlink(file.path);
-      console.log(`🧹 Deleted temp file: ${file.path}`);
+      // console.log(`🧹 Deleted temp file: ${file.path}`);
     } catch (err) {
       console.error(`❌ Failed to delete temp file: ${file.path}`, err);
     }

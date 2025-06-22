@@ -9,8 +9,8 @@ import ParentDetails from "@/components/details/ParentDetails";
 import LocalGuardian from "@/components/details/LocalGuardian";
 import FileUploads from "@/components/details/FileUploads";
 import useLoadingStore from "@/stores/loadingStore";
-import useUserStore  from "@/stores/userStore";
-import { submitStudentDetails } from "@/utils/student/studentApi";
+import useUserStore from "@/stores/userStore";
+import { submitStudentDetails, updateStudentDetails, getStudentDetails } from "@/utils/student/studentDetailsApi";
 import testValues from "@/test/detailsTest";
 
 export default function DetailsPage() {
@@ -18,6 +18,8 @@ export default function DetailsPage() {
   const scrollViewRef = useRef<ScrollView>(null);
   const setLoading = useLoadingStore((state) => state.setLoading);
   const userId = useUserStore((state) => state.userId);
+  const details = useUserStore((state) => state.details);
+  const setDetails = useUserStore((state) => state.setDetails);
 
   const next = () => {
     setPage((p) => p + 1);
@@ -45,7 +47,7 @@ export default function DetailsPage() {
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={details ? { ...initialValues, ...details } : initialValues}
       // initialValues={testValues} // For testing purposes, replace with initialValues in production
       validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
@@ -91,10 +93,10 @@ export default function DetailsPage() {
           formData.append("resForeignState", values.resForeignState);
           formData.append("resForeignCountry", values.resForeignCountry);
           formData.append("resForeignPostalCode", values.resForeignPostalCode);
-          formData.append("guardianName", values.guardianName);
-          formData.append("guardianRelationship", values.guardianRelationship);
-          formData.append("guardianMobile", values.guardianMobile);
-          formData.append("guardianEmail", values.guardianEmail);
+          formData.append("localGuardianName", values.localGuardianName);
+          formData.append("localGuardianRelationship", values.localGuardianRelationship);
+          formData.append("localGuardianMobile", values.localGuardianMobile);
+          formData.append("localGuardianEmail", values.localGuardianEmail);
           formData.append("guardianHouseNo", values.guardianHouseNo);
           formData.append("guardianStreet", values.guardianStreet);
           formData.append("guardianCity", values.guardianCity);
@@ -127,7 +129,21 @@ export default function DetailsPage() {
               } as any);
             }
           }
-          await submitStudentDetails(formData);
+
+          if (!details) {
+            await submitStudentDetails(formData);
+          } else {
+            await updateStudentDetails(details.rollNo, formData);
+          }
+
+          try {
+            const fresh = await getStudentDetails();
+            if (fresh && fresh.success) {
+              setDetails(fresh.data);
+            }
+          } catch (e) {
+            console.error("Failed to fetch updated details:", e);
+          }
           setLoading(false);
         }
       }}

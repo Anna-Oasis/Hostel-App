@@ -47,3 +47,30 @@ export async function getStudentDetails() {
     throw error;
   }
 }
+
+export async function updateStudentDetails(rollNo: string, formData: FormData) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+  try {
+    const response = await api.put(`/api/student/details/${rollNo}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Form updated successfully:", response.data);
+    Alert.alert("Success", "Details updated successfully");
+    setTimeout(() => router.replace("/User/Student"), 1000);
+  } catch (error) {
+    console.error(error);
+    if (typeof error === "object" && error !== null && "response" in error) {
+      const err = error as { response: any };
+      console.log("Error response data:", err.response.data);
+      console.log("Error response status:", err.response.status);
+      console.log("Error response headers:", err.response.headers);
+    }
+    Alert.alert("Error", "Failed to update details. Please try again.");
+  }
+}
