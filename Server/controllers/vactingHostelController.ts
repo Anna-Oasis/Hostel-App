@@ -60,8 +60,7 @@ export async function createVacatingHostelFormController(req: AuthRequest, res: 
 
 
 export async function getAllVacatingHostelFormsController(req: AuthRequest, res: Response) {
-  const result = await getAllVacatingHostelForms();
-
+  const result = await getAllVacatingHostelForms(req.params.no);
   if (!result || result.length === 0) {
     throw AppError("No vacating hostel forms found", httpStatus.NOT_FOUND);
   }

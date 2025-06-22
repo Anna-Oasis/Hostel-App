@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import PhoneInputField from "@/components/form/PhoneInputField";
@@ -48,14 +48,10 @@ export default function VacatingForm({
       >
         {({ handleSubmit }) => (
           <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
-            <View className="space-y-4">
-              <TextField label="Room No" value="roomNo" placeholder="Enter Room Number" />
+            <View className="space-y-4 p-4">
               <DatePickerField label="Vacate Date" value="vacateDate" placeholder="YYYY-MM-DD" />
               <TimePickerField label="Vacate Time" value="vacateTime" placeholder="HH:MM" />
               <TextField label="Future Address" value="futureAddress" placeholder="Permanent address" />
-              <PhoneInputField label="Student Mobile" value="studentMobile" placeholder="Phone number" />
-              <TextField label="Parent's Email" value="parentEmail" placeholder="Parent's Email" />
-              <PhoneInputField label="Local Guardian Mobile" value="localGuardianMobile" placeholder="Guardian's Phone number" />
 
               <CheckBoxField
                 label="Did you hand over all the items?"
@@ -66,16 +62,21 @@ export default function VacatingForm({
                 }))}
               />
 
-              <CheckBoxField
-                label="I acknowledge that I leave the room without any damages. If any issues are found later, I agree to pay the applicable charges."
-                value="declarationAccepted"
-                options={[
-                  {
-                    label: "",
-                    value: "true",
-                  },
-                ]}
-              />
+
+                <View className="p-2 flex gap-2 justify-center items-center m-4">
+                    <Text className="text-error-500">
+                        I acknowledge that I leave the room without any damages. If any issues are found later, I agree to pay the applicable charges.
+                    </Text>
+                    <CheckBoxField
+                        value="declarationAccepted"
+                        options={[
+                            {
+                                label: "I accept the hostel terms and condition",
+                                value: "true",
+                            },
+                        ]}
+                        />
+                </View>
 
               <Button onPress={() => handleSubmit()}>
                 <ButtonText>Next</ButtonText>
