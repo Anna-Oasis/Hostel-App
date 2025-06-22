@@ -73,7 +73,7 @@ const LoginCard = () => {
   );
 };
 
-function DebugRouter() {
+export function DebugRouter() {
   const router = useRouter();
 
   const debugRoutes: [string, string][] = [

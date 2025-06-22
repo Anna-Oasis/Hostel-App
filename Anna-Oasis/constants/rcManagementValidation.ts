@@ -2,8 +2,8 @@ import * as Yup from "yup";
 import { StyleSheet, Dimensions } from "react-native";
 
 const hostelOptions = [
-  { label: "FLORA", value: "FLORA" },
-  { label: "LAVENDER", value: "LAVENDER" },
+  { label: "Flora", value: "Flora" },
+  { label: "Lavender", value: "Lavender" },
 ];
 
 const initialValues = {
@@ -24,19 +24,6 @@ const validationSchema = Yup.object().shape({
   hostel: Yup.string().required("Hostel is required"),
 });
 
-const initialRcList = [
-  { id: "1", name: "John Doe", hostel: "LAVENDER", assignedFloors: [] as string[] },
-  { id: "2", name: "Jane Smith", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "3", name: "Alex Lee", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "4", name: "Emily Carter", hostel: "LAVENDER", assignedFloors: [] as string[] },
-  { id: "5", name: "Michael Brown", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "6", name: "Sarah Wilsonwwwwwwwwwwww", hostel: "LAVENDER", assignedFloors: [] as string[] },
-  { id: "7", name: "David Kim", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "8", name: "Olivia Chen", hostel: "LAVENDER", assignedFloors: [] as string[] },
-  { id: "9", name: "Chris Evans", hostel: "FLORA", assignedFloors: [] as string[] },
-  { id: "10", name: "Sophia Patel", hostel: "LAVENDER", assignedFloors: [] as string[] },
-  { id: "11", name: "Daniel Lee", hostel: "FLORA", assignedFloors: [] as string[] },
-];
 
 const floors = ["Ground Floor", "First Floor", "Second Floor", "Third Floor"];
 
@@ -53,7 +40,6 @@ export {
   hostelOptions,
   initialValues,
   validationSchema,
-  initialRcList,
   floors,
     floorShort,
 };
