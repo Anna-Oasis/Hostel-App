@@ -8,13 +8,9 @@ export const vacatingItems = [
 ];
 
 export const initialValues = {
-  roomNo: '',
   vacateDate: '',
   vacateTime: '',
   futureAddress: '',
-  studentMobile: '',
-  parentEmail: '',
-  localGuardianMobile: '',
   itemsReturned: [],
   declarationAccepted: []
 };

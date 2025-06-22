@@ -1,10 +1,9 @@
-import { Admission } from "../models/admissionModel";
 import { Router } from "express";
 import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
-  updateAdmissionController,
+  updateAdmissionController
 } from "../controllers/admissionController";
 import {
   createGrievanceController,
@@ -17,9 +16,15 @@ import {
   getStudentDetailsController,
   createStudentDetailsController,
   updateStudentDetailsController,
+  getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
+import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveFormController";
 
 
+import {
+  createVacatingHostelFormController,
+  getAllVacatingHostelFormsController,
+} from "../controllers/vactingHostelController";
 
 const studentRouter = Router();
 
@@ -44,10 +49,17 @@ const fileFields = upload.fields([
 ]);
 
 
+
+studentRouter.get(
+  "/details", authenticateUser, hasRole(['student']),
+  errorWrapper(getStudentDetailsUsingUserIdController)
+)
+
 studentRouter.get(
   "/details/:rollNo",authenticateUser ,hasRole(['student']),
   errorWrapper(getStudentDetailsController)
 );
+
 
 studentRouter.post(
   "/details",
@@ -59,6 +71,22 @@ studentRouter.put(
   "/details/:rollNo",
   fileFields,authenticateUser ,hasRole(['student']),
   errorWrapper(updateStudentDetailsController)
+);
+
+studentRouter.get("/vacating_hostel/:no",authenticateUser ,hasRole(['student']),errorWrapper(getAllVacatingHostelFormsController));
+studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
+
+studentRouter.post(
+  "/leave",
+  authenticateUser,hasRole(['student']),
+  errorWrapper(createLeaveFormFromController)
+);
+
+studentRouter.get(
+  "/leave/:roll_number",
+  authenticateUser,
+  hasRole(['student']),
+  errorWrapper(getAllLeaveFormsFromController)
 );
 
 export default studentRouter;

@@ -1,71 +1,97 @@
-import { ScrollView, View } from "react-native";
-import { Formik } from "formik";
-import TextField from "@/components/form/TextField";
-import PhoneInputField from "@/components/form/PhoneInputField";
-import DatePickerField from "@/components/form/DatePickerField";
-import TimePickerField from "@/components/form/TimePickerField";
-import CheckBoxField from "@/components/form/CheckBoxField";
+import React, { useState } from "react";
+import VacatingForm from "@/components/hostelvacation/VacatingForm";
+import CautionDepositForm from "@/components/hostelvacation/CautionDepositForm";
+import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
 import { Button, ButtonText } from "@/components/ui/button";
-import {vacatingItems,initialValues} from "@/constants/vacatingHostels";
-import { validationSchema } from "@/constants/vacatingHostelValidation";
+import { Text } from "@/components/ui/text";
+import { initialValues as vacatingInitialValues } from "@/constants/vacatingHostels";
+import { initialValues as cautionDepositInitialValues } from "@/constants/cautionDepositValidation";
+import { submitStudentVacatingForm } from "@/utils/vacatingHostelUtils";
+import { View } from "react-native";
+import { useRouter } from "expo-router";
 
+export default function HostelVacationFlow() {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [vacatingFormData, setVacatingFormData] = useState<FormData | null>(null);
+  const [vacatingValues, setVacatingValues] = useState<any>(vacatingInitialValues);
+  const [cautionDepositValues, setCautionDepositValues] = useState<any>(cautionDepositInitialValues);
+  const [showModal, setShowModal] = useState(false);
 
-const VacatingForm = () => {
-  const handleSubmitted = (values: any) => {
-    const submitValues = {
-      ...values,
-      declarationAccepted: values.declarationAccepted.includes("true"),
-    };
-    console.log('Form Submitted:', submitValues);
-  };
+  const router = useRouter()
 
   return (
-    <View style={{ flex: 1, padding: 16, paddingTop: 48, backgroundColor: "#fff" }}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmitted}
-      >
-        {({ handleSubmit }) => (
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
-            <View className="space-y-4">
-              <TextField label="Room No" value="roomNo" placeholder="Enter Room Number" />
-              <DatePickerField label="Vacate Date" value="vacateDate" placeholder="YYYY-MM-DD" />
-              <TimePickerField label="Vacate Time" value="vacateTime" placeholder="HH:MM"/>
-              <TextField label="Future Address" value="futureAddress" placeholder="Permanent address" />
-              <PhoneInputField label="Student Mobile" value="studentMobile" placeholder="Phone number" />
-              <TextField label="Parent's Email" value="parentEmail" placeholder="Parent's Email" />
-              <PhoneInputField label="Local Guardian Mobile" value="localGuardianMobile" placeholder="Guardian's Phone number" />
+    <>
+      <View className="w-full flex items-end px-6 bg-white">
+        <Button className="w-[50%]" onPress={() => router.push("/User/Student/HostelVacation/Histroy")}>
+          <ButtonText>
+            Show Histroy
+          </ButtonText>
+        </Button>
+      </View>
+      {step === 1 ? (
+        <VacatingForm
+          initialValues={vacatingValues}
+          onNext={(formData, values) => {
+            setVacatingFormData(formData);
+            setVacatingValues(values);
+            setStep(2);
+          }}
+        />
+      ) : (
+        <CautionDepositForm
+          initialValues={cautionDepositValues}
+          onSubmit={async (cautionFormData, values) => {
+            setCautionDepositValues(values);
+            // Combine both FormData objects if needed
+            // const combinedFormData = new FormData();
+            // // @ts-ignore
+            // for (let [key, value] of vacatingFormData!.entries()) {
+            //   combinedFormData.append(key, value);
+            // }
+            // // @ts-ignore
+            // for (let [key, value] of cautionFormData.entries()) {
+            //   combinedFormData.append(key, value);
+            // }
+            // console.log("Combined Form Data:", combinedFormData);
+            console.log(cautionDepositValues)
+            const response = await submitStudentVacatingForm(vacatingValues, values);
 
-              <CheckBoxField
-                label="Did you hand over all the items?"
-                value="itemsReturned"
-                options={vacatingItems.map((item) => ({
-                  label: item,
-                  value: item
-                }))}
-              />
+            if (response === true) {
+              setShowModal(true);
+              setTimeout(() => {
+                router.push("/User/Student/HostelVacation/Histroy")
+              }, 4000)
+            } else {
+              setShowModal(false);
+            }
+            // Example: send to backend here
+            // await fetch("https://your-backend-api.com/hostel-vacation", { method: "POST", body: combinedFormData });
 
-              <CheckBoxField
-                label="I acknowledge that I leave the room without any damages. If any issues are found later, I agree to pay the applicable charges."
-                value="declarationAccepted"
-                options={[
-                  {
-                    label: '',
-                    value: "true"
-                  }
-                ]}
-              />
+            // setShowModal(true);
+          }}
+          onBack={(values) => {
+            setCautionDepositValues(values);
+            setStep(1);
+          }}
+        />
+      )}
 
-              <Button onPress={() => handleSubmit()}>
-                <ButtonText>Submit Vacating Form</ButtonText>
-              </Button>
-            </View>
-          </ScrollView>
-        )}
-      </Formik>
-    </View>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Text className="text-lg font-semibold">Success</Text>
+          </ModalHeader>
+          <ModalBody>
+            <Text className="text-base text-green-700">Submitted successfully!</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button onPress={() => setShowModal(false)}>
+              <ButtonText>OK</ButtonText>
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
-};
-
-export default VacatingForm;
+}

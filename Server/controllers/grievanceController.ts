@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
-import { createGrievance, getGrievancesByRollNumber } from "../services/grievanceService";
+import { createGrievance, getGreivancesForDeputyWarden, getGrievancesByRollNumber } from "../services/grievanceService";
+import { AuthRequest } from "../types/roles";
+import { getGrievancesForManager, resolveGrievanceByManager, getGrievancesForRC, updateGrievanceApprovalStatusByRC } from "../services/grievanceService";
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
+import {  
+  rcGrievanceDecisionSchema 
+} from "../validation/rc.schema";
+import { getRCById } from "../services/rcServices";
 
-export const createGrievanceController = async (req: Request, res: Response) => {
+export const createGrievanceController = async (req: AuthRequest, res: Response) => {
   const data = req.body;
   const result = await createGrievance(data);
 
@@ -14,8 +20,9 @@ export const createGrievanceController = async (req: Request, res: Response) => 
   });
 };
 
-export const getGrievancesByRollNumberController = async (req: Request, res: Response) => {
+export const getGrievancesByRollNumberController = async (req: AuthRequest, res: Response): Promise<void>=> {
   const rollNumber = req.params.roll_number;
+  
   const result = await getGrievancesByRollNumber(rollNumber);
 
   if (result.length === 0) {
@@ -26,5 +33,120 @@ export const getGrievancesByRollNumberController = async (req: Request, res: Res
     success: true,
     data: result,
     message: "Grievances fetched successfully",
+  });
+};
+
+export const getGreivancesForManagerFromController=async (req:AuthRequest,res:Response)=>
+{
+    const data=await getGrievancesForManager();
+
+    if(data.length===0)
+    {
+      throw AppError("No Greivances Found",httpStatus.NOT_FOUND);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        data:data,
+        message:"Greivances Fetched Successfully"
+      }
+    )
+}
+
+export const resolveGrievanceFromController = async (req: AuthRequest,res:Response)=>
+{
+    const greivanceId=Number(req.params.grievance_id);
+    const data=await resolveGrievanceByManager(greivanceId);
+
+    if(data.length===0)
+    {
+      throw AppError("Greivance with Greivance ID not Found",httpStatus.NOT_FOUND);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        data:data,
+        message:"Greivance Resolved Successfully"
+      }
+    );
+}
+
+export const getGrievancesFromDeputyWardenController = async (req:AuthRequest,res:Response)=>
+{
+
+    const data = await getGreivancesForDeputyWarden();
+
+    if(data.length === 0)
+    {
+      throw AppError("Error Fetching Greivances From Deputy Warden Side",httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    res.status(httpStatus.OK)
+    .json(
+      {
+        success:true,
+        message:"Greivances all are fetched from Deputy Warden Side",
+        data:data
+      }
+    );
+}
+
+export const viewGrievancesByRCController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { rc_id } = req.params;
+
+  const rc = await getRCById(Number(rc_id));
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
+  }
+  console.log("RC Details:", rc);
+
+  if (rc[0].hostel == null || rc[0].floor == null) {
+    throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
+  if (!grievances) {
+    throw AppError("Failed to fetch grievances", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+  console.log("Grievances:", grievances);
+
+  res.status(httpStatus.OK).json({ 
+    success: true, 
+    data: grievances,
+    message: "Fetched Grievances successfully",
+  });
+};
+
+export const approveOrDeclineGrievancesByRCController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { rc_id } = req.params;
+
+  const validated = rcGrievanceDecisionSchema.parse(req.body);
+  
+  const rc = await getRCById(Number(rc_id));
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
+  }
+
+  const updateResult = await updateGrievanceApprovalStatusByRC({
+    grievance_id: validated.grievances_id,
+    rc_approval: validated.approve
+  });
+
+  if (!updateResult) {
+    throw AppError("Failed to update grievance status", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "Grievance approval submitted successfully",
   });
 };

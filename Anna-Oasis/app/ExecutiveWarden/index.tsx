@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
+import { View} from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
-import { ClipboardCheckIcon } from "lucide-react-native";
+import { ClipboardCheckIcon , UserCircle2Icon} from "lucide-react-native";
 import { router } from "expo-router";
 
 export default function ExecutiveWardenPage() {
@@ -9,16 +9,18 @@ export default function ExecutiveWardenPage() {
       title: "Admission Verification",
       route: "/ExecutiveWarden/AdmissionVerification",
       icon: ClipboardCheckIcon,
-      color: "#4F46E5",
+      color: "#16A34A",
     },
-    // Add more tiles here if needed in the future
+    {
+      title: "RC Management",
+      route: "/ExecutiveWarden/RCManagement",
+      icon: UserCircle2Icon,
+      color: "#0EA5E9",
+    }
   ];
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">
-        Executive Warden Dashboard
-      </Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
