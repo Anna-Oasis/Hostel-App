@@ -70,7 +70,6 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
   if (!userId) {
     throw AppError("User ID is required", httpStatus.BAD_REQUEST);
   }
-  console.log("User ID:", userId);
 
   const student = await findStudentByUserId(Number(userId));
   if (!student.length) {
