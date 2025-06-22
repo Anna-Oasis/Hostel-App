@@ -71,6 +71,7 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
   if (!userId) {
     throw AppError("User ID is required", httpStatus.BAD_REQUEST);
   }
+  console.log("User ID:", userId);
   const rollNo = await getRollNoFromUserId(Number(userId));
   if (!rollNo) {
     res.status(httpStatus.OK).json({

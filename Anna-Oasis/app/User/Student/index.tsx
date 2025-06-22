@@ -9,6 +9,7 @@ import {
   FileTextIcon,
   BuildingIcon,
 } from "lucide-react-native";
+import DetailsCard from "@/components/student/DetailsCard";
 
 export default function StudentMain() {
   const menuItems = [
@@ -53,6 +54,7 @@ export default function StudentMain() {
   return (
     <>
       <View className="flex-row flex-wrap justify-between items-center p-8">
+        <DetailsCard />
         {menuItems.map((item, idx) => (
           <Button
             key={idx}
