@@ -15,6 +15,13 @@ const imageFields = [
   "admissionSlipUrl"
 ]
 
+function formatKey(key: string) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 const DetailsPage = () => {
   const details = useUserStore((state) => state.details)
 
@@ -45,7 +52,7 @@ const DetailsPage = () => {
           <TableBody>
             {Object.entries(details).map(([key, value]) => (
               <TableRow key={key}>
-                <TableData>{key}</TableData>
+                <TableData>{formatKey(key)}</TableData>
                 <TableData>
                   {imageFields.includes(key) && typeof value === 'string' && value ? (
                     <Image
