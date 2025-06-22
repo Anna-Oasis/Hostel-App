@@ -10,7 +10,6 @@ import {
   courses,
 } from "@/constants/details";
 import nationalities from "@/constants/nationalities";
-import { Text } from "../ui/text";
 import HelperText from "@/components/HelperText";
 
 const StudentDetails = () => {
@@ -48,9 +47,9 @@ const StudentDetails = () => {
         label="Gender"
         value="gender"
         options={[
-          { label: "Male", value: "Male" },
-          { label: "Female", value: "Female" },
-          { label: "Other", value: "Other" },
+          { label: "Male", value: "male" },
+          { label: "Female", value: "female" },
+          { label: "Other", value: "other" },
         ]}
       />
       <SelectField

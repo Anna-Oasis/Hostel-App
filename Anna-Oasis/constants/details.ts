@@ -172,6 +172,7 @@ const initialValues = {
   resIndiaStreet: "",
   resIndiaCity: "",
   resIndiaState: "",
+  resIndiaCountry: "India",
   resIndiaPostalCode: "",
 
   resForeignHouseNo: "",

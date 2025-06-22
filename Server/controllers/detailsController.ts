@@ -91,6 +91,11 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
 export async function createStudentDetailsController(req: AuthRequest, res: Response) {
   const { body, files } = req;
 
+  body.user_id = req.User?.id;
+  if (!body.user_id) {
+    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
+  }
+
   const missingFile = requiredFiles.find(
     (field) => !(files as FileMap)?.[field]?.length
   );

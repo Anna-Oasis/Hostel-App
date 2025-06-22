@@ -4,10 +4,12 @@ import PhoneInputField from "@/components/form/PhoneInputField";
 import SelectField from "@/components/form/SelectField";
 import countries from "@/constants/countries";
 import indianStates from "@/constants/indianStates";
+import { Text } from "../ui/text";
 
 const ParentDetails = () => (
   <>
     {/* Father Details */}
+    <Text bold size="2xl" > Parent's details</Text>
     <TextField label="Father's Name" value="fatherName" placeholder="Father's name" />
     <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
     <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
