@@ -56,7 +56,6 @@ const testValues = {
   govtIdType: "aadhaar",
   govtId: "1234-5678-9012",
   categoryProofUrl: "aadhaar_card.pdf",
-  aadhaarUrl: "123456789012",
   admissionSlipUrl: "admission_slip.pdf",
   declaration: ["I agree"],
   transactionId: "TXN123456",

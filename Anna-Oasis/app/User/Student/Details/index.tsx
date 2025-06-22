@@ -45,8 +45,8 @@ export default function DetailsPage() {
 
   return (
     <Formik
-      // initialValues={initialValues}
-      initialValues={testValues} // For testing purposes, replace with initialValues in production
+      initialValues={initialValues}
+      // initialValues={testValues} // For testing purposes, replace with initialValues in production
       validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
@@ -110,7 +110,6 @@ export default function DetailsPage() {
               name: "parentGuardianSignatureUrl",
             },
             { key: "categoryProofUrl", name: "categoryProofUrl" },
-            { key: "aadhaarUrl", name: "aadhaarUrl" },
             { key: "admissionSlipUrl", name: "admissionSlipUrl" },
           ] as const;
           type ImageFieldKey = (typeof imageFields)[number]["key"];
