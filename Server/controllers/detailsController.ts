@@ -147,7 +147,11 @@ export async function updateStudentDetailsController(req: AuthRequest, res: Resp
   if (!existingStudent.length) {
     throw AppError("Student with provided roll number not found", httpStatus.NOT_FOUND);
   }
-  console.log(existingStudent);
+  body.user_id = req.User?.id;
+  if (!body.user_id) {
+    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
+  }
+  console.log(body)
   const validated = studentSchema.partial().parse(body);
   const updatedData: Record<string, any> = {
     ...validated,

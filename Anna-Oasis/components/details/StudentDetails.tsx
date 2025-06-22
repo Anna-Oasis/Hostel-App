@@ -11,16 +11,23 @@ import {
 } from "@/constants/details";
 import nationalities from "@/constants/nationalities";
 import HelperText from "@/components/HelperText";
+import useUserStore from "@/stores/userStore";
 
 const StudentDetails = () => {
+  const details = useUserStore((state) => state.details);
+
   return (
     <>
-      <TextField label="Name" value="name" placeholder="Enter name" />
-      <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
       <HelperText>
         Note: You cannot change your roll number once submitted. It will be
         linked with your account
       </HelperText>
+      <TextField label="Name" value="name" placeholder="Enter name" />
+      {!details && (
+        <>
+          <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
+        </>
+      )}
       <SelectField label="Course" value="course" options={courses} />
       <SelectField label="Branch" value="branch" options={Departments} />
       <SelectField label="Semester" value="semester" options={semesters} />
