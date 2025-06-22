@@ -7,10 +7,18 @@ import validationSchemas from "@/constants/admissionValidation";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 import PreviewPage from "@/components/admission/PreviewPage";
 import AdmissionDetails from "@/components/admission/AdmissionDetails";
+import useUserStore from "@/stores/userStore";
+import { router } from "expo-router";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
+  const details = useUserStore((state) => state.details);
+
+  if (!details) {
+    router.replace("/User/Student/Details/Edit");
+    return null;
+  }
 
   const next = () => {
     setPage((p) => p + 1);
