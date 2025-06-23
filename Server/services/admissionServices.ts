@@ -3,8 +3,8 @@ import { admissionModel } from "../models/admissionModel";
 import { admissionApprovalsModel } from "../models/admissionApprovals";
 import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
-import { eq, and, or } from "drizzle-orm";
-import { approval_status } from "../constants/enum";
+import { eq, and } from "drizzle-orm";
+import { admissionApprovalStatus } from "../constants/enum";
 // import { eq, and } from "drizzle-orm";
 
 interface NewAdmissionApproval {
@@ -16,7 +16,7 @@ interface NewAdmissionApproval {
 
 interface AdmissionUpdateParams {
   admission_id: number;
-  status: typeof approval_status[keyof typeof approval_status];
+  status: typeof admissionApprovalStatus[keyof typeof admissionApprovalStatus];
 }
 
 export async function createAdmission(admissionData: NewAdmission) {
@@ -81,7 +81,7 @@ export const getAdmissionsToBeApprovedByRcByHostelBlock = async (hostelBlock: st
     .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
     .where(
       and(
-        eq(admissionModel.status, approval_status.manager),
+        eq(admissionModel.status, admissionApprovalStatus.MANAGER),
         eq(admissionModel.hostelBlock, hostelBlock)
       ))
     .orderBy(admissionModel.submission_Date);

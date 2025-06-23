@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import { Response } from "express";
-import { approval_status, rcLeave_status } from "../constants/enum";
+import { studentLeaveApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { getRCById } from "../services/rcServices";
@@ -16,8 +16,6 @@ import {
 } from "../services/leaveServices";
 import { LeaveDecisionSchema } from "../validation/leave.validation";
 import { leaveFormSchema } from "../validation/leaveform.schema";
-import { getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, updateRCLeaveStatus } from "../services/rcLeaveService";
-import { date } from "drizzle-orm/mysql-core";
 
 export const createLeaveFormFromController = async (
   req: AuthRequest,
@@ -168,9 +166,9 @@ export const updateLeaveFormApprovalStatusController = async (
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
-    updateStatus = approval_status.rc;
+    updateStatus = studentLeaveApprovalStatus.RC;
   } else if (userRole === "deputyWarden") {
-    updateStatus = approval_status.deputyWarden;
+    updateStatus = studentLeaveApprovalStatus.DEPUTYWARDEN;
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
@@ -212,7 +210,7 @@ export const updateLeaveFormApprovalStatusController = async (
   }
 
   const updatedLeaveForm = await updateLeaveForm(Number(leave_form_id), {
-    status: validated.approve? updateStatus :approval_status.declined,
+    status: validated.approve? updateStatus : studentLeaveApprovalStatus.DECLINED,
     updated_at: new Date(),
   });
 

@@ -1,6 +1,6 @@
 import { eq, inArray, and} from "drizzle-orm";
 import { db } from "../config/dbConnection";
-import { approval_status } from "../constants/enum";
+import { vacatingHostelApprovalStatus } from "../constants/enum";
 import {
   vacatingHostelModel,
   NewVacatingHostel,
@@ -78,7 +78,7 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     )
     .where(
       and(
-        eq(vacatingHostelModel.status, approval_status.manager),
+        eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER),
         eq(studentModel.hostelBlock, rc.hostel),
         inArray(studentModel.floor, rc.floor)
       )
@@ -151,7 +151,7 @@ export const approveOrDeclineByRC = async (
   });
 
   // 6. Update status in vacating_hostel
-  const newStatus = approve ? approval_status.rc : approval_status.declined;
+  const newStatus = approve ? vacatingHostelApprovalStatus.RC : vacatingHostelApprovalStatus.DECLINED;
   const [updatedForm] = await db
     .update(vacatingHostelModel)
     .set({ status: newStatus })
@@ -169,7 +169,7 @@ export const getVacatingFormsWaitingForManager = async () => {
   const approvedForms = await db
     .select({ id: vacatingHostelModel.id })
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, approval_status.submitted));
+    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.SUBMITTED));
 
   if (approvedForms.length === 0) {
     return [];
@@ -193,7 +193,7 @@ export const getVacatingFormsWaitingForDeputyWarden = async () => {
   return await db
     .select()
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, approval_status.rc));
+    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.RC));
 };
 
 /*
@@ -292,8 +292,8 @@ export const approveOrDeclineByManager = async (
 
   // Determine new status based on approval
   const newStatus = approve
-    ? approval_status.manager
-    : approval_status.declined;
+    ? vacatingHostelApprovalStatus.MANAGER
+    : vacatingHostelApprovalStatus.DECLINED;
 
   // Update vacating hostel model status
   const updatedForm = await db
@@ -326,8 +326,8 @@ export const approveOrDeclineByDeputyWarden = async (
 
   // Determine new status based on approval
   const newStatus = approve
-    ? approval_status.deputyWarden
-    : approval_status.declined;
+    ? vacatingHostelApprovalStatus.DEPUTYWARDEN
+    : vacatingHostelApprovalStatus.DECLINED;
 
   // Update vacating hostel model status
   const updatedForm = await db

@@ -1,4 +1,3 @@
-import express, { Request, Response } from "express";
 import {
   summerVacationModel,
   NewSummerVacation,
@@ -6,11 +5,7 @@ import {
 import { db } from "../config/dbConnection";
 import { eq, and, inArray, or, isNull } from "drizzle-orm";
 import { summerVacationApprovalsModel } from "../models/summerVacationApprovals";
-import { summer_vacation_status, hostel_block } from "../constants/enum";
-import { JWTPayload } from "../types/roles";
-import AppError from "../utils/AppError";
-import { rcModel } from "../models/rcModel";
-import httpStatus from "http-status";
+import { summerVacationApprovalStatus } from "../constants/enum";
 import { studentModel } from "../models/studentModel";
 
 export const createSummerVacationForm = async (data: NewSummerVacation) => {
@@ -71,8 +66,8 @@ export const approveSummerVacationFormByRC = async (
     .update(summerVacationModel)
     .set({
       status: approve
-        ? summer_vacation_status.rc
-        : summer_vacation_status.declined,
+        ? summerVacationApprovalStatus.RC
+        : summerVacationApprovalStatus.DECLINED,
     })
     .where(eq(summerVacationModel.id, summer_vacation_id));
 
@@ -89,7 +84,7 @@ export const getSummerVacationFormsForDeputyWarden = async () => {
   return await db
     .select()
     .from(summerVacationModel)
-    .where(eq(summerVacationModel.status, summer_vacation_status.rc));
+    .where(eq(summerVacationModel.status, summerVacationApprovalStatus.RC));
 };
 
 //approve summer vacation form by Deputy Warden
@@ -103,8 +98,8 @@ export const approveSummerVacationByDeputyWarden = async (
     .update(summerVacationModel)
     .set({
       status: approve
-        ? summer_vacation_status.deputyWarden
-        : summer_vacation_status.declined,
+        ? summerVacationApprovalStatus.DEPUTYWARDEN
+        : summerVacationApprovalStatus.DECLINED,
     })
     .where(eq(summerVacationModel.id, summer_vacation_id));
 

@@ -1,5 +1,4 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { roomModel } from "../models/roomModel";
 import { db } from "../roomStructure";
 import { studentModel } from "../models/studentModel";
 

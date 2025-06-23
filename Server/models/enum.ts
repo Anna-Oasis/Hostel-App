@@ -1,46 +1,59 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 import {
-  approval_status,
-  hostel_block,
+  hostelBlock,
   gender,
-  user_role,
-  rcLeave_status,
-  grievance_status,
-  summer_vacation_status
+  userRole,
+  admissionApprovalStatus,
+  rcLeaveApprovalStatus,
+  grievanceApprovalStatus,
+  summerVacationApprovalStatus,
+  studentLeaveApprovalStatus,
+  vacatingHostelApprovalStatus
 } from "../constants/enum";
 
-export const approval_status_pgEnum = pgEnum(
+export const admission_approval_status_pgEnum = pgEnum(
   "approval_status",
-  Object.values(approval_status) as [string, ...string[]]
+  Object.values(admissionApprovalStatus) as [string, ...string[]]
 );
 
 export const summer_vacation_status_pgEnum = pgEnum(
   "summer_vacation_status",
-  Object.values(summer_vacation_status) as [string, ...string[]]
+  Object.values(summerVacationApprovalStatus) as [string, ...string[]]
 );
-
 
 export const rcLeave_status_pgEnum = pgEnum(
   "rcLeave_status",
-  Object.values(rcLeave_status) as [string, ...string[]]
+  Object.values(rcLeaveApprovalStatus) as [string, ...string[]]
 );
 
 export const hostel_block_pgEnum = pgEnum(
   "hostel_block",
-  Object.values(hostel_block) as [string, ...string[]]
+  Object.values(hostelBlock) as [string, ...string[]]
 );
 
 export const gender_pgEnum = pgEnum(
   "gender",
-  Object.values(gender) as [string, ...string[]]  
+  Object.values(gender) as [string, ...string[]]
 );
 
 export const user_role_pgEnum = pgEnum(
   "role",
-  Object.values(user_role) as [string, ...string[]]
+  Object.values(userRole) as [string, ...string[]]
 );
 
 export const grievance_status_pgEnum = pgEnum(
   "grievance_status",
-  Object.values(grievance_status) as [string, ...string[]]
+  Object.values(grievanceApprovalStatus) as [string, ...string[]]
 );
+
+export const student_leave_status_pgEnum = pgEnum(
+  "student_leave_status",
+  Object.values(studentLeaveApprovalStatus) as [string, ...string[]]
+);
+
+export const vacating_hostel_status_pgEnum = pgEnum(
+  "vacating_hostel_status",
+  Object.values(vacatingHostelApprovalStatus) as [string, ...string[]]
+);
+
+

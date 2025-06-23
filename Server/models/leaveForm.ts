@@ -7,8 +7,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum } from "./enum";
-import { approval_status } from "../constants/enum";
+import { student_leave_status_pgEnum } from "./enum";
+import { studentLeaveApprovalStatus } from "../constants/enum";
 
 export const leaveFormModel = pgTable("leave_form", {
   id: serial("id").primaryKey(),
@@ -27,9 +27,9 @@ export const leaveFormModel = pgTable("leave_form", {
   emergency_contact: varchar("emergency_contact", { length: 15 }).notNull(),
   
   // Status and timestamps
-  status: approval_status_pgEnum("status")
+  status: student_leave_status_pgEnum("status")
     .notNull()
-    .default(approval_status.submitted),
+    .default(studentLeaveApprovalStatus.SUBMITTED),
     
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
