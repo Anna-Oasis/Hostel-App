@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/admission";
@@ -11,16 +11,14 @@ import useUserStore from "@/stores/userStore";
 import { router } from "expo-router";
 import { submitStudentAdmission } from "@/utils/student/studentAdmissionApi";
 import useLoadingStore from "@/stores/loadingStore";
-import { Box } from "@/components/ui/box";
-import { Fab, FabLabel, FabIcon } from "@/components/ui/fab";
-import { History } from "lucide-react-native";
+import AdmissionHistory from "./History/index"; // You'll implement this
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
+  const [activeTab, setActiveTab] = useState<"form" | "history">("form");
   const scrollViewRef = useRef<ScrollView>(null);
   const details = useUserStore((state) => state.details);
   const setLoading = useLoadingStore((state) => state.setLoading);
-
   const currentYear = new Date().getFullYear();
   const gender = details?.gender;
 
@@ -51,95 +49,118 @@ const AdmissionForm = () => {
   };
 
   return (
-    <>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchemas[page]}
-        onSubmit={async (values) => {
-          if (page < 2) {
-            next();
-          } else {
-            const declaration = values.declaration || [];
-            const details = useUserStore.getState().details;
-            const academicYear = `${currentYear}-${currentYear + 1}`;
-            const requestBody = {
-              roll_number: details?.rollNo || "",
-              academicYear,
-              studentAgreed: declaration.includes("studentAgreed"),
-              parentAgreed: declaration.includes("parentAgreed"),
-              admissionCategory: values.admissionCategory || "",
-              previousResident: values.previousResident === "Yes",
-              hostelBlock: values.hostelBlock || "",
-              messPreference: values.messPreference || "",
-              transaction_id: values.transactionId,
-            };
-            setLoading(true);
-            await submitStudentAdmission(requestBody);
-            setLoading(false);
-            router.replace("/User/Student/Admission/History");
-          }
-        }}
-      >
-        {({ handleSubmit, values, setFieldValue }) => {
-          useEffect(() => {
-            if (gender === "male" && values.hostelBlock !== "Flora") {
-              setFieldValue("hostelBlock", "Flora");
-            } else if (gender === "female" && values.hostelBlock !== "Lavendar") {
-              setFieldValue("hostelBlock", "Lavendar");
-            }
-          }, [gender, setFieldValue]);
-          const hostelBlock = values.hostelBlock;
-
-          return (
-            <ScrollView ref={scrollViewRef}>
-              <View className="m-4 flex gap-3">
-                {hostelBlock && (
-                  <View>
-                    <Text className="mb-2 font-semibold">
-                      Admission for hostel block {hostelBlock} for the year{" "}
-                      {currentYear}
-                    </Text>
-                  </View>
-                )}
-                {renderPage(handleSubmit, values)}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {page < 2 && (
-                    <>
-                      {page > 0 && (
-                        <Button onPress={prev}>
-                          <ButtonText>Back</ButtonText>
-                        </Button>
-                      )}
-                      <Button onPress={() => handleSubmit()}>
-                        <ButtonText>Next</ButtonText>
-                      </Button>
-                    </>
-                  )}
-                </View>
-              </View>
-            </ScrollView>
-          );
-        }}
-      </Formik>
-      <Box className="absolute bottom-6 right-6">
-        <Fab
-          size="md"
-          placement="bottom right"
-          isHovered={false}
-          isDisabled={false}
-          isPressed={false}
-          onPress={() => router.push("/User/Student/Admission/History")}
+    <View className="flex-1 bg-white">
+      {/* Tab Header */}
+      <View className="flex-row justify-around mt-4 mb-2">
+        <TouchableOpacity
+          className={`flex-1 py-3 items-center border-b-2 ${
+            activeTab === "form" ? "border-black" : "border-gray-200"
+          }`}
+          onPress={() => setActiveTab("form")}
         >
-          <FabIcon as={History} />
-          <FabLabel>History</FabLabel>
-        </Fab>
-      </Box>
-    </>
+          <Text
+            className={`text-lg font-semibold ${
+              activeTab === "form" ? "text-black" : "text-gray-500"
+            }`}
+          >
+            Admission Form
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={`flex-1 py-3 items-center border-b-2 ${
+            activeTab === "history" ? "border-black" : "border-gray-200"
+          }`}
+          onPress={() => setActiveTab("history")}
+        >
+          <Text
+            className={`text-lg font-semibold ${
+              activeTab === "history" ? "text-black" : "text-gray-500"
+            }`}
+          >
+            History
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Tab Content */}
+      {activeTab === "form" ? (
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchemas[page]}
+          onSubmit={async (values) => {
+            if (page < 2) {
+              next();
+            } else {
+              const declaration = values.declaration || [];
+              const details = useUserStore.getState().details;
+              const academicYear = `${currentYear}-${currentYear + 1}`;
+              const requestBody = {
+                roll_number: details?.rollNo || "",
+                academicYear,
+                studentAgreed: declaration.includes("studentAgreed"),
+                parentAgreed: declaration.includes("parentAgreed"),
+                admissionCategory: values.admissionCategory || "",
+                previousResident: values.previousResident === "Yes",
+                hostelBlock: values.hostelBlock || "",
+                messPreference: values.messPreference || "",
+                transaction_id: values.transactionId,
+              };
+              setLoading(true);
+              await submitStudentAdmission(requestBody);
+              setLoading(false);
+              setActiveTab("history"); // redirect to history tab after submission
+            }
+          }}
+        >
+          {({ handleSubmit, values, setFieldValue }) => {
+            useEffect(() => {
+              if (gender === "male" && values.hostelBlock !== "Flora") {
+                setFieldValue("hostelBlock", "Flora");
+              } else if (
+                gender === "female" &&
+                values.hostelBlock !== "Lavendar"
+              ) {
+                setFieldValue("hostelBlock", "Lavendar");
+              }
+            }, [gender, setFieldValue]);
+
+            const hostelBlock = values.hostelBlock;
+
+            return (
+              <ScrollView ref={scrollViewRef}>
+                <View className="m-4 flex gap-3">
+                  {hostelBlock && (
+                    <View>
+                      <Text className="mb-2 font-semibold">
+                        Admission for hostel block {hostelBlock} for the year{" "}
+                        {currentYear}
+                      </Text>
+                    </View>
+                  )}
+                  {renderPage(handleSubmit, values)}
+                  <View className="flex-row justify-between">
+                    {page < 2 && (
+                      <>
+                        {page > 0 && (
+                          <Button onPress={prev}>
+                            <ButtonText>Back</ButtonText>
+                          </Button>
+                        )}
+                        <Button onPress={() => handleSubmit()}>
+                          <ButtonText>Next</ButtonText>
+                        </Button>
+                      </>
+                    )}
+                  </View>
+                </View>
+              </ScrollView>
+            );
+          }}
+        </Formik>
+      ) : (
+        <AdmissionHistory />
+      )}
+    </View>
   );
 };
 

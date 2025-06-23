@@ -30,7 +30,7 @@ export default function ApplyForLeavePage() {
           className={`flex-1 py-3 items-center border-b-2 ${activeTab === "history" ? "border-blue-600" : "border-gray-200"}`}
           onPress={() => handleTabChange("history")}
         >
-          <Text className={`text-lg font-semibold ${activeTab === "history" ? "text-blue-600" : "text-gray-500"}`}>History and Previous Leaves</Text>
+          <Text className={`text-lg font-semibold ${activeTab === "history" ? "text-blue-600" : "text-gray-500"}`}>History</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className={`flex-1 py-3 items-center border-b-2 ${activeTab === "Close Leave" ? "border-blue-600" : "border-gray-200"}`}

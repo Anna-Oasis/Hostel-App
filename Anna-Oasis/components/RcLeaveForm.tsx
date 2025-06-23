@@ -95,12 +95,14 @@ const RcLeaveForm = () => {
                         <DatePickerField
                             value="arrival"
                             placeholder="YYYY-MM-DD"
+                            minimumDate={new Date()}
                         />
 
                         <Text className="text-lg">Leaving Date:</Text>
                         <DatePickerField
                             value="leaving"
                             placeholder="YYYY-MM-DD"
+                            minimumDate={new Date()}
                         />
 
                         <Text className="text-lg">Reason for Leave:</Text>

@@ -16,13 +16,21 @@ export default function SummerVacationForm() {
     { label: "Lan Cable", value: "Lan Cable" },
     { label: "Cupboard Keys", value: "Cupboard Keys" },
   ];
-
+  const requiredItemValues = hostelItemsOptions.map((item) => item.value);
   const summerVacationSchema = Yup.object().shape({
     vacationDate: Yup.string().required("Date of vacate is required"),
     vacationTime: Yup.string().required("Time of vacate is required"),
     address: Yup.string().required("Address is required"),
     email: Yup.string().email("Enter a valid email").required("Parent's email is required"),
-    hostelItems: Yup.array().min(1).required(),
+    hostelItems: Yup.array()
+      .required("You must select all hostel items")
+      .test(
+        "all-items-selected",
+        "You must select all hostel items",
+        (value) =>
+          Array.isArray(value) &&
+          requiredItemValues.every((item) => value.includes(item))
+      ),
     declaration: Yup.array().min(1).required(),
   });
 
@@ -33,7 +41,6 @@ export default function SummerVacationForm() {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-1 p-4 items-center">
-          <Text className="text-2xl font-normal mb-2">Summer Vacation Form</Text>
 
           <Formik
             initialValues={{
