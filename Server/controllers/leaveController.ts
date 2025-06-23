@@ -54,7 +54,7 @@ export const getAllLeaveFormsFromController = async (
 
   const result = await getLeaveFormApprovals(rollNumber);
 
-  if (!result || result.length === 0) {
+  if (!result) {
     res.status(httpStatus.NOT_FOUND).json({
       success: false,
       message: "No Leave Form Exists",
