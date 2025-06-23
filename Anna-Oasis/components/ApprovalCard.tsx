@@ -3,8 +3,7 @@ import { View, Text, Animated, Dimensions } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
-import { Icon, CloseIcon, CopyIcon } from "@/components/ui/icon"
-import { BlurView } from 'expo-blur'
+import { Icon, CloseIcon } from "@/components/ui/icon"
 
 /**
  * Status options for the approval badge
@@ -97,53 +96,59 @@ const ApprovalCard = (props: approvalCardProps) => {
 
   return (
     <View className="m-2">
-      <BlurView
-        intensity={100}
-        tint="dark"
-        className="rounded-2xl overflow-hidden"
+      <View
+        className="rounded-2xl bg-white p-6 shadow-lg"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 6,
+          elevation: 4,
+        }}
       >
-        <View
-          className="rounded-2xl bg-[#81b1ce] p-8"
-        >
-          <View className="flex flex-row">
-            <Text className="text-white font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
-            {props.badge && (
-              <Animated.View
-                style={{
-                  opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
-                }}
-              >
-                <Badge
-                  size="md"
-                  variant="solid"
-                  action={
-                    props.badge === badgeStatus.Approved
-                      ? 'success'
-                      : props.badge === badgeStatus.Rejected
-                      ? 'error'
-                      : 'muted'
-                  }
-                  className={`px-4 py-1 rounded-lg ${props.badge === badgeStatus.Pending ? "bg-orange-500" : 
-                                              props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}`}
-                >
-                  <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
-                </Badge>
-              </Animated.View>
-            )}
-          </View>
-
-          <Text className="text-base font-medium text-white italic">{props.subTitle}</Text>
-
-          <View className="items-end mt-4">
-            <Button
-              onPress={() => setViewDetails(true)}
-              className='bg-[#0f1056]'
+        <View className="flex flex-row items-start">
+          <Text className="text-black font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
+          {props.badge && (
+            <Animated.View
+              style={{
+                opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
+              }}
             >
-              <ButtonText >View more</ButtonText>
-            </Button>
-          </View>
+              <Badge
+                size="md"
+                variant="solid"
+                action={
+                  props.badge === badgeStatus.Approved
+                    ? 'success'
+                    : props.badge === badgeStatus.Rejected
+                    ? 'error'
+                    : 'muted'
+                }
+                className={`px-4 py-1 rounded-full ${
+                  props.badge === badgeStatus.Pending
+                    ? "bg-orange-500"
+                    : props.badge === badgeStatus.Approved
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }`}
+              >
+                <BadgeText className="text-white">{props.badge}</BadgeText>
+              </Badge>
+            </Animated.View>
+          )}
         </View>
-      </BlurView>
+
+        <Text className="text-base font-medium text-black italic">{props.subTitle}</Text>
+
+        <View className="items-end mt-4">
+          <Button
+            onPress={() => setViewDetails(true)}
+            className='bg-black'
+          >
+            <ButtonText className="text-white">View more</ButtonText>
+          </Button>
+        </View>
+      </View>
 
       <Modal
         isOpen={viewDetails}
@@ -152,24 +157,24 @@ const ApprovalCard = (props: approvalCardProps) => {
         <ModalBackdrop/>
         <ModalContent style={{ maxHeight: Dimensions.get("window").height * 0.8 }}>
           <ModalHeader className='border-b-2'>
-            <Text className="text-2xl font-bold mb-2">Details</Text>
+            <Text className="text-2xl font-bold mb-2 text-black">Details</Text>
             <ModalCloseButton>
               <Icon as={CloseIcon} className="mb-2" size='xl' />
             </ModalCloseButton>
           </ModalHeader>
           <ModalBody className='mt-6'>
             {props.data && (
-              <View className="space-y-3">
-                {Object.entries(props.data).map(([key, value]) => (
+              <View>
+                {Object.entries(props.data).map(([key, value], idx) => (
                   <View
                     key={key}
-                    className="bg-white/10 rounded-lg px-3 py-2"
+                    className={`bg-gray-100 rounded-lg px-3 py-2${idx !== 0 ? " mt-3" : ""}`}
                   >
-                    <Text className="text-base font-semibold text-gray-900 dark:text-white">
+                    <Text className="text-base font-semibold text-black">
                       {formatKey(key)}
                     </Text>
                     <Text
-                      className="text-base font-normal text-gray-800 dark:text-gray-200 mt-1"
+                      className="text-base font-normal text-gray-800 mt-1"
                       numberOfLines={4}
                       ellipsizeMode="tail"
                     >
@@ -188,7 +193,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                     setViewDetails(false);
                     props.onApprove?.();
                   }}
-                  className="bg-green-600 w-[95px] h-10 items-centerrounded-lg justify-center"
+                  className="bg-green-600 w-[95px] h-10 rounded-lg justify-center"
                 >
                   <ButtonText className="text-white text-center">Approve</ButtonText>
                 </Button>

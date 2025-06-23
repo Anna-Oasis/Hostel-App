@@ -1,9 +1,23 @@
-import { View } from "react-native";
+import { View, Keyboard } from "react-native";
+import { useEffect, useState } from "react";
 import { Text } from "@/components/ui/text";
 import { Icon } from "@/components/ui/icon";
 import { Heart } from "lucide-react-native";
 
 export default function Footer() {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  if (keyboardVisible) return null;
+
   return (
     <View
       className="absolute bottom-8 left-0 right-0 items-center opacity-20"
