@@ -23,7 +23,8 @@ const initialValues = {
   submissionDate: "",
   transactionId: "",
   academicYear: "",
-  hostelBlock: undefined
+  hostelBlock: undefined,
+  declaration: [] as string[]
 };
 
 const hostelBlocks = [

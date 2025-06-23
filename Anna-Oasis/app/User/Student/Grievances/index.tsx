@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import ModalCallable from "@/components/ModalCallable";
-import { useUserStore } from "@/stores/userStore";
+import useUserStore from "@/stores/userStore";
 import { getToken, verifyToken } from "@/utils/authUtils";
 import { useState, useRef } from "react";
 import { handleGrievance } from "@/utils/grievanceUtils";
