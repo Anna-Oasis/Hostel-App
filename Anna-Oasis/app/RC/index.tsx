@@ -29,7 +29,7 @@ export default function RCPage() {
       color: "#10B981",
     },
     {
-      title: "Apply for Leave",
+      title: "Leave",
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,
       color: "#D97706",

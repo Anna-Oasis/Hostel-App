@@ -5,12 +5,12 @@ import {
   Text,
   ScrollView,
   Alert,
-  Modal,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
-import { getRCLeavebyDw, updateRCLeaveStatusByDw } from "@/utils/deputyWarden/dwApi";
-import { getRCLeavebyEw, updateRCLeaveStatusByEw } from "@/utils/executiveWarden/ewApi";
+import {
+  getRCLeavebyEw,
+  updateRCLeaveStatusByEw,
+} from "@/utils/executiveWarden/ewApi";
 
 type RcLeave = {
   id: number;
@@ -26,10 +26,6 @@ export default function RcLeavePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingIds, setUpdatingIds] = useState<Set<number>>(new Set());
-
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectComment, setRejectComment] = useState("");
-  const [currentRejectId, setCurrentRejectId] = useState<number | null>(null);
 
   const fetchLeaves = async () => {
     try {
@@ -58,7 +54,7 @@ export default function RcLeavePage() {
             leave.id === leaveId ? { ...leave, approved: "2" } : leave
           )
         );
-        Alert.alert("Success", "RC Leave approved successfully.");
+        Alert.alert("Approved", "RC Leave approved successfully.");
       } else {
         Alert.alert("Error", result.message || "Approval failed.");
       }
@@ -73,37 +69,17 @@ export default function RcLeavePage() {
     }
   };
 
-  const handleRejectClick = (leaveId: number) => {
-    setCurrentRejectId(leaveId);
-    setRejectComment("");
-    setShowRejectModal(true);
-  };
-
-  const handleRejectConfirm = async () => {
-    if (currentRejectId === null || !rejectComment.trim()) {
-      Alert.alert("Error", "Rejection reason is required.");
-      return;
-    }
-
-    setUpdatingIds((prev) => new Set(prev).add(currentRejectId));
+  const handleReject = async (leaveId: number) => {
+    setUpdatingIds((prev) => new Set(prev).add(leaveId));
     try {
-      const result = await updateRCLeaveStatusByEw(
-        currentRejectId,
-        "false",
-        rejectComment
-      );
+      const result = await updateRCLeaveStatusByEw(leaveId, "false", "");
       if (result.success) {
         setLeaves((prev) =>
           prev.map((leave) =>
-            leave.id === currentRejectId
-              ? { ...leave, approved: "-1" }
-              : leave
+            leave.id === leaveId ? { ...leave, approved: "-1" } : leave
           )
         );
         Alert.alert("Rejected", "RC Leave has been rejected.");
-        setShowRejectModal(false);
-        setCurrentRejectId(null);
-        setRejectComment("");
       } else {
         Alert.alert("Error", result.message || "Rejection failed.");
       }
@@ -112,16 +88,10 @@ export default function RcLeavePage() {
     } finally {
       setUpdatingIds((prev) => {
         const newSet = new Set(prev);
-        newSet.delete(currentRejectId!);
+        newSet.delete(leaveId);
         return newSet;
       });
     }
-  };
-
-  const handleRejectCancel = () => {
-    setShowRejectModal(false);
-    setRejectComment("");
-    setCurrentRejectId(null);
   };
 
   useEffect(() => {
@@ -148,75 +118,42 @@ export default function RcLeavePage() {
   }
 
   return (
-    <>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {leaves.length === 0 ? (
-          <Text className="text-center text-gray-500">
-            No RC Leave requests found.
-          </Text>
-        ) : (
-          leaves.map((leave) => (
-            <ApprovalCard
-              key={leave.id}
-              title={`RC Leave #${leave.id}`}
-              subTitle={`From ${leave.leaving} to ${leave.arrival}`}
-              data={{
-                Reason: leave.reason,
-                Created: new Date(leave.created_at).toLocaleString(),
-              }}
-              badge={
-                leave.approved === "2"
-                  ? badgeStatus.Approved
-                  : leave.approved === "-1"
+    <ScrollView contentContainerStyle={{ padding: 16 }}>
+      {leaves.length === 0 ? (
+        <Text className="text-center text-gray-500">
+          No RC Leave requests found.
+        </Text>
+      ) : (
+        leaves.map((leave) => (
+          <ApprovalCard
+            key={leave.id}
+            title={`RC Leave #${leave.id}`}
+            subTitle={`From ${leave.leaving} to ${leave.arrival}`}
+            data={{
+              "Reason": leave.reason,
+              "Leaving": leave.leaving,
+              "Arrival": leave.arrival,
+              "Created At": new Date(leave.created_at).toLocaleString(),
+              "Status": leave.approved === '1'
+                ? badgeStatus.Pending
+                : leave.approved === '-1'
+                  ? badgeStatus.Rejected
+                  : leave.approved === '2'
+                    ? badgeStatus.Approved
+                    : badgeStatus.Pending,
+            }}
+            badge={
+              leave.approved === "2"
+                ? badgeStatus.Approved
+                : leave.approved === "-1"
                   ? badgeStatus.Rejected
                   : badgeStatus.Pending
-              }
-              onApprove={() => handleApprove(leave.id)}
-              onDecline={() => handleRejectClick(leave.id)}
-            />
-          ))
-        )}
-      </ScrollView>
-
-      {/* Rejection Modal */}
-      <Modal
-        visible={showRejectModal}
-        transparent
-        animationType="slide"
-        onRequestClose={handleRejectCancel}
-      >
-        <View className="flex-1 justify-center items-center bg-black/50 p-5">
-          <View className="bg-white w-full max-w-sm rounded-2xl p-5">
-            <Text className="text-lg font-bold mb-2 text-center">
-              Reason for Rejection
-            </Text>
-            <TextInput
-              value={rejectComment}
-              onChangeText={setRejectComment}
-              placeholder="Enter reason..."
-              multiline
-              numberOfLines={4}
-              className="border border-gray-300 p-3 rounded-lg text-base text-black mb-4"
-              placeholderTextColor="#999"
-              textAlignVertical="top"
-            />
-            <View className="flex-row justify-between space-x-2">
-              <TouchableOpacity
-                onPress={handleRejectCancel}
-                className="flex-1 bg-gray-300 py-3 rounded-lg items-center"
-              >
-                <Text className="text-black font-semibold">Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleRejectConfirm}
-                className="flex-1 bg-red-500 py-3 rounded-lg items-center"
-              >
-                <Text className="text-white font-semibold">Reject</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </>
+            }
+            onApprove={() => handleApprove(leave.id)}
+            onDecline={() => handleReject(leave.id)}
+          />
+        ))
+      )}
+    </ScrollView>
   );
 }
