@@ -1,10 +1,9 @@
 import { View, Text, Image } from 'react-native'
-import { useEffect } from 'react'
+import { useFormikContext } from 'formik'
 import SelectField from '@/components/form/SelectField'
 import TextField from '@/components/form/TextField'
 import { hostelBlocks, admissionCategories, messPreferences, previousResidentOptions } from '@/constants/admission'
 import useUserStore from '@/stores/userStore'
-import { useFormikContext } from 'formik'
 
 const HOSTEL_FEES = [
   { label: "Admission Fee", amount: "₹2,000" },
@@ -17,28 +16,10 @@ const UPI_ID = "salaikowshikan531@okicici";
 const QR_IMAGE = require("@/assets/images/upi.jpg");
 
 const AdmissionDetails = () => {
-  const details = useUserStore((state) => state.details)
-  const gender = details?.gender
-  const { setFieldValue, values } = useFormikContext<any>()
-
-  useEffect(() => {
-    if (gender === "male") {
-      setFieldValue("hostelBlock", "Flora")
-    } else if (gender === "female") {
-      setFieldValue("hostelBlock", "Lavendar")
-    }
-  }, [gender, setFieldValue])
-
-  const currentYear = new Date().getFullYear()
-  const hostelBlock = values.hostelBlock
+  const { values } = useFormikContext<any>()
 
   return (
     <View>
-      {hostelBlock && (
-        <Text className="mb-2 font-semibold">
-          Admission for hostel block {hostelBlock} for the year {currentYear}
-        </Text>
-      )}
       <SelectField label="Mess Preference" value="messPreference" options={messPreferences} />
       <SelectField label="Previous Resident" value="previousResident" options={previousResidentOptions} />
       <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />

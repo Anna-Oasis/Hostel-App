@@ -4,6 +4,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
 import { Icon, CloseIcon, CopyIcon } from "@/components/ui/icon"
+import { BlurView } from 'expo-blur'
 
 /**
  * Status options for the approval badge
@@ -84,44 +85,54 @@ const ApprovalCard = (props: approvalCardProps) => {
   }, []);
 
   return (
-    <View className="border border-primary-400 rounded-lg m-2 p-4 bg-black/10">
-
-      <View className="flex flex-row ">
-        <Text className="text-black font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
-        {props.badge && (
-            <Animated.View
-              style={{
-                opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
-              }}
-            >
-              <Badge
-                size="md"
-                variant="solid"
-                action={
-                  props.badge === badgeStatus.Approved
-                    ? 'success'
-                    : props.badge === badgeStatus.Rejected
-                    ? 'error'
-                    : 'muted'
-                }
-                className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
-                                            props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
-              >
-                <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
-              </Badge>
-            </Animated.View>
-          )}
-      </View>
-
-        <Text className="text-base font-medium ">{props.subTitle}</Text>
-
-      <View className="items-center mt-4">
-        <Button
-            onPress={() => setViewDetails(true)}
+    <View className="m-2">
+      <BlurView
+        intensity={40}
+        tint="dark"
+        className="rounded-2xl overflow-hidden"
+      >
+        <View
+          className="rounded-2xl bg-[#81b1ce] p-8"
         >
-          <ButtonText >View more</ButtonText>
-        </Button>
-      </View>
+          <View className="flex flex-row">
+            <Text className="text-white font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
+            {props.badge && (
+              <Animated.View
+                style={{
+                  opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
+                }}
+              >
+                <Badge
+                  size="md"
+                  variant="solid"
+                  action={
+                    props.badge === badgeStatus.Approved
+                      ? 'success'
+                      : props.badge === badgeStatus.Rejected
+                      ? 'error'
+                      : 'muted'
+                  }
+                  className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
+                                              props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+                >
+                  <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
+                </Badge>
+              </Animated.View>
+            )}
+          </View>
+
+          <Text className="text-base font-medium text-white italic">{props.subTitle}</Text>
+
+          <View className="items-end mt-4">
+            <Button
+              onPress={() => setViewDetails(true)}
+              className='bg-[#0f1056]'
+            >
+              <ButtonText >View more</ButtonText>
+            </Button>
+          </View>
+        </View>
+      </BlurView>
 
       <Modal
         isOpen={viewDetails}
