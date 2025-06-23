@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -7,8 +7,23 @@ import {
   ClipboardListIcon,
   CalendarCheckIcon,
 } from "lucide-react-native";
+import { useEffect } from "react";
+import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
 
 export default function RCPage() {
+  
+  const fetchRooms = async () => {
+    try {
+      const rooms = await getAllRooms();
+      console.log("Rooms fetched successfully:", rooms);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  }
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
   const menuItems = [
     {
       title: "Room Allocation",
@@ -48,7 +63,9 @@ export default function RCPage() {
             variant="solid"
           >
             <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonText className="mt-3 text-base font-medium">
+              {item.title}
+            </ButtonText>
           </Button>
         ))}
       </View>
