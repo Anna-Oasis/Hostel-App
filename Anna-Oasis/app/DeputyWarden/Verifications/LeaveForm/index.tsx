@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, TextInput } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import { Text } from "@/components/ui/text";
 import {
@@ -21,6 +21,9 @@ export default function LeaveFormVerificationPage() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
+  const [rejectModalVisible, setRejectModalVisible] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
+  const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -49,6 +52,27 @@ export default function LeaveFormVerificationPage() {
     }
   };
 
+  // Called when Decline is pressed
+  const handleDecline = (leaveFormId: number) => {
+    setSelectedLeaveId(leaveFormId);
+    setRejectReason("");
+    setRejectModalVisible(true);
+  };
+
+  // Called when rejection reason is submitted
+  const submitRejection = () => {
+    if (!rejectReason.trim()) {
+      Alert.alert("Error", "Please provide a reason for rejection.");
+      return;
+    }
+    handleDecision(
+      selectedLeaveId!,
+      false,
+      `${rejectReason.trim()} (Rejected by Deputy Warden)`
+    );
+    setRejectModalVisible(false);
+  };
+
   // Helper to map status
   const mapStatus = (status: string | number) => {
     if (status === "2") return badgeStatus.Pending;
@@ -56,6 +80,7 @@ export default function LeaveFormVerificationPage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff", padding: 12 }}>
+      {/* Success Modal */}
       <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
         <ModalBackdrop />
         <ModalContent>
@@ -72,6 +97,41 @@ export default function LeaveFormVerificationPage() {
               style={{ padding: 8 }}
             >
               OK
+            </Text>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Rejection Reason Modal */}
+      <Modal isOpen={rejectModalVisible} onClose={() => setRejectModalVisible(false)}>
+        <ModalBackdrop />
+        <ModalContent>
+          <ModalHeader>
+            <Text className="text-lg font-semibold">Reason for Rejection</Text>
+          </ModalHeader>
+            <ModalBody>
+            <TextInput
+              placeholder="Enter reason for rejection"
+              value={rejectReason}
+              onChangeText={setRejectReason}
+              multiline
+              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-base"
+              textAlignVertical="top"
+            />
+            </ModalBody>
+          <ModalFooter>
+            <Text
+              className="text-blue-600 font-semibold mr-6"
+              onPress={submitRejection}
+              style={{ padding: 8 }}
+            >
+              Submit
+            </Text>
+            <Text
+              className="text-gray-600 font-semibold"
+              onPress={() => setRejectModalVisible(false)}
+              style={{ padding: 8 }}
+            >
+              Cancel
             </Text>
           </ModalFooter>
         </ModalContent>
@@ -109,7 +169,7 @@ export default function LeaveFormVerificationPage() {
                   "Status": leave.status === "2" ? "Pending" : leave.status
                 }}
                 onApprove={() => handleDecision(leave.id, true)}
-                onDecline={() => handleDecision(leave.id, false, "Rejected by Deputy Warden")}
+                onDecline={() => handleDecline(leave.id)}
               />
             );
           })}
