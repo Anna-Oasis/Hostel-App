@@ -70,3 +70,13 @@ export async function getRCById(rc_id: number) {
     .limit(1);
   return rc;
 }
+
+
+export async function getRCByUserId(userId: number) {
+  const rc = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.userId, userId))
+    .limit(1);
+  return rc;
+}

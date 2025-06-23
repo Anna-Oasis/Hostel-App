@@ -103,7 +103,7 @@ rcRouter.put(
 
 // Room and student details routes
 rcRouter.get(
-  "/rooms",
+  "/rooms/:academicYear",
   authenticateUser,
   hasRole(['rc']),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
