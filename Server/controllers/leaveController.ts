@@ -212,7 +212,7 @@ export const updateLeaveFormApprovalStatusController = async (
   }
 
   const updatedLeaveForm = await updateLeaveForm(Number(leave_form_id), {
-    status: updateStatus,
+    status: validated.approve? updateStatus :approval_status.declined,
     updated_at: new Date(),
   });
 
