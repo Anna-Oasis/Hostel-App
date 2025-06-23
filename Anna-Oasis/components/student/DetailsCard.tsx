@@ -20,6 +20,7 @@ const DetailsCard = () => {
             } else {
                 setDetails(details.data);
             }
+            console.log(details.data);
         } catch (error) {
             console.error("Error fetching student details:", error);
         }
