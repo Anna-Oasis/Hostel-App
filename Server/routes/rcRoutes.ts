@@ -131,13 +131,13 @@ rcRouter.put(
 
 // Attendance routes
 rcRouter.get(
-  "/attendance/:rc_id",
+  "/attendance",
   authenticateUser,
   hasRole(['rc']),
   errorWrapper(getAttendanceByRcController)
 );
 rcRouter.post(
-  "/attendance/:rc_id",
+  "/attendance",
   authenticateUser,
   hasRole(['rc']),
   errorWrapper(createAttendanceByRcController)
