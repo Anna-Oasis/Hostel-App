@@ -438,8 +438,12 @@ export const updateApprovalStatusByRCController = async (
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
-
-    // Check if room has space (max 2 students)
+    if (room.rollNo?.includes(rollNo)) {
+      throw AppError(
+        "Student is already assigned to this room",
+        httpStatus.BAD_REQUEST
+      );
+    }
     if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
       throw AppError(
         `Room is already full (${ROOM_SIZE} students)`,

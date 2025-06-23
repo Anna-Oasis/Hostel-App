@@ -9,7 +9,7 @@ export default function Signup() {
   const setLoading = useLoadingStore((state) => state.setLoading);
 
   return (
-    <View className="flex-1 justify-center items-center p-4 bg-gray-50">
+    <View className="flex-1 justify-center  p-4 bg-gray-50">
       <SignupForm
         onSubmit={(values) => {
           setLoading(true);
