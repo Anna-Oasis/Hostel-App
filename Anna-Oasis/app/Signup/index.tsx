@@ -4,6 +4,7 @@ import SignupForm from "@/components/auth/SignupCard";
 import { handleSignup } from "@/utils/authUtils";
 import useLoadingStore from "@/stores/loadingStore";
 import { router } from "expo-router";
+import Footer from "@/components/appbars/Footer";
 
 export default function Signup() {
   const setLoading = useLoadingStore((state) => state.setLoading);
@@ -18,6 +19,7 @@ export default function Signup() {
           setLoading(false);
         }}
       />
+      <Footer />
     </View>
   );
 }

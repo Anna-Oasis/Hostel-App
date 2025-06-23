@@ -3,7 +3,7 @@ import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
 import { getRCidfromUserId } from "../services/helper";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { fetchStudentDetailsForRC } from "../services/studentServices";
 
 export const fetchStudentDetailsForRcController = async (
@@ -16,22 +16,14 @@ export const fetchStudentDetailsForRcController = async (
         httpStatus.UNAUTHORIZED
         );
     }
-
-    const rc_id = await getRCidfromUserId(Number(req.User.id));
-    if (!rc_id) {
-    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-    }
-
-    const rc = await getRCById(Number(rc_id));
-    if (!rc || rc.length === 0) {
-    throw AppError("RC not found", httpStatus.NOT_FOUND);
-    }
+    const rc = await getRCByUserId(Number(req.User.id));
 
     if(!rc[0].floor || !rc[0].hostel){
     throw AppError("RC hostel details not found", httpStatus.NOT_FOUND);
     }
-
+    console.log("RC Details:", rc);
     const students = await fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
+    console.log(students)
 
     if (!students || students.length === 0) {
         res.status(httpStatus.OK).json({
