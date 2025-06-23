@@ -16,6 +16,12 @@ export default function ExecutiveWardenPage() {
       route: "/ExecutiveWarden/RCManagement",
       icon: UserCircle2Icon,
       color: "#0EA5E9",
+    },
+        {
+      title: "RC Leave Approvals",
+      route: "/ExecutiveWarden/RcLeave",
+      icon: UserCircle2Icon,
+      color: "#0EA5E9",
     }
   ];
 

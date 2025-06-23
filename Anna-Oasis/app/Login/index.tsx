@@ -7,6 +7,9 @@ import {
 } from "react-native";
 import { Text } from "@/components/ui/text";
 import LoginCard from "@/components/auth/LoginCard";
+import Footer from "@/components/appbars/Footer";
+      
+
 export default function Login() {
 
   return (
@@ -34,6 +37,7 @@ export default function Login() {
           <LoginCard />
         </View>
       </KeyboardAvoidingView>
+      <Footer />
     </ScrollView>
   );
 }

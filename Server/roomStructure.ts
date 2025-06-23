@@ -100,7 +100,7 @@ async function insertRoomStructure() {
       // Generate room structure for this block
       let roomCounter = 1;
       
-      for (let floor = 1; floor <= numFloors; floor++) {
+      for (let floor = 0; floor < numFloors; floor++) {
         console.log(`  📍 Floor ${floor}: Rooms ${roomCounter} to ${roomCounter + roomsPerFloor - 1}`);
         
         for (let roomInFloor = 1; roomInFloor <= roomsPerFloor; roomInFloor++) {

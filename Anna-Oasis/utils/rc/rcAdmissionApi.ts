@@ -8,7 +8,7 @@ export async function getAllRCAdmissions() {
     if (!token) {
       throw new Error("User is not authenticated");
     }
-    const response = await api.get("/api/resident_counsellor/admissions", {
+    const response = await api.get(`/api/resident_counsellor/admissions/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -25,12 +25,13 @@ export async function getAllRCAdmissions() {
 }
 
 export async function getAllRooms() {
+  const academicYear = "2025-2026";
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("User is not authenticated");
     }
-    const response = await api.get("/api/resident_counsellor/rooms", {
+    const response = await api.get(`/api/resident_counsellor/rooms/${academicYear}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -44,4 +45,22 @@ export async function getAllRooms() {
     );
     throw error;
   }
+}
+
+export async function allocateRoomAdmission(admissionId: string, updateData: any) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("User is not authenticated");
+  }
+  console.log("Allocating room for admission:", admissionId, updateData);
+  const response = await api.put(
+    `/api/resident_counsellor/admissions/${admissionId}`,
+    updateData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
 }

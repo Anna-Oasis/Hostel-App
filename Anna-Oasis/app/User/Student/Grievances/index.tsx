@@ -46,7 +46,7 @@ export default function GrievancesPage() {
 
   return (
     <View className="bg-white flex-1 p-0">
-      <View className="flex-row justify-around items-center bg-gray-100 pt-4 ">
+      <View className="flex-row justify-around items-center  pt-4 ">
         <Button
           variant="link"
           className={`flex-1 flex-row items-center justify-center py-2 border-b-2 ${

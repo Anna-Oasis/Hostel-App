@@ -18,7 +18,7 @@ export const rcLeaveModel = pgTable("rc_leave", {
   // Foreign key to RC
   rc_id: integer("rc_id")
     .notNull()
-    .references(() => rcModel.userId, { onDelete: "cascade" }),
+    .references(() => rcModel.id, { onDelete: "cascade" }),
 
   leaving: date("leaving").notNull(),
   arrival: date("arrival").notNull(),

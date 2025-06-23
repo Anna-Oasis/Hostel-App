@@ -9,20 +9,26 @@ import {
 } from "lucide-react-native";
 import { useEffect } from "react";
 import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
+import useRCStore from "@/stores/rcStore";
 
 export default function RCPage() {
-  
+  const setRooms = useRCStore((state) => state.setRooms);
+  const rooms = useRCStore((state) => state.rooms);
+
   const fetchRooms = async () => {
     try {
       const rooms = await getAllRooms();
-      console.log("Rooms fetched successfully:", rooms);
+      setRooms(rooms);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
-  }
+  };
+
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    if (!rooms || rooms.length === 0) {
+      fetchRooms();
+    }
+  }, [rooms]);
 
   const menuItems = [
     {
@@ -44,7 +50,7 @@ export default function RCPage() {
       color: "#10B981",
     },
     {
-      title: "Apply for Leave",
+      title: "Leave",
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,
       color: "#D97706",

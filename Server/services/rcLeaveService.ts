@@ -38,7 +38,7 @@ export async function updateAlternateRCtoId(rcId : number,id : number) {
       .set({
         alternatingToRCId : rcId
       })
-      .where(eq(rcModel.userId, id))
+      .where(eq(rcModel.id, id))
       .returning();
   return updateRC;
 }
