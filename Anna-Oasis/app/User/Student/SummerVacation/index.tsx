@@ -7,7 +7,7 @@ import { ScrollView } from "react-native";
 import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import * as Yup from 'yup';
 import TimePickerField from "@/components/form/TimePickerField";
-import { submitSummerVacationRequest } from "@/utils/student/studentApi";
+import { submitSummerVacationRequest } from "@/utils/student/studentVacationApi";
 
 
 export default function SummerVacationPage() {
