@@ -13,12 +13,34 @@ export async function getAllRCAdmissions() {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (error: any) {
     Alert.alert(
       "Fetch Error",
       error.response?.data?.message ||
         "An error occurred while fetching admissions"
+    );
+    throw error;
+  }
+}
+
+export async function getAllRooms() {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.get("/api/resident_counsellor/rooms", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    Alert.alert(
+      "Fetch Error",
+      error.response?.data?.message ||
+        "An error occurred while fetching rooms"
     );
     throw error;
   }

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Animated, Dimensions } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
@@ -36,6 +36,17 @@ type approvalCardProps = {
   badge?: badgeStatus,
   /** JSON object containing data to be displayed in the details modal */
   data ?: Record<string, any>,
+}
+
+/**
+ * Format a key string to a more readable format
+ * (e.g., "parentGuardianSignatureUrl" -> "Parent Guardian Signature Url")
+ */
+function formatKey(key: string) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 /**
@@ -139,7 +150,7 @@ const ApprovalCard = (props: approvalCardProps) => {
         onClose={() => setViewDetails(false)}
       >
         <ModalBackdrop/>
-        <ModalContent>
+        <ModalContent style={{ maxHeight: Dimensions.get("window").height * 0.8 }}>
           <ModalHeader className='border-b-2'>
             <Text className="text-2xl font-bold mb-2">Details</Text>
             <ModalCloseButton>
@@ -148,11 +159,20 @@ const ApprovalCard = (props: approvalCardProps) => {
           </ModalHeader>
           <ModalBody className='mt-6'>
             {props.data && (
-              <View>
+              <View className="space-y-3">
                 {Object.entries(props.data).map(([key, value]) => (
-                  <View key={key} className='flex flex-row space-y-2 gap-1'>
-                    <Text className='text-lg font-medium'>{key} : </Text>
-                    <Text className='text-lg font-normal'>
+                  <View
+                    key={key}
+                    className="bg-white/10 rounded-lg px-3 py-2"
+                  >
+                    <Text className="text-base font-semibold text-gray-900 dark:text-white">
+                      {formatKey(key)}
+                    </Text>
+                    <Text
+                      className="text-base font-normal text-gray-800 dark:text-gray-200 mt-1"
+                      numberOfLines={4}
+                      ellipsizeMode="tail"
+                    >
                       {typeof value === 'string' ? value : JSON.stringify(value)}
                     </Text>
                   </View>
