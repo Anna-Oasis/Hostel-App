@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getAllRCAdmissions } from "@/utils/rc/rcAdmissionApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
+import { Icon } from "@/components/ui/icon";
+import { Inbox } from "lucide-react-native";
 
 export default function RoomAllocationPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
@@ -32,8 +34,14 @@ export default function RoomAllocationPage() {
     <View className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {admissions.length === 0 ? (
-          <View className="flex-1 justify-center items-center">
-            <Text>Room Allocation (Coming Soon)</Text>
+          <View className="flex-1 justify-center items-center mt-16">
+            <Icon as={Inbox} size="xl" color="#a3a3a3" className="mb-4" />
+            <Text size="lg" className="text-typography-400 font-semibold mb-2">
+              No pending room allocations
+            </Text>
+            <Text size="sm" className="text-typography-300 text-center">
+              All admissions have been reviewed.
+            </Text>
           </View>
         ) : (
           admissions.map((item: any, idx: number) => (
