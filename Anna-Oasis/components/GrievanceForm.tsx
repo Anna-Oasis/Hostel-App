@@ -13,23 +13,23 @@ const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
       <Text className="text-3xl font-bold text-gray-900 mb-4">File a Grievance</Text>
       <Formik
         initialValues={{
-          title: "",
+          subject: "",
           description: "",
-          category: "",
+          grievance_type: "",
         }}
         validationSchema={Yup.object().shape({
-          title: Yup.string().required("Title is required"),
+          subject: Yup.string().required("Subject is required"),
           description: Yup.string().required("Description is required"),
-          category: Yup.string().required("Category is required"),
+          grievance_type: Yup.string().required("Category is required"),
         })}
         onSubmit={onSubmit}
       >
-        {({ handleSubmit, values }) => (
+        {({ handleSubmit }) => (
           <View className="space-y-4">
             <TextField
               placeholder="Enter grievance title"
-              value="title"
-              label="Title"
+              value="subject"
+              label="Subject"
             />
             <TextField
               placeholder="Describe your grievance"
@@ -39,12 +39,11 @@ const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
 
             <SelectField
               label="Category"
-              value="category"
+              value="grievance_type"
               options={grievanceCategories}
             />
 
             <Button onPress={() => {
-                console.log(values);
                 handleSubmit();
             }} className="mt-6">
               <ButtonText>Submit Grievance</ButtonText>
