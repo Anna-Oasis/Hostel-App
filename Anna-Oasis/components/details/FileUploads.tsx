@@ -6,25 +6,35 @@ import TextField from "@/components/form/TextField";
 import RadioField from "@/components/form/RadioField";
 import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
+import useUserStore from "@/stores/userStore";
 
 const FileUploads = () => {
   const { values, setFieldValue } = useFormikContext<any>();
+  const details = useUserStore((state) => state.details);
+
   useEffect(() => {
-    if (values.isForeignNational === "Yes" && values.govtIdType !== "Passport") {
-      setFieldValue("govtIdType", "Passport");
+    if (details) {
+      const isForeign = details.govtIdType === "Passport" ? "Yes" : "No";
+      setFieldValue("isForeignNational", isForeign);
+    } else {
+      if (values.isForeignNational === undefined) {
+        setFieldValue("isForeignNational", "No");
+      }
     }
-  }, [values.isForeignNational, setFieldValue, values.govtIdType]);
+  }, [details, setFieldValue, values.isForeignNational, details?.govtIdType]);
 
   return (
     <>
-      <RadioField
-        label="Are you a Foreign National?"
-        value="isForeignNational"
-        options={[
-          { label: "Yes", value: "Yes" },
-          { label: "No", value: "No" },
-        ]}
-      />
+      {!details && (
+        <RadioField
+          label="Are you a Foreign National?"
+          value="isForeignNational"
+          options={[
+            { label: "Yes", value: "Yes" },
+            { label: "No", value: "No" },
+          ]}
+        />
+      )}
 
       {values.isForeignNational === "No" ? (
         <View>
@@ -57,12 +67,11 @@ const FileUploads = () => {
             placeholder="Upload"
           />
         </View>
-      ) }
+      )}
 
       <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
       <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
       <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
-      <ImagePickerField label="Aadhaar Card" value="aadhaarUrl" placeholder="Upload" />
       <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
     </>
   );

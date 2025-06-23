@@ -70,7 +70,6 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
   if (!userId) {
     throw AppError("User ID is required", httpStatus.BAD_REQUEST);
   }
-  console.log("User ID:", userId);
 
   const student = await findStudentByUserId(Number(userId));
   if (!student.length) {
@@ -91,6 +90,11 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
 
 export async function createStudentDetailsController(req: AuthRequest, res: Response) {
   const { body, files } = req;
+
+  body.user_id = req.User?.id;
+  if (!body.user_id) {
+    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
+  }
 
   const missingFile = requiredFiles.find(
     (field) => !(files as FileMap)?.[field]?.length
@@ -143,7 +147,11 @@ export async function updateStudentDetailsController(req: AuthRequest, res: Resp
   if (!existingStudent.length) {
     throw AppError("Student with provided roll number not found", httpStatus.NOT_FOUND);
   }
-  console.log(existingStudent);
+  body.user_id = req.User?.id;
+  if (!body.user_id) {
+    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
+  }
+  console.log(body)
   const validated = studentSchema.partial().parse(body);
   const updatedData: Record<string, any> = {
     ...validated,
