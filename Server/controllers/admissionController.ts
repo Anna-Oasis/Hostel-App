@@ -28,7 +28,7 @@ import {
   updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/warden.schema";
 
@@ -358,12 +358,13 @@ export const fetchAdmissionsApprovedByUser = async (
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
   const userID = parseInt(req.User.id);
+  console.log("User ID:", userID);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
   const data = await getAdmissionsApprovedByUser(userID);
-
+  console.log("Fetched Admissions:", data);
   res.status(httpStatus.OK).json({
     success: true,
     data,
@@ -387,10 +388,8 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.User.id));
-
-
-  const rc = await getRCById(Number(rc_userId));
+  const rc = await getRCByUserId(Number(req.User.id));
+  const rc_userId = req.User.id;
   if (!rc || rc.length === 0) {
     throw AppError("RC not found ", httpStatus.NOT_FOUND);
   }
@@ -407,7 +406,6 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
     user_id: Number(rc_userId),
