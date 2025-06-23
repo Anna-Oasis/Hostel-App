@@ -55,7 +55,7 @@ const ApprovePage = () => {
         hostel_block: hostelBlock,
       });
       Alert.alert("Success", "Room Allocated successfully");
-      router.back();
+      router.replace("/RC/RoomAllocation");
     } catch (error: any) {
       Alert.alert(
         "Update Error",

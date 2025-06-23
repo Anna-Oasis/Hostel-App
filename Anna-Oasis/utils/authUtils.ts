@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 import api from "@/api";
-import { User } from "../stores/userStore";
+import useUserStore, { User } from "../stores/userStore";
 
 const TOKEN_KEY = "authToken";
 
@@ -26,6 +26,7 @@ export const getToken = async (): Promise<string | null> => {
 export const removeToken = async () => {
   try {
     await AsyncStorage.removeItem(TOKEN_KEY);
+
   } catch (error) {
     console.error("Error removing token:", error);
   }
