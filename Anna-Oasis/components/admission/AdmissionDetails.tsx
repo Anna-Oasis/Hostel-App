@@ -1,8 +1,9 @@
 import { View, Text, Image } from 'react-native'
-import React from 'react'
+import { useFormikContext } from 'formik'
 import SelectField from '@/components/form/SelectField'
 import TextField from '@/components/form/TextField'
 import { hostelBlocks, admissionCategories, messPreferences, previousResidentOptions } from '@/constants/admission'
+import useUserStore from '@/stores/userStore'
 
 const HOSTEL_FEES = [
   { label: "Admission Fee", amount: "₹2,000" },
@@ -15,9 +16,10 @@ const UPI_ID = "salaikowshikan531@okicici";
 const QR_IMAGE = require("@/assets/images/upi.jpg");
 
 const AdmissionDetails = () => {
+  const { values } = useFormikContext<any>()
+
   return (
     <View>
-      <SelectField label="Hostel Block" value="hostelBlock" options={hostelBlocks} />
       <SelectField label="Mess Preference" value="messPreference" options={messPreferences} />
       <SelectField label="Previous Resident" value="previousResident" options={previousResidentOptions} />
       <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
