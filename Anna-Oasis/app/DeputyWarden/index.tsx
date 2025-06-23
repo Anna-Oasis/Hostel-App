@@ -34,6 +34,12 @@ export default function DeputyWardenPage() {
       icon: BarChart2Icon,
       color: "#10B981",
     },
+        {
+      title: "RC Leave Approvals",
+      route: "/DeputyWarden/RcLeave",
+      icon: UsersIcon,
+      color: "#9870a4",
+    },
   ];
 
   return (
