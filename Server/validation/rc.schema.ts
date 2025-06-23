@@ -4,11 +4,11 @@ import { hostel_block } from "../constants/enum";
 
 export const rcAdmissionDecisionSchema = z.object({
   approve: z.boolean(),
-  comment: z.string().optional(),
-  room: z.coerce.number({ invalid_type_error: "room must be a number" }).optional(),
-  floor: z.coerce.number({ invalid_type_error: "floor must be a number" }).optional(),
+  comment: z.string(),
+  room: z.coerce.number({ invalid_type_error: "room must be a number" }),
+  floor: z.coerce.number({ invalid_type_error: "floor must be a number" }),
   hostel_block: z
-    .enum(Object.values(hostel_block) as [string, ...string[]]).optional(),
+    .enum(Object.values(hostel_block) as [string, ...string[]]),
 });
 
 export const rcCreateSchema = z.object({

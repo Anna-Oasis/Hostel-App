@@ -27,7 +27,6 @@ const AdmissionHistory = () => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
-      <Text className="text-2xl font-bold mb-4">Admission History</Text>
       {!rollNo ? (
         <Text>Roll number not found.</Text>
       ) : history.length === 0 ? (
