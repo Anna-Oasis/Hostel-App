@@ -87,7 +87,7 @@ const ApprovalCard = (props: approvalCardProps) => {
   return (
     <View className="m-2">
       <BlurView
-        intensity={40}
+        intensity={100}
         tint="dark"
         className="rounded-2xl overflow-hidden"
       >
@@ -112,8 +112,8 @@ const ApprovalCard = (props: approvalCardProps) => {
                       ? 'error'
                       : 'muted'
                   }
-                  className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
-                                              props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+                  className={`px-4 py-1 rounded-lg ${props.badge === badgeStatus.Pending ? "bg-orange-500" : 
+                                              props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}`}
                 >
                   <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
                 </Badge>
