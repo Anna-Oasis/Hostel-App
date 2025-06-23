@@ -1,9 +1,10 @@
 import { ScrollView } from 'react-native'
 import { Text } from '@/components/ui/text'
 import { useEffect, useState } from 'react'
-import ApprovalCard, { badgeStatus } from '@/components/ApprovalCard'
+import ApprovalCard from '@/components/ApprovalCard'
 import { getStudentAdmissionStatus } from '@/utils/student/studentAdmissionApi'
 import useUserStore from '@/stores/userStore'
+import { getAdmissionBadgeStatus } from '@/utils/getBadgeStatus'
 
 const AdmissionHistory = () => {
   const details = useUserStore((state) => state.details)
@@ -24,12 +25,6 @@ const AdmissionHistory = () => {
     fetchHistory()
   }, [rollNo])
 
-  const getBadgeStatus = (status: string) => {
-      if (status === "4") return badgeStatus.Approved
-      if (status === "-1") return badgeStatus.Rejected
-    return badgeStatus.Pending
-  }
-
   return (
     <ScrollView contentContainerStyle={{ padding: 16 }}>
       <Text className="text-2xl font-bold mb-4">Admission History</Text>
@@ -43,7 +38,7 @@ const AdmissionHistory = () => {
             key={item.id}
             title={`Admission ${item.academicYear}`}
             subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
-            badge={getBadgeStatus(item.status)}
+            badge={getAdmissionBadgeStatus(item.status)}
             data={{
               "Roll Number": item.roll_number,
               "Academic Year": item.academicYear,
@@ -53,7 +48,7 @@ const AdmissionHistory = () => {
               "Parent Agreed": item.parentAgreed ? "Yes" : "No",
               "Transaction ID": item.transaction_id,
               "Submission Date": item.submission_Date,
-              "Status": getBadgeStatus(item.status),
+              "Status": getAdmissionBadgeStatus(item.status),
             }}
           />
         ))
