@@ -106,8 +106,9 @@ const ApprovalCard = (props: approvalCardProps) => {
           elevation: 4,
         }}
       >
-        <View className="flex flex-row items-start justify-between">
-          <Text className="text-black font-semibold text-2xl mb-2 w-[70%]">{props.title}</Text>
+        <View className="flex flex-row items-start">
+          <Text className="text-black font-semibold text-2xl mb-2 w-[75%]">{props.title}</Text>
+
           {props.badge && (
             <Animated.View
               style={{
