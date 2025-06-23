@@ -2,17 +2,18 @@ import api from "@/api";
 import { getToken } from "../authUtils";
 import { Alert } from "react-native";
 
-export async function getAllRCGrievances() {
+export async function getAllManagerGrievances() {
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("User is not authenticated");
     }
-    const response = await api.get("/api/resident_counsellor/grievance", {
+    const response = await api.get("/api/manager/grievance", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("Manager grievances response:", response.data.data);
     return response.data.data;
   } catch (error: any) {
     Alert.alert(
@@ -24,15 +25,15 @@ export async function getAllRCGrievances() {
   }
 }
 
-export async function updateGrievanceStatus(grievanceId: number, approve: boolean) {
+export async function updateManagerGrievanceState(grievanceId: number) {
   try {
     const token = await getToken();
     if (!token) {
       throw new Error("User is not authenticated");
     }
     const response = await api.put(
-      `/api/resident_counsellor/grievance/${grievanceId}`,
-      { approve },
+      `/api/manager/grievance/${grievanceId}`,
+      undefined,
       {
         headers: {
           Authorization: `Bearer ${token}`,
