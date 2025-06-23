@@ -6,6 +6,7 @@ import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import { Icon } from "@/components/ui/icon";
 import { Inbox } from "lucide-react-native";
+import { router } from "expo-router";
 
 export default function RoomAllocationPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
@@ -23,9 +24,11 @@ export default function RoomAllocationPage() {
     fetchAdmissions();
   }, []);
 
-  const handleApprove = () => {
+  const handleApprove = (admissionId : Number) => {
+    router.push(`/RC/RoomAllocation/Approve/${admissionId}` as any)
     console.log("Approved");
-  };
+  }
+
   const handleDecline = () => {
     console.log("Declined");
   };
@@ -54,7 +57,7 @@ export default function RoomAllocationPage() {
                 ...item.admission,
                 ...item.student,
               }}
-              onApprove={handleApprove}
+              onApprove={() => handleApprove(item.admission.id)}
               onDecline={handleDecline}
             />
           ))

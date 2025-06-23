@@ -396,6 +396,7 @@ export const updateApprovalStatusByRCController = async (
   }
 
   const validated = rcAdmissionDecisionSchema.parse(req.body);
+  console.log("Validated Data:", validated);
   if (
     validated.approve === false &&
     (!validated.comment || validated.comment.trim() === "")
@@ -432,15 +433,7 @@ export const updateApprovalStatusByRCController = async (
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const currentYear = admission[0].academicYear;
   if (validated.approve) {
-    // Approval logic
     const status = approval_status.rc;
-
-    if (!validated.room || !validated.floor || !validated.hostel_block) {
-      throw AppError(
-        "Room number, Floor and Hostel block are required for approval",
-        httpStatus.BAD_REQUEST
-      );
-    }
 
     // Check room capacity before approval
     const room = await checkRoom(validated.room, validated.hostel_block, currentYear);

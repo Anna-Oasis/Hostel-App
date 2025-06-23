@@ -46,3 +46,21 @@ export async function getAllRooms() {
     throw error;
   }
 }
+
+export async function allocateRoomAdmission(admissionId: string, updateData: any) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("User is not authenticated");
+  }
+  console.log("Allocating room for admission:", admissionId, updateData);
+  const response = await api.put(
+    `/api/resident_counsellor/admissions/${admissionId}`,
+    updateData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data.data;
+}
