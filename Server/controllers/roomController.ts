@@ -1,32 +1,50 @@
+import { hostel_block } from './../constants/enum';
 import { fetchRoomDetailsByBlockAndAcademicYear } from "../services/roomServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import { fetchRoomsSchema } from "../validation/room.schema";
 import httpStatus from "http-status";
 import { Response } from "express";
+import { getRCidfromUserId } from "../services/helper";
+import { getRCById } from "../services/rcServices";
 
 export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
+  const {academicYear} = req.params
+
+  if (!academicYear || academicYear.length !== 9 || !/^\d{4}-\d{4}$/.test(academicYear)) {
+    throw AppError(
+      "Invalid academic year format. It should be in YYYY-YYYY format.",
+      httpStatus.BAD_REQUEST
+    );
+  }
+  console.log("Academic Year:", academicYear);
   if (!req.User || !req.User.id || !req.User.role) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
+  console.log("User ID:", req.User.id);
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
+      if (!rc_id) {
+    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
+    }
 
-  if (req.User.role ==="student")
-  {
+    const rc = await getRCById(Number(rc_id));
+    if (!rc || rc.length === 0 || !rc[0].floor || !rc[0].hostel) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
+    }
+  console.log("RC Details:", rc[0]);
+  const room=await fetchRoomDetailsByBlockAndAcademicYear(rc[0].hostel, academicYear)
+  if (!room || room.length === 0) {
     throw AppError(
-      "Invalid User!", httpStatus.UNAUTHORIZED
+      "No rooms found for the specified block and academic year",
+      httpStatus.NOT_FOUND
     );
   }
-
-  const validated=fetchRoomsSchema.parse(req.body);
-
-  const room=fetchRoomDetailsByBlockAndAcademicYear(validated.hostelBlock, validated.academicYear)
-
   if (!room) {
     throw AppError(
       "Can't fetch room details",
