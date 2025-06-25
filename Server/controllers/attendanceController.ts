@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
 import { createAttendanceSchema } from "../validation/attendance.schema";

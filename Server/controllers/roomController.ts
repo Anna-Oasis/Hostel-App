@@ -1,11 +1,8 @@
-import { hostel_block } from "./../constants/enum";
 import { fetchRoomDetailsByBlockAndAcademicYear } from "../services/roomServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
-import { fetchRoomsSchema } from "../validation/room.schema";
 import httpStatus from "http-status";
 import { Response } from "express";
-import { getRCidfromUserId } from "../services/helper";
 import { getRCByUserId } from "../services/rcServices";
 
 export const fetchRoomDetailsByBlockAndAcademicYearController = async (

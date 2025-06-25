@@ -1,7 +1,6 @@
 import {Router} from 'express';
 import errorWrapper from '../middleware/errorWrapper';
-import { createPreAdmissionController, getPreAdmissionsController } from '../controllers/preAdmissionController';
-import { get } from 'http';
+import { createPreAdmissionController, getPreAdmissionsController } from '../controllers/preAdmissionController'
 
 const preadmissionRouter = Router();
 

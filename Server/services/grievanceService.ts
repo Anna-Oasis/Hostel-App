@@ -3,14 +3,12 @@ import { grievancesModel } from "../models/grievances";
 import { studentModel } from "../models/studentModel";
 import { eq, and , inArray} from "drizzle-orm";
 import { NewGrievance } from "../models/grievances";
-import { grievance_status, hostel_block} from "../constants/enum";
+import { grievanceApprovalStatus, hostelBlock} from "../constants/enum";
 import { userModel } from "../models/userModel";
-import { hostel_block_pgEnum } from "../models/enum";
-import { sql } from "drizzle-orm";
 
 interface GrievanceUpdateParams {
   grievance_id: number;
-  status: typeof grievance_status[keyof typeof grievance_status];
+  status: typeof grievanceApprovalStatus[keyof typeof grievanceApprovalStatus];
   updatedBy: string;
 }
 
@@ -33,7 +31,7 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
     .where(eq(grievancesModel.roll_number, rollNumber));
 };
 
-export const getGrievancesForRC = async (hostelBlock: typeof hostel_block[keyof typeof hostel_block], floors: number[]) => {
+export const getGrievancesForRC = async (hostelblock: typeof hostelBlock[keyof typeof hostelBlock], floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
   const grievances = await db
     .select()
@@ -42,8 +40,8 @@ export const getGrievancesForRC = async (hostelBlock: typeof hostel_block[keyof 
     .where(
       and(
         inArray(studentModel.floor, floors),
-        eq(studentModel.hostelBlock, hostelBlock),   
-        eq(grievancesModel.status, grievance_status.submitted),       
+        eq(studentModel.hostelBlock, hostelblock),   
+        eq(grievancesModel.status, grievanceApprovalStatus.SUBMITTED),       
       )
     );
   return grievances;
@@ -103,7 +101,7 @@ export const getGrievancesForManager = async () => {
     })
     .from(grievancesModel)
     .where(
-      eq(grievancesModel.status, grievance_status.rc)
+      eq(grievancesModel.status, grievanceApprovalStatus.RC)
     );
 };
 

@@ -1,9 +1,9 @@
-import { rcLeave_status } from "../constants/enum";
+import { rcLeaveApprovalStatus } from "../constants/enum";
 import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull } from "../services/rcLeaveService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { getRCidfromUserId, getRCsbyHostel } from "../services/helper";
 import { getRCById } from "../services/rcServices";
 
@@ -26,9 +26,9 @@ export const updateLeaveStatusForRC = async (
   if (req.User.role == "deputyWarden") {
     var result;
     if (status == "true") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.deputyWarden)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DEPUTYWARDEN)
     } else if (status == "false") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.declined)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED)
     }
     res.status(httpStatus.OK).json({
       success : true,
@@ -38,9 +38,9 @@ export const updateLeaveStatusForRC = async (
   } else if(req.User.role == "executiveWarden") {
     var result;
     if (status == "true") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.executiveWarden)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.EXECUTIVEWARDEN)
     } else if (status == "false") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeave_status.declined)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED)
     }
     res.status(httpStatus.OK).json({
       success : true,

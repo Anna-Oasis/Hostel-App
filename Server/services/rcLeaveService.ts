@@ -2,7 +2,7 @@ import { NewRCLeave } from "../models/rcLeave";
 import { db } from "../config/dbConnection";
 import { eq, and } from "drizzle-orm";
 import { rcLeaveModel } from "../models/rcLeave";
-import { rcLeave_status } from "../constants/enum";
+import { rcLeaveApprovalStatus } from "../constants/enum";
 import { rcModel } from "../models/rcModel";
 
 export const getRCLeaveApprovals = async (rcId: number) => {
@@ -74,7 +74,7 @@ export const getRCLeaveToBeApprovedByDeputyWarden = async () => {
     .from(rcLeaveModel)
     .where(
     and(
-        eq(rcLeaveModel.approved, rcLeave_status.submitted)
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED)
     ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;
@@ -86,7 +86,7 @@ export const getRCLeaveToBeApprovedByExecutiveWarden = async () => {
     .from(rcLeaveModel)
     .where(
     and(
-        eq(rcLeaveModel.approved, rcLeave_status.deputyWarden)
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.DEPUTYWARDEN)
     ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;

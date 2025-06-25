@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { grievancesModel } from "../models/grievances";
-import { hostel_block } from "../constants/enum";
+import { hostelBlock } from "../constants/enum";
 
 export const rcAdmissionDecisionSchema = z.object({
   approve: z.boolean(),
@@ -8,14 +7,14 @@ export const rcAdmissionDecisionSchema = z.object({
   room: z.coerce.number({ invalid_type_error: "room must be a number" }),
   floor: z.coerce.number({ invalid_type_error: "floor must be a number" }),
   hostel_block: z
-    .enum(Object.values(hostel_block) as [string, ...string[]]),
+    .enum(Object.values(hostelBlock) as [string, ...string[]]).optional(),
 });
 
 export const rcCreateSchema = z.object({
   name: z.string().min(1, "RC name is required"),
-  email:z.string().email("Invalid email format"),
+  email :z.string().email("Invalid email format"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
-  hostel: z.nativeEnum(hostel_block, {
+  hostel: z.nativeEnum(hostelBlock, {
     errorMap: () => ({ message: "Invalid hostel block" }),
   }),
   floor : z.array(z.number()).default([]).optional(),
@@ -23,7 +22,7 @@ export const rcCreateSchema = z.object({
 
 export const rcUpdateSchema = z.object({
   name: z.string().min(1, "RC name is required").optional(),
-  hostel: z.nativeEnum(hostel_block, {
+  hostel: z.nativeEnum(hostelBlock, {
     errorMap: () => ({ message: "Invalid hostel block" }),
   }).optional(),
   floor: z.array(z.number()).default([]).optional(),

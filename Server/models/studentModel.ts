@@ -8,7 +8,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { userModel } from "./userModel";
 import {gender_pgEnum, hostel_block_pgEnum} from "./enum";
-import { hostel_block } from "../constants/enum";
 
 export const studentModel = pgTable("student", {
   // User Reference

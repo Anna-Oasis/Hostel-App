@@ -9,8 +9,8 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { approval_status_pgEnum, hostel_block_pgEnum} from "./enum";
-import { approval_status } from "../constants/enum";
+import { admission_approval_status_pgEnum, hostel_block_pgEnum} from "./enum";
+import { admissionApprovalStatus } from "../constants/enum";
 
 export const admissionModel = pgTable("admission", {
   id: serial("id").primaryKey(),
@@ -36,9 +36,9 @@ export const admissionModel = pgTable("admission", {
 
   transaction_id: varchar("transaction_id", { length: 100 }).notNull(),
 
-  status: approval_status_pgEnum("status")
+  status: admission_approval_status_pgEnum("status")
     .notNull()
-    .default(approval_status.submitted),
+    .default(admissionApprovalStatus.SUBMITTED),
 });
 
 export type Admission = typeof admissionModel.$inferSelect;

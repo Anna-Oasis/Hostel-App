@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { hostel_block } from "../constants/enum";
+import { hostelBlock } from "../constants/enum";
 
 export const createAdmissionSchema = z.object({
   roll_number: z.string().min(6, "Roll number is required"),
@@ -20,7 +20,7 @@ export const createAdmissionSchema = z.object({
   previousResident: z.boolean(),
 
   hostelBlock: z
-    .enum(Object.values(hostel_block) as [string, ...string[]])
+    .enum(Object.values(hostelBlock) as [string, ...string[]])
     .refine((val) => val !== "", { message: "Hostel block is required" }),
     
   messPreference: z

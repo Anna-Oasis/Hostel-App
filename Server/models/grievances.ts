@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { grievance_status_pgEnum } from "./enum";
-import { grievance_status } from "../constants/enum";
+import { grievanceApprovalStatus } from "../constants/enum";
 
 export const grievancesModel = pgTable("grievances", {
   id: serial("id").primaryKey(),
@@ -26,7 +26,7 @@ export const grievancesModel = pgTable("grievances", {
   // Approval and resolution status
   status: grievance_status_pgEnum("status")
     .notNull()
-    .default(grievance_status.submitted),
+    .default(grievanceApprovalStatus.SUBMITTED),
 
   // Timestamps
   rc_decision_at: timestamp("rc_approval_at"),

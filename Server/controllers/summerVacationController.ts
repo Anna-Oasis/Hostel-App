@@ -11,7 +11,6 @@ import {
   getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor,
 } from "../services/summerVacationServices";
 import { AuthRequest } from "../types/roles";
-import { isBooleanObject } from "node:util/types";
 import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
 import { getRCById } from "../services/rcServices";
 

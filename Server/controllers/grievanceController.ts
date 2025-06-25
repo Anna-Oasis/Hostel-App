@@ -11,7 +11,7 @@ import {
 import { getRCById } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
-import { grievance_status } from "../constants/enum";
+import { grievanceApprovalStatus} from "../constants/enum";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
@@ -171,9 +171,9 @@ export const approveOrDeclineGrievancesByRCController = async (
   let status;
 
   if(validated.approve)
-    status=grievance_status.rc;
+    status=grievanceApprovalStatus.RC;
   else
-    status=grievance_status.declined;
+    status=grievanceApprovalStatus.DECLINED;
 
   const updateResult = await updateGrievanceStatus({
     grievance_id: grievanceId,
@@ -246,7 +246,7 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
     const grievanceId=Number(req.params.grievance_id);
     const data = await updateGrievanceStatus({
       grievance_id: grievanceId,
-      status: grievance_status.manager,
+      status: grievanceApprovalStatus.MANAGER,
       updatedBy: req.User.role
     });
 
