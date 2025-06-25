@@ -17,6 +17,13 @@ export const userRole = {
   EXECUTIVE_WARDEN: "EXECUTIVE_WARDEN",
 };
 
+export const endeavour = {
+  HIGHER_STUDIES: "HIGHER_STUDIES",
+  JOB: "JOB",
+  COMPETITIVE_EXAMS: "COMPETITIVE_EXAMS",
+  OTHERS: "OTHERS"
+};
+
 export const admissionApprovalStatus = {
   SUBMITTED: "0",
   MANAGER: "1",

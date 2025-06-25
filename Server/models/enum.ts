@@ -8,7 +8,8 @@ import {
   grievanceApprovalStatus,
   summerVacationApprovalStatus,
   studentLeaveApprovalStatus,
-  vacatingHostelApprovalStatus
+  vacatingHostelApprovalStatus,
+  endeavour
 } from "../constants/enum";
 
 export const admission_approval_status_pgEnum = pgEnum(
@@ -36,9 +37,15 @@ export const gender_pgEnum = pgEnum(
   Object.values(gender) as [string, ...string[]]
 );
 
+
 export const user_role_pgEnum = pgEnum(
   "role",
   Object.values(userRole) as [string, ...string[]]
+);
+
+export const endeavour_pgEnum = pgEnum(
+  "endeavour",
+  Object.values(endeavour) as [string, ...string[]]
 );
 
 export const grievance_status_pgEnum = pgEnum(

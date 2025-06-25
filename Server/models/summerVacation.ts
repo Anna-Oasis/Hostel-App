@@ -23,6 +23,11 @@ export const summerVacationModel = pgTable("summer_vacation", {
   vacation_from: timestamp("vacation_from").notNull(),
   address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   returned_items: varchar("returned_items", { length: 100 }).array(),
+
+  //Contact details
+  mobile: varchar("mobile", { length: 15 }).notNull(),  //whatsapp number
+  email: varchar("email", { length: 100 }).notNull(),
+
   // Status and timestamps
   status: summer_vacation_status_pgEnum("status")
     .notNull()
