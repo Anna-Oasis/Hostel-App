@@ -97,7 +97,7 @@ const ApprovalCard = (props: approvalCardProps) => {
   return (
     <View className="m-2">
       <View
-        className="rounded-2xl bg-white p-6 shadow-lg"
+        className="rounded-2xl bg-white p-4 shadow-lg"
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -107,7 +107,8 @@ const ApprovalCard = (props: approvalCardProps) => {
         }}
       >
         <View className="flex flex-row items-start">
-          <Text className="text-black font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
+          <Text className="text-black font-semibold text-2xl mb-2 w-[75%]">{props.title}</Text>
+
           {props.badge && (
             <Animated.View
               style={{

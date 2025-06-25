@@ -79,6 +79,7 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     .where(
       and(
         eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER),
+
         eq(studentModel.hostelBlock, rc.hostel),
         inArray(studentModel.floor, rc.floor)
       )

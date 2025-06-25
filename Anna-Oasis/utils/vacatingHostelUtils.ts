@@ -1,12 +1,21 @@
 import api from "@/api";
 import { getToken } from "./authUtils";
 
-export const submitStudentVacatingForm = async(vacatingValues : any, cautionDepositValues : any) => {
-  
+
+export const submitStudentVacatingForm = async(roll_number : string, vacatingValues : any, cautionDepositValues : any) => {
     try {
+        if (!roll_number) {
+            console.error("User details not found or roll number is missing.");
+            return false;
+        }
+
+        if (!vacatingValues || !cautionDepositValues) {
+            console.error("Vacating values or caution deposit values are missing.");
+            return false;
+        }
         const reqBody = {
           vacatingForm: {
-            roll_number: "2025115002",
+            roll_number: roll_number,
             vacating_date: vacatingValues.vacateDate,
             vacating_time: vacatingValues.vacateTime + ':00',
             future_address: vacatingValues.futureAddress,
@@ -21,15 +30,12 @@ export const submitStudentVacatingForm = async(vacatingValues : any, cautionDepo
           },
         };
 
-    console.log(reqBody)
-    console.log(cautionDepositValues)
-
-
-        const tok = await getToken()
+        const token = await getToken()
+        console.log("Submitting vacating form with data:", reqBody);
 
         const response = await api.post("/api/student/vacating_hostel", reqBody, {
           headers : {
-            Authorization : `Bearer ${tok}`
+            Authorization : `Bearer ${token}`
           }
         })
 
@@ -40,15 +46,14 @@ export const submitStudentVacatingForm = async(vacatingValues : any, cautionDepo
     }
 }
 
-export const getVacatingHistroy = async() => {
+export const getVacatingHistory = async() => {
   try {
-        const tok = await getToken()
-        const res = await api.get("/api/student/vacating_hostel/2025115002",  {
+        const token = await getToken()
+        const res = await api.get(`/api/student/vacating_hostel/`,  {
           headers : {
-            Authorization : `Bearer ${tok}`
+            Authorization : `Bearer ${token}`
           }
         })
-
     return res.data.data
   } catch (error) {
     console.log(`Error :  ${error}`);

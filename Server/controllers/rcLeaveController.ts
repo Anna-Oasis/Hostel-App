@@ -36,7 +36,12 @@ export const updateLeaveStatusForRC = async (
       message : "Leave Approved"
     })
   } else if(req.User.role == "executiveWarden") {
-    const result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.EXECUTIVEWARDEN)
+    var result;
+    if (status == "true") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.EXECUTIVEWARDEN)
+    } else if (status == "false") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED)
+    }
     res.status(httpStatus.OK).json({
       success : true,
       data : result,
@@ -71,42 +76,55 @@ export const getRCLeaves = async (
   }
 }
 
-
 export const createRCLeaveFormFromController = async (req: AuthRequest, res: Response) => {
-  const data = req.body;
+  try {
+    const data = req.body;
 
-  console.log("Data received for RC Leave Form:", data);
-  console.log("User ID from request:", req.User);
+    if (!data || Object.keys(data).length === 0) {
+      throw AppError("Leave form data is missing", httpStatus.BAD_REQUEST);
+    }
 
-  if (!data || data.length === 0) {
-    throw AppError("Undefined Data Passed here", httpStatus.BAD_REQUEST);
-  }
-  if (!req.User || !req.User.id || !req.User.role) {
-    throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
-  }
+    if (!req.User || !req.User.id || !req.User.role) {
+      throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
+    }
 
-  const result = await createRcLeaveForm(data);
-  const _rc = await getRCidfromUserId(Number(data.alternate))
-  console.log("test",_rc)
-  const rc = await getRCById(_rc)
-  console.log("alternate RC ",rc)
-  const updatedRC = await updateAlternateRCtoId(Number(data.rc_id), Number(data.alternate))
+    const userId = Number(req.User.id);
+    const rcId = await getRCidfromUserId(userId);
 
-  res.status(httpStatus.OK)
-    .json({
+    if (!rcId) {
+      throw AppError("RC ID not found for user", httpStatus.NOT_FOUND);
+    }
+
+    data.rc_id = rcId;
+
+    const result = await createRcLeaveForm(data);
+
+    // const alternateRCId = await getRCidfromUserId(Number(data.alternate));
+    const rc = await getRCById(Number(data.alternate));
+
+    const updatedRC = await updateAlternateRCtoId(Number(data.rc_id), Number(data.alternate));
+
+    res.status(httpStatus.OK).json({
       success: true,
       message: "New Leave Form Created",
       data: result,
-      updatedRc : updatedRC
+      updatedRc: updatedRC,
     });
-}
+  } catch (error) {
+    console.error("Error in createRCLeaveFormFromController:", error);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An unexpected error occurred",
+    });
+  }
+};
 
 export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
   if (!req.User || !req.User.id || !req.User.role) {
     throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
   }
-
-  const leaveForms = await getRCLeaveApprovals(Number(req.User.id));
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
+  const leaveForms = await getRCLeaveApprovals(rc_id);
   if (!leaveForms || leaveForms.length === 0) {
     throw AppError("No leave forms found for this RC", httpStatus.NOT_FOUND);
   }
@@ -141,7 +159,8 @@ export const updateCompleteLeave = async (req : AuthRequest, res : Response) => 
   if (!req.User || !req.User.id) {
     throw AppError("User is not valid", httpStatus.FORBIDDEN)
   }
-  const updatedRC = await updateAlternateRCtoNull(Number(req.User.id))
+  const rc_id = await getRCidfromUserId(Number(req.User.id));
+  const updatedRC = await updateAlternateRCtoNull(rc_id)
   res.status(httpStatus.OK).json({
     success : true,
     data : updatedRC,

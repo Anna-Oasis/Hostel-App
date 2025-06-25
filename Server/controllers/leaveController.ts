@@ -52,7 +52,7 @@ export const getAllLeaveFormsFromController = async (
 
   const result = await getLeaveFormApprovals(rollNumber);
 
-  if (!result || result.length === 0) {
+  if (!result) {
     res.status(httpStatus.NOT_FOUND).json({
       success: false,
       message: "No Leave Form Exists",
@@ -94,6 +94,7 @@ export const getLeaveFormWaitingForApprovalController = async (
     }
 
     const rc = await getRCById(Number(rc_id));
+    console.log("RC:", rc);
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }

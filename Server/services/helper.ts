@@ -4,6 +4,7 @@ import { userModel } from "../models/userModel";
 import { eq } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import {hashPassword} from "../utils/hashPassword";
+import { log } from "console";
 
 export async function getRCidfromUserId(userId: number) {
   console.log("Fetching RC ID for user ID:", userId);
@@ -13,6 +14,7 @@ export async function getRCidfromUserId(userId: number) {
     .where(eq(rcModel.userId
       , userId))
     .limit(1);
+  log("Query Result:", queryRes);
   return queryRes[0].id;
 }
 

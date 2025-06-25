@@ -198,6 +198,7 @@ export const getSummerVacationFormsForRCController = async (
     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
   }
   const RCs = await getRCById(rcId);
+  console.log("RCs", RCs);
   if (!RCs || RCs.length === 0) {
     throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
   }

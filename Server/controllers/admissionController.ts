@@ -28,7 +28,7 @@ import {
   updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/warden.schema";
 
@@ -358,12 +358,13 @@ export const fetchAdmissionsApprovedByUser = async (
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
   const userID = parseInt(req.User.id);
+  console.log("User ID:", userID);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
   const data = await getAdmissionsApprovedByUser(userID);
-
+  console.log("Fetched Admissions:", data);
   res.status(httpStatus.OK).json({
     success: true,
     data,
@@ -387,15 +388,14 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.User.id));
-
-
-  const rc = await getRCById(Number(rc_userId));
+  const rc = await getRCByUserId(Number(req.User.id));
+  const rc_userId = req.User.id;
   if (!rc || rc.length === 0) {
     throw AppError("RC not found ", httpStatus.NOT_FOUND);
   }
 
   const validated = rcAdmissionDecisionSchema.parse(req.body);
+  console.log("Validated Data:", validated);
   if (
     validated.approve === false &&
     (!validated.comment || validated.comment.trim() === "")
@@ -406,7 +406,6 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
     user_id: Number(rc_userId),
@@ -432,23 +431,19 @@ export const updateApprovalStatusByRCController = async (
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const currentYear = admission[0].academicYear;
   if (validated.approve) {
-    // Approval logic
     const status = admissionApprovalStatus.RC;
-
-    if (!validated.room || !validated.floor || !validated.hostel_block) {
-      throw AppError(
-        "Room number, Floor and Hostel block are required for approval",
-        httpStatus.BAD_REQUEST
-      );
-    }
 
     // Check room capacity before approval
     const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
-
-    // Check if room has space (max 2 students)
+    if (room.rollNo?.includes(rollNo)) {
+      throw AppError(
+        "Student is already assigned to this room",
+        httpStatus.BAD_REQUEST
+      );
+    }
     if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
       throw AppError(
         `Room is already full (${ROOM_SIZE} students)`,
