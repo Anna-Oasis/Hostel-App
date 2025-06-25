@@ -128,9 +128,11 @@ export const approveSummerVacationDeputyWardenController = async (
       httpStatus.UNAUTHORIZED
     );
   }
+
   const userId = req.User.id;
   const summerVacationID = Number(req.params.summer_vacation_id);
   const { approve, comment } = req.body;
+
   if (
     !summerVacationID ||
     isNaN(summerVacationID) ||
@@ -138,6 +140,7 @@ export const approveSummerVacationDeputyWardenController = async (
   ) {
     throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
   }
+
   if (approve === false && !comment) {
     throw AppError(
       "Comment is required when declining the form",
@@ -147,7 +150,7 @@ export const approveSummerVacationDeputyWardenController = async (
 
   await approveSummerVacationByDeputyWarden(
     Number(userId),
-    Number(summerVacationID),
+    summerVacationID,
     approve,
     comment
   );

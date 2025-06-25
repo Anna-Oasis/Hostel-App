@@ -4,7 +4,7 @@
 import { Router } from "express";
 import {
   fetchAdmissionsApprovedByUser,
-  updateApprovalStatusByRCController,
+  // updateApprovalStatusByRCController,
   getAdmissionWaitingForApprovalByRCController
 } from "../controllers/admissionController";
 import {
