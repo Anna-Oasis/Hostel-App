@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/details";
-import validationSchemas from "@/constants/detailsValidation";
+import validationSchemas from "@/constants/validations/detailsValidation";
 import StudentDetails from "@/components/details/StudentDetails";
 import ParentDetails from "@/components/details/ParentDetails";
 import LocalGuardian from "@/components/details/LocalGuardian";

@@ -6,7 +6,7 @@ import RCManagementForm from "@/components/rcmanagement/RCManagementForm";
 import AssignFloorsModal from "@/components/rcmanagement/AssignFloorsModal";
 import RemoveRCModal from "@/components/rcmanagement/RemoveRCModal";
 import { Spinner } from "@/components/ui/spinner";
-import { floors } from "@/constants/rcManagementValidation";
+import { floors } from "@/constants/validations/rcManagementValidation";
 import {
   fetchRCs,
   addRC,

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Pencil } from "lucide-react-native";
-import { floorShort } from "@/constants/rcManagementValidation";
+import { floorShort } from "@/constants/validations/rcManagementValidation";
 import { Text } from "@/components/ui/text";
 import {
   Table,

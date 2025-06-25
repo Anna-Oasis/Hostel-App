@@ -5,7 +5,7 @@ import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { initialValues as vacatingInitialValues } from "@/constants/vacatingHostels";
-import { initialValues as cautionDepositInitialValues } from "@/constants/cautionDepositValidation";
+import { initialValues as cautionDepositInitialValues } from "@/constants/validations/cautionDepositValidation";
 import { submitStudentVacatingForm } from "@/utils/vacatingHostelUtils";
 import { View } from "react-native";
 import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHistory";

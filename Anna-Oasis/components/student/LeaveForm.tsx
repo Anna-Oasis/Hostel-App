@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
+import { studentLeaveFormValidation } from "@/constants/validations/studentLeaveFormValidation";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { leaveTypes } from "@/constants/details";
@@ -11,7 +11,6 @@ import PhoneInputField from "@/components/form/PhoneInputField";
 import MultiLineText from "@/components/form/MultiLineText";
 import TimePickerField from "@/components/form/TimePickerField";
 
-// Helper to combine date and time into a JS Date object
 const combineDateTime = (date: string, time: string) => {
   if (!date || !time) return null;
   return new Date(`${date}T${time}`);
@@ -37,33 +36,7 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
           destination: "",
           emergency_contact: "",
         }}
-        validationSchema={Yup.object().shape({
-          leave_type: Yup.string().required("Leave type is required"),
-          from_date: Yup.string().required("From date is required"),
-          from_time: Yup.string().required("From time is required"),
-          to_date: Yup.string()
-            .required("To date is required"),
-          to_time: Yup.string()
-            .required("To time is required")
-            .test(
-              "from-before-to",
-              "From date and time must be before To date and time",
-              function (to_time) {
-                const { from_date, from_time, to_date } = this.parent;
-                if (!from_date || !from_time || !to_date || !to_time)
-                  return true;
-                const from = combineDateTime(from_date, from_time);
-                const to = combineDateTime(to_date, to_time);
-                if (!from || !to) return true;
-                return from < to;
-              }
-            ),
-          reason: Yup.string().required("Reason is required"),
-          destination: Yup.string().required("Destination is required"),
-          emergency_contact: Yup.string().required(
-            "Emergency contact is required"
-          ),
-        })}
+        validationSchema={studentLeaveFormValidation}
         onSubmit={onSubmit}
       >
         {({ handleSubmit, values }) => (
@@ -132,3 +105,4 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
 };
 
 export default LeaveForm;
+ 

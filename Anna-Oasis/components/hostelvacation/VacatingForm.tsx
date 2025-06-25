@@ -2,13 +2,12 @@ import React from "react";
 import { View, ScrollView, Text } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
-import PhoneInputField from "@/components/form/PhoneInputField";
 import DatePickerField from "@/components/form/DatePickerField";
 import TimePickerField from "@/components/form/TimePickerField";
 import CheckBoxField from "@/components/form/CheckBoxField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { vacatingItems, initialValues } from "@/constants/vacatingHostels";
-import { validationSchema } from "@/constants/vacatingHostelValidation";
+import { validationSchema } from "@/constants/validations/vacatingHostelValidation";
 
 type VacatingFormValues = typeof initialValues & {
   declarationAccepted: string[];

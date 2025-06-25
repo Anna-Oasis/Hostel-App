@@ -3,7 +3,7 @@ import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/admission";
-import validationSchemas from "@/constants/admissionValidation";
+import validationSchemas from "@/constants/validations/admissionValidation";
 import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration";
 import PreviewPage from "@/components/admission/PreviewPage";
 import AdmissionDetails from "@/components/admission/AdmissionDetails";

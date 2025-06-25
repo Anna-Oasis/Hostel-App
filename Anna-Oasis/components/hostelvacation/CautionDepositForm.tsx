@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { initialValues, validationSchema, NOTE } from "@/constants/cautionDepositValidation";
+import { initialValues, validationSchema, NOTE } from "@/constants/validations/cautionDepositValidation";
 
 export default function CautionDepositForm({
   onSubmit,

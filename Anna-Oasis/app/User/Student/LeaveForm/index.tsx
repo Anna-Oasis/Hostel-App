@@ -2,13 +2,16 @@ import { useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import LeaveForm from "@/components/student/LeaveForm";
 import ModalCallable from "@/components/ModalCallable";
-import { submitLeaveForm, fetchLeaveForms } from "@/utils/student/studentLeaveApi";
-import  useUserStore  from "@/stores/userStore";
+import {
+  submitLeaveForm,
+  fetchLeaveForms,
+} from "@/utils/student/studentLeaveApi";
+import useUserStore from "@/stores/userStore";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { Text } from "@/components/ui/text";
 import TabSwitch from "@/components/TabSwitch";
 import { FilePlus2, History } from "lucide-react-native";
 import useLoadingStore from "@/stores/loadingStore";
+import EmptyPage from "@/components/EmptyPage";
 
 function LeaveFormPage() {
   const [showModal, setShowModal] = useState(false);
@@ -50,7 +53,8 @@ function LeaveFormPage() {
         from_date: values.from_date,
         to_date: values.to_date,
         reason: values.reason,
-        address_of_stay: values.destination || values.address_of_stay || values.address,
+        address_of_stay:
+          values.destination || values.address_of_stay || values.address,
         emergency_contact: values.emergency_contact,
       };
       await submitLeaveForm(payload);
@@ -98,7 +102,10 @@ function LeaveFormPage() {
       {activeTab === "history" && (
         <ScrollView className="flex-1 px-4 py-2">
           {leaveHistory.length === 0 ? (
-            <Text className="text-center mt-8 text-gray-500">No leave forms found.</Text>
+            <EmptyPage
+              title="No leave forms found."
+              description="You have not submitted any leave applications yet."
+            />
           ) : (
             leaveHistory.map((leave) => (
               <ApprovalCard
@@ -114,16 +121,17 @@ function LeaveFormPage() {
                 }
                 data={{
                   "Leave Type": leave.leave_type,
-                  "From": leave.from_date,
-                  "To": leave.to_date,
-                  "Reason": leave.reason,
+                  From: leave.from_date,
+                  To: leave.to_date,
+                  Reason: leave.reason,
                   "Address of Stay": leave.address_of_stay,
                   "Emergency Contact": leave.emergency_contact,
-                  "Status": leave.status === "3"
-                    ? "Approved"
-                    : leave.status === "-1"
-                    ? "Rejected"
-                    : "Pending",
+                  Status:
+                    leave.status === "3"
+                      ? "Approved"
+                      : leave.status === "-1"
+                      ? "Rejected"
+                      : "Pending",
                 }}
               />
             ))

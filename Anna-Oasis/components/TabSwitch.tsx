@@ -32,7 +32,6 @@
  * />
  */
 
-import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Icon } from "@/components/ui/icon";
