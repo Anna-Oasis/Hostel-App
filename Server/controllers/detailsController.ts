@@ -2,9 +2,10 @@ import { Response } from "express";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
-import { studentSchema } from "../validation/student.schema";
+import { studentDetailsDecisionSchema, studentSchema } from "../validation/student.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
+  fetchStudentsForManagerVerification,
   findStudentByRollNo,
   findStudentByUserId,
   insertStudentDetails,
@@ -182,5 +183,98 @@ export async function updateStudentDetailsController(req: AuthRequest, res: Resp
     success: true,
     data: result,
     message: "Student details updated successfully",
+  });
+}
+
+export const fetchStudentDetailsForManagerVerificationController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const userID = parseInt(req.User.id);
+  console.log("User ID:", userID);
+
+  if (isNaN(userID)) {
+    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
+  }
+  
+  const data = await fetchStudentsForManagerVerification();
+  console.log("Fetched Students:", data);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data,
+    message: "Students fetched successfully",
+  });
+};
+
+export async function approveStudentDetailsByManagerController(
+  req: AuthRequest,
+  res: Response
+) 
+{
+  if (!req.User || !req.User.id || !req.User.role) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const userID = parseInt(req.User.id);
+  console.log("User ID:", userID);
+
+  if (isNaN(userID)) {
+    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
+  }
+
+  const { rollNo } = req.params;
+
+  const validatedData = studentDetailsDecisionSchema.parse(req.body);
+
+  if (!rollNo || typeof validatedData.approve !== "boolean") {
+    throw AppError(
+      "Roll number and status (boolean) are required",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  // If approve is false, comment is required
+  if (validatedData.approve === false && (!validatedData.comment || validatedData.comment.trim() === "")) {
+    throw AppError(
+      "Comment is required when declining",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
+  const student = await findStudentByRollNo(rollNo);
+
+  if (student.length === 0) {
+    throw AppError(
+      "Student not found for the provided roll number",
+      httpStatus.NOT_FOUND
+    );
+  }
+
+  const updatedStudent = await updateStudentByRollNo(rollNo, validatedData);
+
+  if(!updatedStudent){
+    throw AppError(
+      "Student details approval is not updated",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+  
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: {
+      student: updatedStudent,
+    },
+    message: "Student details approval updated successfully",
   });
 }

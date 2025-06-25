@@ -90,7 +90,7 @@ export const studentModel = pgTable("student", {
   updatedAt:date("updated_at").defaultNow().notNull(),
 
   //verification
-  isVerified: boolean("is_verified"),
+  approve: boolean("approve"),
   comment: text("comment"),
 
   // Images
