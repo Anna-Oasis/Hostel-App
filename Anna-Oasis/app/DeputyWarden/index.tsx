@@ -34,11 +34,16 @@ export default function DeputyWardenPage() {
       icon: BarChart2Icon,
       color: "#10B981",
     },
+        {
+      title: "RC Leave Approvals",
+      route: "/DeputyWarden/RcLeave",
+      icon: UsersIcon,
+      color: "#9870a4",
+    },
   ];
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">Deputy Warden Dashboard</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button

@@ -20,3 +20,10 @@ export const updateStudentByRollNo = async (rollNo: string, data: any) => {
     .where(eq(studentModel.rollNo, rollNo))
     .returning();
 };
+
+export const findStudentByUserId = async (userId: number) => {
+  return await db
+    .select()
+    .from(studentModel)
+    .where(eq(studentModel.user_id, userId));
+}

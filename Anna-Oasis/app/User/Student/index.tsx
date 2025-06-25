@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -8,10 +8,8 @@ import {
   CalendarIcon,
   FileTextIcon,
   BuildingIcon,
-  LogOut,
 } from "lucide-react-native";
-import { removeToken } from "@/utils/authUtils";
-import StudentAppBar from "@/components/appbars/AppBar";
+import DetailsCard from "@/components/student/DetailsCard";
 
 export default function StudentMain() {
   const menuItems = [
@@ -56,6 +54,7 @@ export default function StudentMain() {
   return (
     <>
       <View className="flex-row flex-wrap justify-between items-center p-8">
+        <DetailsCard />
         {menuItems.map((item, idx) => (
           <Button
             key={idx}

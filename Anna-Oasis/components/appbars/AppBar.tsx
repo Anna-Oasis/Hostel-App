@@ -5,12 +5,15 @@ import { LogOut } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { removeToken } from '@/utils/authUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import useUserStore from '@/stores/userStore';
 
 interface AppBarProps {
   title: string;
 }
 
 export default function AppBar({ title }: AppBarProps) {
+  const resetUser = useUserStore((state) => state.resetUser);
+
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -28,6 +31,7 @@ export default function AppBar({ title }: AppBarProps) {
       <Button
         onPress={() => {
           removeToken();
+          resetUser();
           router.replace('/Login');
         }}
         className="p-2 rounded-full bg-transparent"
@@ -35,7 +39,7 @@ export default function AppBar({ title }: AppBarProps) {
       >
         <ButtonIcon as={LogOut} size="md" color="#444444" />
         <ButtonText className="sr-only">
-            Logout
+          Logout
         </ButtonText>
       </Button>
     </View>

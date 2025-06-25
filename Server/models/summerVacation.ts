@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { summer_vacation_status_pgEnum } from "./enum";
-import { summer_vacation_status } from "../constants/enum";
+import { summerVacationApprovalStatus } from "../constants/enum";
 
 export const summerVacationModel = pgTable("summer_vacation", {
   id: serial("id").primaryKey(),
@@ -26,7 +26,7 @@ export const summerVacationModel = pgTable("summer_vacation", {
   // Status and timestamps
   status: summer_vacation_status_pgEnum("status")
     .notNull()
-    .default(summer_vacation_status.submitted),
+    .default(summerVacationApprovalStatus.SUBMITTED),
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

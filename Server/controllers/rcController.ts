@@ -11,8 +11,7 @@ import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
 import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
-import { createRcLeaveForm, getRCLeaveApprovals } from "../services/rcLeaveService";
-import {  updateAlternateRCtoId, updateAlternateRCtoNull,} from "../services/rcLeaveService"
+
 
 export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);

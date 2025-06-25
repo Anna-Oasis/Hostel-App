@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
+import PasswordField from "@/components/form/PasswordField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { useRouter } from "expo-router";
 import { validationSchema } from "@/utils/auth/authValidation";
@@ -41,28 +41,24 @@ const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
                 placeholder="Enter your full name"
                 value="name"
                 label="Full Name"
-                // className="bg-gray-50 rounded-lg"
               />
               
               <TextField
                 placeholder="Enter your email"
                 value="email"
                 label="Email Address"
-                // className="bg-gray-50 rounded-lg"
               />
               
-              <TextField
+              <PasswordField
                 placeholder="Create a password"
                 value="password"
                 label="Password"
-                // className="bg-gray-50 rounded-lg"
               />
               
-              <TextField
+              <PasswordField
                 placeholder="Confirm your password"
                 value="confirmPassword"
                 label="Confirm Password"
-                // className="bg-gray-50 rounded-lg"
               />
 
               <Button 

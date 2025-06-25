@@ -1,27 +1,4 @@
-export const approval_status = {
-  submitted: "0",
-  manager: "1",
-  rc: "2",
-  deputyWarden: "3",
-  executiveWarden: "4",
-  declined: "-1",
-};
-
-export const rcLeave_status = {
-  submitted: "0",
-  deputyWarden: "1",
-  executiveWarden: "2",
-  declined: "-1",
-};
-
-export const summer_vacation_status = {
-  submitted: "0",
-  rc: "1",
-  deputyWarden: "2",
-  declined: "-1",
-};
-
-export const hostel_block = {
+export const hostelBlock = {
   BOYS: "Flora",
   GIRLS: "Lavender",
 };
@@ -32,16 +9,56 @@ export const gender = {
   OTHER: "other",
 };
 
-export const user_role = {
+export const userRole = {
   STUDENT: "STUDENT",
   MANAGER: "MANAGER",
   RC: "RC",
   DEPUTY_WARDEN: "DEPUTY_WARDEN",
   EXECUTIVE_WARDEN: "EXECUTIVE_WARDEN",
 };
-export const grievance_status = {
-  submitted: "0",
-  rc: "1",
-  manager: "2",
-  declined: "-1"
+
+export const admissionApprovalStatus = {
+  SUBMITTED: "0",
+  MANAGER: "1",
+  RC: "2",
+  DEPUTYWARDEN: "3",
+  EXECUTIVEWARDEN: "4",
+  DECLINED: "-1",
+};
+
+export const rcLeaveApprovalStatus = {
+  SUBMITTED: "0",
+  DEPUTYWARDEN: "1",
+  EXECUTIVEWARDEN: "2",
+  DECLINED: "-1",
+};
+
+export const vacatingHostelApprovalStatus = {
+  SUBMITTED: "0",
+  RC: "1",
+  MANAGER : "2",
+  DEPUTYWARDEN: "3",
+  EXECUTIVEWARDEN: "4",
+  DECLINED: "-1",
+};
+
+export const studentLeaveApprovalStatus = {
+  SUBMITTED: "0",
+  RC: "1",
+  DEPUTYWARDEN: "2",
+  DECLINED: "-1",
+};
+
+export const summerVacationApprovalStatus = {
+  SUBMITTED: "0",
+  RC: "1",
+  DEPUTYWARDEN: "2",
+  DECLINED: "-1",
+};
+
+export const grievanceApprovalStatus = {
+  SUBMITTED: "0",
+  RC: "1",
+  MANAGER: "2",
+  DECLINED: "-1",
 };

@@ -1,4 +1,3 @@
-import { timestamp } from "drizzle-orm/gel-core";
 import { z } from "zod";
 
 export const studentSchema = z.object({

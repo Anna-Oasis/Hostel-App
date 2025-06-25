@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Animated, Dimensions } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
-import { Icon, CloseIcon, CopyIcon } from "@/components/ui/icon"
+import { Icon, CloseIcon } from "@/components/ui/icon"
 
 /**
  * Status options for the approval badge
@@ -35,6 +35,17 @@ type approvalCardProps = {
   badge?: badgeStatus,
   /** JSON object containing data to be displayed in the details modal */
   data ?: Record<string, any>,
+}
+
+/**
+ * Format a key string to a more readable format
+ * (e.g., "parentGuardianSignatureUrl" -> "Parent Guardian Signature Url")
+ */
+function formatKey(key: string) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 /**
@@ -84,11 +95,21 @@ const ApprovalCard = (props: approvalCardProps) => {
   }, []);
 
   return (
-    <View className="border border-primary-400 rounded-lg m-2 p-4 bg-black/10">
+    <View className="m-2">
+      <View
+        className="rounded-2xl bg-white p-4 shadow-lg"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 6,
+          elevation: 4,
+        }}
+      >
+        <View className="flex flex-row items-start">
+          <Text className="text-black font-semibold text-2xl mb-2 w-[75%]">{props.title}</Text>
 
-      <View className="flex flex-row ">
-        <Text className="text-black font-semibold text-2xl mb-2 w-[80%]">{props.title}</Text>
-        {props.badge && (
+          {props.badge && (
             <Animated.View
               style={{
                 opacity: props.badge === badgeStatus.Pending ? floatBadge : 1,
@@ -104,23 +125,30 @@ const ApprovalCard = (props: approvalCardProps) => {
                     ? 'error'
                     : 'muted'
                 }
-                className={props.badge === badgeStatus.Pending ? "bg-orange-500" : 
-                                            props.badge === badgeStatus.Approved ? "bg-green-500" : "bg-red-500"}
+                className={`px-4 py-1 rounded-full ${
+                  props.badge === badgeStatus.Pending
+                    ? "bg-orange-500"
+                    : props.badge === badgeStatus.Approved
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }`}
               >
-                <BadgeText className="px-auto text-white">{props.badge}</BadgeText>
+                <BadgeText className="text-white">{props.badge}</BadgeText>
               </Badge>
             </Animated.View>
           )}
-      </View>
+        </View>
 
-        <Text className="text-base font-medium ">{props.subTitle}</Text>
+        <Text className="text-base font-medium text-black italic">{props.subTitle}</Text>
 
-      <View className="items-center mt-4">
-        <Button
+        <View className="items-end mt-4">
+          <Button
             onPress={() => setViewDetails(true)}
-        >
-          <ButtonText >View more</ButtonText>
-        </Button>
+            className='bg-black'
+          >
+            <ButtonText className="text-white">View more</ButtonText>
+          </Button>
+        </View>
       </View>
 
       <Modal
@@ -128,9 +156,9 @@ const ApprovalCard = (props: approvalCardProps) => {
         onClose={() => setViewDetails(false)}
       >
         <ModalBackdrop/>
-        <ModalContent>
+        <ModalContent style={{ maxHeight: Dimensions.get("window").height * 0.8 }}>
           <ModalHeader className='border-b-2'>
-            <Text className="text-2xl font-bold mb-2">Details</Text>
+            <Text className="text-2xl font-bold mb-2 text-black">Details</Text>
             <ModalCloseButton>
               <Icon as={CloseIcon} className="mb-2" size='xl' />
             </ModalCloseButton>
@@ -138,10 +166,19 @@ const ApprovalCard = (props: approvalCardProps) => {
           <ModalBody className='mt-6'>
             {props.data && (
               <View>
-                {Object.entries(props.data).map(([key, value]) => (
-                  <View key={key} className='flex flex-row space-y-2 gap-1'>
-                    <Text className='text-lg font-medium'>{key} : </Text>
-                    <Text className='text-lg font-normal'>
+                {Object.entries(props.data).map(([key, value], idx) => (
+                  <View
+                    key={key}
+                    className={`bg-gray-100 rounded-lg px-3 py-2${idx !== 0 ? " mt-3" : ""}`}
+                  >
+                    <Text className="text-base font-semibold text-black">
+                      {formatKey(key)}
+                    </Text>
+                    <Text
+                      className="text-base font-normal text-gray-800 mt-1"
+                      numberOfLines={4}
+                      ellipsizeMode="tail"
+                    >
                       {typeof value === 'string' ? value : JSON.stringify(value)}
                     </Text>
                   </View>
@@ -157,7 +194,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                     setViewDetails(false);
                     props.onApprove?.();
                   }}
-                  className="bg-green-600 w-[90px] h-10 rounded-lg justify-center"
+                  className="bg-green-600 w-[95px] h-10 rounded-lg justify-center"
                 >
                   <ButtonText className="text-white text-center">Approve</ButtonText>
                 </Button>

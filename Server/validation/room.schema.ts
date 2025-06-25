@@ -1,10 +1,10 @@
 import z from "zod";
-import { hostel_block } from "../constants/enum";
+import { hostelBlock } from "../constants/enum";
 
 export const fetchRoomsSchema = z.object(
     {
         hostelBlock: z
-            .enum(Object.values(hostel_block) as [string, ...string[]])
+            .enum(Object.values(hostelBlock) as [string, ...string[]])
             .refine((val) => val !== "", { message: "Hostel block is required" }),
         academicYear: z
             .string()

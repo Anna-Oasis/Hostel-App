@@ -42,7 +42,7 @@ const SelectField = ({ label,value, options }: SelectFieldProps) => {
           <SelectInput placeholder="Select option" className="flex-1 my-3 py-2" />
           <SelectIcon className="mr-3" as={ChevronDownIcon} />
         </SelectTrigger>
-        <SelectPortal>
+        <SelectPortal  >
           <SelectBackdrop />
           <SelectContent style={{ maxHeight: 400 }}>
             <SelectDragIndicatorWrapper>

@@ -1,152 +1,98 @@
-import { useState, useRef } from "react";
-import { ScrollView, View, Text } from "react-native";
-import { Formik } from "formik";
-import { Button, ButtonText } from "@/components/ui/button";
-import { initialValues } from "@/constants/details";
-import validationSchemas from "@/constants/detailsValidation";
-import StudentDetails from "@/components/details/StudentDetails";
-import ParentDetails from "@/components/details/ParentDetails";
-import LocalGuardian from "@/components/details/LocalGuardian";
-import FileUploads from "@/components/details/FileUploads";
+import { View, ScrollView, Image, Text } from 'react-native'
+import React from 'react'
+import useUserStore from '@/stores/userStore'
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableData } from "@/components/ui/table"
+import { router } from 'expo-router'
+import { Box } from "@/components/ui/box"
+import { Fab, FabLabel, FabIcon } from "@/components/ui/fab"
+import { Pencil } from 'lucide-react-native'
 
-export default function DetailsPage() {
-  const [page, setPage] = useState(0);
-  const scrollViewRef = useRef<ScrollView>(null);
+const imageFields = [
+  "passportPhotoUrl",
+  "studentSignatureUrl",
+  "parentGuardianSignatureUrl",
+  "categoryProofUrl",
+  "admissionSlipUrl"
+]
 
-  const next = () => {
-    setPage((p) => p + 1);
-    setTimeout(() => {
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-    }, 0);
-  };
-  
-  const prev = () => setPage((p) => p - 1);
+function formatKey(key: string) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
-  const renderPage = () => {
-    switch (page) {
-      case 0:
-        return <StudentDetails />;
-      case 1:
-        return <ParentDetails />;
-      case 2:
-        return <LocalGuardian />;
-      case 3:
-        return <FileUploads />
-      default:
-        return null;
-    }
-  };
+const DetailsPage = () => {
+  const details = useUserStore((state) => state.details)
+
+  if (!details) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead>No Details Found</TableHead>
+            </TableRow>
+          </TableHeader>
+        </Table>
+      </View>
+    )
+  }
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchemas[page]}
-      onSubmit={async (values) => {
-        if (page < 3) {
-          next();
-        } else {
-          const formData = new FormData();
-          formData.append("name", values.name);
-          formData.append("rollNo", values.rollNo);
-          formData.append("course", values.course);
-          formData.append("branch", values.branch);
-          formData.append("semester", values.semester);
-          formData.append("mobile", values.mobile);
-          formData.append("email", values.email);
-          formData.append("emergencyContact", values.emergencyContact);
-          formData.append("dateOfBirth", values.dateOfBirth);
-          formData.append("age", values.age);
-          formData.append("gender", values.gender);
-          formData.append("nationality", values.nationality);
-          formData.append("bloodGroup", values.bloodGroup);
-          formData.append("medicalHistory", values.medicalHistory);
-          formData.append("fatherName", values.fatherName);
-          formData.append("fatherOccupation", values.fatherOccupation);
-          formData.append("fatherMobile", values.fatherMobile);
-          formData.append("fatherEmail", values.fatherEmail);
-          formData.append("fatherCountry", values.fatherCountry);
-          formData.append("motherName", values.motherName);
-          formData.append("motherOccupation", values.motherOccupation);
-          formData.append("motherMobile", values.motherMobile);
-          formData.append("motherEmail", values.motherEmail);
-          formData.append("motherCountry", values.motherCountry);
-          formData.append("resIndiaHouseNo", values.resIndiaHouseNo);
-          formData.append("resIndiaStreet", values.resIndiaStreet);
-          formData.append("resIndiaCity", values.resIndiaCity);
-          formData.append("resIndiaState", values.resIndiaState);
-          formData.append("resIndiaPostalCode", values.resIndiaPostalCode);
-          formData.append("resForeignHouseNo", values.resForeignHouseNo);
-          formData.append("resForeignStreet", values.resForeignStreet);
-          formData.append("resForeignCity", values.resForeignCity);
-          formData.append("resForeignState", values.resForeignState);
-          formData.append("resForeignCountry", values.resForeignCountry);
-          formData.append("resForeignPostalCode", values.resForeignPostalCode);
-          formData.append("guardianName", values.guardianName);
-          formData.append("guardianRelationship", values.guardianRelationship);
-          formData.append("guardianMobile", values.guardianMobile);
-          formData.append("guardianEmail", values.guardianEmail);
-          formData.append("guardianHouseNo", values.guardianHouseNo);
-          formData.append("guardianStreet", values.guardianStreet);
-          formData.append("guardianCity", values.guardianCity);
-          formData.append("guardianState", values.guardianState);
-          formData.append("guardianCountry", values.guardianCountry);
-          formData.append("guardianPostalCode", values.guardianPostalCode);
-          formData.append("govtIdType", values.govtIdType);
-          formData.append("govtId", values.govtId);
-          const imageFields = [
-            { key: "passportPhoto", name: "images[passportPhoto]" },
-            { key: "studentSignature", name: "images[studentSignature]" },
-            { key: "parentGuardianSignature", name: "images[parentGuardianSignature]" },
-            { key: "govtIdDocument", name: "images[govtIdDocument]" },
-            { key: "aadhaar", name: "images[aadhaar]" },
-            { key: "admissionSlip", name: "images[admissionSlip]" }
-          ] as const;
-          type ImageFieldKey = typeof imageFields[number]["key"];
-          for (const field of imageFields) {
-            const uri = values[field.key as ImageFieldKey];
-            if (uri) {
-              const filename = uri.split("/").pop() || "image.jpg";
-              const match = /\.(\w+)$/.exec(filename);
-              const type = match ? `image/${match[1]}` : "image";
-              formData.append(field.name, {
-                uri,
-                name: filename,
-                type,
-              } as any);
-            }
-          }
-          console.log("FormData prepared for submission:", formData);
-        }
-      }}
-    >
-      {({ handleSubmit, validateForm }) => (
-        <ScrollView ref={scrollViewRef}>
-          <View className="m-4 flex gap-3">
-            
-            {renderPage()}
-            
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}
-            >
-              {page > 0 && (
-                <Button onPress={prev} variant="outline">
-                  <ButtonText>Back</ButtonText>
-                </Button>
-              )}
-              
-              <Button onPress={async () => {
-                const formErrors = await validateForm();
-                if (Object.keys(formErrors).length > 0) {
-                  console.log("Formik validation errors:", formErrors);
-                }
-                handleSubmit();
-                }}>
-                <ButtonText>{page < 3 ? "Next" : "Update Details"}</ButtonText>
-              </Button>
-            </View>
-          </View>
-        </ScrollView>
-      )}
-    </Formik>
-  );
+    <Box className="flex-1 p-2">
+      <ScrollView contentContainerStyle={{ padding: 8 }}>
+        <View className="bg-white rounded-xl shadow-sm mb-4 p-2">
+          <Table className="w-full">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="py-2 font-bold text-base">Field</TableHead>
+                <TableHead className="py-2 font-bold text-base">Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Object.entries(details).map(([key, value], idx) => (
+                <TableRow
+                  key={key}
+                  className={idx % 2 === 0 ? "bg-slate-50" : "bg-white"}
+                >
+                  <TableData className="py-2">
+                    <Text className="font-bold text-gray-800">{formatKey(key)}</Text>
+                  </TableData>
+                  <TableData className="py-2">
+                    {imageFields.includes(key) && typeof value === 'string' && value ? (
+                      <Image
+                        source={{ uri: value }}
+                        className="w-20 h-20 rounded-lg my-1"
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Text className={value === null || value === undefined || value === "" ? "text-gray-400" : "text-gray-800"}>
+                        {value === null || value === undefined || value === ""
+                          ? "not assigned yet"
+                          : String(value)}
+                      </Text>
+                    )}
+                  </TableData>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </View>
+      </ScrollView>
+      <Fab
+        size="md"
+        placement="bottom right"
+        isHovered={false}
+        isDisabled={false}
+        isPressed={false}
+        onPress={() => router.push('/User/Student/Details/Edit')}
+      >
+        <FabIcon as={Pencil} />
+        <FabLabel>Edit Details</FabLabel>
+      </Fab>
+    </Box>
+  )
 }
+
+export default DetailsPage

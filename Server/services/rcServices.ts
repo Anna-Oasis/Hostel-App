@@ -1,13 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../config/dbConnection";
-
 import { rcModel } from "../models/rcModel";
-import { approval_status } from "../constants/enum";
-import { roomModel } from "../models/roomModel";
-import {summerVacationModel } from "../models/summerVacation";
-
-
-
 
 export async function createRC(
   name: string,
@@ -70,6 +63,16 @@ export async function getRCById(rc_id: number) {
     .select()
     .from(rcModel)
     .where(eq(rcModel.id, rc_id))
+    .limit(1);
+  return rc;
+}
+
+
+export async function getRCByUserId(userId: number) {
+  const rc = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.userId, userId))
     .limit(1);
   return rc;
 }

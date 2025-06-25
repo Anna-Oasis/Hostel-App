@@ -8,7 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { rcModel } from "./rcModel";
-import { rcLeave_status } from "../constants/enum";
+import { rcLeaveApprovalStatus } from "../constants/enum";
 import { rcLeave_status_pgEnum } from "./enum";
 import { userModel } from "./userModel";
 
@@ -18,14 +18,14 @@ export const rcLeaveModel = pgTable("rc_leave", {
   // Foreign key to RC
   rc_id: integer("rc_id")
     .notNull()
-    .references(() => rcModel.userId, { onDelete: "cascade" }),
+    .references(() => rcModel.id, { onDelete: "cascade" }),
 
   leaving: date("leaving").notNull(),
   arrival: date("arrival").notNull(),
   
   reason: text("reason").notNull(),
 
-  approved: rcLeave_status_pgEnum("approved").default(rcLeave_status.submitted).notNull(),
+  approved: rcLeave_status_pgEnum("approved").default(rcLeaveApprovalStatus.SUBMITTED).notNull(),
    //Timestamps
   created_at: timestamp("created_at").defaultNow().notNull(),
   dw_approved_at: timestamp("approved_at").defaultNow(),

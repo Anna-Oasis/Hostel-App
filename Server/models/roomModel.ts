@@ -1,4 +1,3 @@
-import { studentModel } from './studentModel';
 import { pgTable, varchar, integer, primaryKey } from "drizzle-orm/pg-core";
 
 

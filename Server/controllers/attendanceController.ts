@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
 import { createAttendanceSchema } from "../validation/attendance.schema";
@@ -9,13 +9,18 @@ import {
   fetchAllAttendanceByDate
 } from "../services/attendanceService";
 import { AuthRequest } from "../types/roles";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 
 export async function createAttendanceByRcController(req: AuthRequest, res: Response) {
 
   const validatedData = createAttendanceSchema.parse(req.body);
+
+  if (!req.User?.id) {
+    throw AppError("User not authenticated", httpStatus.UNAUTHORIZED);
+  }
+  const rcDetailsArray = await getRCByUserId(Number(req.User.id));
   
-  const rc_id = Number(req.params.rc_id);
+  const rc_id = Number(rcDetailsArray[0].id);
 
   const result = await createAttendanceByRc({
     ...validatedData,
@@ -31,15 +36,12 @@ export async function createAttendanceByRcController(req: AuthRequest, res: Resp
   });
 }
 export async function getAttendanceByRcController(req: AuthRequest, res: Response) {
-  const rc_id = Number(req.params.rc_id);
-
-  if (!rc_id) {
-    throw AppError("RC ID is required", httpStatus.BAD_REQUEST);
+  if (!req.User?.id){
+    throw AppError("User not authenticated", httpStatus.UNAUTHORIZED);
   }
-
-  // First check the RC model to get RC details and alternate RC ID
-  const rcDetailsArray = await getRCById(rc_id);
+  const rcDetailsArray = await getRCByUserId(Number(req.User.id));
   const alternatingRCId = rcDetailsArray[0].alternatingToRCId;
+  const rc_id = rcDetailsArray[0].id;
   
   let attendanceRecords;
   let message;
@@ -56,7 +58,6 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     
     message = `Attendance records retrieved successfully for RC ${rc_id} and alternate RC ${alternatingRCId}`;
   } else {
-    // Fetch attendance only for current RC
     attendanceRecords = await getAttendanceByRc(rc_id);
     message = "Attendance records retrieved successfully";
   }

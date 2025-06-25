@@ -10,4 +10,6 @@ build/
 coverage/
 .DS_Store
 .vscode
-**/migrations
+**/migrations/
+
+**/package-lock.json

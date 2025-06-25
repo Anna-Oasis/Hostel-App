@@ -1,6 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { roomModel } from "../models/roomModel";
-import { db } from "../roomStructure";
+import { db } from "../config/dbConnection";
 import { studentModel } from "../models/studentModel";
 
 export const fetchStudentDetailsForRC = async (

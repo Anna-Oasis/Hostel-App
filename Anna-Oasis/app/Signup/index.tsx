@@ -1,15 +1,16 @@
 import React from "react";
 import { View } from "react-native";
-import SignupForm from "@/components/signup";
+import SignupForm from "@/components/auth/SignupCard";
 import { handleSignup } from "@/utils/authUtils";
 import useLoadingStore from "@/stores/loadingStore";
 import { router } from "expo-router";
+import Footer from "@/components/appbars/Footer";
 
 export default function Signup() {
   const setLoading = useLoadingStore((state) => state.setLoading);
 
   return (
-    <View className="flex-1 justify-center items-center p-4 bg-gray-50">
+    <View className="flex-1 justify-center  p-4 bg-gray-50">
       <SignupForm
         onSubmit={(values) => {
           setLoading(true);
@@ -18,6 +19,7 @@ export default function Signup() {
           setLoading(false);
         }}
       />
+      <Footer />
     </View>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from "../services/admissionServices";
 import { Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
-import { approval_status } from "../constants/enum";
+import { admissionApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
 import { AuthRequest } from "../types/roles";
@@ -28,7 +28,7 @@ import {
   updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/warden.schema";
 
@@ -47,11 +47,11 @@ export async function fetchAdmissionWaitingForApprovalController(
   let reqStatus: string;
 
   if (userRole === "manager") {
-    reqStatus = approval_status.submitted;
+    reqStatus = admissionApprovalStatus.SUBMITTED;
   } else if (userRole === "deputyWarden") {
-    reqStatus = approval_status.rc;
+    reqStatus = admissionApprovalStatus.RC;
   } else if (userRole === "executiveWarden") {
-    reqStatus = approval_status.deputyWarden;
+    reqStatus = admissionApprovalStatus.DEPUTYWARDEN;
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
@@ -143,7 +143,7 @@ export async function approveByManagerController(
   }
 
   const updatedAdmission = await updateAdmission(Number(admission_id), {
-    status: approval_status.manager,
+    status: admissionApprovalStatus.MANAGER,
     updatedAt: new Date(),
   });
 
@@ -186,7 +186,7 @@ export async function createAdmissionController(
 
   const newAdmission = await createAdmission({
     ...parsedData,
-    status: approval_status.submitted,
+    status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
     updatedAt: new Date(),
   });
@@ -270,8 +270,8 @@ export async function updateAdmissionController(
     );
   }
   if (
-    existingAdmission[0].status !== approval_status.submitted &&
-    existingAdmission[0].status !== approval_status.declined
+    existingAdmission[0].status !== admissionApprovalStatus.SUBMITTED &&
+    existingAdmission[0].status !== admissionApprovalStatus.DECLINED
   ) {
     throw AppError(
       "Admission can only be updated if it is in submitted or declined status",
@@ -283,7 +283,7 @@ export async function updateAdmissionController(
   const updatedAdmission = await updateAdmission(Number(admissionId), {
     ...restData,
     updatedAt: new Date(),
-    status: approval_status.submitted,
+    status: admissionApprovalStatus.SUBMITTED,
   });
   res.status(200).json({
     success: true,
@@ -323,8 +323,8 @@ export async function updateApprovalStatusByManagerController(
   }
 
   const newStatus = parsedData.approve
-    ? approval_status.manager
-    : approval_status.declined;
+    ? admissionApprovalStatus.MANAGER
+    : admissionApprovalStatus.DECLINED;
 
   const updatedAdmission = await updateAdmission(Number(admission_id), {
     status: newStatus,
@@ -358,12 +358,13 @@ export const fetchAdmissionsApprovedByUser = async (
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
   const userID = parseInt(req.User.id);
+  console.log("User ID:", userID);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
   const data = await getAdmissionsApprovedByUser(userID);
-
+  console.log("Fetched Admissions:", data);
   res.status(httpStatus.OK).json({
     success: true,
     data,
@@ -387,15 +388,14 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc_userId = await getRCidfromUserId(Number(req.User.id));
-
-
-  const rc = await getRCById(Number(rc_userId));
+  const rc = await getRCByUserId(Number(req.User.id));
+  const rc_userId = req.User.id;
   if (!rc || rc.length === 0) {
     throw AppError("RC not found ", httpStatus.NOT_FOUND);
   }
 
   const validated = rcAdmissionDecisionSchema.parse(req.body);
+  console.log("Validated Data:", validated);
   if (
     validated.approve === false &&
     (!validated.comment || validated.comment.trim() === "")
@@ -406,7 +406,6 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  // Common approval creation
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
     user_id: Number(rc_userId),
@@ -432,23 +431,19 @@ export const updateApprovalStatusByRCController = async (
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const currentYear = admission[0].academicYear;
   if (validated.approve) {
-    // Approval logic
-    const status = approval_status.rc;
-
-    if (!validated.room || !validated.floor || !validated.hostel_block) {
-      throw AppError(
-        "Room number, Floor and Hostel block are required for approval",
-        httpStatus.BAD_REQUEST
-      );
-    }
+    const status = admissionApprovalStatus.RC;
 
     // Check room capacity before approval
     const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
-
-    // Check if room has space (max 2 students)
+    if (room.rollNo?.includes(rollNo)) {
+      throw AppError(
+        "Student is already assigned to this room",
+        httpStatus.BAD_REQUEST
+      );
+    }
     if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
       throw AppError(
         `Room is already full (${ROOM_SIZE} students)`,
@@ -497,7 +492,7 @@ export const updateApprovalStatusByRCController = async (
     }
   } else {
     // Denial logic
-    const status = approval_status.declined;
+    const status = admissionApprovalStatus.DECLINED;
 
     // Update admission status
     const admissionUpdate = await updateAdmissionStatus({
@@ -584,16 +579,16 @@ export const updateApprovalStatusByWardenController = async (
     // Approval logic
     let status : string;
     if (role === "deputyWarden") {
-      if (admission[0].status !== approval_status.rc) {
+      if (admission[0].status !== admissionApprovalStatus.RC) {
         throw AppError("Admission must be approved by RC before Deputy Warden approval",httpStatus.BAD_REQUEST
         );
       }
-      status = approval_status.deputyWarden;
+      status = admissionApprovalStatus.DEPUTYWARDEN;
     }else if (role === "executiveWarden") {
-      if (admission[0].status !== approval_status.deputyWarden) {
+      if (admission[0].status !== admissionApprovalStatus.DEPUTYWARDEN) {
         throw AppError("Admission must be approved by Deputy Warden before Executive Warden approval", httpStatus.BAD_REQUEST);
       }
-      status = approval_status.executiveWarden;
+      status = admissionApprovalStatus.EXECUTIVEWARDEN;
     }
     else {
       throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
@@ -612,7 +607,7 @@ export const updateApprovalStatusByWardenController = async (
     }
   } else {
     // Denial logic
-    const status = approval_status.declined;
+    const status = admissionApprovalStatus.DECLINED;
 
     // Update admission status
     const admissionUpdate = await updateAdmissionStatus({

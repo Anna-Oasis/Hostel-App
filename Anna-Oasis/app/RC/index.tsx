@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -7,8 +7,29 @@ import {
   ClipboardListIcon,
   CalendarCheckIcon,
 } from "lucide-react-native";
+import { useEffect } from "react";
+import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
+import useRCStore from "@/stores/rcStore";
 
 export default function RCPage() {
+  const setRooms = useRCStore((state) => state.setRooms);
+  const rooms = useRCStore((state) => state.rooms);
+
+  const fetchRooms = async () => {
+    try {
+      const rooms = await getAllRooms();
+      setRooms(rooms);
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!rooms || rooms.length === 0) {
+      fetchRooms();
+    }
+  }, [rooms]);
+
   const menuItems = [
     {
       title: "Room Allocation",
@@ -29,7 +50,7 @@ export default function RCPage() {
       color: "#10B981",
     },
     {
-      title: "Apply for Leave",
+      title: "Leave",
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,
       color: "#D97706",
@@ -38,7 +59,6 @@ export default function RCPage() {
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <Text className="text-2xl font-bold text-gray-800 mb-6 mt-2">RC Dashboard</Text>
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
@@ -49,7 +69,9 @@ export default function RCPage() {
             variant="solid"
           >
             <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonText className="mt-3 text-base font-medium">
+              {item.title}
+            </ButtonText>
           </Button>
         ))}
       </View>
