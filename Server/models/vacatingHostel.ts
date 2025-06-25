@@ -8,8 +8,8 @@ import {
   time,
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
-import { vacating_hostel_status_pgEnum } from "./enum";
-import { vacatingHostelApprovalStatus } from "../constants/enum";
+import { endeavour_pgEnum, vacating_hostel_status_pgEnum } from "./enum";
+import { endeavour, vacatingHostelApprovalStatus } from "../constants/enum";
 
 export const vacatingHostelModel = pgTable("vacating_hostel", {
   id: serial("id").primaryKey(),
@@ -26,7 +26,13 @@ export const vacatingHostelModel = pgTable("vacating_hostel", {
   returned_items: varchar("returned_items", { length: 100 }).array(),
   status: vacating_hostel_status_pgEnum("status")
     .notNull()
-    .default(vacatingHostelApprovalStatus.SUBMITTED),   
+    .default(vacatingHostelApprovalStatus.SUBMITTED),  
+  
+  //Endeavours and feedback
+  endeavour: endeavour_pgEnum("endeavour").notNull(),
+  endeavourDescription: text("endeavour_description").notNull(),
+  feedback: text("feedback").notNull(),
+
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -25,6 +25,10 @@ export const leaveFormModel = pgTable("leave_form", {
   reason: text("reason").notNull(),
   address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   emergency_contact: varchar("emergency_contact", { length: 15 }).notNull(),
+
+  //Contact details
+  mobile: varchar("mobile", { length: 15 }).notNull(), //whatsapp number
+  email: varchar("email", { length: 100 }).notNull(),
   
   // Status and timestamps
   status: student_leave_status_pgEnum("status")
