@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc-studentleaveform/RCLeaveFormApprovalAPI";
+import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
 import { Text } from "@/components/ui/text";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import DeclineComment from "@/components/modals/DeclineComment";
+import ModalCallable from "@/components/modals/ModalCallable";
 
 export default function LeaveFormPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
@@ -57,15 +51,15 @@ export default function LeaveFormPage() {
   };
 
   // Called when rejection reason is submitted
-  const submitRejection = () => {
-    if (!rejectReason.trim()) {
+  const submitRejection = (reason: string) => {
+    if (!reason.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
       return;
     }
     handleDecision(
       selectedLeaveId!,
       false,
-      `${rejectReason.trim()} (Rejected by RC)`
+      `${reason.trim()} (Rejected by RC)`
     );
     setRejectModalVisible(false);
   };
@@ -77,61 +71,21 @@ export default function LeaveFormPage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff", padding: 12 }}>
-      {/* Success Modal */}
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{modalMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold"
-              onPress={() => setModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* Rejection Reason Modal */}
-      <Modal isOpen={rejectModalVisible} onClose={() => setRejectModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Reason for Rejection</Text>
-          </ModalHeader>
-            <ModalBody>
-            <TextInput
-              placeholder="Enter reason for rejection"
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-top"
-            />
-            </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold mr-6"
-              onPress={submitRejection}
-              style={{ padding: 8 }}
-            >
-              Submit
-            </Text>
-            <Text
-              className="text-gray-600 font-semibold"
-              onPress={() => setRejectModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              Cancel
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalCallable
+        show={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Success"
+        message={modalMsg}
+      />
+      <DeclineComment
+        visible={rejectModalVisible}
+        onClose={() => setRejectModalVisible(false)}
+        onSubmit={submitRejection}
+        title="Reason for Rejection"
+        placeholder="Enter reason for rejection"
+        submitLabel="Submit"
+        cancelLabel="Cancel"
+      />
       {loading ? (
         <View className="items-center mt-8">
           <Spinner size="large" />

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import ApprovalCard, { badgeStatus } from '@/components/ApprovalCard';
 import { getHistoryOfGrievance } from '@/utils/student/studentGrievanceApi';
 import { getGrievanceBadgeStatus } from '@/utils/getBadgeStatus';
+import EmptyPage from '@/components/EmptyPage';
 
 type GrievanceRaw = {
   id: number;
@@ -69,15 +70,22 @@ const GrievanceHistory = () => {
   return (
     <ScrollView>
       <View className='m-2'>
-        {grievanceListRaw.map((item, index) => (
-          <ApprovalCard
-            key={item.id}
-            title={item.grievance_type || "No Title"}
-            subTitle={item.subject || "No Subtitle"}
-            badge={grievanceListDisplay[index]?.badge || badgeStatus.Pending}
-            data={grievanceListDisplay[index]}
+        {grievanceListRaw.length === 0 ? (
+          <EmptyPage
+            title="No Grievances Found"
+            description="You have not filed any grievances yet."
           />
-        ))}
+        ) : (
+          grievanceListRaw.map((item, index) => (
+            <ApprovalCard
+              key={item.id}
+              title={item.grievance_type || "No Title"}
+              subTitle={item.subject || "No Subtitle"}
+              badge={grievanceListDisplay[index]?.badge || badgeStatus.Pending}
+              data={grievanceListDisplay[index]}
+            />
+          ))
+        )}
       </View>
     </ScrollView>
   );

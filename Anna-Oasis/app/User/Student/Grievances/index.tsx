@@ -1,13 +1,13 @@
-import GrievanceForm from "@/components/GrievanceForm";
+import GrievanceForm from "@/components/student/GrievanceForm";
 import { useRouter } from "expo-router";
-import { View, TouchableOpacity, Text } from "react-native";
-import ModalCallable from "@/components/ModalCallable";
+import { View } from "react-native";
+import ModalCallable from "@/components/modals/ModalCallable";
 import { useState } from "react";
 import { handleGrievance } from "@/utils/student/studentGrievanceApi";
 import useLoadingStore from "@/stores/loadingStore";
 import GrievanceHistory from "@/components/student/GrievanceHistory";
 import { FilePen, History } from "lucide-react-native";
-import { Button, ButtonText } from "@/components/ui/button";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function GrievancesPage() {
   const [showModal, setShowModal] = useState(false);
@@ -46,48 +46,20 @@ export default function GrievancesPage() {
 
   return (
     <View className="bg-white flex-1 p-0">
-      <View className="flex-row justify-around items-center  pt-4 ">
-        <Button
-          variant="link"
-          className={`flex-1 flex-row items-center justify-center py-2 border-b-2 ${
-            activeTab === "file" ? "border-black" : "border-transparent"
-          }`}
-          onPress={() => setActiveTab("file")}
-        >
-          <FilePen
-            size={20}
-            color={activeTab === "file" ? "black" : "gray"}
-          />
-          <ButtonText
-            className={`ml-2 text-base font-semibold ${
-              activeTab === "file" ? "text-black" : "text-gray-500"
-            }`}
-            style={{ textDecorationLine: "none" }}
-          >
-            File Grievance
-          </ButtonText>
-        </Button>
-        <Button
-          variant="link"
-          className={`flex-1 flex-row items-center justify-center py-2 border-b-2 ${
-            activeTab === "history" ? "border-black" : "border-transparent"
-          }`}
-          onPress={() => setActiveTab("history")}
-        >
-          <History
-            size={20}
-            color={activeTab === "history" ? "black" : "gray"}
-          />
-          <ButtonText
-            className={`ml-2 text-base font-semibold ${
-              activeTab === "history" ? "text-black" : "text-gray-500"
-            }`}
-            style={{ textDecorationLine: "none" }}
-          >
-            History
-          </ButtonText>
-        </Button>
-      </View>
+      {/* Tabs */}
+      <TabSwitch
+        tabs={[
+          { label: "File Grievance", value: "file" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="pt-4"
+        icons={{
+          file: FilePen,
+          history: History,
+        }}
+      />
 
       {/* Tab Content */}
       <View className="flex-1 p-6">

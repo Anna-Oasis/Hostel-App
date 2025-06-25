@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton,ModalBody, ModalFooter } from '@/components/ui/modal';
-import { CloseIcon, Icon } from './ui/icon';
+import { CloseIcon, Icon } from '../ui/icon';
 import { Heading } from '@/components/ui/heading'
 
 type LeaveModalProps = {

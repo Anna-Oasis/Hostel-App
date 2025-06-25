@@ -6,7 +6,7 @@ import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHis
 import { FilePen, History } from "lucide-react-native";
 import useUserStore from "@/stores/userStore";
 import TabSwitch from "@/components/TabSwitch";
-import ModalCallable from "@/components/ModalCallable";
+import ModalCallable from "@/components/modals/ModalCallable";
 import { initialValues as vacatingInitialValues } from "@/constants/vacatingHostels";
 import { initialValues as cautionDepositInitialValues } from "@/constants/validations/cautionDepositValidation";
 import { submitStudentVacatingForm } from "@/utils/student/studentVacatingHostelApi";

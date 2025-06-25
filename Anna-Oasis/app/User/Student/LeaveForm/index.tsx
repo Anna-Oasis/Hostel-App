@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import LeaveForm from "@/components/student/LeaveForm";
-import ModalCallable from "@/components/ModalCallable";
+import ModalCallable from "@/components/modals/ModalCallable";
 import {
   submitLeaveForm,
   fetchLeaveForms,
