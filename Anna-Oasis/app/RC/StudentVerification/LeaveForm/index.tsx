@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import ApprovalCard from "@/components/ApprovalCard";
 import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
-import { Text } from "@/components/ui/text";
 import { Spinner } from "@/components/ui/spinner";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
+import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
+import EmptyPage from "@/components/EmptyPage";
 
 export default function LeaveFormPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
@@ -13,7 +14,6 @@ export default function LeaveFormPage() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [rejectModalVisible, setRejectModalVisible] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
   const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
 
   const getLeaveForms = async () => {
@@ -43,14 +43,11 @@ export default function LeaveFormPage() {
     }
   };
 
-  // Called when Decline is pressed
   const handleDecline = (leaveFormId: number) => {
     setSelectedLeaveId(leaveFormId);
-    setRejectReason("");
     setRejectModalVisible(true);
   };
 
-  // Called when rejection reason is submitted
   const submitRejection = (reason: string) => {
     if (!reason.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
@@ -62,11 +59,6 @@ export default function LeaveFormPage() {
       `${reason.trim()} (Rejected by RC)`
     );
     setRejectModalVisible(false);
-  };
-
-  // Helper to map status
-  const mapStatus = (status: string | number) => {
-    if (status === "0") return badgeStatus.Pending;
   };
 
   return (
@@ -91,7 +83,10 @@ export default function LeaveFormPage() {
           <Spinner size="large" />
         </View>
       ) : leaveForms.length === 0 ? (
-        <Text className="text-center mt-8 text-gray-500">No leave forms pending approval.</Text>
+        <EmptyPage
+          title="No leave forms"
+          description="There are currently no leave forms pending approval."
+        />
       ) : (
         <ScrollView>
           {leaveForms.map((item) => {
@@ -102,7 +97,7 @@ export default function LeaveFormPage() {
                 key={leave.id}
                 title={`${student.name} (${leave.roll_number})`}
                 subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={mapStatus(leave.status)}
+                badge={getLeaveBadgeStatus(leave.status)}
                 data={{
                   "Student Name": student.name,
                   "Roll Number": leave.roll_number,

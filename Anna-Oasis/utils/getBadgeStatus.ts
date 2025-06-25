@@ -23,3 +23,9 @@
       if (status === -1) return badgeStatus.Rejected
     return badgeStatus.Pending
   }
+
+  export const getLeaveBadgeStatus = (status: string) => {
+      if (status === "2") return badgeStatus.Approved
+      if (status === "-1") return badgeStatus.Rejected
+    return badgeStatus.Pending
+  }
