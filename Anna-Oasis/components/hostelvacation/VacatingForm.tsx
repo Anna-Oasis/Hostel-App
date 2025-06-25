@@ -46,11 +46,26 @@ export default function VacatingForm({
         }}
       >
         {({ handleSubmit }) => (
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
+          >
             <View className="space-y-4 p-4">
-              <DatePickerField label="Vacate Date" value="vacateDate" placeholder="YYYY-MM-DD" />
-              <TimePickerField label="Vacate Time" value="vacateTime" placeholder="HH:MM" />
-              <TextField label="Future Address" value="futureAddress" placeholder="Permanent address" />
+              <DatePickerField
+                label="Vacate Date"
+                value="vacateDate"
+                placeholder="YYYY-MM-DD"
+              />
+              <TimePickerField
+                label="Vacate Time"
+                value="vacateTime"
+                placeholder="HH:MM"
+              />
+              <TextField
+                label="Future Address"
+                value="futureAddress"
+                placeholder="Permanent address"
+              />
 
               <CheckBoxField
                 label="Did you hand over all the items?"
@@ -61,21 +76,22 @@ export default function VacatingForm({
                 }))}
               />
 
-
-                <View className="p-2 flex gap-2 justify-center items-center m-4">
-                    <Text className="text-error-500">
-                        I acknowledge that I leave the room without any damages. If any issues are found later, I agree to pay the applicable charges.
-                    </Text>
-                    <CheckBoxField
-                        value="declarationAccepted"
-                        options={[
-                            {
-                                label: "I accept the hostel terms and condition",
-                                value: "true",
-                            },
-                        ]}
-                        />
-                </View>
+              <View className="p-2 flex gap-2 justify-center items-center m-4">
+                <Text className="text-error-500">
+                  I acknowledge that I leave the room without any damages. If
+                  any issues are found later, I agree to pay the applicable
+                  charges.
+                </Text>
+                <CheckBoxField
+                  value="declarationAccepted"
+                  options={[
+                    {
+                      label: "I accept the hostel terms and condition",
+                      value: "true",
+                    },
+                  ]}
+                />
+              </View>
 
               <Button onPress={() => handleSubmit()}>
                 <ButtonText>Next</ButtonText>

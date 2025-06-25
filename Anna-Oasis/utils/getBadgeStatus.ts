@@ -11,3 +11,15 @@
       if (status === "-1") return badgeStatus.Rejected
     return badgeStatus.Pending
   }
+
+  export const getSummerVacationBadgeStatus = (status: string) => {
+      if (status === "2") return badgeStatus.Approved
+      if (status === "-1") return badgeStatus.Rejected
+    return badgeStatus.Pending
+  }
+
+  export const getHostelVacationBadgeStatus = (status: number) => {
+      if (status === 3) return badgeStatus.Approved
+      if (status === -1) return badgeStatus.Rejected
+    return badgeStatus.Pending
+  }

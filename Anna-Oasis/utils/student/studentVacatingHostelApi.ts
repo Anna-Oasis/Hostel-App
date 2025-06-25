@@ -1,5 +1,5 @@
 import api from "@/api";
-import { getToken } from "./authUtils";
+import { getToken } from "@/utils/authUtils";
 
 
 export const submitStudentVacatingForm = async(roll_number : string, vacatingValues : any, cautionDepositValues : any) => {

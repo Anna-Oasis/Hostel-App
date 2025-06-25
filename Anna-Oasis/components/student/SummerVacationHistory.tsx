@@ -1,20 +1,15 @@
-import { View, Text, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Box } from "./ui/box";
-import ApprovalCard, { badgeStatus } from "./ApprovalCard";
+import { ScrollView } from "react-native";
+import { Text } from "@/components/ui/text";
+import { useEffect, useState } from "react";
+import { Box } from "@/components/ui/box";
+import ApprovalCard from "@/components/ApprovalCard";
 import useUserStore from "@/stores/userStore";
 import {
   fetchSummerVacationForms,
   VacationStatusMap,
   SummerVacationForm,
 } from "@/utils/student/studentVacationApi";
-
-const statusBadgeMap: Record<string, keyof typeof badgeStatus> = {
-  "0": "Pending",
-  "1": "Pending",
-  "2": "Approved",
-  "-1": "Rejected",
-};
+import { getSummerVacationBadgeStatus } from "@/utils/getBadgeStatus";
 
 const SummerVacationHistory = () => {
   const user = useUserStore((state) => state.details);
@@ -39,17 +34,24 @@ const SummerVacationHistory = () => {
     getHistory();
   }, [!user?.rollNo]);
 
+  if (loading) {
+    return (
+      <Box className="flex-1 items-center justify-center">
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
+
   return (
+
     <ScrollView className="p-4">
-      {loading ? (
-        <Text className="text-center text-gray-600">Loading...</Text>
-      ) : forms.length > 0 ? (
+      {forms.length > 0 ? (
         forms.map((form) => (
           <Box key={form.id} className="mb-3  bg-white rounded-lg">
             <ApprovalCard
               title={`Form #${form.id}`}
               subTitle={`Vacation From: ${new Date(form.vacation_from).toLocaleDateString()}`}
-              badge={badgeStatus[statusBadgeMap[form.status] || "Pending"]}
+              badge={getSummerVacationBadgeStatus(form.status)}
               data={{
                 "Address of Stay": form.address_of_stay,
                 "Returned Items": form.returned_items.join(", "),
@@ -69,3 +71,4 @@ const SummerVacationHistory = () => {
 };
 
 export default SummerVacationHistory;
+

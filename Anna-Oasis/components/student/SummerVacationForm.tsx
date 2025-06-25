@@ -1,13 +1,14 @@
-// components/SummerVacationForm.tsx
 import CheckBoxField from "@/components/form/CheckBoxField";
 import DatePickerField from "@/components/form/DatePickerField";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { Formik } from "formik";
-import { ScrollView, View, Text, KeyboardAvoidingView, Platform } from "react-native";
-import * as Yup from "yup";
-import TimePickerField from "@/components/form/TimePickerField";
+import { ScrollView, View, KeyboardAvoidingView, Platform } from "react-native";
+import { summerVacationValidation } from "@/constants/validations/summerVacationValidation";
 import { submitSummerVacationRequest } from "@/utils/student/studentVacationApi";
+import TimePickerField from "@/components/form/TimePickerField";
+import useLoadingStore from "@/stores/loadingStore";
 
 export default function SummerVacationForm() {
   const hostelItemsOptions = [
@@ -16,23 +17,8 @@ export default function SummerVacationForm() {
     { label: "Lan Cable", value: "Lan Cable" },
     { label: "Cupboard Keys", value: "Cupboard Keys" },
   ];
-  const requiredItemValues = hostelItemsOptions.map((item) => item.value);
-  const summerVacationSchema = Yup.object().shape({
-    vacationDate: Yup.string().required("Date of vacate is required"),
-    vacationTime: Yup.string().required("Time of vacate is required"),
-    address: Yup.string().required("Address is required"),
-    email: Yup.string().email("Enter a valid email").required("Parent's email is required"),
-    hostelItems: Yup.array()
-      .required("You must select all hostel items")
-      .test(
-        "all-items-selected",
-        "You must select all hostel items",
-        (value) =>
-          Array.isArray(value) &&
-          requiredItemValues.every((item) => value.includes(item))
-      ),
-    declaration: Yup.array().min(1).required(),
-  });
+
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   return (
     <KeyboardAvoidingView
@@ -41,7 +27,6 @@ export default function SummerVacationForm() {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex-1 p-4 items-center">
-
           <Formik
             initialValues={{
               vacationDate: "",
@@ -51,14 +36,19 @@ export default function SummerVacationForm() {
               hostelItems: [],
               declaration: [],
             }}
-            validationSchema={summerVacationSchema}
-            onSubmit={(values) => {
-              submitSummerVacationRequest({
-                vacation_from: values.vacationDate,
-                vacation_time: values.vacationTime,
-                address_of_stay: values.address,
-                returned_items: values.hostelItems,
-              });
+            validationSchema={summerVacationValidation(hostelItemsOptions)}
+            onSubmit={async (values) => {
+              try {
+                setLoading(true);
+                await submitSummerVacationRequest({
+                  vacation_from: values.vacationDate,
+                  vacation_time: values.vacationTime,
+                  address_of_stay: values.address,
+                  returned_items: values.hostelItems,
+                });
+              } finally {
+                setLoading(false);
+              }
             }}
           >
             {({ handleSubmit }) => (
@@ -92,3 +82,4 @@ export default function SummerVacationForm() {
     </KeyboardAvoidingView>
   );
 }
+
