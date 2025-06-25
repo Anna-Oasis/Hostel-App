@@ -45,42 +45,6 @@ export interface UpdateVacationStatusResponse {
     success: boolean;
     message: string;
 }
-export const updateVacationStatus = async (id: number, status: boolean, comment?: string): Promise<UpdateVacationStatusResponse> => {
-    const token = await getToken();
-    console.log("Token:", token);
-
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.put(`/api/resident_counsellor/summer_vacation/${id}`,
-        { approve: status, comment: comment || "" },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        }
-    );
-    const data = response.data;
-    return data as UpdateVacationStatusResponse;
-}
-
-export const getStudentVacationsByDw = async (): Promise<VacationFormResponse> => {
-    const token = await getToken();
-    console.log("Token:", token);
-
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.get("/api/deputy_warden/summer_vacation", {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-    const data = response.data;
-    return data as VacationFormResponse;
-};
 
 export interface UpdateVacationStatusResponse {
     success: boolean;

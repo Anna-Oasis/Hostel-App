@@ -2,19 +2,20 @@ import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard from "@/components/ApprovalCard";
 import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
-import { Spinner } from "@/components/ui/spinner";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
 import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
+import useLoadingStore from "@/stores/loadingStore";
 
 export default function LeaveFormPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [rejectModalVisible, setRejectModalVisible] = useState(false);
   const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
+
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -33,14 +34,16 @@ export default function LeaveFormPage() {
   }, []);
 
   const handleDecision = async (leaveFormId: number, approve: boolean, comment?: string) => {
+    setLoading(true);
     try {
       await updateRCLeaveFormStatus(leaveFormId, approve, comment);
       setModalMsg(approve ? "Leave form approved successfully!" : "Leave form rejected successfully!");
       setModalVisible(true);
-      getLeaveForms();
+      await getLeaveForms();
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to update leave form status");
     }
+    setLoading(false);
   };
 
   const handleDecline = (leaveFormId: number) => {
@@ -78,11 +81,7 @@ export default function LeaveFormPage() {
         submitLabel="Submit"
         cancelLabel="Cancel"
       />
-      {loading ? (
-        <View className="items-center mt-8">
-          <Spinner size="large" />
-        </View>
-      ) : leaveForms.length === 0 ? (
+      {leaveForms.length === 0 ? (
         <EmptyPage
           title="No leave forms"
           description="There are currently no leave forms pending approval."
