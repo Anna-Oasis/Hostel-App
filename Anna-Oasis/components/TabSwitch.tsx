@@ -1,3 +1,37 @@
+/**
+ * TabSwitch Component
+ * -------------------
+ * A reusable tab switcher for React Native.
+ *
+ * @template T - The type of the tab value.
+ *
+ * @param {Object} props
+ * @param {{ label: string; value: T }[]} props.tabs - Array of tab objects with label and value.
+ * @param {T} props.activeTab - The currently active tab value.
+ * @param {(tab: T) => void} props.onTabChange - Callback when a tab is selected.
+ * @param {string} [props.className] - Optional className for styling.
+ * @param {{ [key in T]?: React.ElementType }} [props.icons] - Optional mapping of tab values to icon components.
+ *
+ * @example
+ * import TabSwitch from "@/components/TabSwitch";
+ * import { FilePlus2, History } from "lucide-react-native";
+ * 
+ * const [activeTab, setActiveTab] = useState<"form" | "history">("form");
+ * 
+ * <TabSwitch
+ *   tabs={[
+ *     { label: "Leave Form", value: "form" },
+ *     { label: "History", value: "history" },
+ *   ]}
+ *   activeTab={activeTab}
+ *   onTabChange={setActiveTab}
+ *   icons={{
+ *     form: FilePlus2,
+ *     history: History,
+ *   }}
+ * />
+ */
+
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
