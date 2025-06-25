@@ -433,7 +433,9 @@ export const updateApprovalStatusByRCController = async (
   if (validated.approve) {
     const status = admissionApprovalStatus.RC;
 
-    // Check room capacity before approval
+    if (!validated.room || !validated.hostel_block) {
+      throw AppError("Room and hostel block are required", httpStatus.BAD_REQUEST);
+    }
     const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
