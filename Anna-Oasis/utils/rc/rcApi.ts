@@ -24,23 +24,6 @@ export interface VacationForm {
     student_name: string;
 }
 
-export const getStudentVacations = async (): Promise<VacationFormResponse> => {
-    const token = await getToken();
-    console.log("Token:", token);
-
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.get("/api/resident_counsellor/summer_vacation", {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-    const data = response.data;
-    return data as VacationFormResponse;
-};
-
 export interface UpdateVacationStatusResponse {
     success: boolean;
     message: string;
@@ -94,22 +77,6 @@ export interface RCLeaveResponseWithMsg {
     message: string;
 }
 
-export const getRCLeaves = async (): Promise<RCLeaveResponseWithMsg> => {
-    const token = await getToken();
-    console.log("Token:", token);
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.get("/api/resident_counsellor/leave", {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-    const data = response.data;
-    return data as RCLeaveResponseWithMsg;
-}
-
 export const getRCLeavesbyDW = async (): Promise<RCLeaveResponse> => {
     const token = await getToken();
     console.log("Token:", token);
@@ -145,6 +112,13 @@ export interface RCInfo {
     updatedAt: string; // ISO timestamp
 }
 
+export interface RCLeaveCompleteResponse {
+    success: boolean;
+    message: string;
+    data: RCInfo[];
+}
+
+
 export const getRCList = async (): Promise<RCListResponse> => {
     const token = await getToken();
     console.log("Token:", token);
@@ -161,73 +135,6 @@ export const getRCList = async (): Promise<RCListResponse> => {
     const data = response.data;
     return data as RCListResponse;
 }
-
-export interface RCLeaveCompleteResponse {
-    success: boolean;
-    message: string;
-    data: RCInfo[];
-}
-
-export const completeRCLeave = async () => {
-    const token = await getToken();
-    console.log("Token:", token);
-
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.post("/api/resident_counsellor/leave/complete", {},{
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-    const data = response.data;
-    return data as RCLeaveCompleteResponse;
-}
-
-export interface RCLeaveFormPayload {
-    rc_id: number;
-    arrival: string;   // ISO date string (e.g., "2025-01-03")
-    leaving: string;   // ISO date string
-    reason: string;
-    alternate: number; // Alternate RC ID
-}
-
-export interface CreateRCLeaveResponse {
-    success: boolean;
-    message: string;
-    data: RCLeave[];
-    updatedRc: RCInfo[];
-}
-
-export const submitRCLeaveForm = async (payload: RCLeaveFormPayload): Promise<RCLeaveResponse> => {
-    const token = await getToken();
-    console.log("Token:", token);
-
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    const response = await api.post("/api/resident_counsellor/leave", payload, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
-    const data = response.data;
-    return data as CreateRCLeaveResponse;
-}
-
-export const submitLeave = async (values: RCLeaveFormPayload) => {
-    const res = await submitRCLeaveForm(values);
-    if (res.success) {
-        console.log('RC Leave Form submitted successfully:', res);
-        Alert.alert("Success", "RC Leave Form submitted successfully");
-        router.replace("/RC");
-    } else {
-        console.error('Failed to submit RC Leave Form:');
-    }
-}
-
 
 export const approveRCLeave = async (id: number, status: string, comment?: string): Promise<RCLeaveCompleteResponse> => {
     const token = await getToken();

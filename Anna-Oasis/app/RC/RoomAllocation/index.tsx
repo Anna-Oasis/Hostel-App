@@ -1,11 +1,8 @@
 import { View, ScrollView } from "react-native";
-import { Text } from "@/components/ui/text";
 import { useEffect, useState } from "react";
 import { getAllRCAdmissions } from "@/utils/rc/rcAdmissionApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
-import { Icon } from "@/components/ui/icon";
-import { Inbox } from "lucide-react-native";
 import { router } from "expo-router";
 import { allocateRoomAdmission } from "@/utils/rc/rcAdmissionApi";
 import EmptyPage from "@/components/EmptyPage";
