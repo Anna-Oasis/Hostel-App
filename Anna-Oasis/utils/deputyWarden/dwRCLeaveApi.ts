@@ -1,6 +1,24 @@
 import api from "@/api";
-import { RCLeaveResponse } from "../rc/rcApi";
 import { getToken } from "../authUtils";
+
+export interface RCLeaveResponse {
+    message: string;
+    success: boolean;
+    data: RCLeave[];
+}
+
+export interface RCLeave {
+    id: number;
+    rc_id: number;
+    leaving: string;        
+    arrival: string;    
+    reason: string;
+    approved: string;      
+    created_at: string;    
+    dw_approved_at: string; 
+    ew_updated_at: string;  
+}
+
 
 export async function getRCLeavebyDw(): Promise<RCLeaveResponse> {
     const token = await getToken();

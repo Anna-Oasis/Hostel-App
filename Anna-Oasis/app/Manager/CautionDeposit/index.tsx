@@ -6,7 +6,7 @@ import {
   fetchManagerVacatingForms,
   approveManagerVacatingForm,
   rejectManagerVacatingForm,
-} from "@/utils/manager-studentvacatinghostel/managercautiondepositAPI";
+} from "@/utils/manager/managerCautionDepositAPI";
 import { Spinner } from "@/components/ui/spinner";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";

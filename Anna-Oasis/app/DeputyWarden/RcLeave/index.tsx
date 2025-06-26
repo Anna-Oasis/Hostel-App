@@ -1,16 +1,19 @@
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import ApprovalCard from "@/components/ApprovalCard";
 import { useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import {
   getRCLeavebyDw,
   updateRCLeaveStatusByDw,
-} from "@/utils/deputyWarden/dwApi";
+} from "@/utils/deputyWarden/dwRCLeaveApi";
+import { getRCLeaveBadgeStatus } from "@/utils/getBadgeStatus";
+import ModalCallable from "@/components/modals/ModalCallable";
+import DeclineComment from "@/components/modals/DeclineComment";
+import EmptyPage from "@/components/EmptyPage";
 
 type RcLeave = {
   id: number;
@@ -26,6 +29,8 @@ export default function RcLeavePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingIds, setUpdatingIds] = useState<Set<number>>(new Set());
+  const [modal, setModal] = useState<{ show: boolean; title?: string; message?: string }>({ show: false });
+  const [declineModal, setDeclineModal] = useState<{ show: boolean; leaveId?: number }>({ show: false });
 
   const fetchLeaves = async () => {
     try {
@@ -54,7 +59,11 @@ export default function RcLeavePage() {
             leave.id === leaveId ? { ...leave, approved: "2" } : leave
           )
         );
-        Alert.alert("Approved", "RC Leave approved successfully.");
+        setModal({
+          show: true,
+          title: "Approved",
+          message: "RC Leave approved successfully.",
+        });
       } else {
         Alert.alert("Error", result.message || "Approval failed.");
       }
@@ -69,17 +78,26 @@ export default function RcLeavePage() {
     }
   };
 
-  const handleReject = async (leaveId: number) => {
+  // Show DeclineComment modal, then call API with comment
+  const handleDecline = (leaveId: number) => {
+    setDeclineModal({ show: true, leaveId });
+  };
+
+  const handleReject = async (leaveId: number, comment: string) => {
     setUpdatingIds((prev) => new Set(prev).add(leaveId));
     try {
-      const result = await updateRCLeaveStatusByDw(leaveId, "false", "");
+      const result = await updateRCLeaveStatusByDw(leaveId, "false", comment);
       if (result.success) {
         setLeaves((prev) =>
           prev.map((leave) =>
             leave.id === leaveId ? { ...leave, approved: "-1" } : leave
           )
         );
-        Alert.alert("Rejected", "RC Leave has been rejected.");
+        setModal({
+          show: true,
+          title: "Rejected",
+          message: "RC Leave has been rejected.",
+        });
       } else {
         Alert.alert("Error", result.message || "Rejection failed.");
       }
@@ -106,54 +124,55 @@ export default function RcLeavePage() {
     );
   }
 
-  if (error) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-red-500 mb-2 text-center">{error}</Text>
-        <TouchableOpacity onPress={fetchLeaves}>
-          <Text className="text-blue-600 underline">Retry</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {leaves.length === 0 ? (
-        <Text className="text-center text-gray-500">
-          No RC Leave requests found.
-        </Text>
-      ) : (
-        leaves.map((leave) => (
-          <ApprovalCard
-            key={leave.id}
-            title={`RC Leave #${leave.id}`}
-            subTitle={`From ${leave.leaving} to ${leave.arrival}`}
-            data={{
-              "Reason": leave.reason,
-              "Leaving": leave.leaving,
-              "Arrival": leave.arrival,
-              "Created At": new Date(leave.created_at).toLocaleString(),
-              "Status": leave.approved === '1'
-                ? badgeStatus.Pending
-                : leave.approved === '-1'
-                  ? badgeStatus.Rejected
-                  : leave.approved === '2'
-                    ? badgeStatus.Approved
-                    : badgeStatus.Pending,
-            }}
-            badge={
-              leave.approved === "2"
-                ? badgeStatus.Approved
-                : leave.approved === "-1"
-                  ? badgeStatus.Rejected
-                  : badgeStatus.Pending
-            }
-            onApprove={() => handleApprove(leave.id)}
-            onDecline={() => handleReject(leave.id)}
+    <>
+      <ModalCallable
+        show={modal.show}
+        onClose={() => setModal({ show: false })}
+        title={modal.title}
+        message={modal.message}
+      />
+      <DeclineComment
+        visible={declineModal.show}
+        onClose={() => setDeclineModal({ show: false })}
+        onSubmit={(comment) => {
+          if (declineModal.leaveId) {
+            setDeclineModal({ show: false });
+            handleReject(declineModal.leaveId, comment);
+          }
+        }}
+        title="Reject RC Leave"
+        placeholder="Enter reason for rejection..."
+        submitLabel="Reject"
+        cancelLabel="Cancel"
+      />
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {leaves.length === 0 ? (
+          <EmptyPage
+            title="No RC Leave requests found."
+            description="There are currently no RC Leave requests to review."
           />
-        ))
-      )}
-    </ScrollView>
+        ) : (
+          leaves.map((leave) => (
+            <ApprovalCard
+              key={leave.id}
+              title={`RC Leave #${leave.id}`}
+              subTitle={`From ${leave.leaving} to ${leave.arrival}`}
+              data={{
+                "Reason": leave.reason,
+                "Leaving": leave.leaving,
+                "Arrival": leave.arrival,
+                "Created At": new Date(leave.created_at).toLocaleString(),
+                "Status": getRCLeaveBadgeStatus(leave.approved),
+              }}
+              badge={getRCLeaveBadgeStatus(leave.approved)}
+              onApprove={() => handleApprove(leave.id)}
+              onDecline={() => handleDecline(leave.id)}
+            />
+          ))
+        )}
+      </ScrollView>
+    </>
   );
 }
+

@@ -11,7 +11,9 @@ import useUserStore from "@/stores/userStore";
 import { router } from "expo-router";
 import { submitStudentAdmission } from "@/utils/student/studentAdmissionApi";
 import useLoadingStore from "@/stores/loadingStore";
-import AdmissionHistory from "./History/index"; // You'll implement this
+import AdmissionHistory from "./History/index"; 
+import TabSwitch from "@/components/TabSwitch";
+import { FilePlus2, History as HistoryIcon } from "lucide-react-native";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
@@ -51,36 +53,19 @@ const AdmissionForm = () => {
   return (
     <View className="flex-1 bg-white">
       {/* Tab Header */}
-      <View className="flex-row justify-around mt-4 mb-2">
-        <TouchableOpacity
-          className={`flex-1 py-3 items-center border-b-2 ${
-            activeTab === "form" ? "border-black" : "border-gray-200"
-          }`}
-          onPress={() => setActiveTab("form")}
-        >
-          <Text
-            className={`text-lg font-semibold ${
-              activeTab === "form" ? "text-black" : "text-gray-500"
-            }`}
-          >
-            Admission Form
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`flex-1 py-3 items-center border-b-2 ${
-            activeTab === "history" ? "border-black" : "border-gray-200"
-          }`}
-          onPress={() => setActiveTab("history")}
-        >
-          <Text
-            className={`text-lg font-semibold ${
-              activeTab === "history" ? "text-black" : "text-gray-500"
-            }`}
-          >
-            History
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TabSwitch
+        tabs={[
+          { label: "Admission Form", value: "form" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        icons={{
+          form: FilePlus2,
+          history: HistoryIcon,
+        }}
+        className="mt-4 mb-2"
+      />
 
       {/* Tab Content */}
       {activeTab === "form" ? (
@@ -165,3 +150,4 @@ const AdmissionForm = () => {
 };
 
 export default AdmissionForm;
+
