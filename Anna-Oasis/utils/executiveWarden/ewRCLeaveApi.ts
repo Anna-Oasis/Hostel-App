@@ -1,6 +1,23 @@
 import api from "@/api";
-import { RCLeaveResponse } from "../rc/rcApi";
 import { getToken } from "../authUtils";
+
+export interface RCLeaveResponse {
+    message: string;
+    success: boolean;
+    data: RCLeave[];
+}
+
+export interface RCLeave {
+    id: number;
+    rc_id: number;
+    leaving: string;         // ISO Date string (e.g., "2025-01-03")
+    arrival: string;         // ISO Date string
+    reason: string;
+    approved: string;        // Likely a string enum: "0" | "1" | "2" | "-1"
+    created_at: string;      // ISO timestamp
+    dw_approved_at: string;  // ISO timestamp
+    ew_updated_at: string;   // ISO timestamp
+}
 
 export async function getRCLeavebyEw(): Promise<RCLeaveResponse> {
     const token = await getToken();
