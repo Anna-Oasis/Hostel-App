@@ -16,3 +16,4 @@ export * from './vacatingHostel';
 export * from './vacatingHostelApprovals';
 export * from './roomModel';
 export * from './preAdmission';
+export * from './declarationModel';

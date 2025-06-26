@@ -17,6 +17,7 @@ import {
   approveVacatingFormByManagerController,
   getVacatingFormsForManagerController
 } from '../controllers/vacatingHostelController';
+import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsController } from '../controllers/detailsController';
 
 const managerRouter = Router();
 
@@ -66,6 +67,28 @@ managerRouter.get(
   authenticateUser,
   hasRole(['manager']),
   errorWrapper(getGrievancesForManagerController)
+);
+
+//Student details verification route
+managerRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(fetchStudentDetailsForManagerVerificationController)
+);
+
+managerRouter.get(
+  "/details/:rollNo",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(getStudentDetailsController)
+);
+
+managerRouter.put(
+  "/details/:rollNo",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(approveStudentDetailsByManagerController)
 );
 
 export default managerRouter;

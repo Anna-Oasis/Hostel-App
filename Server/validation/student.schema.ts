@@ -78,3 +78,8 @@ export const studentSchema = z.object({
 
   createdAt: z.coerce.date().default(() => new Date()),
 });
+
+export const studentDetailsDecisionSchema = z.object({
+  approve: z.boolean(),
+  comment: z.string().optional(),
+});

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { studentModel } from "../models/studentModel";
 
@@ -26,4 +26,12 @@ export const findStudentByUserId = async (userId: number) => {
     .select()
     .from(studentModel)
     .where(eq(studentModel.user_id, userId));
+}
+
+export const fetchStudentsForManagerVerification = async () => {
+  return await db
+    .select()
+    .from(studentModel)
+    .where(isNull(studentModel.approve))
+    .orderBy(studentModel.createdAt);
 }
