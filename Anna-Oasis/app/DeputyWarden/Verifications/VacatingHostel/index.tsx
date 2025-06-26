@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, TextInput } from "react-native";
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Alert } from "react-native";
+import ApprovalCard from "@/components/ApprovalCard";
 import {
   fetchDWVacatingForms,
   approveDWVacatingForm,
   rejectDWVacatingForm,
-} from "@/utils/dw-studentvacatinghostel/dwvacatinghostelAPI";
-import { Text } from "@/components/ui/text";
+} from "@/utils/deputyWarden/dwCacatinghostelAPI";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import ModalCallable from "@/components/modals/ModalCallable";
+import DeclineComment from "@/components/modals/DeclineComment";
+import EmptyPage from "@/components/EmptyPage";
+import { getHostelVacationBadgeStatus } from "@/utils/getBadgeStatus";
 
 export default function VacatingHostelVerificationPage() {
   const [applications, setApplications] = useState<any[]>([]);
@@ -23,7 +18,6 @@ export default function VacatingHostelVerificationPage() {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
   const [selectedApp, setSelectedApp] = useState<any>(null);
 
   const getApplications = async () => {
@@ -57,18 +51,17 @@ export default function VacatingHostelVerificationPage() {
   // Reject handler (opens modal)
   const handleReject = (app: any) => {
     setSelectedApp(app);
-    setRejectReason("");
     setRejectModalOpen(true);
   };
 
   // Reject submit (calls API)
-  const submitRejection = async () => {
-    if (!rejectReason.trim()) {
+  const submitRejection = async (reason: string) => {
+    if (!reason.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
       return;
     }
     try {
-      await rejectDWVacatingForm(selectedApp.id, rejectReason.trim());
+      await rejectDWVacatingForm(selectedApp.id, reason.trim());
       setSuccessMsg("Form rejected successfully!");
       setSuccessModalVisible(true);
       setRejectModalOpen(false);
@@ -79,73 +72,34 @@ export default function VacatingHostelVerificationPage() {
     }
   };
 
-  const mapStatus = (status: string | number) => {
-    if (status === "-1") return badgeStatus.Rejected;
-    if (status === "3") return badgeStatus.Approved;
-    return badgeStatus.Pending;
-  };
-
   return (
     <View className="flex-1 bg-white p-3">
       {/* Success Modal for both approval and rejection */}
-      <Modal isOpen={successModalVisible} onClose={() => setSuccessModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{successMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold p-2"
-              onPress={() => setSuccessModalVisible(false)}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalCallable
+        show={successModalVisible}
+        onClose={() => setSuccessModalVisible(false)}
+        title="Success"
+        message={successMsg}
+      />
       {/* Rejection Reason Modal */}
-      <Modal isOpen={rejectModalOpen} onClose={() => setRejectModalOpen(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Reason for Rejection</Text>
-          </ModalHeader>
-          <ModalBody>
-            <TextInput
-              placeholder="Enter reason for rejection"
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-base"
-              style={{ textAlignVertical: "top" }}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold mr-6 p-2"
-              onPress={submitRejection}
-            >
-              Submit
-            </Text>
-            <Text
-              className="text-gray-600 font-semibold p-2"
-              onPress={() => setRejectModalOpen(false)}
-            >
-              Cancel
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DeclineComment
+        visible={rejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        onSubmit={submitRejection}
+        title="Reason for Rejection"
+        placeholder="Enter reason for rejection"
+        submitLabel="Submit"
+        cancelLabel="Cancel"
+      />
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <Spinner size="large" color="#0000ff" />
         </View>
       ) : applications.length === 0 ? (
-        <Text className="text-center mt-8 text-gray-500">No forms pending approval.</Text>
+        <EmptyPage
+          title="No forms pending approval"
+          description="There are currently no hostel vacating forms to verify."
+        />
       ) : (
         <ScrollView>
           {applications.map((app) => (
@@ -153,7 +107,9 @@ export default function VacatingHostelVerificationPage() {
               <ApprovalCard
                 title={`Vacating Hostel - ${app.roll_number}`}
                 subTitle={`Vacating on ${app.vacating_date} at ${app.vacating_time}`}
-                badge={mapStatus(app.status)}
+                badge={getHostelVacationBadgeStatus(
+                  typeof app.status === "string" ? parseInt(app.status) : app.status
+                )}
                 data={{
                   "Roll Number": app.roll_number,
                   "Vacating Date": app.vacating_date,
@@ -162,7 +118,8 @@ export default function VacatingHostelVerificationPage() {
                   "Returned Items": Array.isArray(app.returned_items)
                     ? app.returned_items.join(", ")
                     : "None",
-                  "Status": app.status === "-1"
+                  "Status":
+                    app.status === "-1"
                       ? "Rejected"
                       : app.status === "3"
                       ? "Approved"

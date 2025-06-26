@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { Text } from "@/components/ui/text";
 import {
   fetchDeputyWardenLeaveForms,
   updateDeputyWardenLeaveFormStatus,
 } from "@/utils/deputyWarden/dwStudentLeaveFormAPI";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import ModalCallable from "@/components/modals/ModalCallable";
 import DeclineComment from "@/components/modals/DeclineComment";
+import EmptyPage from "@/components/EmptyPage";
+import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 
 export default function LeaveFormVerificationPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
@@ -73,34 +67,15 @@ export default function LeaveFormVerificationPage() {
     setDeclineModal({ open: false, leaveId: undefined });
   };
 
-  // Helper to map status
-  const mapStatus = (status: string | number) => {
-    if (status === "2") return badgeStatus.Pending;
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: "#fff", padding: 12 }}>
       {/* Success Modal */}
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{modalMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold"
-              onPress={() => setModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalCallable
+        show={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Success"
+        message={modalMsg}
+      />
       {/* Rejection Reason Modal */}
       <DeclineComment
         visible={declineModal.open}
@@ -116,7 +91,10 @@ export default function LeaveFormVerificationPage() {
           <Spinner size="large" color="#0000ff" />
         </View>
       ) : leaveForms.length === 0 ? (
-        <Text className="text-center mt-8 text-gray-500">No leave forms pending approval.</Text>
+        <EmptyPage
+          title="No leave forms pending approval."
+          description="There are currently no leave forms to review."
+        />
       ) : (
         <ScrollView>
           {leaveForms.map((item) => {
@@ -127,7 +105,7 @@ export default function LeaveFormVerificationPage() {
                 key={leave.id}
                 title={`${student.name} (${leave.roll_number})`}
                 subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={mapStatus(leave.status)}
+                badge={getLeaveBadgeStatus(leave.status)}
                 data={{
                   "Student Name": student.name,
                   "Roll Number": leave.roll_number,
