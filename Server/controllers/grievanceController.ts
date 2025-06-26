@@ -76,22 +76,16 @@ export const getGrievancesByUserController = async (
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }
   console.log("Roll Number:", rollNumber);
-  const result = await getGrievancesByRollNumber(rollNumber);
-
-  if (result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No grievances found for this user",
-    });
-    return;
-  }
+  const data = await getGrievancesByRollNumber(rollNumber);
 
   res.status(httpStatus.OK).json({
-    success: true,
-    data: result,
-    message: "Grievances fetched successfully",
-  });
+      success: true,
+      data: data||[],
+      count:data?data.length:0,
+      message: data && data.length >0
+      ?  "Grievances Fetched Successfully":
+      "No Grievances Found",
+    });
 };
 
 
@@ -123,22 +117,16 @@ export const viewGrievancesByRCController = async (
   if (rc[0].hostel == null || rc[0].floor == null) {
     throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
   }
-  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
+  const data = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
 
-  if (!grievances || grievances.length === 0) {
-    res.status(httpStatus.OK).json({ 
-      success: false, 
-      data: [],
-      message: "No grievances found",
+  res.status(httpStatus.OK).json({
+      success: true,
+      data: data||[],
+      count:data?data.length:0,
+      message: data && data.length >0
+      ?  "Grievances Fetched Successfully":
+      "No Grievances Found",
     });
-    return;
-  }
-
-  res.status(httpStatus.OK).json({ 
-    success: true, 
-    data: grievances,
-    message: "Fetched Grievances successfully",
-  });
 };
 
 
@@ -211,19 +199,13 @@ export const getGrievancesForManagerController=async (req:AuthRequest,res:Respon
 
     const data = await getGrievancesForManager();
 
-    if (data.length === 0) {
-      res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No Grievances Found"
-      });
-      return;
-    }
-
     res.status(httpStatus.OK).json({
       success: true,
-      data: data,
-      message: "Grievances Fetched Successfully"
+      data: data||[],
+      count:data?data.length:0,
+      message: data && data.length >0
+      ?  "Grievances Fetched Successfully":
+      "No Grievances Found",
     });
 }
 
@@ -283,18 +265,13 @@ export const getGrievancesForDeputyWardenController = async (req:AuthRequest,res
 
     const data = await getGrievancesForDeputyWarden();
 
-    if (data.length === 0) {
-      res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No grievances found for Deputy Warden"
-      });
-      return;
-    }
 
     res.status(httpStatus.OK).json({
       success: true,
-      message: "All grievances are fetched for Deputy Warden",
-      data: data
+      data: data||[],
+      count:data?data.length:0,
+      message: data && data.length >0
+      ? "All grievances are fetched for Deputy Warden":
+      "No grievances found for Deputy Warden",
     });
 }

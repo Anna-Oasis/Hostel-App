@@ -61,38 +61,27 @@ export const getRCLeaves = async (
     case "deputyWarden" :
       const result = await getRCLeaveToBeApprovedByDeputyWarden()
       
-      if (!result || result.length === 0) {
-        res.status(httpStatus.OK).json({
-          success: false,
-          data: [],
-          message: "No RC leaves waiting for Deputy Warden approval"
-        })
-        return;
-      }
       
       res.status(httpStatus.OK).json({
         success : true,
-        data : result,
-        message: "RC leaves fetched successfully"
+        data : result || [],
+        count:result ? result.length:0,
+        message: result && result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves waiting for Deputy Warden approval"
       })
       break;
       
     case "executiveWarden" :
-      const ewResult = await getRCLeaveToBeApprovedByExecutiveWarden()
-      
-      if (!ewResult || ewResult.length === 0) {
-        res.status(httpStatus.OK).json({
-          success: false,
-          data: [],
-          message: "No RC leaves waiting for Executive Warden approval"
-        })
-        return;
-      }
+      const e_result = await getRCLeaveToBeApprovedByExecutiveWarden()
       
       res.status(httpStatus.OK).json({
         success : true,
-        data : ewResult,
-        message: "RC leaves fetched successfully"
+        data : e_result || [],
+        count:e_result ? e_result.length:0,
+        message: e_result && e_result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves waiting for Deputy Warden approval"
       })
       break;
       
@@ -154,18 +143,13 @@ export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
     throw AppError("No leave forms found for this RC", httpStatus.NOT_FOUND);
   }
 
-  if (!leaveForms || leaveForms.length === 0) {
-        res.status(httpStatus.OK).json({
-          success: false,
-          data: [],
-          message: "No RC leaves are found"
-        })
-    return 
-      }
   res.status(httpStatus.OK).json({
     success: true,
-    data: leaveForms,
-    message: "Fetched RC Leave forms successfully",
+    data: leaveForms || [],
+    count:leaveForms?leaveForms.length:0,
+    message: leaveForms && leaveForms.length >0
+    ? "Fetched RC Leave forms successfully"
+    :"No RC leaves are found",
   });
 
 }
@@ -182,18 +166,14 @@ export const fetchRCbyHostelController = async (req: AuthRequest, res: Response)
   }
 
   const rcs = await getRCsbyHostel(rc[0].hostel);
-  if (!rcs || rcs.length === 0) {
-        res.status(httpStatus.OK).json({
-          success: false,
-          data: [],
-          message: "No RC's are found"
-        })
-        return 
-      }
+ 
   res.status(httpStatus.OK).json({
     success : true,
-    data : rcs,
-    message : "Feched Successfully"
+    data : rcs || [],
+    count:rcs?rcs.length:0,
+    message : rcs && rcs.length>0
+    ?"Feched Successfully"
+    :"No RC's are found"
   })
 
 }
