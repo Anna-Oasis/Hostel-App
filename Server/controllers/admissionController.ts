@@ -61,7 +61,7 @@ export async function fetchAdmissionWaitingForApprovalController(
   res.status(httpStatus.OK).json({
     success: true,
     user: req.User,
-    data: submittedAdmissions,
+    data: submittedAdmissions|| [],
     count: submittedAdmissions.length,
     message: "Admissions retrieved successfully",
   });

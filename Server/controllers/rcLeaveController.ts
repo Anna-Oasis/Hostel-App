@@ -60,19 +60,44 @@ export const getRCLeaves = async (
   switch (req.User.role) {
     case "deputyWarden" :
       const result = await getRCLeaveToBeApprovedByDeputyWarden()
+      
+      if (!result || result.length === 0) {
+        res.status(httpStatus.OK).json({
+          success: false,
+          data: [],
+          message: "No RC leaves waiting for Deputy Warden approval"
+        })
+        return;
+      }
+      
       res.status(httpStatus.OK).json({
         success : true,
-        data : result
+        data : result,
+        message: "RC leaves fetched successfully"
       })
       break;
+      
     case "executiveWarden" :
       const ewResult = await getRCLeaveToBeApprovedByExecutiveWarden()
+      
+      if (!ewResult || ewResult.length === 0) {
+        res.status(httpStatus.OK).json({
+          success: false,
+          data: [],
+          message: "No RC leaves waiting for Executive Warden approval"
+        })
+        return;
+      }
+      
       res.status(httpStatus.OK).json({
         success : true,
-        data : ewResult
+        data : ewResult,
+        message: "RC leaves fetched successfully"
       })
       break;
-
+      
+    default:
+      throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 }
 
@@ -129,11 +154,20 @@ export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
     throw AppError("No leave forms found for this RC", httpStatus.NOT_FOUND);
   }
 
+  if (!leaveForms || leaveForms.length === 0) {
+        res.status(httpStatus.OK).json({
+          success: false,
+          data: [],
+          message: "No RC leaves are found"
+        })
+    return 
+      }
   res.status(httpStatus.OK).json({
     success: true,
     data: leaveForms,
     message: "Fetched RC Leave forms successfully",
   });
+
 }
 
 export const fetchRCbyHostelController = async (req: AuthRequest, res: Response) => {
@@ -148,11 +182,20 @@ export const fetchRCbyHostelController = async (req: AuthRequest, res: Response)
   }
 
   const rcs = await getRCsbyHostel(rc[0].hostel);
+  if (!rcs || rcs.length === 0) {
+        res.status(httpStatus.OK).json({
+          success: false,
+          data: [],
+          message: "No RC's are found"
+        })
+        return 
+      }
   res.status(httpStatus.OK).json({
     success : true,
     data : rcs,
     message : "Feched Successfully"
   })
+
 }
 
 export const updateCompleteLeave = async (req : AuthRequest, res : Response) => {

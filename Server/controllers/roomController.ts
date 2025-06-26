@@ -33,17 +33,19 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
     academicYear
   );
   if (!room || room.length === 0) {
-    throw AppError(
-      "No rooms found for the specified block and academic year",
-      httpStatus.NOT_FOUND
-    );
+    res.status(httpStatus.OK).json({
+    success: false,
+    data: [],
+    message: "No rooms found for the specified block and academic year",
+  });
+    return 
   }
-  if (!room) {
-    throw AppError(
-      "Can't fetch room details",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
+  // if (!room) {
+  //   throw AppError(
+  //     "Can't fetch room details",
+  //     httpStatus.INTERNAL_SERVER_ERROR
+  //   );
+  // }
 
   res.status(httpStatus.OK).json({
     success: true,

@@ -66,6 +66,14 @@ export async function getVacatingHostelFormsOfaStudentController(req: AuthReques
     throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
   }
   const result = await getVacatingHostelFormsOfStudent(rollNo);
+  if (!result || result.length==0){
+    res.status(httpStatus.OK).json({
+    success: false,
+    data: [],
+    message: "No vacating hostel forms found for the student",
+  });
+  return 
+  }
   res.status(httpStatus.OK).json({
     success: true,
     data: result,
