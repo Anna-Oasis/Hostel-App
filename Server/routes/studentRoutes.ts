@@ -19,7 +19,7 @@ import {
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
-import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveController";
+import { createLeaveFormController,getAllLeaveFormsController} from "../controllers/leaveController";
 
 
 import {
@@ -60,9 +60,9 @@ studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),erro
 studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
 //LEAVE FORMS
-studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormFromController));
+studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormController));
 //get all the leave forms
-studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsFromController));
+studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsController));
 
 // SUMMER VACATION FORMS
 //create a new Summer vacation form
