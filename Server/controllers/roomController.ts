@@ -17,7 +17,8 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
       httpStatus.BAD_REQUEST
     );
   }
-  if (!req.User || !req.User.id || !req.User.role) {
+
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
@@ -25,28 +26,29 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   }
 
   const rc = await getRCByUserId(Number(req.User.id));
-  if (!rc || rc.length === 0 || !rc[0].floor || !rc[0].hostel) {
+  if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
+
+  if (rc[0].hostel == null || rc[0].floor == null) {
+    throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   const room = await fetchRoomDetailsByBlockAndAcademicYear(
     rc[0].hostel,
     academicYear
   );
+
   if (!room || room.length === 0) {
     throw AppError(
       "No rooms found for the specified block and academic year",
       httpStatus.NOT_FOUND
     );
   }
-  if (!room) {
-    throw AppError(
-      "Can't fetch room details",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
+    count: room.length,
     data: room,
     message: "Fetched room details successfully",
   });

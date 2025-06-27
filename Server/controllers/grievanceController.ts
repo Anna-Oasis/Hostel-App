@@ -8,7 +8,7 @@ import { AppError } from "../utils/AppError";
 import {  
   rcGrievanceDecisionSchema 
 } from "../validation/grievance.schema";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
 import { grievanceApprovalStatus} from "../constants/enum";
@@ -91,12 +91,7 @@ export const viewGrievancesByRCController = async (
     );
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.User.id));
-  if (!rc_id) {
-    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-  }
-  
-  const rc = await getRCById(Number(rc_id));
+  const rc = await getRCByUserId(Number(req.User.id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
@@ -128,12 +123,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     );
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.User.id));
-  if (!rc_id) {
-    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-  }
-  
-  const rc = await getRCById(Number(rc_id));
+  const rc = await getRCByUserId(Number(req.User.id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
