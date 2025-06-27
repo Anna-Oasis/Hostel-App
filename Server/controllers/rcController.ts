@@ -44,19 +44,15 @@ export async function createRCController(req: AuthRequest, res: Response): Promi
 
 export async function getRCsController(req: AuthRequest, res: Response): Promise<void> {
   const rcs = await getAllRCs();
-  if (!rcs || rcs.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No RCs found",
-    });
-    return;
-  }
+
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: rcs,
-    message: "Fetched all RCs successfully",
+    data: rcs || [],
+    count:rcs?rcs.length:0,
+    message:rcs && rcs.length>0 
+    ?"Fetched all RCs successfully"
+    : "No RCs found",
   });
 }
 

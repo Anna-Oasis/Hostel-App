@@ -61,19 +61,14 @@ export const getAllSummerVacationFormsOfStudent = async (
 
   const result = await getAllSummerVacationForms(rollNumber);
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      message: "No Summer vacation forms found",
-      data: [],
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: "All available Summer Vacation forms are fetched Successfully",
-    data: result,
+    data: result||[],
+    count:result?result.length:0,
+    message: result && result.length >0
+    ? "All available Summer Vacation forms are fetched Successfully"
+    : "No Summer vacation forms found"
   });
 };
 
@@ -166,19 +161,13 @@ export const getSummerVacationFormsForDeputyWardenController = async (
 ) => {
   const result = await getSummerVacationFormsForDeputyWarden();
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      message: "Nothing to approve",
-      data: [],
-    });
-    return;
-  }
-
   res.status(httpStatus.OK).json({
     success: true,
-    message: "Data has been Fetched successfully",
-    data: result,
+    data: result||[],
+    count:result?result.length:0,
+    message: result && result.length >0
+    ? "Data has been Fetched successfully":
+    "Nothig to Approve",
   });
 };
 
@@ -212,18 +201,13 @@ export const getSummerVacationFormsForRCController = async (
       floors
     );
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      message: "No records found",
-      data: [],
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: "All Summer Vacation Forms are fetched Successfully",
-    data: result,
+    data: result||[],
+    count:result?result.length:0,
+    message: result && result.length >0
+    ?"All Summer Vacation Forms are fetched Successfully"
+    : "No records found",
   });
 };

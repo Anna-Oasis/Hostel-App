@@ -52,17 +52,13 @@ export const getAllLeaveFormsFromController = async (
 
   const result = await getLeaveFormApprovals(rollNumber);
 
-  if (!result) {
-    res.status(httpStatus.NOT_FOUND).json({
-      success: false,
-      message: "No Leave Form Exists",
-    });
-  }
-
   res.status(httpStatus.FOUND).json({
     success: true,
-    message: "All available leave forms are fetched Successfully",
-    data: result,
+    data: result || [],
+    count:result?result.length:0,
+    message: result && result.length >0
+    ? "All available leave forms are fetched Successfully"
+    :"No Leave form exists",
   });
 };
 
@@ -116,19 +112,15 @@ export const getLeaveFormWaitingForApprovalController = async (
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 
-  if (!leave_form || leave_form.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: `No Leave Forms waiting for ${userRole} approval`,
-    });
-    return;
-  }
+
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: leave_form,
-    message: "Fetched Leave forms successfully",
+    data: leave_form || [],
+    count:leave_form?leave_form.length:0,
+    message: leave_form && leave_form.length >0
+    ? "Fetched Leave forms successfully"
+    : `No Leave Forms waiting for ${userRole} approval`
   });
 };
 

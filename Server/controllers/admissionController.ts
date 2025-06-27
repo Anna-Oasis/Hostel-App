@@ -31,6 +31,7 @@ import { ROOM_SIZE } from "../constants/values";
 import { getRCById, getRCByUserId } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/warden.schema";
+import { count } from "console";
 
 // GET – Fetch all admissions waiting for approval based on user role - manager, deputy warden, or executive warden
 export async function fetchAdmissionWaitingForApprovalController(
@@ -61,9 +62,11 @@ export async function fetchAdmissionWaitingForApprovalController(
   res.status(httpStatus.OK).json({
     success: true,
     user: req.User,
-    data: submittedAdmissions,
-    count: submittedAdmissions.length,
-    message: "Admissions retrieved successfully",
+    data: submittedAdmissions|| [],
+    count: submittedAdmissions?submittedAdmissions.length:0,
+    message: submittedAdmissions && submittedAdmissions.length >0
+    ? "Admissions retrieved successfully"
+    : "No Admissions found",
   });
 }
 
@@ -92,7 +95,10 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   res.status(httpStatus.OK).json({
     success: true,
     data: admissions || [],
-    message: "Fetched Admissions successfully",
+    count:admissions?admissions.length:0,
+    message: admissions&&admissions.length>0
+    ?"Fetched Admissions successfully"
+    : "No Admissions found"
   });
 };
 
@@ -209,18 +215,14 @@ export async function getAdmissionByRollNumberController(
   }
 
   const admission = await getAdmissionByRollNumber(roll_number);
-  if (admission.length === 0) {
-    res.status(200).json({
-      success: false,
-      data: [],
-      message: "No admission found for the provided roll number",
-    });
-    return;
-  }
+
   res.status(200).json({
     success: true,
-    data: admission,
-    message: "Admission retrieved successfully",
+    data: admission|| [],
+    count:admission? admission.length:0,
+    message: admission&&admission.length>0
+    ?"Admission retrieved successfully"
+    :"No admission found for the provided roll number",
   });
 }
 
@@ -230,18 +232,14 @@ export async function getAdmissionByAdmissionIdController(
 ) {
   const { admissionId } = req.params;
   const admission = await getAdmissionByAdmissionId(Number(admissionId));
-  if (admission.length === 0) {
-    res.status(200).json({
-      success: false,
-      data: [],
-      message: "No admission found for the provided admission ID",
-    });
-    return;
-  }
+ 
   res.status(200).json({
     success: true,
-    data: admission,
-    message: "Admission retrieved successfully",
+    data: admission||[],
+    count:admission?admission.length:0,
+    message:admission && admission.length>0 
+    ? "Admission retrieved successfully"
+    :  "No admission found for the provided admission ID",
   });
 }
 
@@ -363,12 +361,16 @@ export const fetchAdmissionsApprovedByUser = async (
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
-  const data = await getAdmissionsApprovedByUser(userID);
-  console.log("Fetched Admissions:", data);
-  res.status(httpStatus.OK).json({
+  const admission = await getAdmissionsApprovedByUser(userID);
+  console.log("Fetched Admissions:", admission);
+
+   res.status(200).json({
     success: true,
-    data,
-    message: "Admissions approved fetched successfully",
+    data: admission||[],
+    count:admission?admission.length:0,
+    message:admission && admission.length>0 
+    ? "Admissions approved fetched successfully"
+    :  "No admission found ",
   });
 };
 

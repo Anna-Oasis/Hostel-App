@@ -25,19 +25,13 @@ export const fetchStudentDetailsForRcController = async (
     const students = await fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
     console.log(students)
 
-    if (!students || students.length === 0) {
-        res.status(httpStatus.OK).json({
-            success: false,
-            data: [],
-            message: "No student records found",
-        });
-        return;
-    }
-
     res.status(httpStatus.OK).json({
         success: true,
-        data: students,
-        message: "Fetched student details successfully",
+        data: students || [],
+        count : students ? students.length:0,
+        message:students && students.length >0 
+        ?"Fetched student details successfully"
+        : "No student records found",
     });
 };
 

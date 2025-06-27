@@ -66,10 +66,14 @@ export async function getVacatingHostelFormsOfaStudentController(req: AuthReques
     throw AppError("Roll number not found for the user", httpStatus.NOT_FOUND);
   }
   const result = await getVacatingHostelFormsOfStudent(rollNo);
+
   res.status(httpStatus.OK).json({
     success: true,
-    data: result,
-    message: result.length > 0 ? "Vacating hostel forms fetched successfully" : "No vacating hostel forms found for the student",
+    data: result || [],
+    count: result?result.length:0,
+    message: result && result.length > 0
+     ? "Vacating hostel forms fetched successfully"
+      : "No vacating hostel forms found for the student",
   });
 }
 
@@ -81,19 +85,13 @@ export async function getVacatingFormsForRCController(req: AuthRequest, res: Res
   const rcId = parseInt(req.User.id);
   const forms = await getPendingRCApprovals(rcId);
 
-  if (!forms || forms.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No pending forms found for RC",
-    });
-    return;
-  }
-
   res.status(httpStatus.OK).json({
     success: true,
-    data: forms,
-    message: "Pending vacating forms fetched successfully for RC",
+    data: forms || [],
+    count: forms ? forms.length:0,
+    message: forms && forms.length>0
+    ?"Pending vacating forms fetched successfully for RC":
+    "No pending forms found for RC",
   });
 }
 
@@ -122,21 +120,14 @@ export async function approveVacatingFormByRCController(req: AuthRequest, res: R
 export async function getVacatingFormsForManagerController(req: AuthRequest, res: Response) {
   const forms = await getVacatingFormsWaitingForManager();
 
-  if (!forms || forms.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      count: 0,
-      message: "No vacating forms waiting for manager approval",
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: forms,
-    count: forms.length,
-    message: "Vacating forms waiting for manager approval fetched successfully",
+    data: forms || [],
+    count: forms?forms.length:0,
+    message: forms && forms.length>0 
+    ? "Vacating forms waiting for manager approval fetched successfully"
+    : "No vacating forms waiting for manager approval",
   });
 }
 
@@ -144,22 +135,15 @@ export async function getVacatingFormsForManagerController(req: AuthRequest, res
 export async function getVacatingFormsForDeputyWardenController(req: AuthRequest, res: Response) {
   const forms = await getVacatingFormsWaitingForDeputyWarden();
 
-  if (!forms || forms.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      count: 0,
-      message: "No vacating forms waiting for deputy warden approval",
-    });
-    return;
-  }
 
-  res.status(httpStatus.OK).json({
-    success: true,
-    data: forms,
-    count: forms.length,
-    message: "Vacating forms waiting for deputy warden approval fetched successfully",
-  });
+res.status(httpStatus.OK).json({
+  success: true,
+  data: forms || [],
+  count: forms ? forms.length : 0,
+  message: forms && forms.length > 0 
+    ? "Vacating forms waiting for deputy warden approval fetched successfully"
+    : "No vacating forms waiting for deputy warden approval",
+});
 }
 
 export async function approveVacatingFormByDeputyWardenController(req: AuthRequest, res: Response) {
