@@ -11,7 +11,6 @@ export const studentSchema = z.object({
   gender: z.enum(["male", "female", "other"]),
 
   dateOfBirth: z.coerce.date(),
-  age: z.coerce.number().min(15).max(100),
   mobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid mobile number"),
   email: z.string().email(),
   emergencyContact: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid emergency contact"),
@@ -21,7 +20,8 @@ export const studentSchema = z.object({
   govtIdType: z.string(),
   bloodGroup: z.string(),
   medicalHistory: z.string(),
-
+  admissionCategory: z.string().min(1, "Admission category is required"),
+  
   // Father Info
   fatherName: z.string(),
   fatherOccupation: z.string(),

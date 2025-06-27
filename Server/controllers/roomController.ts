@@ -30,7 +30,7 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  if (rc[0].hostel == null || rc[0].floor == null) {
+  if (rc[0].hostel == null) {
     throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
   }
 

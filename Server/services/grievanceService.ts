@@ -12,12 +12,12 @@ interface GrievanceUpdateParams {
   updatedBy: string;
 }
 
-export const getRollNumberByUserId = async (id: number) => {
-  return await db
-  .select({rollNo: studentModel.rollNo})
-  .from(userModel)
-  .innerJoin(studentModel, eq(userModel.id, studentModel.user_id))
-  .where(eq(userModel.id, id));
+export const getGrievanceByGrievanceId = async (grievance_id: number) => {
+  const result = await db
+    .select()
+    .from(grievancesModel)
+    .where(eq(grievancesModel.id, grievance_id));
+  return result;
 };
 
 export const createGrievance = async (data: NewGrievance) => {

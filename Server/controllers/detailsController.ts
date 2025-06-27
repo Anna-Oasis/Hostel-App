@@ -2,9 +2,10 @@ import { Response } from "express";
 import dayjs from "dayjs";
 import httpStatus from "http-status";
 import { AppError } from "../utils/AppError";
-import { studentDetailsDecisionSchema, studentSchema } from "../validation/student.schema";
+import { studentDetailsDecisionSchema, studentSchema } from "../validation/details.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
+  fetchStudentDetailsForRC,
   fetchStudentsForManagerVerification,
   findStudentByRollNo,
   findStudentByUserId,
@@ -12,6 +13,7 @@ import {
   updateStudentByRollNo,
 } from "../services/detailsService";
 import { AuthRequest } from "../types/roles";
+import { getRCByUserId } from "../services/rcServices";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -63,16 +65,12 @@ export async function getStudentDetailsController(req: AuthRequest, res: Respons
 }
 
 export async function getStudentDetailsUsingUserIdController(req: AuthRequest, res: Response) {
-
-  if (!req.User || !req.User.id) {
+  if (!req.User) {
     throw AppError("User not authenticated or user ID is missing", httpStatus.UNAUTHORIZED);
   }
-  const userId = req.User.id;
-  if (!userId) {
-    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
-  }
 
-  const student = await findStudentByUserId(Number(userId));
+  const student = await findStudentByUserId(Number(req.User.id));
+  
   if (!student.length) {
     res.status(httpStatus.OK).json({
       success: false,
@@ -190,27 +188,23 @@ export const fetchStudentDetailsForManagerVerificationController = async (
   req: AuthRequest,
   res: Response
 ) => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-
-  const userID = parseInt(req.User.id);
-  console.log("User ID:", userID);
-
-  if (isNaN(userID)) {
-    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
-  }
   
-  const data = await fetchStudentsForManagerVerification();
-  console.log("Fetched Students:", data);
+  const result = await fetchStudentsForManagerVerification();
+  console.log("Fetched Students:", result);
 
   res.status(httpStatus.OK).json({
     success: true,
-    data,
-    message: "Students fetched successfully",
+    data: result || [],
+    count: result ? result.length : 0,
+    message: result && result.length > 0 
+    ? "Fetched student details successfully"
+    :  "No student records found",
   });
 };
 
@@ -219,27 +213,20 @@ export async function approveStudentDetailsByManagerController(
   res: Response
 ) 
 {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-
-  const userID = parseInt(req.User.id);
-  console.log("User ID:", userID);
-
-  if (isNaN(userID)) {
-    throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
-  }
-
-  const { rollNo } = req.params;
+  
+  const rollNo = req.params.rollNo;
 
   const validatedData = studentDetailsDecisionSchema.parse(req.body);
 
-  if (!rollNo || typeof validatedData.approve !== "boolean") {
+  if (!rollNo) {
     throw AppError(
-      "Roll number and status (boolean) are required",
+      "Roll number is required",
       httpStatus.BAD_REQUEST
     );
   }
@@ -278,3 +265,37 @@ export async function approveStudentDetailsByManagerController(
     message: "Student details approval updated successfully",
   });
 }
+
+export const fetchStudentDetailsForRcController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+    if (!req.User) {
+        throw AppError(
+        "User information is missing from request",
+        httpStatus.UNAUTHORIZED
+        );
+    }
+    const rc = await getRCByUserId(Number(req.User.id));
+    console.log("RC Details:", rc);
+
+    if (!rc || rc.length === 0) {
+      throw AppError("RC not found", httpStatus.NOT_FOUND);
+    }
+
+    if (rc[0].hostel == null || rc[0].floor == null) {
+      throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    const result = await fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
+    console.log(result)
+
+    res.status(httpStatus.OK).json({
+        success: true,
+        data: result || [],
+        count: result ? result.length : 0,
+        message: result && result.length > 0 
+        ? "Fetched student details successfully"
+        :  "No student records found",
+    });
+};
