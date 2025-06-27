@@ -20,4 +20,10 @@ export const vacatingFormSchema = z.object({
   future_address: z.string().min(1, "Future address is required"),
 
   returned_items: z.array(z.string()).optional(),
+
+   endeavour: z.string().min(1, "Endeavour is required"),
+
+  endeavourDescription: z.string().min(1, "Endeavour description is required"),
+
+  feedback: z.string().min(1, "Feedback is required"),
 });

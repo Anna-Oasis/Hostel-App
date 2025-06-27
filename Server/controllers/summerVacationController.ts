@@ -25,20 +25,12 @@ export const createSummerVacationFromController = async (
   }
 
   const validatedData = summerVacationSchema.parse(data);
-
   const result = await createSummerVacationForm(validatedData);
 
-  if (!result || result.length === 0) {
-    throw AppError(
-      "Internal error while generating leave form",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
-
-  res.status(httpStatus.OK).json({
+  res.status(httpStatus.OK).json({  
     success: true,
-    message: "New leave form has been created",
-    data: result,
+    message: result.length >0?"New leave form has been created":"Internal error while generating leave form",
+    data: result.length>0?result:[],
   });
 };
 
@@ -56,7 +48,7 @@ export const getAllSummerVacationFormsOfStudent = async (
   const rollNumber = await getRollNoFromUserId(Number(UserId));
 
   if (!rollNumber) {
-    throw AppError("No Data is passed", httpStatus.BAD_REQUEST);
+    throw AppError("No Data is fetched", httpStatus.BAD_REQUEST);
   }
 
   const result = await getAllSummerVacationForms(rollNumber);
@@ -64,11 +56,9 @@ export const getAllSummerVacationFormsOfStudent = async (
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: result||[],
-    count:result?result.length:0,
-    message: result && result.length >0
-    ? "All available Summer Vacation forms are fetched Successfully"
-    : "No Summer vacation forms found"
+    message: result.length > 0?"All available Summer Vacation forms are fetched Successfully":"No Summer vacation forms found",
+    data: result.length >0?result:0,
+
   });
 };
 
@@ -92,12 +82,14 @@ export const approveSummerVacationFormByRCController = async (
   ) {
     throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
   }
-  if (approve === false && !comment) {
+
+  if (approve === false && (!comment || comment.trim() === '')) {
     throw AppError(
       "Comment is required when declining the form",
       httpStatus.BAD_REQUEST
     );
   }
+
   await approveSummerVacationFormByRC(
     summerVacationID,
     Number(userId),
@@ -136,7 +128,8 @@ export const approveSummerVacationDeputyWardenController = async (
     throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
   }
 
-  if (approve === false && !comment) {
+  if (approve === false && (!comment || comment.trim() === '')) {
+
     throw AppError(
       "Comment is required when declining the form",
       httpStatus.BAD_REQUEST
@@ -162,15 +155,20 @@ export const getSummerVacationFormsForDeputyWardenController = async (
   req: AuthRequest,
   res: Response
 ) => {
+
+
+  if(!req.User || !req.User.id)
+  {
+    throw AppError("User information is missing from request",httpStatus.UNAUTHORIZED);
+  }
+
   const result = await getSummerVacationFormsForDeputyWarden();
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: result||[],
-    count:result?result.length:0,
-    message: result && result.length >0
-    ? "Data has been Fetched successfully":
-    "Nothig to Approve",
+    message: result.length > 0?"Data has been Fetched successfully":"Nothing to approve",
+    data: result.length > 0?result:[],
+
   });
 };
 
@@ -189,11 +187,14 @@ export const getSummerVacationFormsForRCController = async (
   if (!rcId || isNaN(rcId)) {
     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
   }
+
   const RCs = await getRCById(rcId);
-  console.log("RCs", RCs);
+  //console.log("RCs", RCs);
+
   if (!RCs || RCs.length === 0) {
     throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
   }
+
   const RC = RCs[0];
   const floors = RC.floor ? RC.floor : [];
   const hostelBlock = RC.hostel;
@@ -204,13 +205,11 @@ export const getSummerVacationFormsForRCController = async (
       floors
     );
 
-
-  res.status(httpStatus.OK).json({
+  
+    res.status(httpStatus.OK).json({
     success: true,
-    data: result||[],
-    count:result?result.length:0,
-    message: result && result.length >0
-    ?"All Summer Vacation Forms are fetched Successfully"
-    : "No records found",
+    message: result.length > 0?"All Summer Vacation Forms are fetched Successfully":"No records found",
+    data: result.length > 0?result:[],
+
   });
 };

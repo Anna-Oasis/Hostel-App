@@ -10,6 +10,7 @@ import {
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { postDeclarationFromController,getLatestDeclarationFromController} from "../controllers/declarationController";
 import {
   getRCLeaves,
   updateLeaveStatusForRC,
@@ -62,4 +63,17 @@ executiveWardenRouter.put(
   hasRole(["executiveWarden"]),
   errorWrapper(updateLeaveStatusForRC)
 );
+
+executiveWardenRouter.post("/declaration",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(postDeclarationFromController)
+);
+
+executiveWardenRouter.get("/declaration/:type",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(getLatestDeclarationFromController)
+);
+
 export default executiveWardenRouter;

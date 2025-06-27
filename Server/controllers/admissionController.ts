@@ -192,9 +192,10 @@ export async function createAdmissionController(
 
   const newAdmission = await createAdmission({
     ...parsedData,
+    declaration_id:parsedData.declaration_id,
     status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
-    updatedAt: new Date(),
+    updatedAt: new Date()
   });
 
   res.status(httpStatus.CREATED).json({
@@ -436,7 +437,7 @@ export const updateApprovalStatusByRCController = async (
     const status = admissionApprovalStatus.RC;
 
     // Check room capacity before approval
-    const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
+    const room = await checkRoom(validated.room, validated.hostel_block!, currentYear);
     if (!room) {
       throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
     }
@@ -459,7 +460,7 @@ export const updateApprovalStatusByRCController = async (
     const setStudent = await setStudentinRoom(
       updatedRollNos,
       validated.room,
-      validated.hostel_block,
+      validated.hostel_block!,
       currentYear
     );
 
@@ -484,7 +485,7 @@ export const updateApprovalStatusByRCController = async (
     }
 
     // Update student hostel details
-    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block);
+    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block!);
 
     if (!studentUpdate) {
       throw AppError(

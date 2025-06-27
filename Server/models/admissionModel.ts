@@ -18,7 +18,7 @@ import { declarationModel } from "./declarationModel";
 export const admissionModel = pgTable("admission", {
   id: serial("id").primaryKey(),
 
-  declarartion_id: integer("declaration_id")
+  declaration_id: integer("declaration_id")
       .notNull()
       .references(() => declarationModel.id, { onDelete: "no action" }).unique(),
 

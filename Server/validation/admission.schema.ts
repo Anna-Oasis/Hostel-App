@@ -3,6 +3,10 @@ import { hostelBlock } from "../constants/enum";
 
 export const createAdmissionSchema = z.object({
   roll_number: z.string().min(6, "Roll number is required"),
+    declaration_id: z.number({
+    required_error: "declaration_id is required",
+    invalid_type_error: "declaration_id must be a number",
+  }),
   academicYear: z
     .string()
     .min(9, "Academic year is required")
