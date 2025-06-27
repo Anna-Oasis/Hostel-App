@@ -3,8 +3,8 @@ import { Response } from "express";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
-import { getRCById, getRCByUserId } from "../services/rcServices";
-import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
+import {  getRCByUserId } from "../services/rcServices";
+import { getRollNoFromUserId } from "../services/helper";
 import {
   getLeaveFormsToBeApprovedByRcByFloor,
   getLeaveFormByLeaveFormId,
@@ -56,7 +56,7 @@ export const createLeaveFormController = async (
   });
 };
 
-export const getAllLeaveFormsController = async (
+export const getAllLeaveFormsByRollNoController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
@@ -84,13 +84,6 @@ export const getAllLeaveFormsController = async (
   });
 };
 
-// RC: \resident_counsellor\student_leave
-// Deputy Warden: \deputy_warden\student_leave
-
-/*
-RC: GET - Fetch all student leave forms waiting for RC approval by floor
-Deputy Warden: GET - Fetch all leave forms waiting for approval from deputy warden
-*/
 export const getLeaveFormWaitingForApprovalController = async (
   req: AuthRequest,
   res: Response
@@ -137,9 +130,6 @@ export const getLeaveFormWaitingForApprovalController = async (
   });
 };
 
-/*
-PUT - \leave_form_id as path param, approve the leave_form_id by RC and Deputy warden and entry into leave_form_id_approvals (request body will contain approve/decline with comment) 
-*/
 export const updateLeaveFormApprovalStatusController = async (
   req: AuthRequest,
   res: Response
