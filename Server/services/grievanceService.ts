@@ -28,7 +28,8 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
   return await db
     .select()
     .from(grievancesModel)
-    .where(eq(grievancesModel.roll_number, rollNumber));
+    .where(eq(grievancesModel.roll_number, rollNumber))
+    .orderBy(grievancesModel.created_at);
 };
 
 export const getGrievancesForRC = async (hostelblock: typeof hostelBlock[keyof typeof hostelBlock], floors: number[]) => {
@@ -43,7 +44,8 @@ export const getGrievancesForRC = async (hostelblock: typeof hostelBlock[keyof t
         eq(studentModel.hostelBlock, hostelblock),   
         eq(grievancesModel.status, grievanceApprovalStatus.SUBMITTED),       
       )
-    );
+    )
+    .orderBy(grievancesModel.created_at);
   return grievances;
 };
 
@@ -90,19 +92,13 @@ export const updateGrievanceStatus = async ({
 
 export const getGrievancesForManager = async () => {
   return await db
-    .select({
-      grievanceId: grievancesModel.id,
-      rollNo: grievancesModel.roll_number,
-      formDetails: {
-        grievanceType: grievancesModel.grievance_type,
-        subject: grievancesModel.subject,
-        description: grievancesModel.description,
-      },
-    })
+    .select()
     .from(grievancesModel)
+    .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
     .where(
       eq(grievancesModel.status, grievanceApprovalStatus.RC)
-    );
+    )
+    .orderBy(grievancesModel.created_at);
 };
 
 /*
@@ -124,17 +120,10 @@ export const updateGrievanceStatusByManager= async ({
 export const getGrievancesForDeputyWarden = async ()=>
 {
   return db
-      .select({
-        grievanceId: grievancesModel.id,
-        rollNo: grievancesModel.roll_number,
-        formDetails: {
-          grievanceType: grievancesModel.grievance_type,
-          subject: grievancesModel.subject,
-          description: grievancesModel.description,
-        },
-        status: grievancesModel.status,
-      })
-      .from(grievancesModel);
+      .select()
+      .from(grievancesModel)
+      .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
+      .orderBy(grievancesModel.created_at);
 }
 
 
