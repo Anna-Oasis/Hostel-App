@@ -26,7 +26,7 @@ import {
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
-import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
   getAttendanceByRcController

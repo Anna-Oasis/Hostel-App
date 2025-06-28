@@ -130,13 +130,15 @@ export const approveOrDeclineGrievancesByRCController = async (
 
   console.log("RC Details:", rc);
 
-  const grievanceId  = req.params;
-  
-  if (!grievanceId || isNaN(Number(grievanceId))) {
+  const { grievance_id } = req.params;
+
+  if (!grievance_id || isNaN(Number(grievance_id))) {
     throw AppError("Invalid or missing Grievance ID", httpStatus.BAD_REQUEST);
   }
 
-  const grievance=await getGrievanceByGrievanceId(Number(grievanceId));
+  const grievanceId = Number(grievance_id);
+
+  const grievance=await getGrievanceByGrievanceId(grievanceId);
 
   if(!grievance) {
     throw AppError("No Grievance found for this grievance id", httpStatus.BAD_REQUEST);
@@ -151,7 +153,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     status=grievanceApprovalStatus.DECLINED;
 
   const updateResult = await updateGrievanceStatus({
-    grievance_id: Number(grievanceId),
+    grievance_id: grievanceId,
     status,
     updatedBy: req.User.role
   });
@@ -192,20 +194,22 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
       );
     }
 
-    const grievanceId  = req.params;
-  
-    if (!grievanceId || isNaN(Number(grievanceId))) {
+    const { grievance_id } = req.params;
+
+    if (!grievance_id || isNaN(Number(grievance_id))) {
       throw AppError("Invalid or missing Grievance ID", httpStatus.BAD_REQUEST);
     }
+
+  const grievanceId = Number(grievance_id);
     
-    const grievance=await getGrievanceByGrievanceId(Number(grievanceId));
+    const grievance=await getGrievanceByGrievanceId(grievanceId);
 
     if(!grievance) {
       throw AppError("No Grievance found for the provided id", httpStatus.BAD_REQUEST);
     }
 
     const data = await updateGrievanceStatus({
-      grievance_id: Number(grievanceId),
+      grievance_id: grievanceId,
       status: grievanceApprovalStatus.MANAGER,
       updatedBy: req.User.role
     });

@@ -14,7 +14,7 @@ import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} f
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
-  getStudentDetailsController,
+  getStudentDetailsUsingRollNoController,
   createStudentDetailsController,
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
@@ -36,6 +36,7 @@ studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole([
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
 studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
 
+//Grievance
 studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
 studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
 
@@ -50,10 +51,9 @@ const fileFields = upload.fields([
 
 
 // student Details
-studentRouter.get("/details", authenticateUser, hasRole(['student']),errorWrapper(getStudentDetailsUsingUserIdController))
-studentRouter.get("/details/:rollNo",authenticateUser ,hasRole(['student']),errorWrapper(getStudentDetailsController));
+studentRouter.get("/details", authenticateUser, hasRole(['student']),errorWrapper(getStudentDetailsUsingUserIdController));
 studentRouter.post("/details",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(createStudentDetailsController));
-studentRouter.put("/details/:rollNo",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(updateStudentDetailsController));
+studentRouter.put("/details/:roll_number",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(updateStudentDetailsController));
 
 // Vacating Hostel
 studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getVacatingHostelFormsOfaStudentController));

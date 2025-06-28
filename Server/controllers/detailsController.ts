@@ -39,7 +39,7 @@ const fileFieldToFolder: Record<
   admissionSlipUrl: { folder: "admissionSlip", signature: "admissionSlip" },
 };
 
-export async function getStudentDetailsController(req: AuthRequest, res: Response) {
+export async function getStudentDetailsUsingRollNoController(req: AuthRequest, res: Response) {
   const { rollNo } = req.params;
 
   if (!rollNo) {
@@ -88,69 +88,70 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
 }
 
 export async function createStudentDetailsController(req: AuthRequest, res: Response) {
+  if (!req.User) {
+    throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
+  }
+
   const { body, files } = req;
-
-  body.user_id = req.User?.id;
-  if (!body.user_id) {
-    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
-  }
-
-  const missingFile = requiredFiles.find(
-    (field) => !(files as FileMap)?.[field]?.length
-  );
-  if (missingFile) {
-    throw AppError(
-      `Missing required file: ${missingFile}`,
-      httpStatus.BAD_REQUEST
-    );
-  }
-
   const validatedData = studentSchema.parse(body);
   const dbReadyData = {
     ...validatedData,
     dateOfBirth: dayjs(validatedData.dateOfBirth).format("YYYY-MM-DD"),
     createdAt: dayjs(validatedData.createdAt).format("YYYY-MM-DD"),
+    userId: req.User.id
   };
 
-  const userId = dbReadyData.user_id;
+  const missingFile = requiredFiles.find((field) => !(files as FileMap)?.[field]?.length);
+  if (missingFile) {
+    throw AppError(`Missing required file: ${missingFile}`, httpStatus.BAD_REQUEST);
+  }
+
+  
+
   const uploadedUrls: Record<string, string> = {};
+  const userId = req.User.id;
 
   await Promise.all(
     requiredFiles.map(async (field) => {
       const fileArr = (files as FileMap)[field];
       const { folder, signature } = fileFieldToFolder[field];
-      uploadedUrls[field] = await handleFileUpload(
-        fileArr[0],
-        String(userId),
-        folder,
-        signature
-      );
+      uploadedUrls[field] = await handleFileUpload(fileArr[0], String(userId), folder, signature);
     })
   );
 
   Object.assign(dbReadyData, uploadedUrls);
 
-  const student = await insertStudentDetails(dbReadyData);
+  const result = await insertStudentDetails(dbReadyData);
+
+  if (!result) {
+    throw AppError("Failed to insert student details", httpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   res.status(httpStatus.CREATED).json({
     success: true,
-    data: student,
+    data: result,
     message: "Student details created successfully",
   });
 }
 
+
 export async function updateStudentDetailsController(req: AuthRequest, res: Response) {
+  if (!req.User) {
+    throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
+  }
+
   const { rollNo } = req.params;
   const { body, files } = req;
+
+  if (!rollNo) {
+    throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
+  }
+
   const existingStudent = await findStudentByRollNo(rollNo);
   if (!existingStudent.length) {
     throw AppError("Student with provided roll number not found", httpStatus.NOT_FOUND);
   }
-  body.user_id = req.User?.id;
-  if (!body.user_id) {
-    throw AppError("User ID is required", httpStatus.BAD_REQUEST);
-  }
-  console.log(body)
+
   const validated = studentSchema.partial().parse(body);
   const updatedData: Record<string, any> = {
     ...validated,
@@ -160,22 +161,26 @@ export async function updateStudentDetailsController(req: AuthRequest, res: Resp
     createdAt: validated.createdAt
       ? dayjs(validated.createdAt).format("YYYY-MM-DD")
       : undefined,
+    userId: req.User.id
   };
 
   const imageFields = Object.keys(fileFieldToFolder);
-
   for (const field of imageFields) {
     const fileArr = (files as FileMap)?.[field];
     if (fileArr?.length > 0) {
       const file = fileArr[0];
       const { folder, signature } = fileFieldToFolder[field];
-      const userId = validated.user_id ?? "unknown";
+      const userId = req.User.id;
       const url = await handleFileUpload(file, String(userId), folder, signature);
       updatedData[field] = url;
     }
   }
 
   const result = await updateStudentByRollNo(rollNo, updatedData);
+
+  if (!result) {
+    throw AppError("Student details update failed", httpStatus.INTERNAL_SERVER_ERROR);
+  }
 
   res.status(httpStatus.OK).json({
     success: true,
