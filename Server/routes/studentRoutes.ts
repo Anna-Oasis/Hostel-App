@@ -1,10 +1,10 @@
 import { Router } from "express";
-import {
+/*import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
   updateAdmissionController
-} from "../controllers/admissionController";
+} from "../controllers/admissionController";*/
 import {
   createGrievanceController,
   getGrievancesByUserController,
@@ -31,10 +31,10 @@ const studentRouter = Router();
 
 
 //admission - students
-studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
+/*studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
 studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
-studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
+studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));*/
 
 //Grievance
 studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
