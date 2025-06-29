@@ -15,6 +15,7 @@ import {
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
+import { getAllRCDetailsController } from "../controllers/rcController";
 
 const executiveWardenRouter = Router();
 
@@ -70,6 +71,11 @@ executiveWardenRouter.put(
   hasRole(["executiveWarden"]),
   errorWrapper(updateLeaveStatusForRC)
 );
-
+executiveWardenRouter.get(
+  "/rc/details",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  getAllRCDetailsController
+);
 
 export default executiveWardenRouter;

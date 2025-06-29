@@ -14,33 +14,33 @@ import { AuthRequest } from "../types/roles";
 import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
 import { getRCById } from "../services/rcServices";
 
-export const createSummerVacationFromController = async (
-  req: AuthRequest,
-  res: Response
-) => {
-  const data = req.body;
+// export const createSummerVacationFromController = async (
+//   req: AuthRequest,
+//   res: Response
+// ) => {
+//   const data = req.body;
 
-  if (!data || Object.keys(data).length === 0) {
-    throw AppError("No data provided", httpStatus.BAD_REQUEST);
-  }
+//   if (!data || Object.keys(data).length === 0) {
+//     throw AppError("No data provided", httpStatus.BAD_REQUEST);
+//   }
 
-  const validatedData = summerVacationSchema.parse(data);
+//   const validatedData = summerVacationSchema.parse(data);
 
-  const result = await createSummerVacationForm(validatedData);
+//   const result = await createSummerVacationForm(validatedData);
 
-  if (!result || result.length === 0) {
-    throw AppError(
-      "Internal error while generating leave form",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
+//   if (!result || result.length === 0) {
+//     throw AppError(
+//       "Internal error while generating leave form",
+//       httpStatus.INTERNAL_SERVER_ERROR
+//     );
+//   }
 
-  res.status(httpStatus.OK).json({
-    success: true,
-    message: "New leave form has been created",
-    data: result,
-  });
-};
+//   res.status(httpStatus.OK).json({
+//     success: true,
+//     message: "New leave form has been created",
+//     data: result,
+//   });
+// };
 
 export const getAllSummerVacationFormsOfStudent = async (
   req: AuthRequest,
@@ -174,43 +174,43 @@ export const getSummerVacationFormsForDeputyWardenController = async (
   });
 };
 
-export const getSummerVacationFormsForRCController = async (
-  req: AuthRequest,
-  res: Response
-) => {
-  if (!req.User || !req.User.id) {
-    throw AppError(
-      "User information is missing from request",
-      httpStatus.UNAUTHORIZED
-    );
-  }
+// export const getSummerVacationFormsForRCController = async (
+//   req: AuthRequest,
+//   res: Response
+// ) => {
+//   if (!req.User || !req.User.id) {
+//     throw AppError(
+//       "User information is missing from request",
+//       httpStatus.UNAUTHORIZED
+//     );
+//   }
 
-  const rcId = await getRCidfromUserId(Number(req.User.id));
-  if (!rcId || isNaN(rcId)) {
-    throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
-  }
-  const RCs = await getRCById(rcId);
-  console.log("RCs", RCs);
-  if (!RCs || RCs.length === 0) {
-    throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
-  }
-  const RC = RCs[0];
-  const floors = RC.floor ? RC.floor : [];
-  const hostelBlock = RC.hostel;
+//   const rcId = await getRCidfromUserId(Number(req.User.id));
+//   if (!rcId || isNaN(rcId)) {
+//     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
+//   }
+//   const RCs = await getRCById(rcId);
+//   console.log("RCs", RCs);
+//   if (!RCs || RCs.length === 0) {
+//     throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
+//   }
+//   const RC = RCs[0];
+//   const floors = RC.floor ? RC.floor : [];
+//   const hostelBlock = RC.hostel;
 
-  const result =
-    await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
-      hostelBlock,
-      floors
-    );
+//   const result =
+//     await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
+//       hostelBlock,
+//       floors
+//     );
 
 
-  res.status(httpStatus.OK).json({
-    success: true,
-    data: result||[],
-    count:result?result.length:0,
-    message: result && result.length >0
-    ?"All Summer Vacation Forms are fetched Successfully"
-    : "No records found",
-  });
-};
+//   res.status(httpStatus.OK).json({
+//     success: true,
+//     data: result||[],
+//     count:result?result.length:0,
+//     message: result && result.length >0
+//     ?"All Summer Vacation Forms are fetched Successfully"
+//     : "No records found",
+//   });
+// };

@@ -10,7 +10,9 @@ import {
   getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
+import {
+  // createSummerVacationFromController,
+  getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
@@ -23,7 +25,7 @@ import { createLeaveFormController,getAllLeaveFormsByRollNoController} from "../
 
 
 import {
-  createVacatingHostelFormController,
+  // createVacatingHostelFormController,
   getVacatingHostelFormsOfaStudentController
 } from "../controllers/vacatingHostelController";
 
@@ -57,7 +59,7 @@ studentRouter.put("/details/:roll_number",fileFields,authenticateUser ,hasRole([
 
 // Vacating Hostel
 studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getVacatingHostelFormsOfaStudentController));
-studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
+// studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
 //LEAVE FORMS
 studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormController));
@@ -65,7 +67,7 @@ studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),e
 
 // SUMMER VACATION FORMS
 // create a new Summer vacation form
-studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
+// studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));
 

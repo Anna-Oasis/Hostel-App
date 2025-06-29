@@ -15,7 +15,7 @@ import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from '../middleware/rbacMiddleware';
 import {
   approveSummerVacationFormByRCController,
-  getSummerVacationFormsForRCController
+  // getSummerVacationFormsForRCController
 } from '../controllers/summerVacationController';
 import {
   getVacatingFormsForRCController,
@@ -38,7 +38,7 @@ import {
   postRCDetailsController,
   putRCDetailsController,
 } from "../controllers/rcController";
-
+import { upload } from "../middleware/multer";
 
 const rcRouter = Router();
 
@@ -77,12 +77,12 @@ rcRouter.put(
 );
 
 // Summer vacation routes
-rcRouter.get(
-  "/summer_vacation",
-  authenticateUser,
-  hasRole(['rc']),
-  errorWrapper(getSummerVacationFormsForRCController)
-);
+// rcRouter.get(
+//   "/summer_vacation",
+//   authenticateUser,
+//   hasRole(['rc']),
+//   errorWrapper(getSummerVacationFormsForRCController)
+// );
 rcRouter.put(
   "/summer_vacation/:summer_vacation_id",
   authenticateUser,
@@ -165,6 +165,10 @@ rcRouter.post(
   "/details",
   authenticateUser,
   hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
   postRCDetailsController
 );
 
@@ -172,6 +176,10 @@ rcRouter.put(
   "/details",
   authenticateUser,
   hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
   putRCDetailsController
 );
 
