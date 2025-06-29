@@ -14,7 +14,6 @@ import {
 } from "../services/detailsService";
 import { AuthRequest } from "../types/roles";
 import { getRCByUserId } from "../services/rcServices";
-import { createConnection } from "mysql2";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -95,9 +94,6 @@ export async function createStudentDetailsController(req: AuthRequest, res: Resp
         httpStatus.UNAUTHORIZED
       );
     }
-
-    console.log("Incoming req.body: ", req.body);
-    console.log("Incoming req.files: ", req.files);
 
     const validation = studentSchema.safeParse(req.body);
     if (!validation.success) {
@@ -184,8 +180,6 @@ export async function updateStudentDetailsController(req: AuthRequest, res: Resp
   if (!req.User) {
     throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
   }
-
-  console.log(req.params);
 
   const rollNo = req.params.roll_number;
   const { body, files } = req;

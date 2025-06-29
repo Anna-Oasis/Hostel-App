@@ -8,11 +8,10 @@ import { AppError } from "../utils/AppError";
 import {  
   rcGrievanceDecisionSchema 
 } from "../validation/grievance.schema";
-import { getRCById, getRCByUserId } from "../services/rcServices";
+import { getRCByUserId } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
-import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
+import { getRollNoFromUserId } from "../services/helper";
 import { grievanceApprovalStatus} from "../constants/enum";
-import { isBooleanObject } from "util/types";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
