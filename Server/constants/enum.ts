@@ -72,5 +72,5 @@ export const grievanceApprovalStatus = {
 
 export const declaration = {
   ADMISSION: "ADMISSION",
-  SUMMER_VACATION: "SUMMER_VACATION"
+  HOSTEL_VACATION: "HOSTEL_VACATION"
 };
