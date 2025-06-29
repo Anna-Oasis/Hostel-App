@@ -30,6 +30,7 @@
     "@gluestack-ui/radio": "^0.1.34",
     "@gluestack-ui/select": "^0.1.30",
     "@gluestack-ui/spinner": "^0.1.15",
+    "@gluestack-ui/switch": "^0.1.29",
     "@gluestack-ui/textarea": "^0.1.25",
     "@gluestack-ui/toast": "^1.0.8",
     "@legendapp/motion": "^2.4.0",

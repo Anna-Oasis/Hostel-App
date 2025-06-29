@@ -1,7 +1,7 @@
 import { getVacatingHistory } from '@/utils/student/studentVacatingHostelApi';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import ApprovalCard, { badgeStatus } from '@/components/ApprovalCard';
+import { ScrollView, View, Text } from 'react-native';
+import ApprovalCard from '@/components/ApprovalCard';
 import { getHostelVacationBadgeStatus } from '@/utils/getBadgeStatus';
 
 const HostelVacationHistory = () => {
@@ -54,7 +54,5 @@ const HostelVacationHistory = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default HostelVacationHistory;

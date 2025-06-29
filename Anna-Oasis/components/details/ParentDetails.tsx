@@ -5,39 +5,55 @@ import SelectField from "@/components/form/SelectField";
 import countries from "@/constants/countries";
 import indianStates from "@/constants/indianStates";
 import { Text } from "../ui/text";
+import { Divider } from "../ui/divider";
+import { View } from "react-native";
 
 const ParentDetails = () => (
-  <>
-    {/* Father Details */}
-    <Text bold size="2xl" > Parent's details</Text>
-    <TextField label="Father's Name" value="fatherName" placeholder="Father's name" />
-    <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
-    <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
-    <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
-    <SelectField label="Father's Country" value="fatherCountry" options={countries} />
+  <View>
+    <Text className="text-2xl font-bold text-center mb-2 mt-2">Parent's Details</Text>
+    <Divider className="mb-6" />
 
-    {/* Mother Details */}
-    <TextField label="Mother's Name" value="motherName" placeholder="Mother's name" />
-    <TextField label="Mother's Occupation" value="motherOccupation" placeholder="Mother's occupation" />
-    <PhoneInputField label="Mother's Mobile" value="motherMobile" placeholder="Mother's phone number" />
-    <TextField label="Mother's Email" value="motherEmail" placeholder="Mother's email" />
-    <SelectField label="Mother's Country" value="motherCountry" options={countries} />
+    <View className="bg-white rounded-xl shadow p-4 mb-6">
+      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Father's Details</Text>
+      <Divider className="mb-3" />
+      <TextField label="Father's Name" value="fatherName" placeholder="Father's name" />
+      <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
+      <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
+      <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
+      <SelectField label="Father's Country" value="fatherCountry" options={countries} />
+    </View>
 
-    {/* Residential Address (India) */}
-    <TextField label="Indian House No" value="resIndiaHouseNo" placeholder="House No" />
-    <TextField label="Indian Street" value="resIndiaStreet" placeholder="Street" />
-    <TextField label="Indian City" value="resIndiaCity" placeholder="City" />
-    <SelectField label="Indian State" value="resIndiaState" options={indianStates} />
-    <TextField label="Indian Postal Code" value="resIndiaPostalCode" placeholder="Postal Code" />
+    <View className="bg-white rounded-xl shadow p-4 mb-6">
+      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Mother's Details</Text>
+      <Divider className="mb-3" />
+      <TextField label="Mother's Name" value="motherName" placeholder="Mother's name" />
+      <TextField label="Mother's Occupation" value="motherOccupation" placeholder="Mother's occupation" />
+      <PhoneInputField label="Mother's Mobile" value="motherMobile" placeholder="Mother's phone number" />
+      <TextField label="Mother's Email" value="motherEmail" placeholder="Mother's email" />
+      <SelectField label="Mother's Country" value="motherCountry" options={countries} />
+    </View>
 
-    {/* Residential Address (Foreign) */}
-    <TextField label="Foreign House No" value="resForeignHouseNo" placeholder="House No" />
-    <TextField label="Foreign Street" value="resForeignStreet" placeholder="Street" />
-    <TextField label="Foreign City" value="resForeignCity" placeholder="City" />
-    <TextField label="Foreign State" value="resForeignState" placeholder="State" />
-    <SelectField label="Foreign Country" value="resForeignCountry" options={countries} />
-    <TextField label="Foreign Postal Code" value="resForeignPostalCode" placeholder="Postal Code" />
-  </>
+    <View className="bg-white rounded-xl shadow p-4 mb-6">
+      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Residential Address (India)</Text>
+      <Divider className="mb-3" />
+      <TextField label="Indian House No" value="resIndiaHouseNo" placeholder="House No" />
+      <TextField label="Indian Street" value="resIndiaStreet" placeholder="Street" />
+      <TextField label="Indian City" value="resIndiaCity" placeholder="City" />
+      <SelectField label="Indian State" value="resIndiaState" options={indianStates} />
+      <TextField label="Indian Postal Code" value="resIndiaPostalCode" placeholder="Postal Code" />
+    </View>
+
+    <View className="bg-white rounded-xl shadow p-4 mb-6">
+      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Residential Address (Foreign)</Text>
+      <Divider className="mb-3" />
+      <TextField label="Foreign House No" value="resForeignHouseNo" placeholder="House No" />
+      <TextField label="Foreign Street" value="resForeignStreet" placeholder="Street" />
+      <TextField label="Foreign City" value="resForeignCity" placeholder="City" />
+      <TextField label="Foreign State" value="resForeignState" placeholder="State" />
+      <SelectField label="Foreign Country" value="resForeignCountry" options={countries} />
+      <TextField label="Foreign Postal Code" value="resForeignPostalCode" placeholder="Postal Code" />
+    </View>
+  </View>
 );
 
 export default ParentDetails;

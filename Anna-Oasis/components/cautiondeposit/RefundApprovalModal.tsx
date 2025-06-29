@@ -1,12 +1,20 @@
-import React from "react";
 import { View } from "react-native";
 import { Formik } from "formik";
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
+import {
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@/components/ui/modal";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import TextField from "@/components/form/TextField";
-import { RefundApprovalInitialValues,RefundApprovalValidationSchema } from "@/constants/refundApprovalModal";
-
+import {
+  RefundApprovalInitialValues,
+  RefundApprovalValidationSchema,
+} from "@/constants/validations/refundApprovalValidation";
 
 export default function RefundApprovalModal({
   isOpen,
@@ -16,7 +24,12 @@ export default function RefundApprovalModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (values: {
+    refundAmount: string;
+    deductionAmount: string;
+    deductionReason: string;
+    studentRollNumber: string;
+  }) => void;
   application: { id: string; name: string; rollNumber: string } | null;
 }) {
   return (
@@ -30,12 +43,10 @@ export default function RefundApprovalModal({
           initialValues={RefundApprovalInitialValues}
           validationSchema={RefundApprovalValidationSchema}
           onSubmit={(values) => {
-            const formData = new FormData();
-            formData.append("studentRollNumber", application?.rollNumber || "");
-            formData.append("refundAmount", values.refundAmount);
-            formData.append("deductionAmount", values.deductionAmount);
-            formData.append("deductionReason", values.deductionReason);
-            onSubmit(formData);
+            onSubmit({
+              ...values,
+              studentRollNumber: application?.rollNumber || "",
+            });
           }}
         >
           {({ handleSubmit }) => (

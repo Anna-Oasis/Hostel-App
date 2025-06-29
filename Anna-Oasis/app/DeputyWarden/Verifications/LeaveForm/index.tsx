@@ -1,29 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { Text } from "@/components/ui/text";
 import {
   fetchDeputyWardenLeaveForms,
   updateDeputyWardenLeaveFormStatus,
-} from "@/utils/dw-studentleaveform/DWStudentLeaveFormAPI";
+} from "@/utils/deputyWarden/dwStudentLeaveFormAPI";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import ModalCallable from "@/components/modals/ModalCallable";
+import DeclineComment from "@/components/modals/DeclineComment";
+import EmptyPage from "@/components/EmptyPage";
+import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 
 export default function LeaveFormVerificationPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
-  const [rejectModalVisible, setRejectModalVisible] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
-  const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
+  const [declineModal, setDeclineModal] = useState<{ open: boolean; leaveId?: number }>({
+    open: false,
+  });
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -54,94 +49,52 @@ export default function LeaveFormVerificationPage() {
 
   // Called when Decline is pressed
   const handleDecline = (leaveFormId: number) => {
-    setSelectedLeaveId(leaveFormId);
-    setRejectReason("");
-    setRejectModalVisible(true);
+    setDeclineModal({ open: true, leaveId: leaveFormId });
   };
 
   // Called when rejection reason is submitted
-  const submitRejection = () => {
-    if (!rejectReason.trim()) {
+  const handleDeclineSubmit = (comment: string) => {
+    if (!declineModal.leaveId) return;
+    if (!comment.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
       return;
     }
     handleDecision(
-      selectedLeaveId!,
+      declineModal.leaveId,
       false,
-      `${rejectReason.trim()} (Rejected by Deputy Warden)`
+      `${comment.trim()} (Rejected by Deputy Warden)`
     );
-    setRejectModalVisible(false);
-  };
-
-  // Helper to map status
-  const mapStatus = (status: string | number) => {
-    if (status === "2") return badgeStatus.Pending;
+    setDeclineModal({ open: false, leaveId: undefined });
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff", padding: 12 }}>
       {/* Success Modal */}
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{modalMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold"
-              onPress={() => setModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalCallable
+        show={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Success"
+        message={modalMsg}
+      />
       {/* Rejection Reason Modal */}
-      <Modal isOpen={rejectModalVisible} onClose={() => setRejectModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Reason for Rejection</Text>
-          </ModalHeader>
-            <ModalBody>
-            <TextInput
-              placeholder="Enter reason for rejection"
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-base"
-              textAlignVertical="top"
-            />
-            </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold mr-6"
-              onPress={submitRejection}
-              style={{ padding: 8 }}
-            >
-              Submit
-            </Text>
-            <Text
-              className="text-gray-600 font-semibold"
-              onPress={() => setRejectModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              Cancel
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DeclineComment
+        visible={declineModal.open}
+        onClose={() => setDeclineModal({ open: false, leaveId: undefined })}
+        onSubmit={handleDeclineSubmit}
+        title="Reason for Rejection"
+        placeholder="Enter reason for rejection"
+        submitLabel="Submit"
+        cancelLabel="Cancel"
+      />
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <Spinner size="large" color="#0000ff" />
         </View>
       ) : leaveForms.length === 0 ? (
-        <Text className="text-center mt-8 text-gray-500">No leave forms pending approval.</Text>
+        <EmptyPage
+          title="No leave forms pending approval."
+          description="There are currently no leave forms to review."
+        />
       ) : (
         <ScrollView>
           {leaveForms.map((item) => {
@@ -152,7 +105,7 @@ export default function LeaveFormVerificationPage() {
                 key={leave.id}
                 title={`${student.name} (${leave.roll_number})`}
                 subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={mapStatus(leave.status)}
+                badge={getLeaveBadgeStatus(leave.status)}
                 data={{
                   "Student Name": student.name,
                   "Roll Number": leave.roll_number,
@@ -166,7 +119,7 @@ export default function LeaveFormVerificationPage() {
                   "Reason": leave.reason,
                   "Address of Stay": leave.address_of_stay,
                   "Emergency Contact": leave.emergency_contact,
-                  "Status": leave.status === "2" ? "Pending" : leave.status
+                  "Status": leave.status === "2" ? "Pending" : leave.status,
                 }}
                 onApprove={() => handleDecision(leave.id, true)}
                 onDecline={() => handleDecline(leave.id)}

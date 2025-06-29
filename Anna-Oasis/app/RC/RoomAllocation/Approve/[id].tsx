@@ -63,7 +63,10 @@ const ApprovePage = () => {
           error?.message ||
           "An error occurred while updating the admission"
       );
-      console.log("Error allocating room:", error?.response?.data || error.message);
+      console.log(
+        "Error allocating room:",
+        error?.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }

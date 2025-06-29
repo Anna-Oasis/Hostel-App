@@ -1,27 +1,19 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { Formik } from "formik";
-import * as Yup from "yup";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { grievanceCategories } from "@/constants/admission";
-import SelectField from "./form/SelectField";
+import { grievanceCategories, grievanceInitialValues } from "@/constants/grievance";
+import SelectField from "@/components/form/SelectField";
+import { grievanceValidationSchema } from "@/constants/validations/grievanceValidation";
 
 const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   return (
     <View className="flex bg-white ">
       <Text className="text-3xl font-bold text-gray-900 mb-4">File a Grievance</Text>
       <Formik
-        initialValues={{
-          subject: "",
-          description: "",
-          grievance_type: "",
-        }}
-        validationSchema={Yup.object().shape({
-          subject: Yup.string().required("Subject is required"),
-          description: Yup.string().required("Description is required"),
-          grievance_type: Yup.string().required("Category is required"),
-        })}
+        initialValues={grievanceInitialValues}
+        validationSchema={grievanceValidationSchema}
         onSubmit={onSubmit}
       >
         {({ handleSubmit }) => (

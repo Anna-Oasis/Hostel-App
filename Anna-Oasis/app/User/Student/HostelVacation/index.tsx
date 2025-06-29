@@ -1,94 +1,111 @@
 import { useState } from "react";
+import { View } from "react-native";
+import { Formik } from "formik";
 import VacatingForm from "@/components/hostelvacation/VacatingForm";
 import CautionDepositForm from "@/components/hostelvacation/CautionDepositForm";
-import { View } from "react-native";
-import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHistory";
-import { FilePen, History } from "lucide-react-native";
+import { initialValues as vacateInitialValues } from "@/constants/vacatingHostels";
+import { initialValues as depositInitialValues, validationSchema as depositValidationSchema } from "@/constants/validations/cautionDepositValidation";
+import { validationSchema as vacateValidationSchema } from "@/constants/validations/vacatingHostelValidation";
+import { submitStudentVacatingForm } from "@/utils/student/studentVacatingHostelApi";
 import useUserStore from "@/stores/userStore";
 import TabSwitch from "@/components/TabSwitch";
-import ModalCallable from "@/components/ModalCallable";
-import { initialValues as vacatingInitialValues } from "@/constants/vacatingHostels";
-import { initialValues as cautionDepositInitialValues } from "@/constants/validations/cautionDepositValidation";
-import { submitStudentVacatingForm } from "@/utils/student/studentVacatingHostelApi";
+import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHistory";
+import { FilePlus2, History } from "lucide-react-native";
+import ModalCallable from "@/components/modals/ModalCallable";
 
-export default function HostelVacationFlow() {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [vacatingFormData, setVacatingFormData] = useState<FormData | null>(null);
-  const [vacatingValues, setVacatingValues] = useState<any>(vacatingInitialValues);
-  const [cautionDepositValues, setCautionDepositValues] = useState<any>(cautionDepositInitialValues);
-  const [showModal, setShowModal] = useState(false);
+const initialValues = {
+  ...vacateInitialValues,
+  ...depositInitialValues,
+};
+
+const validationSchemas = [
+  vacateValidationSchema,
+  depositValidationSchema,
+];
+
+export default function HostelVacationPage() {
+  const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
-  const roll_number = useUserStore((state) => state.details.rollNo);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const details = useUserStore((state) => state.details);
 
-  const handleTabChange = (tab: "form" | "history") => {
-    setActiveTab(tab);
-    if (tab === "form") {
-      setStep(1);
-      setVacatingValues(vacatingInitialValues);
-      setCautionDepositValues(cautionDepositInitialValues);
+  const handleNext = () => setPage((p) => p + 1);
+  const handleBack = () => setPage((p) => p - 1);
+
+  const handleSubmit = async (values: any) => {
+    if (page === 0) {
+      handleNext();
+      return;
+    }
+    const roll_number = details?.rollNo || "";
+    const vacatingValues = {
+      vacateDate: values.vacateDate,
+      vacateTime: values.vacateTime,
+      futureAddress: values.futureAddress,
+      itemsReturned: values.itemsReturned,
+    };
+    const cautionDepositValues = {
+      accountHolderName: values.accountHolderName,
+      accountNumber: values.accountNumber,
+      bankName: values.bankName,
+      bankAddress: values.bankAddress,
+      ifscCode: values.ifscCode,
+    };
+    const success = await submitStudentVacatingForm(roll_number, vacatingValues, cautionDepositValues);
+    if (success) {
+      setShowSuccess(true);
     }
   };
 
+  const handleModalClose = () => {
+    setShowSuccess(false);
+    setActiveTab("history");
+    setPage(0);
+  };
+
   return (
-    <View className="bg-white flex-1 p-0">
-      {/* Tabs */}
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <TabSwitch
         tabs={[
-          { label: "Hostel Vacation Form", value: "form" },
+          { label: "Vacation Form", value: "form" },
           { label: "History", value: "history" },
         ]}
         activeTab={activeTab}
-        onTabChange={handleTabChange}
-        className="bg-gray-100 pt-4"
+        onTabChange={setActiveTab}
         icons={{
-          form: FilePen,
+          form: FilePlus2,
           history: History,
         }}
+        className="mt-4 mb-2"
       />
-      <View className="flex-1 p-6">
-        {activeTab === "form" ? (
-          step === 1 ? (
-            <VacatingForm
-              initialValues={vacatingValues}
-              onNext={(formData, values) => {
-                setVacatingFormData(formData);
-                setVacatingValues(values);
-                setStep(2);
-              }}
-            />
-          ) : (
-            <CautionDepositForm
-              initialValues={cautionDepositValues}
-              onSubmit={async (cautionFormData, values) => {
-                setCautionDepositValues(values);
-                const response = await submitStudentVacatingForm(roll_number, vacatingValues, values);
-
-                if (response === true) {
-                  setShowModal(true);
-                  setTimeout(() => {
-                    setShowModal(false);
-                    setActiveTab("history");
-                  }, 3000);
-                } else {
-                  setShowModal(false);
-                }
-              }}
-              onBack={(values) => {
-                setCautionDepositValues(values);
-                setStep(1);
-              }}
-            />
-          )
-        ) : (
-          <HostelVacationHistory />
-        )}
-        <ModalCallable
-          show={showModal}
-          onClose={() => setShowModal(false)}
-          title="Success"
-          message="Submitted successfully!"
-        />
-      </View>
+      {activeTab === "form" ? (
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchemas[page]}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({ handleSubmit }) => (
+            <>
+              {page === 0 && <VacatingForm onNext={handleSubmit} />}
+              {page === 1 && (
+                <CautionDepositForm
+                  onSubmit={handleSubmit}
+                  onBack={handleBack}
+                />
+              )}
+            </>
+          )}
+        </Formik>
+      ) : (
+        <HostelVacationHistory />
+      )}
+      <ModalCallable
+        show={showSuccess}
+        onClose={handleModalClose}
+        title="Success"
+        message="Your hostel vacation form has been submitted successfully."
+      />
     </View>
   );
 }

@@ -12,7 +12,7 @@ import {
   addRC,
   removeRC,
   assignFloors,
-} from "@/utils/rcManagement/RCManagementUtils";
+} from "@/utils/deputyWarden/RCManagementUtils";
 
 export default function RCManagementPage() {
   const [modalVisible, setModalVisible] = useState(false);

@@ -1,26 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, TextInput } from "react-native";
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc-studentleaveform/RCLeaveFormApprovalAPI";
-import { Text } from "@/components/ui/text";
-import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Alert } from "react-native";
+import ApprovalCard from "@/components/ApprovalCard";
+import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
+import DeclineComment from "@/components/modals/DeclineComment";
+import ModalCallable from "@/components/modals/ModalCallable";
+import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
+import EmptyPage from "@/components/EmptyPage";
+import useLoadingStore from "@/stores/loadingStore";
 
 export default function LeaveFormPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [rejectModalVisible, setRejectModalVisible] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
   const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
+
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -39,105 +34,58 @@ export default function LeaveFormPage() {
   }, []);
 
   const handleDecision = async (leaveFormId: number, approve: boolean, comment?: string) => {
+    setLoading(true);
     try {
       await updateRCLeaveFormStatus(leaveFormId, approve, comment);
       setModalMsg(approve ? "Leave form approved successfully!" : "Leave form rejected successfully!");
       setModalVisible(true);
-      getLeaveForms();
+      await getLeaveForms();
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to update leave form status");
     }
+    setLoading(false);
   };
 
-  // Called when Decline is pressed
   const handleDecline = (leaveFormId: number) => {
     setSelectedLeaveId(leaveFormId);
-    setRejectReason("");
     setRejectModalVisible(true);
   };
 
-  // Called when rejection reason is submitted
-  const submitRejection = () => {
-    if (!rejectReason.trim()) {
+  const submitRejection = (reason: string) => {
+    if (!reason.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
       return;
     }
     handleDecision(
       selectedLeaveId!,
       false,
-      `${rejectReason.trim()} (Rejected by RC)`
+      `${reason.trim()} (Rejected by RC)`
     );
     setRejectModalVisible(false);
   };
 
-  // Helper to map status
-  const mapStatus = (status: string | number) => {
-    if (status === "0") return badgeStatus.Pending;
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: "#fff", padding: 12 }}>
-      {/* Success Modal */}
-      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{modalMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold"
-              onPress={() => setModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* Rejection Reason Modal */}
-      <Modal isOpen={rejectModalVisible} onClose={() => setRejectModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Reason for Rejection</Text>
-          </ModalHeader>
-            <ModalBody>
-            <TextInput
-              placeholder="Enter reason for rejection"
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-top"
-            />
-            </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold mr-6"
-              onPress={submitRejection}
-              style={{ padding: 8 }}
-            >
-              Submit
-            </Text>
-            <Text
-              className="text-gray-600 font-semibold"
-              onPress={() => setRejectModalVisible(false)}
-              style={{ padding: 8 }}
-            >
-              Cancel
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {loading ? (
-        <View className="items-center mt-8">
-          <Spinner size="large" />
-        </View>
-      ) : leaveForms.length === 0 ? (
-        <Text className="text-center mt-8 text-gray-500">No leave forms pending approval.</Text>
+      <ModalCallable
+        show={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Success"
+        message={modalMsg}
+      />
+      <DeclineComment
+        visible={rejectModalVisible}
+        onClose={() => setRejectModalVisible(false)}
+        onSubmit={submitRejection}
+        title="Reason for Rejection"
+        placeholder="Enter reason for rejection"
+        submitLabel="Submit"
+        cancelLabel="Cancel"
+      />
+      {leaveForms.length === 0 ? (
+        <EmptyPage
+          title="No leave forms"
+          description="There are currently no leave forms pending approval."
+        />
       ) : (
         <ScrollView>
           {leaveForms.map((item) => {
@@ -148,7 +96,7 @@ export default function LeaveFormPage() {
                 key={leave.id}
                 title={`${student.name} (${leave.roll_number})`}
                 subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={mapStatus(leave.status)}
+                badge={getLeaveBadgeStatus(leave.status)}
                 data={{
                   "Student Name": student.name,
                   "Roll Number": leave.roll_number,

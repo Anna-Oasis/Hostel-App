@@ -7,7 +7,6 @@ export interface AdmissionRequestBody {
   academicYear: string;
   studentAgreed: boolean;
   parentAgreed: boolean;
-  admissionCategory: string;
   previousResident: boolean;
   hostelBlock: string;
   messPreference: string;

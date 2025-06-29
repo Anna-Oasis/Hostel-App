@@ -3,10 +3,12 @@ import { useFormikContext } from "formik";
 import ImagePickerField from "@/components/form/ImagePickerField";
 import SelectField from "@/components/form/SelectField";
 import TextField from "@/components/form/TextField";
-import RadioField from "@/components/form/RadioField";
+import SwitchField from "@/components/form/SwitchField";
 import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
 import useUserStore from "@/stores/userStore";
+import { Text } from "@/components/ui/text";
+import { Divider } from "@/components/ui/divider";
 
 const FileUploads = () => {
   const { values, setFieldValue } = useFormikContext<any>();
@@ -25,19 +27,26 @@ const FileUploads = () => {
 
   return (
     <>
+      <Text className="text-2xl font-bold text-center mb-2 mt-2">Document Uploads</Text>
+      <Divider className="mb-6" />
+
       {!details && (
-        <RadioField
-          label="Are you a Foreign National?"
-          value="isForeignNational"
-          options={[
-            { label: "Yes", value: "Yes" },
-            { label: "No", value: "No" },
-          ]}
-        />
+        <View className="items-center mb-6">
+          <SwitchField
+            label="Are you a Foreign National?"
+            value="isForeignNational"
+            checkedValue="Yes"
+            uncheckedValue="No"
+          />
+        </View>
       )}
 
+      <Divider className="my-4" />
+
       {values.isForeignNational === "No" ? (
-        <View>
+        <View className="bg-white rounded-xl shadow p-4 mb-6">
+          <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Indian Students</Text>
+          <Divider className="mb-3" />
           <SelectField
             label="Government ID Type"
             value="govtIdType"
@@ -55,7 +64,9 @@ const FileUploads = () => {
           />
         </View>
       ) : (
-        <View>
+        <View className="bg-white rounded-xl shadow p-4 mb-6">
+          <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Foreign Nationals</Text>
+          <Divider className="mb-3" />
           <TextField
             label="Passport Number"
             value="govtId"
@@ -69,12 +80,19 @@ const FileUploads = () => {
         </View>
       )}
 
-      <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
-      <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
-      <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
-      <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
+      <Divider className="my-4" />
+
+      <View className="bg-white rounded-xl shadow p-4">
+        <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Other Required Documents</Text>
+        <Divider className="mb-3" />
+        <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
+        <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
+        <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
+        <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
+      </View>
     </>
   );
 };
 
 export default FileUploads;
+

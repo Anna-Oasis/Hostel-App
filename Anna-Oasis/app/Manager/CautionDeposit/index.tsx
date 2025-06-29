@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Alert, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import RefundApprovalModal from "@/components/cautiondeposit/RefundApprovalModal";
 import {
   fetchManagerVacatingForms,
   approveManagerVacatingForm,
   rejectManagerVacatingForm,
-} from "@/utils/manager-studentvacatinghostel/managercautiondepositAPI";
-import { Text } from "@/components/ui/text";
+} from "@/utils/manager/managerCautionDepositAPI";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@/components/ui/modal";
+import DeclineComment from "@/components/modals/DeclineComment";
+import ModalCallable from "@/components/modals/ModalCallable";
+import EmptyPage from "@/components/EmptyPage";
 
 export default function CautionDepositManager() {
   const [applications, setApplications] = useState<any[]>([]);
@@ -26,7 +20,6 @@ export default function CautionDepositManager() {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
 
   const getApplications = async () => {
     setLoading(true);
@@ -49,13 +42,13 @@ export default function CautionDepositManager() {
     setRefundModalOpen(true);
   };
 
-  const handleRefundSubmit = async (formData: FormData) => {
+  const handleRefundSubmit = async (values: { refundAmount: string; deductionAmount: string; deductionReason: string; studentRollNumber: string }) => {
     try {
       await approveManagerVacatingForm(
         selectedApp.vacating_hostel_id,
-        formData.get("deductionAmount") as string,
-        formData.get("refundAmount") as string,
-        formData.get("deductionReason") as string
+        values.deductionAmount,
+        values.refundAmount,
+        values.deductionReason
       );
       setSuccessMsg("Form approved successfully!");
       setSuccessModalVisible(true);
@@ -69,19 +62,18 @@ export default function CautionDepositManager() {
 
   const handleReject = (app: any) => {
     setSelectedApp(app);
-    setRejectReason("");
     setRejectModalOpen(true);
   };
 
-  const submitRejection = async () => {
-    if (!rejectReason.trim()) {
+  const submitRejection = async (reason: string) => {
+    if (!reason.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection.");
       return;
     }
     try {
       await rejectManagerVacatingForm(
         selectedApp.vacating_hostel_id,
-        rejectReason.trim() + " (Rejected by Manager)",
+        reason.trim() + " (Rejected by Manager)",
         selectedApp.deductions || "0.00",
         selectedApp.refund_amount || "0.00",
         selectedApp.deduction_details || "None"
@@ -117,65 +109,35 @@ export default function CautionDepositManager() {
         }
       />
       {/* Success Modal for both approval and rejection */}
-      <Modal isOpen={successModalVisible} onClose={() => setSuccessModalVisible(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Success</Text>
-          </ModalHeader>
-          <ModalBody>
-            <Text className="text-base text-green-700">{successMsg}</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold p-2"
-              onPress={() => setSuccessModalVisible(false)}
-            >
-              OK
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalCallable
+        show={successModalVisible}
+        onClose={() => setSuccessModalVisible(false)}
+        title="Success"
+        message={successMsg}
+      />
       {/* Rejection Reason Modal */}
-      <Modal isOpen={rejectModalOpen} onClose={() => setRejectModalOpen(false)}>
-        <ModalBackdrop />
-        <ModalContent>
-          <ModalHeader>
-            <Text className="text-lg font-semibold">Reason for Rejection</Text>
-          </ModalHeader>
-          <ModalBody>
-            <TextInput
-              placeholder="Enter reason for rejection"
-              value={rejectReason}
-              onChangeText={setRejectReason}
-              multiline
-              className="border border-gray-300 rounded-lg p-3 min-h-[60px] mt-2 mb-2 text-base"
-              textAlignVertical="top"
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Text
-              className="text-blue-600 font-semibold mr-6 p-2"
-              onPress={submitRejection}
-            >
-              Submit
-            </Text>
-            <Text
-              className="text-gray-600 font-semibold p-2"
-              onPress={() => setRejectModalOpen(false)}
-            >
-              Cancel
-            </Text>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DeclineComment
+        visible={rejectModalOpen}
+        onClose={() => {
+          setRejectModalOpen(false);
+          setSelectedApp(null);
+        }}
+        onSubmit={submitRejection}
+        title="Reason for Rejection"
+        placeholder="Enter reason for rejection"
+        submitLabel="Submit"
+        cancelLabel="Cancel"
+      />
       <ScrollView>
         {loading ? (
           <View className="flex-1 items-center justify-center">
             <Spinner size="large" color="#0000ff" />
           </View>
         ) : applications.length === 0 ? (
-          <Text className="text-center mt-8 text-gray-500">No forms pending approval.</Text>
+          <EmptyPage
+            title="No forms pending approval"
+            description="All caution deposit forms have been reviewed."
+          />
         ) : (
           applications.map((app) => (
             <View key={app.vacating_hostel_id} className="mb-4">
