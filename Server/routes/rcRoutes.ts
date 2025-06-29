@@ -4,7 +4,7 @@
 import { Router } from "express";
 import {
   fetchAdmissionsApprovedByUser,
-   updateApprovalStatusByRCController,
+   allocateRoomController,
   getAdmissionWaitingForApprovalByRCController
 } from "../controllers/admissionController";
 import {
@@ -50,10 +50,10 @@ rcRouter.get(
   errorWrapper(getAdmissionWaitingForApprovalByRCController)
 );
 rcRouter.put(
-  "/admissions/:admission_id",
+  "/admissions/room/:admission_id",
   authenticateUser,
   hasRole(["rc"]),
-  errorWrapper(updateApprovalStatusByRCController)
+  errorWrapper(allocateRoomController)
 );
 rcRouter.get(
   "/admissions/approvals",

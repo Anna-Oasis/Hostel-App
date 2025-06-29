@@ -21,17 +21,17 @@ import {
   updateAdmissionStatus,
   getRollNumberByAdmissionId,
 } from "../services/admissionServices";
-import { rcAdmissionDecisionSchema } from "../validation/rc.schema";
+import { roomAllocationSchema } from "../validation/admission.schema";
 import {
   checkRoom,
   setStudentinRoom,
   updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getRCById, getRCByUserId } from "../services/rcServices";
+import { getRCById } from "../services/rcServices";
+import { findStudentByRollNo } from "../services/detailsService";
 import { getRCidfromUserId } from "../services/helper";
-import { wardenDecisionSchema } from "../validation/warden.schema";
-import { count } from "console";
+import { wardenDecisionSchema } from "../validation/admission.schema";
 
 // GET – Fetch all admissions waiting for approval based on user role - manager, deputy warden, or executive warden
 export async function fetchAdmissionWaitingForApprovalController(
@@ -45,28 +45,33 @@ export async function fetchAdmissionWaitingForApprovalController(
     );
   }
   const userRole = req.User.role;
-  let reqStatus: string;
+  let reqStatuses: string[];
 
   if (userRole === "manager") {
-    reqStatus = admissionApprovalStatus.SUBMITTED;
-  } else if (userRole === "deputyWarden") {
-    reqStatus = admissionApprovalStatus.RC;
-  } else if (userRole === "executiveWarden") {
-    reqStatus = admissionApprovalStatus.DEPUTYWARDEN;
+    reqStatuses = [admissionApprovalStatus.SUBMITTED];
+  } else if (userRole === "deputyWarden" || userRole === "executiveWarden") {
+    reqStatuses = [
+      admissionApprovalStatus.MANAGER,
+      admissionApprovalStatus.ROOM_ALLOCATED,
+    ];
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 
-  const submittedAdmissions = await getAdmissionsByStatus(reqStatus);
+  const admissionsByStatus = await Promise.all(
+    reqStatuses.map((status) => getAdmissionsByStatus(status))
+  );
+  const submittedAdmissions = admissionsByStatus.flat();
 
   res.status(httpStatus.OK).json({
     success: true,
     user: req.User,
-    data: submittedAdmissions|| [],
-    count: submittedAdmissions?submittedAdmissions.length:0,
-    message: submittedAdmissions && submittedAdmissions.length >0
-    ? "Admissions retrieved successfully"
-    : "No Admissions found",
+    data: submittedAdmissions || [],
+    count: submittedAdmissions ? submittedAdmissions.length : 0,
+    message:
+      submittedAdmissions && submittedAdmissions.length > 0
+        ? "Admissions retrieved successfully"
+        : "No Admissions found",
   });
 }
 
@@ -95,10 +100,11 @@ export const getAdmissionWaitingForApprovalByRCController = async (
   res.status(httpStatus.OK).json({
     success: true,
     data: admissions || [],
-    count:admissions?admissions.length:0,
-    message: admissions&&admissions.length>0
-    ?"Fetched Admissions successfully"
-    : "No Admissions found"
+    count: admissions ? admissions.length : 0,
+    message:
+      admissions && admissions.length > 0
+        ? "Fetched Admissions successfully"
+        : "No Admissions found",
   });
 };
 
@@ -110,7 +116,7 @@ export async function approveByManagerController(
   const { admission_id } = req.params;
   const { approve, comment } = req.body;
 
-  if (!admission_id || isNaN(Number(admission_id))) {
+  if (admission_id === undefined && isNaN(Number(admission_id))) {
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
 
@@ -178,6 +184,12 @@ export async function createAdmissionController(
   const admissionData = req.body;
   const parsedData = createAdmissionSchema.parse(admissionData);
 
+  const studentData = await findStudentByRollNo(parsedData.roll_number)
+
+  if(!studentData[0].approve) {
+    throw AppError("Student is not approved", httpStatus.BAD_REQUEST);
+  }
+
   const existingAdmissions = await checkForAdmissionByRollNumberAndAcademicYear(
     parsedData.roll_number,
     parsedData.academicYear
@@ -195,6 +207,7 @@ export async function createAdmissionController(
     status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
     updatedAt: new Date(),
+    declaration_id: 1, // replace this with the actual declaration ID
   });
 
   res.status(httpStatus.CREATED).json({
@@ -210,7 +223,7 @@ export async function getAdmissionByRollNumberController(
   res: Response
 ) {
   const { roll_number } = req.params;
-  if (!roll_number) {
+  if (!roll_number && roll_number.trim() === "" && roll_number.length < 5) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
 
@@ -218,11 +231,12 @@ export async function getAdmissionByRollNumberController(
 
   res.status(200).json({
     success: true,
-    data: admission|| [],
-    count:admission? admission.length:0,
-    message: admission&&admission.length>0
-    ?"Admission retrieved successfully"
-    :"No admission found for the provided roll number",
+    data: admission || [],
+    count: admission ? admission.length : 0,
+    message:
+      admission && admission.length > 0
+        ? "Admission retrieved successfully"
+        : "No admission found for the provided roll number",
   });
 }
 
@@ -231,15 +245,21 @@ export async function getAdmissionByAdmissionIdController(
   res: Response
 ) {
   const { admissionId } = req.params;
+
+  if (!admissionId || isNaN(Number(admissionId))) {
+    throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
+  }
+
   const admission = await getAdmissionByAdmissionId(Number(admissionId));
- 
+
   res.status(200).json({
     success: true,
-    data: admission||[],
-    count:admission?admission.length:0,
-    message:admission && admission.length>0 
-    ? "Admission retrieved successfully"
-    :  "No admission found for the provided admission ID",
+    data: admission || [],
+    count: admission ? admission.length : 0,
+    message:
+      admission && admission.length > 0
+        ? "Admission retrieved successfully"
+        : "No admission found for the provided admission ID",
   });
 }
 
@@ -356,26 +376,25 @@ export const fetchAdmissionsApprovedByUser = async (
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
   const userID = parseInt(req.User.id);
-  console.log("User ID:", userID);
 
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
   const admission = await getAdmissionsApprovedByUser(userID);
-  console.log("Fetched Admissions:", admission);
 
-   res.status(200).json({
+  res.status(200).json({
     success: true,
-    data: admission||[],
-    count:admission?admission.length:0,
-    message:admission && admission.length>0 
-    ? "Admissions approved fetched successfully"
-    :  "No admission found ",
+    data: admission || [],
+    count: admission ? admission.length : 0,
+    message:
+      admission && admission.length > 0
+        ? "Admissions approved fetched successfully"
+        : "No admission found ",
   });
 };
 
 // \resident_counsellor\admissions: PUT – use \admission_id to approve or decline by rc, entry into admission_approval table with comment(if declined) and also update the corresponding student details with the room and floor (The request body will contain the approval, rc_id, student user_id, room and floor)
-export const updateApprovalStatusByRCController = async (
+export const allocateRoomController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
@@ -390,29 +409,13 @@ export const updateApprovalStatusByRCController = async (
     );
   }
 
-  const rc = await getRCByUserId(Number(req.User.id));
-  const rc_userId = req.User.id;
-  if (!rc || rc.length === 0) {
-    throw AppError("RC not found ", httpStatus.NOT_FOUND);
-  }
-
-  const validated = rcAdmissionDecisionSchema.parse(req.body);
-  console.log("Validated Data:", validated);
-  if (
-    validated.approve === false &&
-    (!validated.comment || validated.comment.trim() === "")
-  ) {
-    throw AppError(
-      "Comment is required when declining an admission",
-      httpStatus.BAD_REQUEST
-    );
-  }
+  const validated = roomAllocationSchema.parse(req.body);
 
   const approvalResult = await createAdmissionApproval({
     admission_id: Number(admission_id),
-    user_id: Number(rc_userId),
-    approve: validated.approve,
-    comment: validated.comment,
+    user_id: Number(req.User.id),
+    approve: true,
+    comment: "Room allocation",
   });
 
   if (!approvalResult) {
@@ -432,89 +435,78 @@ export const updateApprovalStatusByRCController = async (
 
   const rollNo = await getRollNumberByAdmissionId(Number(admission_id));
   const currentYear = admission[0].academicYear;
-  if (validated.approve) {
-    const status = admissionApprovalStatus.RC;
+  const status = admissionApprovalStatus.ROOM_ALLOCATED;
 
-    // Check room capacity before approval
-    const room = await checkRoom(validated.room, validated.hostel_block, currentYear);
-    if (!room) {
-      throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
-    }
-    if (room.rollNo?.includes(rollNo)) {
-      throw AppError(
-        "Student is already assigned to this room",
-        httpStatus.BAD_REQUEST
-      );
-    }
-    if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
-      throw AppError(
-        `Room is already full (${ROOM_SIZE} students)`,
-        httpStatus.BAD_REQUEST
-      );
-    }
-
-    // Create updated roll numbers array
-    const updatedRollNos = room.rollNo ? [...room.rollNo, rollNo] : [rollNo];
-
-    const setStudent = await setStudentinRoom(
-      updatedRollNos,
-      validated.room,
-      validated.hostel_block,
-      currentYear
+  // Check room capacity before approval
+  const room = await checkRoom(
+    validated.room,
+    validated.hostel_block,
+    currentYear
+  );
+  if (!room) {
+    throw AppError("Room Not Found!", httpStatus.NOT_FOUND);
+  }
+  if (room.rollNo?.includes(rollNo)) {
+    throw AppError(
+      "Student is already assigned to this room",
+      httpStatus.BAD_REQUEST
     );
+  }
+  if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
+    throw AppError(
+      `Room is already full (${ROOM_SIZE} students)`,
+      httpStatus.BAD_REQUEST
+    );
+  }
 
-    if (!setStudent) {
-      throw AppError(
-        "Failed to assign student to room",
-        httpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+  // Create updated roll numbers array
+  const updatedRollNos = room.rollNo ? [...room.rollNo, rollNo] : [rollNo];
 
-    // Update admission status
-    const admissionUpdate = await updateAdmissionStatus({
-      admission_id: Number(admission_id),
-      status,
-    });
+  const setStudent = await setStudentinRoom(
+    updatedRollNos,
+    validated.room,
+    validated.hostel_block,
+    currentYear
+  );
 
-    if (!admissionUpdate) {
-      throw AppError(
-        "Failed to update admission status",
-        httpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+  if (!setStudent) {
+    throw AppError(
+      "Failed to assign student to room",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
 
-    // Update student hostel details
-    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block);
+  // Update admission status
+  const admissionUpdate = await updateAdmissionStatus({
+    admission_id: Number(admission_id),
+    status,
+  });
 
-    if (!studentUpdate) {
-      throw AppError(
-        "Failed to update student room and floor",
-        httpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  } else {
-    // Denial logic
-    const status = admissionApprovalStatus.DECLINED;
+  if (!admissionUpdate) {
+    throw AppError(
+      "Failed to update admission status",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
 
-    // Update admission status
-    const admissionUpdate = await updateAdmissionStatus({
-      admission_id: Number(admission_id),
-      status,
-    });
+  // Update student hostel details
+  const studentUpdate = await updateStudentHostelDetails(
+    rollNo,
+    validated.room,
+    validated.floor,
+    validated.hostel_block
+  );
 
-    if (!admissionUpdate) {
-      throw AppError(
-        "Failed to update admission status",
-        httpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+  if (!studentUpdate) {
+    throw AppError(
+      "Failed to update student room and floor",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
   }
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: validated.approve
-      ? "Admission approved successfully"
-      : "Admission declined successfully",
+    message: "Room allocated successfully",
   });
 };
 
@@ -528,17 +520,15 @@ export const updateApprovalStatusByWardenController = async (
   if (!admission_id || isNaN(Number(admission_id))) {
     throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
   }
-
+  
   if (!req.User || !req.User.role || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
-  const role = req.User.role;
   const user_id = req.User.id;
   const validated = wardenDecisionSchema.parse(req.body);
-
   // If status is false, comment is required
   if (
     validated.approve === false &&
@@ -579,22 +569,16 @@ export const updateApprovalStatusByWardenController = async (
 
   if (validated.approve) {
     // Approval logic
-    let status : string;
-    if (role === "deputyWarden") {
-      if (admission[0].status !== admissionApprovalStatus.RC) {
-        throw AppError("Admission must be approved by RC before Deputy Warden approval",httpStatus.BAD_REQUEST
-        );
-      }
-      status = admissionApprovalStatus.DEPUTYWARDEN;
-    }else if (role === "executiveWarden") {
-      if (admission[0].status !== admissionApprovalStatus.DEPUTYWARDEN) {
-        throw AppError("Admission must be approved by Deputy Warden before Executive Warden approval", httpStatus.BAD_REQUEST);
-      }
-      status = admissionApprovalStatus.EXECUTIVEWARDEN;
+    let status: string;
+
+    if (admission[0].status !== admissionApprovalStatus.ROOM_ALLOCATED) {
+      throw AppError(
+        "Room allocation is required before Deputy Warden approval",
+        httpStatus.BAD_REQUEST
+      );
     }
-    else {
-      throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
-    }
+    status = admissionApprovalStatus.WARDEN;
+
     // Update admission status
     const admissionUpdate = await updateAdmissionStatus({
       admission_id: Number(admission_id),
@@ -625,7 +609,12 @@ export const updateApprovalStatusByWardenController = async (
     }
 
     // Clear student hostel details
-    const studentUpdate = await updateStudentHostelDetails(rollNo, null, null, '');
+    const studentUpdate = await updateStudentHostelDetails(
+      rollNo,
+      null,
+      null,
+      null
+    );
 
     if (!studentUpdate) {
       throw AppError(
@@ -634,7 +623,7 @@ export const updateApprovalStatusByWardenController = async (
       );
     }
 
-    const roomNo=await getRoomByRollNo(rollNo);
+    const roomNo = await getRoomByRollNo(rollNo);
 
     // Only proceed with room removal
     if (roomNo) {
@@ -652,12 +641,7 @@ export const updateApprovalStatusByWardenController = async (
       // Remove student from room
       const updatedRollNos = room.rollNo.filter((r) => r !== rollNo);
 
-      await setStudentinRoom(
-        updatedRollNos,
-        roomNo,
-        hostelBlock,
-        currentYear
-      );
+      await setStudentinRoom(updatedRollNos, roomNo, hostelBlock, currentYear);
     }
   }
 

@@ -77,7 +77,7 @@ export const updateStudentHostelDetails = async (
   rollNo: string, 
   roomNumber: number | null,
   floor:  number | null,
-  hostelBlock: string,
+  hostelBlock: string| null,
 ) => {
   return await db
     .update(studentModel)
