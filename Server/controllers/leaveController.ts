@@ -3,8 +3,8 @@ import { Response } from "express";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
-import { getRCById } from "../services/rcServices";
-import { getRCidfromUserId } from "../services/helper";
+import {  getRCByUserId } from "../services/rcServices";
+import { getRollNoFromUserId } from "../services/helper";
 import {
   getLeaveFormsToBeApprovedByRcByFloor,
   getLeaveFormByLeaveFormId,
@@ -12,68 +12,101 @@ import {
   createLeaveFormApproval,
   getLeaveFormsToBeApprovedByDeputyWarden,
   createLeaveForm,
-  getLeaveFormApprovals,
+  getLeaveFormsByRollNo,
 } from "../services/leaveServices";
-import { LeaveDecisionSchema } from "../validation/leave.validation";
-import { leaveFormSchema } from "../validation/leaveform.schema";
+import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.schema";
 
-export const createLeaveFormFromController = async (
+export const createLeaveFormController = async (
   req: AuthRequest,
   res: Response
 ) => {
-  //validation
-  const validatedData = leaveFormSchema.safeParse(req.body);
-
-  if (!validatedData.success) {
+  if (!req.User) {
     throw AppError(
-      validatedData.error.issues.map((issue) => issue.message).join(", "),
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  //const rollNo = req.params.roll_number;
+  const rollNo = await getRollNoFromUserId(Number(req.User.id));
+
+  if (!rollNo) {
+    throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
+  }
+
+  const validated= leaveFormSchema.parse(req.body);
+
+  const from = new Date(validated.from_date);
+  const to = new Date(validated.to_date);
+
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+    throw AppError("Invalid date format", httpStatus.BAD_REQUEST);
+  }
+
+  if (to < from) {
+    throw AppError(
+      "`to_date` must be the same as or after `from_date`",
       httpStatus.BAD_REQUEST
     );
   }
 
-  const result = await createLeaveForm(validatedData.data);
+  const validatedData = {
+    ...validated,
+    roll_number: rollNo,
+  };
 
-  res.status(httpStatus.OK).json({
+  const result = await createLeaveForm(validatedData);
+
+  if(!result){
+    throw AppError(
+      "Failed to create leave form",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+  
+  res.status(httpStatus.CREATED).json({
     success: true,
-    message: "New Leave Form Created",
     data: result,
+    count:result.length,
+    message: "New Leave Form Created successfully",
   });
 };
 
-export const getAllLeaveFormsFromController = async (
+export const getAllLeaveFormsByRollNoController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const rollNumber = req.params.roll_number;
-
-  if (!rollNumber) {
-    throw AppError("Invalid or No Data is passed", httpStatus.BAD_REQUEST);
+  if (!req.User) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
   }
 
-  const result = await getLeaveFormApprovals(rollNumber);
+  const rollNo = req.params.roll_number;
+  //const rollNo = await getRollNoFromUserId(Number(req.User.id));
 
-  res.status(httpStatus.FOUND).json({
+  if (!rollNo) {
+    throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
+  }
+
+  const result = await getLeaveFormsByRollNo(rollNo);
+
+  res.status(httpStatus.OK).json({
     success: true,
     data: result || [],
-    count:result?result.length:0,
-    message: result && result.length >0
+    count:result ? result.length : 0,
+    message:result && result.length > 0 
     ? "All available leave forms are fetched Successfully"
-    :"No Leave form exists",
+    :  "No Leave Form Exists",
   });
 };
 
-// RC: \resident_counsellor\student_leave
-// Deputy Warden: \deputy_warden\student_leave
-
-/*
-RC: GET - Fetch all student leave forms waiting for RC approval by floor
-Deputy Warden: GET - Fetch all leave forms waiting for approval from deputy warden
-*/
 export const getLeaveFormWaitingForApprovalController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
@@ -81,63 +114,46 @@ export const getLeaveFormWaitingForApprovalController = async (
   }
 
   const userRole = req.User.role;
-  let leave_form: any;
+  let result: any;
 
   if (userRole === "rc") {
-    const rc_id = await getRCidfromUserId(Number(req.User.id));
-    if (!rc_id) {
-      throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-    }
-
-    const rc = await getRCById(Number(rc_id));
+    const rc = await getRCByUserId(Number(req.User.id));
     console.log("RC:", rc);
+
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
 
-    if (!rc[0].hostel || !rc[0].floor) {
-      throw AppError(
-        "Hostel or floor is not assigned to RC",
-        httpStatus.NOT_FOUND
-      );
+    if (rc[0].hostel == null || rc[0].floor == null) {
+      throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    leave_form = await getLeaveFormsToBeApprovedByRcByFloor(
+    result = await getLeaveFormsToBeApprovedByRcByFloor(
       rc[0].floor,
       rc[0].hostel
     );
   } else if (userRole === "deputyWarden") {
-    leave_form = await getLeaveFormsToBeApprovedByDeputyWarden();
+    result = await getLeaveFormsToBeApprovedByDeputyWarden();
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 
-
-
-  res.status(httpStatus.OK).json({
+   res.status(httpStatus.OK).json({
     success: true,
-    data: leave_form || [],
-    count:leave_form?leave_form.length:0,
-    message: leave_form && leave_form.length >0
-    ? "Fetched Leave forms successfully"
-    : `No Leave Forms waiting for ${userRole} approval`
+    data: result || [],
+    count:result ? result.length : 0,
+    message:result && result.length > 0 
+    ? "All available leave forms are fetched Successfully"
+    :  `No Leave Forms waiting for ${userRole} approval`,
   });
 };
 
-/*
-PUT - \leave_form_id as path param, approve the leave_form_id by RC and Deputy warden and entry into leave_form_id_approvals (request body will contain approve/decline with comment) 
-*/
 export const updateLeaveFormApprovalStatusController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { leave_form_id } = req.params;
 
-  if (!leave_form_id || isNaN(Number(leave_form_id))) {
-    throw AppError("Invalid or missing Leave Form ID", httpStatus.BAD_REQUEST);
-  }
-
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
@@ -149,12 +165,8 @@ export const updateLeaveFormApprovalStatusController = async (
   let updateStatus: string;
 
   if (userRole === "rc") {
-    const rc_id = await getRCidfromUserId(Number(req.User.id));
-    if (!rc_id) {
-      throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-    }
-
-    const rc = await getRCById(Number(rc_id));
+   
+    const rc = await getRCByUserId(Number(req.User.id));
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
     }
@@ -166,15 +178,10 @@ export const updateLeaveFormApprovalStatusController = async (
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 
-  const validated = LeaveDecisionSchema.parse(req.body);
-  if (
-    validated.approve === false &&
-    (!validated.comment || validated.comment.trim() === "")
-  ) {
-    throw AppError(
-      "Comment is required when declining a leave form",
-      httpStatus.BAD_REQUEST
-    );
+  const { leave_form_id } = req.params;
+
+  if (!leave_form_id || isNaN(Number(leave_form_id))) {
+    throw AppError("Invalid or missing Leave Form ID", httpStatus.BAD_REQUEST);
   }
 
   const existingleaveForm = await getLeaveFormByLeaveFormId(
@@ -183,8 +190,19 @@ export const updateLeaveFormApprovalStatusController = async (
 
   if (existingleaveForm.length === 0) {
     throw AppError(
-      "leave form not found for the provided ID",
+      "Leave form not found for the provided ID",
       httpStatus.NOT_FOUND
+    );
+  }
+
+  const validated = LeaveDecisionSchema.parse(req.body);
+  if (
+    validated.approve === false &&
+    (!validated.comment || validated.comment.trim() === "")
+  ) {
+    throw AppError(
+      "Comment is required when declining a leave form",
+      httpStatus.BAD_REQUEST
     );
   }
 
@@ -206,6 +224,13 @@ export const updateLeaveFormApprovalStatusController = async (
     status: validated.approve? updateStatus : studentLeaveApprovalStatus.DECLINED,
     updated_at: new Date(),
   });
+
+  if (!updatedLeaveForm) {
+    throw AppError(
+      "Failed to update leave form",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
 
   res.status(httpStatus.OK).json({
     success: true,

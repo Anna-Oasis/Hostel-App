@@ -102,7 +102,7 @@ deputyWardenRouter.put(
 
 // Room details route
 deputyWardenRouter.get(
-  "/rooms",
+  "/rooms/:academicYear",
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)

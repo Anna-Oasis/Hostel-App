@@ -52,7 +52,7 @@ executiveWardenRouter.put(
 
 // Room details route
 executiveWardenRouter.get(
-  "/rooms",
+  "/rooms/:academicYear",
   authenticateUser,
   hasRole(["executiveWarden"]),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)

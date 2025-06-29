@@ -68,7 +68,6 @@ export async function getRCById(rc_id: number) {
   return rc;
 }
 
-
 export async function getRCByUserId(userId: number) {
   const rc = await db
     .select()
