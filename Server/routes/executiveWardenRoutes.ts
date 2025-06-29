@@ -15,7 +15,7 @@ import {
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
-
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 const executiveWardenRouter = Router();
 
 // Welcome route
@@ -76,4 +76,8 @@ executiveWardenRouter.get("/declaration/:type",
   errorWrapper(getLatestDeclarationFromController)
 );
 
+executiveWardenRouter.get("/declaration",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(getDeclarationForOthersController));
 export default executiveWardenRouter;

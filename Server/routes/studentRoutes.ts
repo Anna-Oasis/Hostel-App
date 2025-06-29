@@ -20,7 +20,7 @@ import {
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
 import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveController";
-
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 
 import {
   createVacatingHostelFormController,
@@ -69,5 +69,8 @@ studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),e
 studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));
+
+//get all types of Latest Declarations  
+studentRouter.get("/declaration",authenticateUser,hasRole(['student']),errorWrapper(getDeclarationForOthersController));
 
 export default studentRouter;

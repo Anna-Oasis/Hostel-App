@@ -65,3 +65,31 @@ export const postDeclarationFromController = async (req:AuthRequest,res:Response
     );
 
 }
+
+export const getDeclarationForOthersController = async (req:AuthRequest,res:Response) =>
+{
+    if(!req.User || !req.User.id)
+    {
+        throw AppError("User ID is required",httpStatus.UNAUTHORIZED);
+    }   
+
+    const json:Record<string,any>={};
+
+    //get latest declaration for all types
+    for (const type of Object.values(declaration)) {
+        const latest = await getLatestDeclaration(type);
+        json[type] = latest.length > 0 ? latest : [];
+    }
+    
+    //check if all are null
+    const valid = Object.values(json).every((val) => val === null);
+
+    res.status(httpStatus.OK)
+    .json(
+        {
+            success:true,
+            message: valid ===  true?"No Declarations Available in Table":"All Latest Declarations Have been fetched Successfully",
+            data: valid === true? []:json
+        }
+    );
+}

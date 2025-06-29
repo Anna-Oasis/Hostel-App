@@ -34,8 +34,7 @@ import {
 import {  getRCsController } from "../controllers/rcController";
 import { getRCLeaveApprovals } from "../services/rcLeaveService";
 import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
-
-
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 
 const rcRouter = Router();
 
@@ -150,5 +149,7 @@ rcRouter.post("/leave/complete", authenticateUser, hasRole(['rc']), errorWrapper
 // Fetch the all the RCs as same as the RC's own hostel
 rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyHostelController))
 
+//get all types of Latest Declarations  
+rcRouter.get("/declaration",authenticateUser,hasRole(['rc']),errorWrapper(getDeclarationForOthersController));
 export default rcRouter;
 
