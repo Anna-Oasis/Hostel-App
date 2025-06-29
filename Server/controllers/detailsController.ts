@@ -46,22 +46,16 @@ export async function getStudentDetailsUsingRollNoController(req: AuthRequest, r
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
 
-  const student = await findStudentByRollNo(rollNo);
+  const data = await findStudentByRollNo(rollNo);
 
-  if (!student.length) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: {},
-      message: "Student not found",
+ res.status(httpStatus.OK).json({
+      success: true,
+      data: data[0]||[],
+      count:data?data.length:0,
+      message: data && data.length >0
+      ? "Student details fetched successfully"
+      : "Student not found",
     });
-    return;
-  }
-
-  res.status(httpStatus.OK).json({
-    success: true,
-    data: student[0],
-    message: "Student details fetched successfully",
-  });
 }
 
 export async function getStudentDetailsUsingUserIdController(req: AuthRequest, res: Response) {
@@ -70,21 +64,15 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
   }
 
   const student = await findStudentByUserId(Number(req.User.id));
-  
-  if (!student.length) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: {},
-      message: "Student not found",
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
-    success: true,
-    data: student[0],
-    message: "Student details fetched successfully",
-  });
+      success: true,
+      data: student[0]||[],
+      count:student?student.length:0,
+      message: student && student.length >0
+      ? "Student details fetched successfully"
+      : "Student not found",
+    });
 }
 
 export async function createStudentDetailsController(req: AuthRequest, res: Response) {

@@ -64,7 +64,7 @@ studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(c
 studentRouter.get("/leave",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsByRollNoController));
 
 // SUMMER VACATION FORMS
-//create a new Summer vacation form
+// create a new Summer vacation form
 studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));

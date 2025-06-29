@@ -62,21 +62,13 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
     message = "Attendance records retrieved successfully";
   }
 
-  if (attendanceRecords.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      count: 0,
-      message: "No attendance records found for this RC",
-    });
-    return;
-  }
-
   res.status(httpStatus.OK).json({
     success: true,
-    data: attendanceRecords,
-    count: attendanceRecords.length,
-    message: message,
+    data: attendanceRecords|| [],
+    count: attendanceRecords?attendanceRecords.length:0,
+    message: attendanceRecords && attendanceRecords.length >0
+    ? message
+    : "No attendance records found for this RC",
   });
 }
 
@@ -97,25 +89,18 @@ export async function getAllAttendanceController(req: AuthRequest, res: Response
     attendanceRecords = await fetchAllAttendance();
     message = "All attendance records retrieved successfully";
   }
-
-  if (attendanceRecords.length === 0) {
-    const errorMessage = date 
+  const errorMessage = date 
       ? `No attendance records found for date: ${date}` 
       : "No attendance records found";
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      count: 0,
-      message: errorMessage,
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: attendanceRecords,
-    count: attendanceRecords.length,
-    message: message,
+    data: attendanceRecords || [],
+    count: attendanceRecords?attendanceRecords.length:0,
+    message:attendanceRecords && attendanceRecords.length >0
+    ? message
+    :errorMessage,
   });
+
 }
 
