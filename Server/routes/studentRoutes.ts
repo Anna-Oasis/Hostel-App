@@ -61,7 +61,7 @@ studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),err
 
 //LEAVE FORMS
 studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormController));
-studentRouter.get("/leave",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsByRollNoController));
+studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsByRollNoController));
 
 // SUMMER VACATION FORMS
 // create a new Summer vacation form

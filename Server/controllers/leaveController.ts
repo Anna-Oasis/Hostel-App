@@ -27,7 +27,9 @@ export const createLeaveFormController = async (
     );
   }
 
+  //const rollNo = req.params.roll_number;
   const rollNo = await getRollNoFromUserId(Number(req.User.id));
+
   if (!rollNo) {
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }
@@ -81,7 +83,9 @@ export const getAllLeaveFormsByRollNoController = async (
     );
   }
 
-  const rollNo = await getRollNoFromUserId(Number(req.User.id));
+  const rollNo = req.params.roll_number;
+  //const rollNo = await getRollNoFromUserId(Number(req.User.id));
+
   if (!rollNo) {
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }

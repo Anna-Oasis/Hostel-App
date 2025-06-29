@@ -14,7 +14,6 @@ export const leaveFormSchema = z.object({
   address_of_stay: z.string().min(1, "Address of stay is required"),
   mobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid mobile number"),
   email: z.string().email(),
-  emergency_contact: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid emergency contact"),
 });
 
 export const LeaveDecisionSchema = z.object({
