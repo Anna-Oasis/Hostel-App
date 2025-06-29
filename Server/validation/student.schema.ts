@@ -10,6 +10,8 @@ export const studentSchema = z.object({
   semester: z.string().min(1),
   gender: z.enum(["male", "female", "other"]),
 
+  admissionCategory:z.string().min(1, "Admission category is required"),
+
   dateOfBirth: z.coerce.date(),
   age: z.coerce.number().min(15).max(100),
   mobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid mobile number"),

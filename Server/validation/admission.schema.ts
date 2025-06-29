@@ -13,10 +13,6 @@ export const createAdmissionSchema = z.object({
   parentAgreed: z.boolean().refine((val) => val === true, {
     message: "Parent must agree to the terms",
   }),
-  admissionCategory: z
-    .string()
-    .min(1, "Admission category is required")
-    .max(30, "Admission category must be less than 30 characters"),
   previousResident: z.boolean(),
 
   hostelBlock: z
@@ -29,6 +25,22 @@ export const createAdmissionSchema = z.object({
     .max(20, "Mess preference must be less than 20 characters"),
   transaction_id: z
     .string()
-    .min(1, "Transaction ID is required")
+    .min(3, "Transaction ID is required")
     .max(100, "Transaction ID must be less than 100 characters"),
 });
+
+
+export const roomAllocationSchema = z.object({
+  room: z.coerce.number({ invalid_type_error: "room must be a number" }),
+  floor: z.coerce.number({ invalid_type_error: "floor must be a number" }),
+  hostel_block: z
+    .enum(Object.values(hostelBlock) as [string, ...string[]]),
+});
+
+
+export const wardenDecisionSchema = z.object({
+  approve: z.boolean(),
+  comment: z.string().optional(),
+});
+
+
