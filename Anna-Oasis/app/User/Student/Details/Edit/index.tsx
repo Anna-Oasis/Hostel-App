@@ -68,6 +68,10 @@ export default function DetailsPage() {
           formData.append("dateOfBirth", values.dateOfBirth);
           formData.append("age", values.age);
           formData.append("gender", values.gender);
+          formData.append("admissionCategory", values.admissionCategory);
+          if (values.admissionCategory === "Other" && values.admissionCategoryReason) {
+            formData.append("admissionCategoryReason", values.admissionCategoryReason);
+          }
           formData.append("nationality", values.nationality);
           formData.append("bloodGroup", values.bloodGroup);
           formData.append("medicalHistory", values.medicalHistory);

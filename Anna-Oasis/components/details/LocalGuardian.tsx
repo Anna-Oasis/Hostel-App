@@ -1,14 +1,14 @@
-import React from "react";
 import TextField from "@/components/form/TextField";
 import PhoneInputField from "@/components/form/PhoneInputField";
 import SelectField from "@/components/form/SelectField";
-import countries from "@/constants/countries";
 import indianStates from "@/constants/indianStates";
 import { Text } from "../ui/text";
+import { Divider } from "../ui/divider";
 
 const LocalGuardian = () => (
   <>
     <Text className="text-lg font-semibold mb-4">Local Guardian Details</Text>
+    <Divider className="mb-4" />
     <TextField label="Guardian Name" value="localGuardianName" placeholder="Name" />
     <TextField
       label="Relationship"

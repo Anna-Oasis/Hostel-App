@@ -84,7 +84,6 @@ const AdmissionForm = () => {
                 academicYear,
                 studentAgreed: declaration.includes("studentAgreed"),
                 parentAgreed: declaration.includes("parentAgreed"),
-                admissionCategory: values.admissionCategory || "",
                 previousResident: values.previousResident === "Yes",
                 hostelBlock: values.hostelBlock || "",
                 messPreference: values.messPreference || "",

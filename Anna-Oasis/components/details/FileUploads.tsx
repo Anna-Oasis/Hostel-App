@@ -7,6 +7,8 @@ import RadioField from "@/components/form/RadioField";
 import { govtIdTypes } from "@/constants/details";
 import { View } from "react-native";
 import useUserStore from "@/stores/userStore";
+import { Text } from "@/components/ui/text";
+import { Divider } from "@/components/ui/divider";
 
 const FileUploads = () => {
   const { values, setFieldValue } = useFormikContext<any>();
@@ -25,6 +27,9 @@ const FileUploads = () => {
 
   return (
     <>
+      <Text className="text-lg font-semibold mb-4">Document Uploads</Text>
+      <Divider className="mb-4" />
+
       {!details && (
         <RadioField
           label="Are you a Foreign National?"
@@ -36,8 +41,12 @@ const FileUploads = () => {
         />
       )}
 
+      <Divider className="my-4" />
+
       {values.isForeignNational === "No" ? (
         <View>
+          <Text className="text-base font-semibold mb-2 mt-2">Indian Students</Text>
+          <Divider className="mb-3" />
           <SelectField
             label="Government ID Type"
             value="govtIdType"
@@ -56,6 +65,8 @@ const FileUploads = () => {
         </View>
       ) : (
         <View>
+          <Text className="text-base font-semibold mb-2 mt-2">Foreign Nationals</Text>
+          <Divider className="mb-3" />
           <TextField
             label="Passport Number"
             value="govtId"
@@ -69,6 +80,10 @@ const FileUploads = () => {
         </View>
       )}
 
+      <Divider className="my-4" />
+
+      <Text className="text-base font-semibold mb-2 mt-2">Other Required Documents</Text>
+      <Divider className="mb-3" />
       <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
       <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
       <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />

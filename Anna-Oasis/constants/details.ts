@@ -1,3 +1,5 @@
+import { admissionCategories } from "./admission";
+
 const Departments = [
   { label: "Chemistry", value: "Chemistry" },
   { label: "Civil Engineering", value: "Civil Engineering" },
@@ -155,6 +157,8 @@ const initialValues = {
   bloodGroup: "",
   medicalHistory: "",
   gender: "",
+  admissionCategory: "",
+  admissionCategoryReason: "",
 
   fatherName: "",
   fatherOccupation: "",

@@ -4,10 +4,12 @@ const admissionCategories = [
   { label: "FN", value: "FN" },
   { label: "LDC", value: "LDC" },
   { label: "SIDS", value: "SIDS" },
+  { label: "ICCR", value: "ICCR" },
+  { label: "SII", value: "SII" },
+  { label: "Other", value: "Other" },
 ];
 
 const initialValues = {
-  admissionCategory: undefined,
   previousResident: undefined,
   messPreference: undefined,
   studentAgreed: "",
