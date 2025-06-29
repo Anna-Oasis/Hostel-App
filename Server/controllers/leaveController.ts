@@ -34,6 +34,20 @@ export const createLeaveFormController = async (
 
   const validated= leaveFormSchema.parse(req.body);
 
+  const from = new Date(validated.from_date);
+  const to = new Date(validated.to_date);
+
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+    throw AppError("Invalid date format", httpStatus.BAD_REQUEST);
+  }
+
+  if (to < from) {
+    throw AppError(
+      "`to_date` must be the same as or after `from_date`",
+      httpStatus.BAD_REQUEST
+    );
+  }
+
   const validatedData = {
     ...validated,
     roll_number: rollNo,
