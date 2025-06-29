@@ -4,11 +4,14 @@ import SelectField from "@/components/form/SelectField";
 import indianStates from "@/constants/indianStates";
 import { Text } from "../ui/text";
 import { Divider } from "../ui/divider";
+import { View } from "react-native";
 
 const LocalGuardian = () => (
-  <>
-    <Text className="text-lg font-semibold mb-4">Local Guardian Details</Text>
-    <Divider className="mb-4" />
+  <View className="bg-white rounded-xl shadow p-4 mb-6">
+    <Text className="text-2xl font-bold text-center mb-2 mt-2">
+      Local Guardian Details
+    </Text>
+    <Divider className="mb-6" />
     <TextField label="Guardian Name" value="localGuardianName" placeholder="Name" />
     <TextField
       label="Relationship"
@@ -46,7 +49,7 @@ const LocalGuardian = () => (
       value="guardianPostalCode"
       placeholder="Postal Code"
     />
-  </>
+  </View>
 );
 
 export default LocalGuardian;

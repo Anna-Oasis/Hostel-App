@@ -15,6 +15,8 @@ import { Text } from "@/components/ui/text";
 interface SwitchFieldProps {
   label?: string;
   value: string;
+  checkedValue?: any;
+  uncheckedValue?: any;
 }
 
 /**
@@ -29,17 +31,15 @@ interface SwitchFieldProps {
  * @param {SwitchFieldProps} props - Component props
  * @returns {JSX.Element} A switch field
  */
-function SwitchField({ label, value }: SwitchFieldProps) {
+function SwitchField({ label, value, checkedValue = true, uncheckedValue = false }: SwitchFieldProps) {
   const { values, setFieldValue, touched, errors } = useFormikContext<any>();
 
-  /**
-   * Handles the change event for the switch.
-   * Sets the boolean value in the Formik field.
-   *
-   * @param {boolean} checked - The new value of the switch.
-   */
+  // Determine switch value based on checkedValue/uncheckedValue
+  const switchValue = values[value] === checkedValue;
+
+  // Set checkedValue or uncheckedValue in Formik
   const handleSwitchChange = (checked: boolean) => {
-    setFieldValue(value, checked);
+    setFieldValue(value, checked ? checkedValue : uncheckedValue);
   };
 
   return (
@@ -48,7 +48,7 @@ function SwitchField({ label, value }: SwitchFieldProps) {
       <Switch
         size="md"
         isDisabled={false}
-        value={!!values[value]}
+        value={switchValue}
         onValueChange={handleSwitchChange}
         trackColor={{ false: colors.neutral[300], true: colors.neutral[600] }}
         thumbColor={colors.neutral[50]}

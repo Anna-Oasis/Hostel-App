@@ -16,6 +16,7 @@ import { Text } from "@/components/ui/text";
 import { Divider } from "@/components/ui/divider";
 import { admissionCategories } from "@/constants/admission";
 import { useFormikContext } from "formik";
+import { View } from "react-native";
 
 interface StudentFormValues {
   name: string;
@@ -41,85 +42,98 @@ const StudentDetails = () => {
   const { values } = useFormikContext<StudentFormValues>();
 
   return (
-    <>
-      {/* Academic Details */}
-      <Text className="text-base font-semibold mb-2 mt-2">Academic Details</Text>
-      <Divider className="mb-3" />
-      <TextField label="Name" value="name" placeholder="Enter name" />
-      {!details && (
-        <>
-          <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
-          <HelperText>
-            Note: You cannot change your roll number once submitted. It will be
-            linked with your account
-          </HelperText>
-        </>
-      )}
-      <SelectField label="Course" value="course" options={courses} />
-      <SelectField label="Branch" value="branch" options={Departments} />
-      <SelectField label="Semester" value="semester" options={semesters} />
+    <View>
+      <Text className="text-2xl font-bold text-center mb-2 mt-2">
+        {details ? "Update Your Personal Details" : "Enter Your Personal Details"}
+      </Text>
+      <Divider className="mb-6" />
 
-      <Divider className="my-4" />
+      {/* Academic Details */}
+      <View className="bg-white rounded-xl shadow p-4 mb-6">
+        <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">
+          Academic Details
+        </Text>
+        <Divider className="mb-3" />
+        <TextField label="Name" value="name" placeholder="Enter name" />
+        {!details && (
+          <>
+            <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
+            <HelperText>
+              Note: You cannot change your roll number once submitted. It will be
+              linked with your account
+            </HelperText>
+          </>
+        )}
+        <SelectField label="Course" value="course" options={courses} />
+        <SelectField label="Branch" value="branch" options={Departments} />
+        <SelectField label="Semester" value="semester" options={semesters} />
+      </View>
 
       {/* Contact Details */}
-      <Text className="text-base font-semibold mb-2 mt-2">Contact Details</Text>
-      <Divider className="mb-3" />
-      <PhoneInputField
-        label="Mobile"
-        value="mobile"
-        placeholder="Phone number"
-      />
-      <TextField label="Email" value="email" placeholder="Email" />
-      <PhoneInputField
-        label="Emergency Contact Number"
-        value="emergencyContact"
-        placeholder="Emergency contact"
-      />
-
-      <Divider className="my-4" />
+      <View className="bg-white rounded-xl shadow p-4 mb-6">
+        <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">
+          Contact Details
+        </Text>
+        <Divider className="mb-3" />
+        <PhoneInputField
+          label="Mobile"
+          value="mobile"
+          placeholder="Phone number"
+        />
+        <TextField label="Email" value="email" placeholder="Email" />
+        <PhoneInputField
+          label="Emergency Contact Number"
+          value="emergencyContact"
+          placeholder="Emergency contact"
+        />
+      </View>
 
       {/* Personal Details */}
-      <Text className="text-base font-semibold mb-2 mt-2">Personal Details</Text>
-      <Divider className="mb-3" />
-      <DatePickerField
-        label="Date of Birth"
-        value="dateOfBirth"
-        placeholder="YYYY-MM-DD"
-      />
-      <TextField label="Age" value="age" placeholder="Age" />
-      <RadioField
-        label="Gender"
-        value="gender"
-        options={[
-          { label: "Male", value: "male" },
-          { label: "Female", value: "female" },
-          { label: "Other", value: "other" },
-        ]}
-      />
-      <SelectField
-        label="Nationality"
-        value="nationality"
-        options={nationalities}
-      />
-      <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
-      {values?.admissionCategory === "Other" && (
-        <TextField
-          label="Reason to join the hostel"
-          value="admissionCategoryReason"
-          placeholder="Please specify your reason"
+      <View className="bg-white rounded-xl shadow p-4 mb-6">
+        <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">
+          Personal Details
+        </Text>
+        <Divider className="mb-3" />
+        <DatePickerField
+          label="Date of Birth"
+          value="dateOfBirth"
+          placeholder="YYYY-MM-DD"
         />
-      )}
-      <SelectField
-        label="Blood Group"
-        value="bloodGroup"
-        options={bloodGroups}
-      />
-      <TextField
-        label="Medical History (Type NIL if none)"
-        value="medicalHistory"
-        placeholder="Optional"
-      />
-    </>
+        <TextField label="Age" value="age" placeholder="Age" />
+        <RadioField
+          label="Gender"
+          value="gender"
+          options={[
+            { label: "Male", value: "male" },
+            { label: "Female", value: "female" },
+            { label: "Other", value: "other" },
+          ]}
+        />
+        <SelectField
+          label="Nationality"
+          value="nationality"
+          options={nationalities}
+        />
+        <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
+        {values?.admissionCategory === "Other" && (
+          <TextField
+            label="Reason to join the hostel"
+            value="admissionCategoryReason"
+            placeholder="Please specify your reason"
+          />
+        )}
+        <SelectField
+          label="Blood Group"
+          value="bloodGroup"
+          options={bloodGroups}
+        />
+        <TextField
+          label="Medical History (Type NIL if none)"
+          value="medicalHistory"
+          placeholder="Optional"
+        />
+      </View>
+    </View>
   );
 };
 

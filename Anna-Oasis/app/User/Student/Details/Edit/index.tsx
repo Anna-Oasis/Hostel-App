@@ -49,7 +49,7 @@ export default function DetailsPage() {
     <Formik
       initialValues={details ? { ...initialValues, ...details } : initialValues}
       // initialValues={testValues} // For testing purposes, replace with initialValues in production
-      validationSchema={validationSchemas[page]}
+      // validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
