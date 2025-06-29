@@ -19,40 +19,40 @@ import { AuthRequest } from "../types/roles";
 import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
 import { getRollNoFromUserId } from "../services/helper";
 
-// export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
-//   const { vacatingForm, cautionDeposit } = req.body;
+export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
+  const { vacatingForm, cautionDeposit } = req.body;
 
-//   if (!vacatingForm || !cautionDeposit) {
-//     throw AppError("Both vacatingForm and cautionDeposit are required", httpStatus.BAD_REQUEST);
-//   }
+  if (!vacatingForm || !cautionDeposit) {
+    throw AppError("Both vacatingForm and cautionDeposit are required", httpStatus.BAD_REQUEST);
+  }
 
-//   const validatedVacatingForm = vacatingFormSchema.parse(vacatingForm);
-//   const validatedCautionDeposit = cautionDepositSchema.parse(cautionDeposit);
+  const validatedVacatingForm = vacatingFormSchema.parse(vacatingForm);
+  const validatedCautionDeposit = cautionDepositSchema.parse(cautionDeposit);
 
-//   const vacatingData = {
-//     ...validatedVacatingForm,
-//     vacating_date: validatedVacatingForm.vacating_date.toISOString().split("T")[0],
-//     vacating_time: validatedVacatingForm.vacating_time,
-//   };
+  const vacatingData = {
+    ...validatedVacatingForm,
+    vacating_date: validatedVacatingForm.vacating_date.toISOString().split("T")[0],
+    vacating_time: validatedVacatingForm.vacating_time,
+  };
 
-//   const [vacatingRecord] = await createVacatingHostelForm(vacatingData);
+  const [vacatingRecord] = await createVacatingHostelForm(vacatingData);
 
-//   const cautionData = {
-//     ...validatedCautionDeposit,
-//     vacating_hostel_id: vacatingRecord.id,
-//   };
+  const cautionData = {
+    ...validatedCautionDeposit,
+    vacating_hostel_id: vacatingRecord.id,
+  };
 
-//   const [refundRecord] = await createCautionDepositRefund(cautionData);
+  const [refundRecord] = await createCautionDepositRefund(cautionData);
 
-//   res.status(httpStatus.CREATED).json({
-//     success: true,
-//     message: "Vacating hostel and caution deposit form submitted successfully",
-//     data: {
-//       vacatingHostel: vacatingRecord,
-//       cautionDeposit: refundRecord,
-//     },
-//   });
-// }
+  res.status(httpStatus.CREATED).json({
+    success: true,
+    message: "Vacating hostel and caution deposit form submitted successfully",
+    data: {
+      vacatingHostel: vacatingRecord,
+      cautionDeposit: refundRecord,
+    },
+  });
+}
 
 
 export async function getVacatingHostelFormsOfaStudentController(req: AuthRequest, res: Response) {
