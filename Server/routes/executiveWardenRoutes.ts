@@ -72,8 +72,6 @@ executiveWardenRouter.put(
   hasRole(["executiveWarden"]),
   errorWrapper(updateLeaveStatusForRC)
 );
-
-
 executiveWardenRouter.post("/declaration",
   authenticateUser,
   hasRole(['executiveWarden']),

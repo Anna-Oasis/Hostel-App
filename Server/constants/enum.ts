@@ -27,9 +27,8 @@ export const endeavour = {
 export const admissionApprovalStatus = {
   SUBMITTED: "0",
   MANAGER: "1",
-  RC: "2",
-  DEPUTYWARDEN: "3",
-  EXECUTIVEWARDEN: "4",
+  ROOM_ALLOCATED : "2",
+  WARDEN: "3",
   DECLINED: "-1",
 };
 

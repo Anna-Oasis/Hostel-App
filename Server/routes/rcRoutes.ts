@@ -4,7 +4,7 @@
 import { Router } from "express";
 import {
   fetchAdmissionsApprovedByUser,
-   updateApprovalStatusByRCController,
+   allocateRoomController,
   getAdmissionWaitingForApprovalByRCController
 } from "../controllers/admissionController";
 import {
@@ -31,10 +31,18 @@ import {
   createAttendanceByRcController,
   getAttendanceByRcController
 } from "../controllers/attendanceController";
-import {  getRCsController } from "../controllers/rcController";
 import { getRCLeaveApprovals } from "../services/rcLeaveService";
 import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
+
 import {getDeclarationForOthersController} from '../controllers/declarationController';
+
+import {
+  getRCDetailsController,
+  postRCDetailsController,
+  putRCDetailsController,
+} from "../controllers/rcController";
+
+
 
 const rcRouter = Router();
 
@@ -46,10 +54,10 @@ rcRouter.get(
   errorWrapper(getAdmissionWaitingForApprovalByRCController)
 );
 rcRouter.put(
-  "/admissions/:admission_id",
+  "/admissions/room/:admission_id",
   authenticateUser,
   hasRole(["rc"]),
-  errorWrapper(updateApprovalStatusByRCController)
+  errorWrapper(allocateRoomController)
 );
 rcRouter.get(
   "/admissions/approvals",
@@ -151,5 +159,7 @@ rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyH
 
 //get all types of Latest Declarations  
 rcRouter.get("/declaration",authenticateUser,hasRole(['rc']),errorWrapper(getDeclarationForOthersController));
+
+
 export default rcRouter;
 

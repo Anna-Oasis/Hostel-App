@@ -6,6 +6,7 @@ import {
   fetchAdmissionsApprovedByUser,
   fetchAdmissionWaitingForApprovalController,
   updateApprovalStatusByWardenController,
+  allocateRoomController,
 } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
@@ -56,6 +57,12 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(fetchAdmissionsApprovedByUser)
+);
+deputyWardenRouter.put(
+  "/admissions/room/:admission_id",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(allocateRoomController)
 );
 
 // Summer vacation routes

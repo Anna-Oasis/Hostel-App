@@ -20,7 +20,7 @@ export const admissionModel = pgTable("admission", {
 
   declaration_id: integer("declaration_id")
       .notNull()
-      .references(() => declarationModel.id, { onDelete: "no action" }).unique(),
+      .references(() => declarationModel.id, { onDelete: "no action" }),
 
   // Foreign key to student roll number
   roll_number: varchar("roll_number", { length: 20 })

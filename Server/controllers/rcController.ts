@@ -11,6 +11,8 @@ import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
 import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
+import { getRCDetailsByUserIdService, createRCDetailsService, updateRCDetailsService } from "../services/rcServices";
+import { rcDetailsSchema } from "../validation/rcDetails.schema";
 
 
 export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
@@ -110,3 +112,80 @@ export async function deleteRCController(req: AuthRequest, res: Response): Promi
   });
 }
 
+export async function getRCDetailsController(req: AuthRequest, res: Response): Promise<void> {
+  if (!req.User || !req.User.id) {
+    throw AppError("User ID missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const userId = Number(req.User.id);
+  const details = await getRCDetailsByUserIdService(userId);
+
+  if (!details) {
+    throw AppError("RC Details not found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "RC Details fetched successfully",
+    count: 1,
+    data: [details],
+  });
+}
+
+export const postRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User || !req.User.id) {
+    throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const inserted = await createRCDetailsService({
+    ...req.body,
+    userId: req.User.id,
+    ...(req.body.dob && {
+      dob: new Date(req.body.dob).toISOString().split("T")[0],
+    }),
+  });
+
+  res.status(httpStatus.CREATED).json({
+    success: true,
+    message: "RC Details created successfully",
+    count: inserted.length,
+    data: inserted,
+  });
+};
+
+
+
+export const putRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User || !req.User.id) {
+    throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const userId = Number(req.User.id);
+
+  const updatePayload = {
+    ...req.body,
+    userId,
+    ...(req.body.dob && {
+      dob: new Date(req.body.dob).toISOString().split("T")[0],
+    }),
+  };
+
+  const result = await updateRCDetailsService(updatePayload);
+
+  if (!result || result.length === 0) {
+    throw AppError("Failed to update RC Details", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "RC Details updated successfully",
+    count: result.length,
+    data: result,
+  });
+};

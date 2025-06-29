@@ -59,13 +59,13 @@ studentRouter.put("/details/:rollNo",fileFields,authenticateUser ,hasRole(['stud
 studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getVacatingHostelFormsOfaStudentController));
 studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
-//LEAVE FORMS
+// LEAVE FORMS
 studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormFromController));
 //get all the leave forms
 studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsFromController));
 
 // SUMMER VACATION FORMS
-//create a new Summer vacation form
+// create a new Summer vacation form
 studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));
