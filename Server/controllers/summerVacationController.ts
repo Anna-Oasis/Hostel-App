@@ -14,33 +14,33 @@ import { AuthRequest } from "../types/roles";
 import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
 import { getRCById } from "../services/rcServices";
 
-// export const createSummerVacationFromController = async (
-//   req: AuthRequest,
-//   res: Response
-// ) => {
-//   const data = req.body;
+export const createSummerVacationFromController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  const data = req.body;
 
-//   if (!data || Object.keys(data).length === 0) {
-//     throw AppError("No data provided", httpStatus.BAD_REQUEST);
-//   }
+  if (!data || Object.keys(data).length === 0) {
+    throw AppError("No data provided", httpStatus.BAD_REQUEST);
+  }
 
-//   const validatedData = summerVacationSchema.parse(data);
+  const validatedData = summerVacationSchema.parse(data);
 
-//   const result = await createSummerVacationForm(validatedData);
+  const result = await createSummerVacationForm(validatedData);
 
-//   if (!result || result.length === 0) {
-//     throw AppError(
-//       "Internal error while generating leave form",
-//       httpStatus.INTERNAL_SERVER_ERROR
-//     );
-//   }
+  if (!result || result.length === 0) {
+    throw AppError(
+      "Internal error while generating leave form",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
 
-//   res.status(httpStatus.OK).json({
-//     success: true,
-//     message: "New leave form has been created",
-//     data: result,
-//   });
-// };
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "New leave form has been created",
+    data: result,
+  });
+};
 
 export const getAllSummerVacationFormsOfStudent = async (
   req: AuthRequest,
