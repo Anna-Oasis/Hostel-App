@@ -29,6 +29,7 @@ import {
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
 import { getRCById } from "../services/rcServices";
+import { findStudentByRollNo } from "../services/detailsService";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/admission.schema";
 
@@ -182,6 +183,12 @@ export async function createAdmissionController(
 ) {
   const admissionData = req.body;
   const parsedData = createAdmissionSchema.parse(admissionData);
+
+  const studentData = await findStudentByRollNo(parsedData.roll_number)
+
+  if(!studentData[0].approve) {
+    throw AppError("Student is not approved", httpStatus.BAD_REQUEST);
+  }
 
   const existingAdmissions = await checkForAdmissionByRollNumberAndAcademicYear(
     parsedData.roll_number,
