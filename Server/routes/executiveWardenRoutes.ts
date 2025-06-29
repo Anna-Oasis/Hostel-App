@@ -6,6 +6,7 @@ import {
   fetchAdmissionsApprovedByUser,
   fetchAdmissionWaitingForApprovalController,
   updateApprovalStatusByWardenController,
+  allocateRoomController
 } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
@@ -16,6 +17,7 @@ import {
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
+
 const executiveWardenRouter = Router();
 
 // Welcome route
@@ -43,6 +45,13 @@ executiveWardenRouter.get(
   errorWrapper(fetchAdmissionsApprovedByUser)
 );
 
+executiveWardenRouter.put(
+  "/admissions/room/:admission_id",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(allocateRoomController)
+);
+
 // Room details route
 executiveWardenRouter.get(
   "/rooms",
@@ -64,6 +73,7 @@ executiveWardenRouter.put(
   errorWrapper(updateLeaveStatusForRC)
 );
 
+
 executiveWardenRouter.post("/declaration",
   authenticateUser,
   hasRole(['executiveWarden']),
@@ -79,5 +89,7 @@ executiveWardenRouter.get("/declaration/:type",
 executiveWardenRouter.get("/declaration",
   authenticateUser,
   hasRole(['executiveWarden']),
-  errorWrapper(getDeclarationForOthersController));
+  errorWrapper(getDeclarationForOthersController)
+);
+
 export default executiveWardenRouter;
