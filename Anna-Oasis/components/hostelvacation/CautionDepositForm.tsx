@@ -1,10 +1,9 @@
-import React from "react";
 import { View, ScrollView } from "react-native";
-import { useFormikContext } from "formik";
 import TextField from "@/components/form/TextField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { NOTE } from "@/constants/validations/cautionDepositValidation";
+import HelperText from "../HelperText";
 
 interface CautionDepositFormProps {
   onSubmit: () => void;
@@ -15,7 +14,6 @@ export default function CautionDepositForm({
   onSubmit,
   onBack,
 }: CautionDepositFormProps) {
-  // You can access values if needed: const { values } = useFormikContext<any>();
   return (
     <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -45,11 +43,7 @@ export default function CautionDepositForm({
             value="ifscCode"
             placeholder="Enter IFS Code"
           />
-
-          <View className="bg-gray-100 rounded-md p-3 mt-2">
-            <Text className="text-xs text-gray-700 font-medium mb-1">Note:</Text>
-            <Text className="text-xs text-gray-700">{NOTE}</Text>
-          </View>
+          <HelperText>{NOTE}</HelperText>
 
           <Button className="mt-4" onPress={onSubmit}>
             <ButtonText>Submit</ButtonText>
