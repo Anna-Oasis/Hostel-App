@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/admission";

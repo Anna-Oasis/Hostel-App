@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { getStudentDetails } from "@/utils/student/studentDetailsApi";
 import useUserStore from "@/stores/userStore";
 import HelperText from "@/components/HelperText";
+import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 
 export default function StudentMain() {
   const menuItems = [
@@ -62,7 +63,10 @@ export default function StudentMain() {
     try {
       const details = await getStudentDetails();
       if (details.count === 0) {
-        Alert.alert("Personal Details", "Please fill your personal details first");
+        Alert.alert(
+          "Personal Details",
+          "Please fill your personal details first"
+        );
         router.push("/User/Student/Details/Edit");
       } else {
         setDetails(details.data);
@@ -83,12 +87,14 @@ export default function StudentMain() {
         {details?.approve === false && (
           <View className="w-full mb-2">
             <HelperText>
-              Your profile is not verified yet. You cannot access other features until manager verifies your profile.
+              Your profile is not verified yet. You cannot access other features
+              until manager verifies your profile.
             </HelperText>
           </View>
         )}
         {menuItems.map((item, idx) => {
-          const isDisabled = details?.approve === false && item.title !== "Personal Details";
+          const isDisabled =
+            details?.approve === false && item.title !== "Personal Details";
           return (
             <Button
               key={idx}
@@ -96,7 +102,7 @@ export default function StudentMain() {
               className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"
               style={[
                 { backgroundColor: item.color },
-                isDisabled && { opacity: 0.5 }
+                isDisabled && { opacity: 0.5 },
               ]}
               variant="solid"
               disabled={isDisabled}
