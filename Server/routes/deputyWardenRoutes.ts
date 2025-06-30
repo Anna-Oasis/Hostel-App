@@ -26,6 +26,7 @@ import {
 import {
   createRCController,
   deleteRCController,
+  getAllRCDetailsController,
   getRCsController,
   updateRCController,
 } from "../controllers/rcController";
@@ -167,6 +168,13 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(getAllAttendanceController)
+);
+
+deputyWardenRouter.get(
+  "/rc/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  getAllRCDetailsController
 );
 
 export default deputyWardenRouter;

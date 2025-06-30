@@ -4,6 +4,7 @@ import {
   getAllRCs,
   deleteRC,
   updateRC,
+  getAllRCDetailsService,
 } from "../services/rcServices";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
@@ -13,7 +14,7 @@ import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
 import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
 import { getRCDetailsByUserIdService, createRCDetailsService, updateRCDetailsService } from "../services/rcServices";
 import { rcDetailsSchema } from "../validation/rcDetails.schema";
-
+import { handleFileUpload } from "../services/cloudflare/fileUpload";
 
 export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
@@ -113,7 +114,7 @@ export async function deleteRCController(req: AuthRequest, res: Response): Promi
 }
 
 export async function getRCDetailsController(req: AuthRequest, res: Response): Promise<void> {
-  if (!req.User || !req.User.id) {
+  if (!req.User?.id) {
     throw AppError("User ID missing", httpStatus.UNAUTHORIZED);
   }
 
@@ -136,16 +137,51 @@ export const postRCDetailsController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id) {
+  if (!req.User?.id) {
     throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
   }
+  const userId = req.User.id;
+
+  let passportPhotoFile: Express.Multer.File | undefined;
+  let rcSignatureFile: Express.Multer.File | undefined;
+
+  if (
+    req.files &&
+    !Array.isArray(req.files) &&
+    typeof req.files === "object"
+  ) {
+    passportPhotoFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["passportPhoto"]?.[0];
+    rcSignatureFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["rcSignature"]?.[0];
+  }
+
+  const passportPhotoUrl = passportPhotoFile
+    ? await handleFileUpload(passportPhotoFile, String(userId), "rc", "passport")
+    : undefined;
+
+  const rcSignatureUrl = rcSignatureFile
+    ? await handleFileUpload(rcSignatureFile, String(userId), "rc", "signature")
+    : undefined;
+
+  const rawPayload = {
+    ...req.body,
+    passportPhotoUrl,
+    rcSignatureUrl,
+    dob: req.body.dob
+      ? new Date(req.body.dob)
+      : undefined,
+  };
+
+  const validated = rcDetailsSchema.safeParse(rawPayload);
+  if (!validated.success) {
+    throw AppError(validated.error.errors[0].message, httpStatus.BAD_REQUEST);
+  }
+
+  const data = validated.data;
 
   const inserted = await createRCDetailsService({
-    ...req.body,
-    userId: req.User.id,
-    ...(req.body.dob && {
-      dob: new Date(req.body.dob).toISOString().split("T")[0],
-    }),
+    ...data,
+    userId: Number(userId),
+    dob: data.dob.toISOString().split("T")[0], 
   });
 
   res.status(httpStatus.CREATED).json({
@@ -158,22 +194,55 @@ export const postRCDetailsController = async (
 
 
 
+
 export const putRCDetailsController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id) {
+  if (!req.User?.id) {
     throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
   }
 
   const userId = Number(req.User.id);
 
-  const updatePayload = {
+  let passportPhotoFile: Express.Multer.File | undefined;
+  let rcSignatureFile: Express.Multer.File | undefined;
+
+  if (
+    req.files &&
+    !Array.isArray(req.files) &&
+    typeof req.files === "object"
+  ) {
+    passportPhotoFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["passportPhoto"]?.[0];
+    rcSignatureFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["rcSignature"]?.[0];
+  }
+
+  const passportPhotoUrl = passportPhotoFile
+    ? await handleFileUpload(passportPhotoFile, String(userId), "rc", "passport")
+    : undefined;
+
+  const rcSignatureUrl = rcSignatureFile
+    ? await handleFileUpload(rcSignatureFile, String(userId), "rc", "signature")
+    : undefined;
+
+  const rawPayload = {
     ...req.body,
-    userId,
-    ...(req.body.dob && {
-      dob: new Date(req.body.dob).toISOString().split("T")[0],
-    }),
+    passportPhotoUrl,
+    rcSignatureUrl,
+    dob: req.body.dob ? new Date(req.body.dob) : undefined,
+  };
+
+  const parsed = rcDetailsSchema.safeParse(rawPayload);
+  if (!parsed.success) {
+    throw AppError(parsed.error.errors[0].message, httpStatus.BAD_REQUEST);
+  }
+
+  const validatedData = parsed.data;
+
+  const updatePayload = {
+    ...validatedData,
+    userId, 
+    dob: validatedData.dob.toISOString().split("T")[0],
   };
 
   const result = await updateRCDetailsService(updatePayload);
@@ -187,5 +256,24 @@ export const putRCDetailsController = async (
     message: "RC Details updated successfully",
     count: result.length,
     data: result,
+  });
+};
+
+
+export const getAllRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const rcList = await getAllRCDetailsService();
+
+  if (!rcList || rcList.length === 0) {
+    throw AppError("No RC Details found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "All RC Details fetched successfully",
+    count: rcList.length,
+    data: rcList,
   });
 };

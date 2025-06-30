@@ -10,7 +10,9 @@ import {
   getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
+import {
+  createSummerVacationFromController,
+  getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {

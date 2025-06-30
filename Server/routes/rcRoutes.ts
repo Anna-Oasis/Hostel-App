@@ -38,7 +38,7 @@ import {
   postRCDetailsController,
   putRCDetailsController,
 } from "../controllers/rcController";
-
+import { upload } from "../middleware/multer";
 
 const rcRouter = Router();
 
@@ -165,6 +165,10 @@ rcRouter.post(
   "/details",
   authenticateUser,
   hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
   postRCDetailsController
 );
 
@@ -172,6 +176,10 @@ rcRouter.put(
   "/details",
   authenticateUser,
   hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
   putRCDetailsController
 );
 
