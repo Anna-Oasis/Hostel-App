@@ -10,6 +10,7 @@ import {
   SummerVacationForm,
 } from "@/utils/student/studentVacationApi";
 import { getSummerVacationBadgeStatus } from "@/utils/getBadgeStatus";
+import EmptyPage from "@/components/EmptyPage";
 
 const SummerVacationHistory = () => {
   const user = useUserStore((state) => state.details);
@@ -62,9 +63,10 @@ const SummerVacationHistory = () => {
           </Box>
         ))
       ) : (
-        <Text className="text-center text-gray-500">
-          No summer vacation forms submitted yet.
-        </Text>
+        <EmptyPage
+          title="No summer vacation forms"
+          description="You have not submitted any summer vacation forms yet."
+        />
       )}
     </ScrollView>
   );

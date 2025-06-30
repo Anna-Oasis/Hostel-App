@@ -1,8 +1,9 @@
-import { getVacatingHistory } from '@/utils/student/studentVacatingHostelApi';
-import { useEffect, useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
-import ApprovalCard from '@/components/ApprovalCard';
-import { getHostelVacationBadgeStatus } from '@/utils/getBadgeStatus';
+import { getVacatingHistory } from "@/utils/student/studentVacatingHostelApi";
+import { useEffect, useState } from "react";
+import { ScrollView, View, Text } from "react-native";
+import ApprovalCard from "@/components/ApprovalCard";
+import { getHostelVacationBadgeStatus } from "@/utils/getBadgeStatus";
+import EmptyPage from "../EmptyPage";
 
 const HostelVacationHistory = () => {
   const [history, setHistory] = useState<any[]>([]);
@@ -17,11 +18,12 @@ const HostelVacationHistory = () => {
 
   return (
     <ScrollView>
-      <View className='flex-1 bg-white p-2'>
+      <View className="flex-1 bg-white p-2">
         {history.length === 0 ? (
-          <View>
-            <Text>No Previous History</Text>
-          </View>
+          <EmptyPage
+            title="No Hostel Vacation History"
+            description="You have not submitted any hostel vacation requests yet."
+          />
         ) : (
           history.map((d, index) => {
             const vac = d.vacating;
@@ -29,7 +31,7 @@ const HostelVacationHistory = () => {
             return (
               <ApprovalCard
                 key={vac.id}
-                title='Hostel Vacation'
+                title="Hostel Vacation"
                 subTitle={`Vacating Hostel at ${vac.vacating_date}`}
                 badge={getHostelVacationBadgeStatus(vac.status)}
                 data={{
@@ -41,9 +43,9 @@ const HostelVacationHistory = () => {
                   "Account Holder": caution?.accountHolderName || "N/A",
                   "Bank Name": caution?.bankName || "N/A",
                   "Bank Address": caution?.addressOfTheBank || "N/A",
-                  "IFSC": caution?.IFSCode || "N/A",
+                  IFSC: caution?.IFSCode || "N/A",
                   "Refund Amount": caution?.refund_amount || "0.00",
-                  "Deductions": caution?.deductions || "0.00",
+                  Deductions: caution?.deductions || "0.00",
                   "Submitted At": new Date(vac.created_at).toLocaleString(),
                 }}
               />
