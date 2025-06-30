@@ -204,10 +204,13 @@ export async function createAdmissionController(
 
   const newAdmission = await createAdmission({
     ...parsedData,
+    declaration_id:parsedData.declaration_id,
     status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
+
     updatedAt: new Date(),
     declaration_id: 1, // replace this with the actual declaration ID
+
   });
 
   res.status(httpStatus.CREATED).json({
@@ -437,6 +440,7 @@ export const allocateRoomController = async (
   const currentYear = admission[0].academicYear;
   const status = admissionApprovalStatus.ROOM_ALLOCATED;
 
+
   // Check room capacity before approval
   const room = await checkRoom(
     validated.room,
@@ -450,6 +454,7 @@ export const allocateRoomController = async (
     throw AppError(
       "Student is already assigned to this room",
       httpStatus.BAD_REQUEST
+
     );
   }
   if (room.rollNo && room.rollNo.length >= ROOM_SIZE) {
@@ -476,11 +481,16 @@ export const allocateRoomController = async (
     );
   }
 
+
+    // Update student hostel details
+    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block!);
+
   // Update admission status
   const admissionUpdate = await updateAdmissionStatus({
     admission_id: Number(admission_id),
     status,
   });
+
 
   if (!admissionUpdate) {
     throw AppError(

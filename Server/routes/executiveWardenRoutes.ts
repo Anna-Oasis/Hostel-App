@@ -11,10 +11,12 @@ import {
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { postDeclarationFromController,getLatestDeclarationFromController} from "../controllers/declarationController";
 import {
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { createAdmissionSessionController, getAdmissionSessionsController, updateAdmissionSessionController } from "../controllers/admissionSessionController";
 import { getAllRCDetailsController } from "../controllers/rcController";
 
@@ -91,6 +93,23 @@ executiveWardenRouter.put(
   hasRole(["executiveWarden"]),
   errorWrapper(updateLeaveStatusForRC)
 );
+executiveWardenRouter.post("/declaration",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(postDeclarationFromController)
+);
+
+executiveWardenRouter.get("/declaration/:type",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(getLatestDeclarationFromController)
+);
+
+executiveWardenRouter.get("/declaration",
+  authenticateUser,
+  hasRole(['executiveWarden']),
+  errorWrapper(getDeclarationForOthersController));
+
 executiveWardenRouter.get(
   "/rc/details",
   authenticateUser,

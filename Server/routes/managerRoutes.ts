@@ -17,6 +17,7 @@ import {
   approveVacatingFormByManagerController,
   getVacatingFormsForManagerController
 } from '../controllers/vacatingHostelController';
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
 
 const managerRouter = Router();
@@ -91,6 +92,11 @@ managerRouter.put(
   errorWrapper(approveStudentDetailsByManagerController)
 );
 
+//get all types of Latest Declarations  
+managerRouter.get("/declaration",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(getDeclarationForOthersController));
 export default managerRouter;
 
 

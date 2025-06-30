@@ -21,6 +21,7 @@ import {
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { createLeaveFormController,getAllLeaveFormsByRollNoController} from "../controllers/leaveController";
 
 
@@ -72,6 +73,8 @@ studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), er
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));
 
+//get all types of Latest Declarations  
+studentRouter.get("/declaration",authenticateUser,hasRole(['student']),errorWrapper(getDeclarationForOthersController));
 // GET latest active admission session for a semester
 studentRouter.get(
   "/admission/session/:semester",

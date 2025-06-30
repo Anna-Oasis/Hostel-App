@@ -22,10 +22,9 @@ export const vacatingFormSchema = z.object({
 
   returned_items: z.array(z.string()).optional(),
 
-  endeavour: z.enum(Object.values(endeavour) as [string, ...string[]])
-              .refine((val) => val !== "", { message: "Endeavour is required" }),
+  endeavour: z.string().min(1, "Endeavour is required"),
 
-  endeavourDescription: z.string({ required_error: "Endeavour Description is required" }).min(1, "Endeavour Description cannot be empty"),
+  endeavourDescription: z.string().min(1, "Endeavour description is required"),
 
-  feedback: z.string({ required_error: "Feedback is required" }).min(1, "Feedback cannot be empty"),
+  feedback: z.string().min(1, "Feedback is required"),
 });

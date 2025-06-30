@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const leaveFormSchema = z.object({
+  roll_number: z.string().min(1, "Roll number is required"),
   leave_type: z.string().min(1, "Leave type is required"),
   from_date: z.string().refine(
     (date) => !isNaN(Date.parse(date)),

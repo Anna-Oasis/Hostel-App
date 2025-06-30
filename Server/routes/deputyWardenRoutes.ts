@@ -36,6 +36,7 @@ import {
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 
 const deputyWardenRouter = Router();
 
@@ -170,6 +171,11 @@ deputyWardenRouter.get(
   errorWrapper(getAllAttendanceController)
 );
 
+//get all types of Latest Declarations  
+deputyWardenRouter.get("/declaration",
+  authenticateUser,
+  hasRole(['deputyWarden']),
+  errorWrapper(getDeclarationForOthersController));
 deputyWardenRouter.get(
   "/rc/details",
   authenticateUser,

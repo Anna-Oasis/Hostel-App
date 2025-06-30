@@ -68,3 +68,9 @@ export const grievanceApprovalStatus = {
   MANAGER: "2",
   DECLINED: "-1",
 };
+
+export const declaration = {
+  ADMISSION: "ADMISSION",
+  SUMMER_VACATION: "SUMMER_VACATION",
+  CHECK:"CHECK"
+};

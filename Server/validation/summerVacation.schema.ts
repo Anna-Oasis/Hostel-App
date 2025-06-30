@@ -8,11 +8,23 @@ export const summerVacationSchema = z.object({
     .min(1, "Roll number is required")
     .max(20, "Roll number too long"),
 
+  email: z.string()
+    .email("Invalid email format"),
+
+  mobile: z.string()
+    .min(10, "Mobile number too short")
+    .max(15, "Mobile number too long"),
+
+  declarartion_id: z.number({
+    required_error: "Declaration ID is required",
+    invalid_type_error: "Declaration ID must be a number"
+  }),
+
   vacation_from: z.string()
     .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid ISO timestamp for vacation_time"
+      message: "Invalid ISO timestamp for vacation_from"
     })
-    .transform((val) => new Date(val)), 
+    .transform((val) => new Date(val)),
 
   address_of_stay: z.string()
     .min(3, "Address is too short")
