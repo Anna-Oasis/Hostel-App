@@ -44,7 +44,7 @@ export async function getLatestAdmissionSessionForSemesterService(semester: numb
     .from(admissionSessionModel)
     .where(
       and(
-        sql`${admissionSessionModel.semesters}.contains(ARRAY[${semester}])`,
+        sql`${semester} = ANY(${admissionSessionModel.semesters})`,
         sql`${admissionSessionModel.from} <= ${today}`,
         sql`${admissionSessionModel.to} >= ${today}`
       )

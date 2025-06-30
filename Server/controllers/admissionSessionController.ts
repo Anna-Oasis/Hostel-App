@@ -88,6 +88,7 @@ export async function getLatestAdmissionSessionForSemesterController(req: AuthRe
         : "No active admission session found for the given semester",
     });
   } catch (err) {
+    console.error("Error fetching latest admission session:", err);
     throw AppError(
       "Failed to fetch admission session",
       httpStatus.INTERNAL_SERVER_ERROR
