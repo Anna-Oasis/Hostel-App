@@ -32,7 +32,7 @@ export const fetchStudentsForManagerVerification = async () => {
   return await db
     .select()
     .from(studentModel)
-    .where(isNull(studentModel.approve))
+    .where(eq(studentModel.approve, false))
     .orderBy(studentModel.createdAt);
 }
 

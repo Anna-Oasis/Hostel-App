@@ -16,6 +16,12 @@ export default function ManagerPage() {
       color: "#4F46E5",
     },
     {
+      title: "Profile Verifications",
+      route: "/Manager/ProfileVerifications",
+      icon: FileTextIcon,
+      color: "#6366F1",
+    },
+    {
       title: "Grievances",
       route: "/Manager/Grievances",
       icon: FileTextIcon,
