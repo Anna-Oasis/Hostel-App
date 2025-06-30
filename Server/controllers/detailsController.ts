@@ -76,48 +76,6 @@ export async function getStudentDetailsUsingUserIdController(req: AuthRequest, r
 }
 
 export async function createStudentDetailsController(req: AuthRequest, res: Response) {
-    if (!req.User) {
-      throw AppError(
-        "User information is missing from request",
-        httpStatus.UNAUTHORIZED
-      );
-    }
-    console.log("Request Body:", req.body);
-
-    const validation = studentSchema.safeParse(req.body);
-    if (!validation.success) {
-      console.error("Validation failed:", validation.error.format());
-      throw AppError("Validation error", httpStatus.BAD_REQUEST);
-    }
-    const validated = validation.data;
-
-
-    const Data = {
-      ...validated,
-      dateOfBirth: dayjs(validated.dateOfBirth).format("YYYY-MM-DD"),
-      createdAt: dayjs(validated.createdAt).format("YYYY-MM-DD"),
-      user_id: req.User.id,
-    };
-
-    const result = await insertStudentDetails(Data);
-
-    if(!result){
-      throw AppError(
-        "Failed to insert student detials",
-        httpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    res.status(httpStatus.CREATED).json({
-      success: true,
-      data: result,
-      count:result.length,
-      message: "Student details inserted successfully",
-    });
-};
-
-
-/*export async function createStudentDetailsController(req: AuthRequest, res: Response) {
   if (!req.User) {
     throw AppError("User information is missing from request", httpStatus.UNAUTHORIZED);
   }
@@ -128,15 +86,13 @@ export async function createStudentDetailsController(req: AuthRequest, res: Resp
     ...validatedData,
     dateOfBirth: dayjs(validatedData.dateOfBirth).format("YYYY-MM-DD"),
     createdAt: dayjs(validatedData.createdAt).format("YYYY-MM-DD"),
-    userId: req.User.id
+    user_id: req.User.id
   };
 
   const missingFile = requiredFiles.find((field) => !(files as FileMap)?.[field]?.length);
   if (missingFile) {
     throw AppError(`Missing required file: ${missingFile}`, httpStatus.BAD_REQUEST);
   }
-
-  
 
   const uploadedUrls: Record<string, string> = {};
   const userId = req.User.id;
@@ -162,7 +118,7 @@ export async function createStudentDetailsController(req: AuthRequest, res: Resp
     data: result,
     message: "Student details created successfully",
   });
-}*/
+}
 
 
 export async function updateStudentDetailsController(req: AuthRequest, res: Response) {

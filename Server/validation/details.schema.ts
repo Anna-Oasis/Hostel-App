@@ -74,13 +74,6 @@ export const studentSchema = z.object({
   guardianCountry: z.string({ required_error: "Guardian country is required" }).min(1, "Guardian country cannot be empty"),
   guardianPostalCode: z.string({ required_error: "Guardian postal code is required" }).regex(postalCodeRegex, "Invalid guardian postal code"),
 
-  // Uploads
-  passportPhotoUrl: z.string({ required_error: "Passport photo URL is required" }).min(1, "Passport photo URL cannot be empty"),
-  studentSignatureUrl: z.string({ required_error: "Student signature URL is required" }).min(1, "Student signature URL cannot be empty"),
-  parentGuardianSignatureUrl: z.string({ required_error: "Parent/Guardian signature URL is required" }).min(1, "Parent/Guardian signature URL cannot be empty"),
-  admissionSlipUrl: z.string({ required_error: "Admission slip URL is required" }).min(1, "Admission slip URL cannot be empty"),
-  categoryProofUrl: z.string({ required_error: "Category proof URL is required" }).min(1, "Category proof URL cannot be empty"),
-
   // Timestamp
   createdAt: z.coerce.date({ required_error: "Created date is required" }).default(() => new Date()),
 });
