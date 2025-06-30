@@ -1,7 +1,6 @@
 import api from "@/api";
 import { getToken } from "@/utils/authUtils";
 
-// Fetch all student leave forms for RC approval
 export async function fetchRCLeaveForms() {
   try {
     const token = await getToken();
@@ -17,7 +16,6 @@ export async function fetchRCLeaveForms() {
   }
 }
 
-// Approve or reject a leave form
 export async function updateRCLeaveFormStatus(leaveFormId: number, approve: boolean, comment?: string) {
   try {
     const token = await getToken();

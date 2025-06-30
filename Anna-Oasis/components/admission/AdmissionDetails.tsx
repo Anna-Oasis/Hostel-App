@@ -22,7 +22,6 @@ const AdmissionDetails = () => {
     <View>
       <SelectField label="Mess Preference" value="messPreference" options={messPreferences} />
       <SelectField label="Previous Resident" value="previousResident" options={previousResidentOptions} />
-      <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
 
       <Text className="text-xl font-bold mb-2" style={{marginTop: 24}}>Hostel Fee Payment</Text>
       <View className="items-center mb-4">

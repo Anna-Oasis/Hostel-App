@@ -1,142 +1,111 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { View } from "react-native";
+import { Formik } from "formik";
 import VacatingForm from "@/components/hostelvacation/VacatingForm";
 import CautionDepositForm from "@/components/hostelvacation/CautionDepositForm";
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal";
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { initialValues as vacatingInitialValues } from "@/constants/vacatingHostels";
-import { initialValues as cautionDepositInitialValues } from "@/constants/cautionDepositValidation";
-import { submitStudentVacatingForm } from "@/utils/vacatingHostelUtils";
-import { View } from "react-native";
-import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHistory";
-import { FilePen, History } from "lucide-react-native";
+import { initialValues as vacateInitialValues } from "@/constants/vacatingHostels";
+import { initialValues as depositInitialValues, validationSchema as depositValidationSchema } from "@/constants/validations/cautionDepositValidation";
+import { validationSchema as vacateValidationSchema } from "@/constants/validations/vacatingHostelValidation";
+import { submitStudentVacatingForm } from "@/utils/student/studentVacatingHostelApi";
 import useUserStore from "@/stores/userStore";
+import TabSwitch from "@/components/TabSwitch";
+import HostelVacationHistory from "@/components/hostelvacation/HostelVacationHistory";
+import { FilePlus2, History } from "lucide-react-native";
+import ModalCallable from "@/components/modals/ModalCallable";
 
-export default function HostelVacationFlow() {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [vacatingFormData, setVacatingFormData] = useState<FormData | null>(null);
-  const [vacatingValues, setVacatingValues] = useState<any>(vacatingInitialValues);
-  const [cautionDepositValues, setCautionDepositValues] = useState<any>(cautionDepositInitialValues);
-  const [showModal, setShowModal] = useState(false);
+const initialValues = {
+  ...vacateInitialValues,
+  ...depositInitialValues,
+};
+
+const validationSchemas = [
+  vacateValidationSchema,
+  depositValidationSchema,
+];
+
+export default function HostelVacationPage() {
+  const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
-  const roll_number = useUserStore((state) => state.details.rollNo);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const details = useUserStore((state) => state.details);
 
-  // Reset forms and step when switching to form tab
-  const handleTabChange = (tab: "form" | "history") => {
-    setActiveTab(tab);
-    if (tab === "form") {
-      setStep(1);
-      setVacatingValues(vacatingInitialValues);
-      setCautionDepositValues(cautionDepositInitialValues);
+  const handleNext = () => setPage((p) => p + 1);
+  const handleBack = () => setPage((p) => p - 1);
+
+  const handleSubmit = async (values: any) => {
+    if (page === 0) {
+      handleNext();
+      return;
+    }
+    const roll_number = details?.rollNo || "";
+    const vacatingValues = {
+      vacateDate: values.vacateDate,
+      vacateTime: values.vacateTime,
+      futureAddress: values.futureAddress,
+      itemsReturned: values.itemsReturned,
+    };
+    const cautionDepositValues = {
+      accountHolderName: values.accountHolderName,
+      accountNumber: values.accountNumber,
+      bankName: values.bankName,
+      bankAddress: values.bankAddress,
+      ifscCode: values.ifscCode,
+    };
+    const success = await submitStudentVacatingForm(roll_number, vacatingValues, cautionDepositValues);
+    if (success) {
+      setShowSuccess(true);
     }
   };
 
+  const handleModalClose = () => {
+    setShowSuccess(false);
+    setActiveTab("history");
+    setPage(0);
+  };
+
   return (
-    <View className="bg-white flex-1 p-0">
-      {/* Tabs */}
-      <View className="flex-row justify-around items-center bg-gray-100 pt-4">
-        <Button
-          variant="link"
-          className={`flex-1 flex-row items-center justify-center py-2 border-b-2 ${
-            activeTab === "form" ? "border-black" : "border-transparent"
-          }`}
-          onPress={() => handleTabChange("form")}
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <TabSwitch
+        tabs={[
+          { label: "Vacation Form", value: "form" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        icons={{
+          form: FilePlus2,
+          history: History,
+        }}
+        className="mt-4 mb-2"
+      />
+      {activeTab === "form" ? (
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchemas[page]}
+          onSubmit={handleSubmit}
+          enableReinitialize
         >
-          <FilePen
-            size={20}
-            color={activeTab === "form" ? "black" : "gray"}
-          />
-          <ButtonText
-            className={`ml-2 text-base font-semibold ${
-              activeTab === "form" ? "text-black" : "text-gray-500"
-            }`}
-            style={{ textDecorationLine: "none" }}
-          >
-            Hostel Vacation Form
-          </ButtonText>
-        </Button>
-        <Button
-          variant="link"
-          className={`flex-1 flex-row items-center justify-center py-2 border-b-2 ${
-            activeTab === "history" ? "border-black" : "border-transparent"
-          }`}
-          onPress={() => handleTabChange("history")}
-        >
-          <History
-            size={20}
-            color={activeTab === "history" ? "black" : "gray"}
-          />
-          <ButtonText
-            className={`ml-2 text-base font-semibold ${
-              activeTab === "history" ? "text-black" : "text-gray-500"
-            }`}
-            style={{ textDecorationLine: "none" }}
-          >
-            History
-          </ButtonText>
-        </Button>
-      </View>
-
-      {/* Tab Content */}
-      <View className="flex-1 p-6">
-        {activeTab === "form" ? (
-          step === 1 ? (
-            <VacatingForm
-              initialValues={vacatingValues}
-              onNext={(formData, values) => {
-                setVacatingFormData(formData);
-                setVacatingValues(values);
-                setStep(2);
-              }}
-            />
-          ) : (
-            <CautionDepositForm
-              initialValues={cautionDepositValues}
-              onSubmit={async (cautionFormData, values) => {
-                setCautionDepositValues(values);
-                console.log("Caution Deposit Values:", values);
-                console.log("Vacating Form Data:", vacatingFormData);
-                const response = await submitStudentVacatingForm(roll_number,vacatingValues, values);
-                console.log("Submission Response:", response);
-
-                if (response === true) {
-                  setShowModal(true);
-                  setTimeout(() => {
-                    setShowModal(false);
-                    setActiveTab("history");
-                  }, 3000);
-                } else {
-                  setShowModal(false);
-                }
-              }}
-              onBack={(values) => {
-                setCautionDepositValues(values);
-                setStep(1);
-              }}
-            />
-          )
-        ) : (
-          <HostelVacationHistory />
-        )}
-
-        {/* Success Modal */}
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <ModalBackdrop />
-          <ModalContent>
-            <ModalHeader>
-              <Text className="text-lg font-semibold">Success</Text>
-            </ModalHeader>
-            <ModalBody>
-              <Text className="text-base text-green-700">Submitted successfully!</Text>
-            </ModalBody>
-            <ModalFooter>
-              <Button onPress={() => setShowModal(false)}>
-                <ButtonText>OK</ButtonText>
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </View>
+          {({ handleSubmit }) => (
+            <>
+              {page === 0 && <VacatingForm onNext={handleSubmit} />}
+              {page === 1 && (
+                <CautionDepositForm
+                  onSubmit={handleSubmit}
+                  onBack={handleBack}
+                />
+              )}
+            </>
+          )}
+        </Formik>
+      ) : (
+        <HostelVacationHistory />
+      )}
+      <ModalCallable
+        show={showSuccess}
+        onClose={handleModalClose}
+        title="Success"
+        message="Your hostel vacation form has been submitted successfully."
+      />
     </View>
   );
 }

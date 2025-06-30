@@ -4,18 +4,12 @@ const admissionCategories = [
   { label: "FN", value: "FN" },
   { label: "LDC", value: "LDC" },
   { label: "SIDS", value: "SIDS" },
-];
-
-const grievanceCategories = [
-  { label: "Administrative", value: "Administrative" },
-  { label: "Hostel", value: "Hostel" },
-  { label: "Mess", value: "Mess" },
-  { label: "Health", value: "Health" },
+  { label: "ICCR", value: "ICCR" },
+  { label: "SII", value: "SII" },
   { label: "Other", value: "Other" },
 ];
 
 const initialValues = {
-  admissionCategory: undefined,
   previousResident: undefined,
   messPreference: undefined,
   studentAgreed: "",
@@ -45,7 +39,6 @@ const previousResidentOptions = [
 export {
   admissionCategories,
   initialValues,
-  grievanceCategories,
   hostelBlocks,
   messPreferences,
   previousResidentOptions,

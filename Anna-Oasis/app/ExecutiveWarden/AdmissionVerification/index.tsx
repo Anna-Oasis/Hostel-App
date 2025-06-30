@@ -1,5 +1,4 @@
 import { View, ScrollView } from "react-native";
-import { Text } from "@/components/ui/text";
 import { useEffect, useState } from "react";
 import {
   getAllEWAdmissions,
@@ -7,9 +6,9 @@ import {
 } from "@/utils/executiveWarden/ewAdmissionApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
-import { Icon } from "@/components/ui/icon";
 import { Inbox } from "lucide-react-native";
 import DeclineComment from "@/components/modals/DeclineComment";
+import EmptyPage from "@/components/EmptyPage";
 
 export default function AdmissionVerificationPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
@@ -60,31 +59,11 @@ export default function AdmissionVerificationPage() {
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {admissions.length === 0 ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 64,
-            }}
-          >
-            <Icon
-              as={Inbox}
-              size="xl"
-              color="#a3a3a3"
-              style={{ marginBottom: 16 }}
-            />
-            <Text
-              size="lg"
-              className="text-typography-400 font-semibold mb-2"
-            >
-              No pending admissions
-            </Text>
-            <Text
-              size="sm"
-              className="text-typography-300 text-center"
-            ></Text>
-          </View>
+          <EmptyPage
+            title="No pending admissions"
+            description=""
+            icon={Inbox}
+          />
         ) : (
           admissions.map((item: any, idx: number) => (
             <ApprovalCard

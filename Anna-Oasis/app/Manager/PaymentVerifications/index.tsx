@@ -8,15 +8,12 @@ import {
 import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import useLoadingStore from "@/stores/loadingStore";
-import { Text } from "@/components/ui/text";
-import ManagerDeclineModal from "@/components/manager/ManagerDeclineModal";
-import { Icon } from "@/components/ui/icon";
-import { Inbox } from "lucide-react-native";
+import EmptyPage from "@/components/EmptyPage";
+import DeclineComment from "@/components/modals/DeclineComment";
 
 export default function PaymentVerificationsPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
-  const [declineComment, setDeclineComment] = useState("");
   const [selectedAdmissionId, setSelectedAdmissionId] = useState<string | null>(
     null
   );
@@ -47,28 +44,23 @@ export default function PaymentVerificationsPage() {
     setShowDeclineModal(true);
   };
 
-  const handleDeclineSubmit = async () => {
+  const handleDeclineSubmit = async (comment: string) => {
     setLoading(true);
-    await managerDecline(selectedAdmissionId!, declineComment);
+    await managerDecline(selectedAdmissionId!, comment);
     setShowDeclineModal(false);
-    setDeclineComment("");
     setSelectedAdmissionId(null);
     setLoading(false);
+    fetchAdmissions();
   };
 
   return (
     <View className="flex-1">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {admissions.length === 0 ? (
-          <View className="flex-1 justify-center items-center mt-16">
-            <Icon as={Inbox} size="xl" color="#a3a3a3" className="mb-4" />
-            <Text size="lg" className="text-typography-400 font-semibold mb-2">
-              No pending verifications
-            </Text>
-            <Text size="sm" className="text-typography-300 text-center">
-              All admissions have been reviewed.
-            </Text>
-          </View>
+          <EmptyPage
+            title="No pending verifications"
+            description="All admissions have been reviewed."
+          />
         ) : (
           admissions.map((admission) => (
             <ApprovalCard
@@ -83,17 +75,19 @@ export default function PaymentVerificationsPage() {
           ))
         )}
       </ScrollView>
-      <ManagerDeclineModal
-        isOpen={showDeclineModal}
-        comment={declineComment}
-        onChangeComment={setDeclineComment}
-        onCancel={() => {
+      <DeclineComment
+        visible={showDeclineModal}
+        onClose={() => {
           setShowDeclineModal(false);
-          setDeclineComment("");
           setSelectedAdmissionId(null);
         }}
         onSubmit={handleDeclineSubmit}
+        title="Decline Admission"
+        placeholder="Enter reason for declining..."
+        submitLabel="Decline"
+        cancelLabel="Cancel"
       />
     </View>
   );
 }
+

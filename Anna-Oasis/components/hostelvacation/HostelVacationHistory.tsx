@@ -1,7 +1,8 @@
-import { getVacatingHistory } from '@/utils/vacatingHostelUtils';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import ApprovalCard, { badgeStatus } from '@/components/ApprovalCard';
+import { getVacatingHistory } from '@/utils/student/studentVacatingHostelApi';
+import { useEffect, useState } from 'react';
+import { ScrollView, View, Text } from 'react-native';
+import ApprovalCard from '@/components/ApprovalCard';
+import { getHostelVacationBadgeStatus } from '@/utils/getBadgeStatus';
 
 const HostelVacationHistory = () => {
   const [history, setHistory] = useState<any[]>([]);
@@ -30,13 +31,7 @@ const HostelVacationHistory = () => {
                 key={vac.id}
                 title='Hostel Vacation'
                 subTitle={`Vacating Hostel at ${vac.vacating_date}`}
-                badge={
-                  vac.status == -1
-                    ? badgeStatus.Rejected
-                    : vac.status == 3
-                    ? badgeStatus.Approved
-                    : badgeStatus.Pending
-                }
+                badge={getHostelVacationBadgeStatus(vac.status)}
                 data={{
                   "Roll Number": vac.roll_number,
                   "Vacating Date": vac.vacating_date,
@@ -59,7 +54,5 @@ const HostelVacationHistory = () => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default HostelVacationHistory;

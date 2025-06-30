@@ -24,11 +24,18 @@ export default function Login() {
       >
         <View className="flex-1 justify-center px-6 pb-10">
           <View className="items-center mb-12">
-            <Text className="text-3xl font-bold text-gray-900 mt-4 mb-2">
-              Anna Oasis
-            </Text>
+            <View className="flex-row items-center justify-center mb-2 mt-4">
+              <Text className="text-3xl font-bold text-gray-900 mr-3">
+                Anna Oasis
+              </Text>
+              <Image
+                source={require("@/assets/images/anna_logo.png")}
+                className="w-16 h-16"
+                resizeMode="contain"
+              />
+            </View>
             <Image
-              source={require("@/assets/images/logo.png")}
+              source={require("@/assets/images/logo.jpg")}
               className="w-48 h-48 my-8"
               resizeMode="contain"
             />

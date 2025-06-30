@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { hostelOptions, initialValues, validationSchema } from "@/constants/rcManagementValidation";
+import { hostelOptions, initialValues, validationSchema } from "@/constants/validations/rcManagementValidation";
 
 export default function RCManagementForm({
   onSubmit,

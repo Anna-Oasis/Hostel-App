@@ -1,11 +1,29 @@
 import api from "@/api";
-import { RCLeaveResponse } from "../rc/rcApi";
 import { getToken } from "../authUtils";
 
-export async function getRCLeavebyEw(): Promise<RCLeaveResponse> {
+export interface RCLeaveResponse {
+    message: string;
+    success: boolean;
+    data: RCLeave[];
+}
+
+export interface RCLeave {
+    id: number;
+    rc_id: number;
+    leaving: string;        
+    arrival: string;    
+    reason: string;
+    approved: string;      
+    created_at: string;    
+    dw_approved_at: string; 
+    ew_updated_at: string;  
+}
+
+
+export async function getRCLeavebyDw(): Promise<RCLeaveResponse> {
     const token = await getToken();
     try {
-        const response = await api.get("/api/executive_warden/rc/leave", {
+        const response = await api.get("/api/deputy_warden/rc/leave", {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
@@ -18,10 +36,10 @@ export async function getRCLeavebyEw(): Promise<RCLeaveResponse> {
         throw new Error("Failed to fetch RC leaves");
     }
 }
-export async function updateRCLeaveStatusByEw(id: number, status: string, comment?: string): Promise<{ success: boolean; message: string }> {
+export async function updateRCLeaveStatusByDw(id: number, status: string, comment?: string): Promise<{ success: boolean; message: string }> {
     const token = await getToken();
     try {
-        const response = await api.put(`/api/executive_warden/rc/leave/${id}`, 
+        const response = await api.put(`/api/deputy_warden/rc/leave/${id}`, 
             { status: status, comment: comment || "" }, 
             {
                 headers: {

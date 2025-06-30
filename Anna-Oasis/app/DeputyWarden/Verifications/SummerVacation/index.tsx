@@ -1,31 +1,38 @@
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
-import { getStudentVacations, getStudentVacationsByDw, updateVacationStatus, updateVacationStatusByDw, VacationForm } from "@/utils/rc/rcApi";
+import ApprovalCard from "@/components/ApprovalCard";
+import {
+  getStudentVacationsByDw,
+  updateVacationStatusByDw,
+  VacationForm,
+} from "@/utils/deputyWarden/dwSummerVacationApi";
+import { getSummerVacationBadgeStatus } from "@/utils/getBadgeStatus";
 import { useEffect, useState } from "react";
-import { View, Text, ScrollView, Alert, Modal, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
+import EmptyPage from "@/components/EmptyPage";
+import DeclineComment from "@/components/modals/DeclineComment";
+import ModalCallable from "@/components/modals/ModalCallable";
 
 export default function SummerVacationVericationPage() {
   const [leaves, setLeaves] = useState<VacationForm[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [updatingIds, setUpdatingIds] = useState<Set<number>>(new Set());
-
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectComment, setRejectComment] = useState("");
   const [currentRejectId, setCurrentRejectId] = useState<number | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalContent, setSuccessModalContent] = useState<{
+    title: string;
+    message: string;
+  }>({ title: "", message: "" });
 
   const fetchLeaves = async () => {
     try {
       setLoading(true);
-      setError(null);
       const result = await getStudentVacationsByDw();
       if (result.success) {
         setLeaves(result.data);
       } else {
-        setError(result.message || "Failed to fetch leaves");
+        console.error(result.message || "Failed to fetch leaves");
       }
     } catch (err: any) {
       console.error("Error fetching leaves:", err);
-      setError(err.message || "An error occurred while fetching leaves");
     } finally {
       setLoading(false);
     }
@@ -33,84 +40,85 @@ export default function SummerVacationVericationPage() {
 
   const handleApprove = async (leaveId: number) => {
     try {
-      setUpdatingIds(prev => new Set([...prev, leaveId]));
-
       const result = await updateVacationStatusByDw(leaveId, true);
 
       if (result.success) {
-        setLeaves(prev =>
-          prev.map(leave =>
-            leave.id === leaveId
-              ? { ...leave, status: "2" }
-              : leave
+        setLeaves((prev) =>
+          prev.map((leave) =>
+            leave.id === leaveId ? { ...leave, status: "2" } : leave
           )
         );
-        Alert.alert("Success", "Vacation request approved successfully");
+        setSuccessModalContent({
+          title: "Success",
+          message: "Vacation request approved successfully",
+        });
+        setShowSuccessModal(true);
       } else {
-        Alert.alert("Error", result.message || "Failed to approve vacation request");
+        Alert.alert(
+          "Error",
+          result.message || "Failed to approve vacation request"
+        );
       }
     } catch (err: any) {
       console.error("Error approving leave:", err);
-      Alert.alert("Error", err.message || "An error occurred while approving the request");
-    } finally {
-      setUpdatingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(leaveId);
-        return newSet;
-      });
+      Alert.alert(
+        "Error",
+        err.message || "An error occurred while approving the request"
+      );
     }
   };
 
   const handleRejectClick = (leaveId: number) => {
     setCurrentRejectId(leaveId);
-    setRejectComment("");
     setShowRejectModal(true);
   };
 
-  const handleRejectConfirm = async () => {
+  const handleRejectConfirm = async (comment: string) => {
     if (!currentRejectId) return;
 
-    if (!rejectComment.trim()) {
+    if (!comment.trim()) {
       Alert.alert("Error", "Please provide a reason for rejection");
       return;
     }
 
     try {
-      setUpdatingIds(prev => new Set([...prev, currentRejectId]));
-
-      const result = await updateVacationStatusByDw(currentRejectId, false, rejectComment);
+      const result = await updateVacationStatusByDw(
+        currentRejectId,
+        false,
+        comment
+      );
 
       if (result.success) {
-        setLeaves(prev =>
-          prev.map(leave =>
-            leave.id === currentRejectId
-              ? { ...leave, status: "-1" }
-              : leave
+        setLeaves((prev) =>
+          prev.map((leave) =>
+            leave.id === currentRejectId ? { ...leave, status: "-1" } : leave
           )
         );
-        Alert.alert("Success", "Vacation request rejected");
+        setSuccessModalContent({
+          title: "Success",
+          message: "Vacation request rejected",
+        });
+        setShowSuccessModal(true);
         setShowRejectModal(false);
         setCurrentRejectId(null);
-        setRejectComment("");
       } else {
-        Alert.alert("Error", result.message || "Failed to reject vacation request");
+        Alert.alert(
+          "Error",
+          result.message || "Failed to reject vacation request"
+        );
       }
     } catch (err: any) {
       console.error("Error rejecting leave:", err);
-      Alert.alert("Error", err.message || "An error occurred while rejecting the request");
-    } finally {
-      setUpdatingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(currentRejectId);
-        return newSet;
-      });
+      Alert.alert(
+        "Error",
+        err.message || "An error occurred while rejecting the request"
+      );
     }
   };
 
   const handleRejectCancel = () => {
     setShowRejectModal(false);
     setCurrentRejectId(null);
-    setRejectComment("");
   };
 
   useEffect(() => {
@@ -120,31 +128,19 @@ export default function SummerVacationVericationPage() {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-base text-gray-600">Loading vacation requests...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View className="flex-1 justify-center items-center p-5">
-        <Text className="text-red-500 text-center mb-2.5">
-          {error}
+        <Text className="text-base text-gray-600">
+          Loading vacation requests...
         </Text>
-        <TouchableOpacity onPress={fetchLeaves}>
-          <Text className="text-blue-500 underline">
-            Tap to retry
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   }
 
   if (leaves.length === 0) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-base text-gray-600">No vacation requests found</Text>
-      </View>
+      <EmptyPage
+        title="No vacation requests found"
+        description="There are currently no summer vacation requests to verify."
+      />
     );
   }
 
@@ -157,71 +153,37 @@ export default function SummerVacationVericationPage() {
             title={`ROLL.NO : (${leave.roll_number})`}
             subTitle={`Vacation from: ${leave.vacation_from}`}
             data={{
-              "ID": leave.id,
+              ID: leave.id,
               "Roll Number": leave.roll_number,
               "Vacation From": leave.vacation_from,
               "Address of Stay": leave.address_of_stay,
               "Returned Items": leave.returned_items.join(", "),
-              "Status": leave.status,
+              Status: leave.status,
               "Created At": new Date(leave.created_at).toLocaleDateString(),
             }}
-            badge={
-              leave.status === '2' ? badgeStatus.Approved :
-                leave.status === '1' ? badgeStatus.Pending :
-                  leave.status === '0' ? badgeStatus.Pending :
-                    leave.status === '-1' ? badgeStatus.Rejected :
-                      badgeStatus.Pending
-            }
+            badge={getSummerVacationBadgeStatus(leave.status)}
             onApprove={() => handleApprove(leave.id)}
             onDecline={() => handleRejectClick(leave.id)}
           />
         ))}
       </ScrollView>
 
-      <Modal
+      <DeclineComment
         visible={showRejectModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={handleRejectCancel}
-      >
-        <View className="flex-1 bg-black/50 justify-center items-center p-5">
-          <View className="bg-white rounded-2xl p-5 w-full max-w-sm">
-            <Text className="text-lg font-bold mb-2.5 text-center text-gray-900">
-              Reason for Rejection
-            </Text>
-            <Text className="text-sm text-gray-600 mb-4 text-center">
-              Please provide a reason for rejecting this vacation request:
-            </Text>
+        onClose={handleRejectCancel}
+        onSubmit={handleRejectConfirm}
+        title="Reason for Rejection"
+        placeholder="Enter rejection reason..."
+        submitLabel="Reject"
+        cancelLabel="Cancel"
+      />
 
-            <TextInput
-              className="border border-gray-300 rounded-lg p-3 min-h-[100px] mb-5 text-base"
-              value={rejectComment}
-              onChangeText={setRejectComment}
-              placeholder="Enter rejection reason..."
-              multiline={true}
-              numberOfLines={4}
-              textAlignVertical="top"
-              placeholderTextColor="#9CA3AF"
-            />
-
-            <View className="flex-row justify-between gap-2.5">
-              <TouchableOpacity
-                className="flex-1 py-3 rounded-lg items-center bg-gray-100 border border-gray-300"
-                onPress={handleRejectCancel}
-              >
-                <Text className="text-gray-700 font-semibold">Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                className="flex-1 py-3 rounded-lg items-center bg-red-500"
-                onPress={handleRejectConfirm}
-              >
-                <Text className="text-white font-semibold">Reject</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <ModalCallable
+        show={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title={successModalContent.title}
+        message={successModalContent.message}
+      />
     </>
   );
 }

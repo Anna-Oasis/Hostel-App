@@ -1,7 +1,9 @@
-import SummerVacationForm from "@/components/SummerVacationForm";
-import SummerVacationHistory from "@/components/SummerVacationHistory";
+import SummerVacationForm from "@/components/student/SummerVacationForm";
+import SummerVacationHistory from "@/components/student/SummerVacationHistory";
 import { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View } from "react-native";
+import TabSwitch from "@/components/TabSwitch";
+import { FilePlus2, History } from "lucide-react-native";
 
 export default function SummerVacationPage() {
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
@@ -12,39 +14,19 @@ export default function SummerVacationPage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* Tab Headers */}
-      <View className="flex-row justify-around mt-4 mb-2">
-        <TouchableOpacity
-          className={`flex-1 py-3 items-center border-b-2 ${
-            activeTab === "form" ? "border-blue-600" : "border-gray-200"
-          }`}
-          onPress={() => handleTabChange("form")}
-        >
-          <Text
-            className={`text-lg font-semibold ${
-              activeTab === "form" ? "text-blue-600" : "text-gray-500"
-            }`}
-          >
-            Vacation Form
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className={`flex-1 py-3 items-center border-b-2 ${
-            activeTab === "history" ? "border-blue-600" : "border-gray-200"
-          }`}
-          onPress={() => handleTabChange("history")}
-        >
-          <Text
-            className={`text-lg font-semibold ${
-              activeTab === "history" ? "text-blue-600" : "text-gray-500"
-            }`}
-          >
-            Submitted Requests
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Tab Content */}
+      <TabSwitch
+        tabs={[
+          { label: "Vacation Form", value: "form" },
+          { label: "Submitted Requests", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        className="mt-4 mb-2"
+        icons={{
+          form: FilePlus2,
+          history: History,
+        }}
+      />
       {activeTab === "form" && (
         <View className="flex-1">
           <SummerVacationForm />

@@ -3,7 +3,7 @@ import { ScrollView, View } from "react-native";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
 import { initialValues } from "@/constants/details";
-import validationSchemas from "@/constants/detailsValidation";
+import validationSchemas from "@/constants/validations/detailsValidation";
 import StudentDetails from "@/components/details/StudentDetails";
 import ParentDetails from "@/components/details/ParentDetails";
 import LocalGuardian from "@/components/details/LocalGuardian";
@@ -49,7 +49,7 @@ export default function DetailsPage() {
     <Formik
       initialValues={details ? { ...initialValues, ...details } : initialValues}
       // initialValues={testValues} // For testing purposes, replace with initialValues in production
-      validationSchema={validationSchemas[page]}
+      // validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
@@ -68,6 +68,10 @@ export default function DetailsPage() {
           formData.append("dateOfBirth", values.dateOfBirth);
           formData.append("age", values.age);
           formData.append("gender", values.gender);
+          formData.append("admissionCategory", values.admissionCategory);
+          if (values.admissionCategory === "Other" && values.admissionCategoryReason) {
+            formData.append("admissionCategoryReason", values.admissionCategoryReason);
+          }
           formData.append("nationality", values.nationality);
           formData.append("bloodGroup", values.bloodGroup);
           formData.append("medicalHistory", values.medicalHistory);

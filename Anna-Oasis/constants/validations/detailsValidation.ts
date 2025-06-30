@@ -23,6 +23,12 @@ const validationSchemas = [
       .oneOf(allowedBloodGroups, "Invalid blood group")
       .required("Required"),
     medicalHistory: Yup.string(),
+    admissionCategory: Yup.string().required("Required"),
+    admissionCategoryReason: Yup.string().when("admissionCategory", {
+      is: (val: string) => val === "Other",
+      then: (schema) => schema.required("Required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
   // Parent Details (Father, Mother, Residential India, Residential Foreign)
   Yup.object({

@@ -16,9 +16,9 @@ const validationSchema = Yup.object().shape({
 });
 
 const NOTE = `
-The students should request their parents to send a consent email / letter that the hostel refund may be transferred to the student’s bank account.
-Students should submit the photocopy of the passbook with photograph affixed in the passbook showing the account number etc.
-The refund of Caution Deposit should be claimed within one year failing which the amount shall be forfeited.
+• Please ensure that the bank account details provided are accurate and belong to the student.
+• The caution deposit will be refunded to this account after the completion of the course, subject to any deductions as per hostel policies.
+• If incorrect or invalid bank account details are provided, the refund will not be processed.
 `;
 
 export { initialValues, validationSchema, NOTE };

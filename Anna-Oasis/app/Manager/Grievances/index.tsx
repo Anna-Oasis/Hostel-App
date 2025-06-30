@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import {
   getAllManagerGrievances,
@@ -6,20 +6,25 @@ import {
 } from "@/utils/manager/managerGrievanceApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import { getGrievanceBadgeStatus } from "@/utils/getBadgeStatus";
-import { Icon } from "@/components/ui/icon";
-import { Inbox } from "lucide-react-native";
 import { Text } from "@/components/ui/text";
+import useLoadingStore from "@/stores/loadingStore";
+import EmptyPage from "@/components/EmptyPage";
 
 export default function GrievancesPage() {
   const [grievances, setGrievances] = useState<any[]>([]);
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   const fetchGrievances = () => {
+    setLoading(true);
     getAllManagerGrievances()
       .then((data) => {
         setGrievances(data || []);
       })
       .catch((error) => {
         console.log("Error fetching Manager grievances:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -29,10 +34,13 @@ export default function GrievancesPage() {
 
   const handleApprove = async (id: number) => {
     try {
+      setLoading(true);
       await updateManagerGrievanceState(id);
       fetchGrievances();
     } catch (error) {
       console.log("Error approving grievance:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,18 +50,10 @@ export default function GrievancesPage() {
         Please approve the grievances once they are resolved.
       </Text>
       {grievances.length === 0 ? (
-        <View className="flex-1 justify-center items-center mt-16">
-          <Icon as={Inbox} size="xl" color="#a3a3a3" className="mb-4" />
-          <Text
-            size="lg"
-            className="text-typography-400 font-semibold mb-2"
-          >
-            No pending grievances
-          </Text>
-          <Text size="sm" className="text-typography-300 text-center">
-            All grievances have been reviewed.
-          </Text>
-        </View>
+        <EmptyPage
+          title="No pending grievances"
+          description="All grievances have been reviewed."
+        />
       ) : (
         grievances.map((item, idx) => (
           <ApprovalCard
