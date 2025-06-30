@@ -26,6 +26,7 @@ import {
   createVacatingHostelFormController,
   getVacatingHostelFormsOfaStudentController
 } from "../controllers/vacatingHostelController";
+import { getLatestAdmissionSessionForSemesterController } from "../controllers/admissionSessionController";
 
 const studentRouter = Router();
 
@@ -69,5 +70,13 @@ studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),e
 studentRouter.post("/summer_vacation",authenticateUser, hasRole(["student"]), errorWrapper(createSummerVacationFromController));
 //fetch all applied summer vacation forms
 studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllSummerVacationFormsOfStudent));
+
+// GET latest active admission session for a semester
+studentRouter.get(
+  "/admission/session/:semester",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getLatestAdmissionSessionForSemesterController)
+);
 
 export default studentRouter;
