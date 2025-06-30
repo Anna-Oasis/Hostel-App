@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { Box } from "@/components/ui/box"
 import { Text } from "@/components/ui/text"
-import { Button, ButtonText } from "@/components/ui/button"
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button"
 import { Modal, ModalBackdrop, ModalContent, ModalCloseButton, ModalHeader, ModalBody, ModalFooter } from "@/components/ui/modal"
-import { Icon, CloseIcon } from "@/components/ui/icon"
+import { Icon } from "@/components/ui/icon"
+import { Pencil, X as CloseIcon } from "lucide-react-native"
 import AdmissionSessionForm from './AdmissionSessionForm'
+import EmptyPage from "@/components/EmptyPage"
 
 const fetchAdmissionSessions = async () => {
   return {
@@ -54,42 +56,45 @@ const AdmissionSessionHistory = () => {
   return (
     <Box className="flex-1 bg-background-0">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {sessions.length === 0 && (
-          <Text className="text-center text-typography-3 mt-8">
-            No admission sessions found.
-          </Text>
-        )}
-        {sessions.map(session => (
-          <Box
-            key={session.id}
-            className="bg-white rounded-2xl p-5 mb-4 border border-gray-100"
-          >
-            <Text className="text-xl font-bold mb-2 text-typography-1">
-              Academic Year: <Text className="font-normal">{session.academic_year}</Text>
-            </Text>
-            <Text className="mb-1 text-typography-1">
-              From: <Text className="font-semibold">{session.from}</Text>
-            </Text>
-            <Text className="mb-1 text-typography-1">
-              To: <Text className="font-semibold">{session.to}</Text>
-            </Text>
-            <Text className="mb-3 text-typography-1">
-              Semesters: <Text className="font-semibold">{session.semesters.join(', ')}</Text>
-            </Text>
-            <Button
-              size="md"
-              variant="solid"
-              action="primary"
-              className="self-end mt-2 px-4 rounded-lg"
-              onPress={() => {
-                setEditSession(session)
-                setShowModal(true)
-              }}
+        {sessions.length === 0 ? (
+          <EmptyPage
+            title="No admission sessions found."
+            description="There are currently no admission sessions to display."
+          />
+        ) : (
+          sessions.map(session => (
+            <Box
+              key={session.id}
+              className="bg-white rounded-2xl p-5 mb-4 border border-gray-100"
             >
-              <ButtonText className="font-semibold">Edit Details</ButtonText>
-            </Button>
-          </Box>
-        ))}
+              <Text className="text-xl font-bold mb-2 text-typography-1">
+                Academic Year: <Text className="font-normal">{session.academic_year}</Text>
+              </Text>
+              <Text className="mb-1 text-typography-1">
+                From: <Text className="font-semibold">{session.from}</Text>
+              </Text>
+              <Text className="mb-1 text-typography-1">
+                To: <Text className="font-semibold">{session.to}</Text>
+              </Text>
+              <Text className="mb-3 text-typography-1">
+                Semesters: <Text className="font-semibold">{session.semesters.join(', ')}</Text>
+              </Text>
+              <Button
+                size="md"
+                variant="solid"
+                action="primary"
+                className="self-end mt-2 px-4 rounded-lg flex-row items-center"
+                onPress={() => {
+                  setEditSession(session)
+                  setShowModal(true)
+                }}
+              >
+                <ButtonIcon as={Pencil} size="sm" className="mr-2" />
+                <ButtonText className="font-semibold">Edit</ButtonText>
+              </Button>
+            </Box>
+          ))
+        )}
       </ScrollView>
       <Modal
         isOpen={showModal}
