@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { roomModel } from "../models/roomModel";
 import { studentModel } from "../models/studentModel";
@@ -77,7 +77,7 @@ export const updateStudentHostelDetails = async (
   rollNo: string, 
   roomNumber: number | null,
   floor:  number | null,
-  hostelBlock: string,
+  hostelBlock: string| null,
 ) => {
   return await db
     .update(studentModel)
@@ -99,14 +99,13 @@ export const fetchRoomDetailsByBlockAndAcademicYear= async (
         eq(roomModel.academicYear, academicYear)
       )
     );
-    
+  
   // Room Details with Student Details
-
   /*
   const room = await db
     .select()
     .from(roomModel)
-    .innerJoin(studentModel, eq(studentModel.roomNumber,roomModel.roomNumber))
+    .innerJoin(studentModel, inArray(studentModel.rollNo, roomModel.rollNo))
     .where(
       and(
         eq(roomModel.hostelBlock, hostelBlock),
@@ -114,6 +113,6 @@ export const fetchRoomDetailsByBlockAndAcademicYear= async (
       )
     );
   */
- 
+  
   return room;
 };

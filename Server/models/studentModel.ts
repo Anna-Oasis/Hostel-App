@@ -30,13 +30,13 @@ export const studentModel = pgTable("student", {
   email: varchar("email", { length: 100 }).notNull(),
   emergencyContact: varchar("emergency_contact", { length: 15 }).notNull(),
   dateOfBirth: date("date_of_birth").notNull(),
-  age: integer("age").notNull(),
   gender: gender_pgEnum("gender").notNull(),
   nationality: varchar("nationality", { length: 50 }).notNull(),
   govtIdType: varchar("govt_id_type", { length: 50 }).notNull(),
   govtId: varchar("govt_id", { length: 50 }).notNull(),
   bloodGroup: varchar("blood_group", { length: 10 }).notNull(),
   medicalHistory: text("medical_history").notNull(),
+  admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
 
   // Father Details
   fatherName: varchar("father_name", { length: 100 }).notNull(),
@@ -88,6 +88,10 @@ export const studentModel = pgTable("student", {
   // Timestamp
   createdAt: date("created_at").defaultNow().notNull(),
   updatedAt:date("updated_at").defaultNow().notNull(),
+
+  //verification
+  approve: boolean("approve"),
+  comment: text("comment"),
 
   // Images
   passportPhotoUrl: text("passport_photo_url"),

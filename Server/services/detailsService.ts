@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { studentModel } from "../models/studentModel";
 
@@ -27,3 +27,41 @@ export const findStudentByUserId = async (userId: number) => {
     .from(studentModel)
     .where(eq(studentModel.user_id, userId));
 }
+
+export const fetchStudentsForManagerVerification = async () => {
+  return await db
+    .select()
+    .from(studentModel)
+    .where(isNull(studentModel.approve))
+    .orderBy(studentModel.createdAt);
+}
+
+export const fetchStudentDetailsForRC = async (
+  floor: number[],
+  hostelBlock: string
+) => {
+  const students = await db
+    .select({
+      rollNo: studentModel.rollNo,
+      name: studentModel.name,
+      roomNumber: studentModel.roomNumber,
+      course: studentModel.course,
+      branch: studentModel.branch,
+      semester: studentModel.semester,
+      mobile: studentModel.mobile,
+      email: studentModel.email,
+      emergencycontact: studentModel.emergencyContact,
+      floor: studentModel.floor,
+      hostelBlock: studentModel.hostelBlock,
+    })
+    .from(studentModel)
+    .where(
+      and(
+        eq(studentModel.hostelBlock, hostelBlock),
+        inArray(studentModel.floor, floor)
+      )
+    )
+    .orderBy(studentModel.roomNumber);
+
+  return students;
+};

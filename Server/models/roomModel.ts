@@ -1,9 +1,9 @@
+import { hostel_block_pgEnum } from './enum';
 import { pgTable, varchar, integer, primaryKey } from "drizzle-orm/pg-core";
-
 
 export const roomModel = pgTable("room", {
   roomNumber: integer("room_number").notNull(),
-  hostelBlock: varchar("hostel_block", { length: 20 }).notNull(),
+  hostelBlock: hostel_block_pgEnum("hostel_block").notNull(),
   academicYear: varchar("academic_year", { length: 9 }).notNull(),
   floor : integer("floor").notNull(),
   rollNo: varchar("rollNo", { length: 20}).array(),

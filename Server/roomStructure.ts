@@ -1,4 +1,4 @@
-import { hostel_block } from "./constants/enum";
+import { hostelBlock } from "./constants/enum";
 import { roomModel } from "./models/roomModel";
 import * as readline from 'readline';
 
@@ -64,7 +64,7 @@ async function insertRoomStructure() {
     } while (!isValidAcademicYear(academicYear));
 
     console.log(`\n📅 Academic Year: ${academicYear}`);
-    console.log(`\n🏢 Available Hostel Blocks: ${Object.values(hostel_block).join(', ')}\n`);
+    console.log(`\n🏢 Available Hostel Blocks: ${Object.values(hostelBlock).join(', ')}\n`);
 
     const roomsToInsert: Array<{
       roomNumber: number;
@@ -75,7 +75,7 @@ async function insertRoomStructure() {
     }> = [];
 
     // Process each hostel block
-    for (const block of Object.values(hostel_block)) {
+    for (const block of Object.values(hostelBlock)) {
       console.log(`\n🏢 Setting up ${block} Block:`);
       console.log("─".repeat(30));
 

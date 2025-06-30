@@ -13,8 +13,11 @@ export const leaveFormSchema = z.object({
   ),
   reason: z.string().min(1, "Reason is required"),
   address_of_stay: z.string().min(1, "Address of stay is required"),
-  emergency_contact: z
-    .string()
-    .min(10, "Emergency contact should be at least 10 digits")
-    .max(15, "Emergency contact too long"),
+  mobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid mobile number"),
+  email: z.string().email(),
+});
+
+export const LeaveDecisionSchema = z.object({
+  approve: z.boolean(),
+  comment: z.string().optional(),
 });

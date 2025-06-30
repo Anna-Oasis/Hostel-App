@@ -5,17 +5,18 @@ import { eq, and, inArray } from "drizzle-orm";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import { leaveFormApprovalsModel } from "../models/leaveFormApprovals";
 
-export const getLeaveFormApprovals=async(rollNumber:string)=>
+export const createLeaveForm = async(data:NewLeaveForm)=>
+{
+    return await db.insert(leaveFormModel).values(data).returning();
+}
+
+export const getLeaveFormsByRollNo=async(rollNumber:string)=>
 {
     return await db
             .select()
             .from(leaveFormModel)
-            .where(eq(leaveFormModel.roll_number,rollNumber));
-}
-
-export const createLeaveForm = async(data:NewLeaveForm)=>
-{
-    return await db.insert(leaveFormModel).values(data).returning();
+            .where(eq(leaveFormModel.roll_number,rollNumber))
+            .orderBy(leaveFormModel.created_at);
 }
 
 export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], hostel_block: string) => {
@@ -66,6 +67,8 @@ export const updateLeaveForm = async (
       status: leaveFormModel.status,
       updatedAt: leaveFormModel.updated_at,
     });
+  
+    return leave_form;
 };
 
 export async function createLeaveFormApproval(approvalData: {
