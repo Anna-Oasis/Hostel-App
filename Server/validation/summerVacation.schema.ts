@@ -15,11 +15,6 @@ export const summerVacationSchema = z.object({
     .min(10, "Mobile number too short")
     .max(15, "Mobile number too long"),
 
-  declarartion_id: z.number({
-    required_error: "Declaration ID is required",
-    invalid_type_error: "Declaration ID must be a number"
-  }),
-
   vacation_from: z.string()
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid ISO timestamp for vacation_from"
