@@ -442,7 +442,6 @@ export const allocateRoomController = async (
   const currentYear = admission[0].academicYear;
   const status = admissionApprovalStatus.ROOM_ALLOCATED;
 
-
   // Check room capacity before approval
   const room = await checkRoom(
     validated.room,
