@@ -4,7 +4,7 @@
 import { Router } from "express";
 import {
   fetchAdmissionsApprovedByUser,
-  updateApprovalStatusByRCController,
+   allocateRoomController,
   getAdmissionWaitingForApprovalByRCController
 } from "../controllers/admissionController";
 import {
@@ -26,15 +26,22 @@ import {
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
-import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
   getAttendanceByRcController
 } from "../controllers/attendanceController";
-import {  getRCsController } from "../controllers/rcController";
 import { getRCLeaveApprovals } from "../services/rcLeaveService";
 import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
 
+import {getDeclarationForOthersController} from '../controllers/declarationController';
+
+import {
+  getRCDetailsController,
+  postRCDetailsController,
+  putRCDetailsController,
+} from "../controllers/rcController";
+import { upload } from "../middleware/multer";
 
 
 const rcRouter = Router();
@@ -47,10 +54,10 @@ rcRouter.get(
   errorWrapper(getAdmissionWaitingForApprovalByRCController)
 );
 rcRouter.put(
-  "/admissions/:admission_id",
+  "/admissions/room/:admission_id",
   authenticateUser,
   hasRole(["rc"]),
-  errorWrapper(updateApprovalStatusByRCController)
+  errorWrapper(allocateRoomController)
 );
 rcRouter.get(
   "/admissions/approvals",
@@ -149,6 +156,38 @@ rcRouter.post("/leave/complete", authenticateUser, hasRole(['rc']), errorWrapper
 
 // Fetch the all the RCs as same as the RC's own hostel
 rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyHostelController))
+
+//get all types of Latest Declarations  
+rcRouter.get("/declaration",authenticateUser,hasRole(['rc']),errorWrapper(getDeclarationForOthersController));
+
+rcRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  getRCDetailsController
+);
+
+rcRouter.post(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
+  postRCDetailsController
+);
+
+rcRouter.put(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
+  putRCDetailsController
+);
 
 export default rcRouter;
 

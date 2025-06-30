@@ -6,10 +6,13 @@ import {
   date,
   timestamp,
   boolean,
+  integer
 } from "drizzle-orm/pg-core";
 import { studentModel } from "./studentModel";
 import { summer_vacation_status_pgEnum } from "./enum";
 import { summerVacationApprovalStatus } from "../constants/enum";
+import { declarationModel } from "./declarationModel";
+
 
 export const summerVacationModel = pgTable("summer_vacation", {
   id: serial("id").primaryKey(),
@@ -19,10 +22,19 @@ export const summerVacationModel = pgTable("summer_vacation", {
     .notNull()
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
 
+  declarartion_id: integer("declaration_id")
+        .notNull()
+        .references(() => declarationModel.id, { onDelete: "no action" }).unique(),
+
   // Summer vacation form details
   vacation_from: timestamp("vacation_from").notNull(),
   address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
   returned_items: varchar("returned_items", { length: 100 }).array(),
+
+  //Contact details
+  mobile: varchar("mobile", { length: 15 }).notNull(),  //whatsapp number
+  email: varchar("email", { length: 100 }).notNull(),
+
   // Status and timestamps
   status: summer_vacation_status_pgEnum("status")
     .notNull()

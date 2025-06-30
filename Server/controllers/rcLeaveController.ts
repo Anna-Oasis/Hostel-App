@@ -60,19 +60,33 @@ export const getRCLeaves = async (
   switch (req.User.role) {
     case "deputyWarden" :
       const result = await getRCLeaveToBeApprovedByDeputyWarden()
+      
+      
       res.status(httpStatus.OK).json({
         success : true,
-        data : result
+        data : result || [],
+        count:result ? result.length:0,
+        message: result && result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves waiting for Deputy Warden approval"
       })
       break;
+      
     case "executiveWarden" :
-      const ewResult = await getRCLeaveToBeApprovedByExecutiveWarden()
+      const e_result = await getRCLeaveToBeApprovedByExecutiveWarden()
+      
       res.status(httpStatus.OK).json({
         success : true,
-        data : ewResult
+        data : e_result || [],
+        count:e_result ? e_result.length:0,
+        message: e_result && e_result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves waiting for Deputy Warden approval"
       })
       break;
-
+      
+    default:
+      throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
 }
 
@@ -131,9 +145,13 @@ export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: leaveForms,
-    message: "Fetched RC Leave forms successfully",
+    data: leaveForms || [],
+    count:leaveForms?leaveForms.length:0,
+    message: leaveForms && leaveForms.length >0
+    ? "Fetched RC Leave forms successfully"
+    :"No RC leaves are found",
   });
+
 }
 
 export const fetchRCbyHostelController = async (req: AuthRequest, res: Response) => {
@@ -148,11 +166,16 @@ export const fetchRCbyHostelController = async (req: AuthRequest, res: Response)
   }
 
   const rcs = await getRCsbyHostel(rc[0].hostel);
+ 
   res.status(httpStatus.OK).json({
     success : true,
-    data : rcs,
-    message : "Feched Successfully"
+    data : rcs || [],
+    count:rcs?rcs.length:0,
+    message : rcs && rcs.length>0
+    ?"Feched Successfully"
+    :"No RC's are found"
   })
+
 }
 
 export const updateCompleteLeave = async (req : AuthRequest, res : Response) => {

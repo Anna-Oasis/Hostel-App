@@ -6,6 +6,7 @@ import {
   fetchAdmissionsApprovedByUser,
   fetchAdmissionWaitingForApprovalController,
   updateApprovalStatusByWardenController,
+  allocateRoomController,
 } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
@@ -25,6 +26,7 @@ import {
 import {
   createRCController,
   deleteRCController,
+  getAllRCDetailsController,
   getRCsController,
   updateRCController,
 } from "../controllers/rcController";
@@ -34,6 +36,7 @@ import {
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
+import {getDeclarationForOthersController} from '../controllers/declarationController';
 
 const deputyWardenRouter = Router();
 
@@ -55,6 +58,12 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(fetchAdmissionsApprovedByUser)
+);
+deputyWardenRouter.put(
+  "/admissions/room/:admission_id",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(allocateRoomController)
 );
 
 // Summer vacation routes
@@ -95,7 +104,7 @@ deputyWardenRouter.put(
 
 // Room details route
 deputyWardenRouter.get(
-  "/rooms",
+  "/rooms/:academicYear",
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
@@ -160,6 +169,18 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(getAllAttendanceController)
+);
+
+//get all types of Latest Declarations  
+deputyWardenRouter.get("/declaration",
+  authenticateUser,
+  hasRole(['deputyWarden']),
+  errorWrapper(getDeclarationForOthersController));
+deputyWardenRouter.get(
+  "/rc/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  getAllRCDetailsController
 );
 
 export default deputyWardenRouter;

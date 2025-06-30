@@ -25,20 +25,12 @@ export const createSummerVacationFromController = async (
   }
 
   const validatedData = summerVacationSchema.parse(data);
-
   const result = await createSummerVacationForm(validatedData);
 
-  if (!result || result.length === 0) {
-    throw AppError(
-      "Internal error while generating leave form",
-      httpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
-
-  res.status(httpStatus.OK).json({
+  res.status(httpStatus.OK).json({  
     success: true,
-    message: "New leave form has been created",
-    data: result,
+    message: result.length >0?"New leave form has been created":"Internal error while generating leave form",
+    data: result.length>0?result:[],
   });
 };
 
@@ -56,24 +48,17 @@ export const getAllSummerVacationFormsOfStudent = async (
   const rollNumber = await getRollNoFromUserId(Number(UserId));
 
   if (!rollNumber) {
-    throw AppError("No Data is passed", httpStatus.BAD_REQUEST);
+    throw AppError("No Data is fetched", httpStatus.BAD_REQUEST);
   }
 
   const result = await getAllSummerVacationForms(rollNumber);
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      message: "No Summer vacation forms found",
-      data: [],
-    });
-    return;
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: "All available Summer Vacation forms are fetched Successfully",
-    data: result,
+    message: result.length > 0?"All available Summer Vacation forms are fetched Successfully":"No Summer vacation forms found",
+    data: result.length >0?result:0,
+
   });
 };
 
@@ -97,12 +82,14 @@ export const approveSummerVacationFormByRCController = async (
   ) {
     throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
   }
-  if (approve === false && !comment) {
+
+  if (approve === false && (!comment || comment.trim() === '')) {
     throw AppError(
       "Comment is required when declining the form",
       httpStatus.BAD_REQUEST
     );
   }
+
   await approveSummerVacationFormByRC(
     summerVacationID,
     Number(userId),
@@ -128,9 +115,11 @@ export const approveSummerVacationDeputyWardenController = async (
       httpStatus.UNAUTHORIZED
     );
   }
+
   const userId = req.User.id;
   const summerVacationID = Number(req.params.summer_vacation_id);
   const { approve, comment } = req.body;
+
   if (
     !summerVacationID ||
     isNaN(summerVacationID) ||
@@ -138,7 +127,9 @@ export const approveSummerVacationDeputyWardenController = async (
   ) {
     throw AppError("Inconsistent Data passed", httpStatus.BAD_REQUEST);
   }
-  if (approve === false && !comment) {
+
+  if (approve === false && (!comment || comment.trim() === '')) {
+
     throw AppError(
       "Comment is required when declining the form",
       httpStatus.BAD_REQUEST
@@ -147,7 +138,7 @@ export const approveSummerVacationDeputyWardenController = async (
 
   await approveSummerVacationByDeputyWarden(
     Number(userId),
-    Number(summerVacationID),
+    summerVacationID,
     approve,
     comment
   );
@@ -164,21 +155,20 @@ export const getSummerVacationFormsForDeputyWardenController = async (
   req: AuthRequest,
   res: Response
 ) => {
-  const result = await getSummerVacationFormsForDeputyWarden();
 
-  if (!result || result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      message: "Nothing to approve",
-      data: [],
-    });
-    return;
+
+  if(!req.User || !req.User.id)
+  {
+    throw AppError("User information is missing from request",httpStatus.UNAUTHORIZED);
   }
+
+  const result = await getSummerVacationFormsForDeputyWarden();
 
   res.status(httpStatus.OK).json({
     success: true,
-    message: "Data has been Fetched successfully",
-    data: result,
+    message: result.length > 0?"Data has been Fetched successfully":"Nothing to approve",
+    data: result.length > 0?result:[],
+
   });
 };
 
@@ -197,11 +187,14 @@ export const getSummerVacationFormsForRCController = async (
   if (!rcId || isNaN(rcId)) {
     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
   }
+
   const RCs = await getRCById(rcId);
-  console.log("RCs", RCs);
+  //console.log("RCs", RCs);
+
   if (!RCs || RCs.length === 0) {
     throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
   }
+
   const RC = RCs[0];
   const floors = RC.floor ? RC.floor : [];
   const hostelBlock = RC.hostel;
@@ -212,18 +205,11 @@ export const getSummerVacationFormsForRCController = async (
       floors
     );
 
-  if (!result || result.length === 0) {
+  
     res.status(httpStatus.OK).json({
-      success: false,
-      message: "No records found",
-      data: [],
-    });
-    return;
-  }
-
-  res.status(httpStatus.OK).json({
     success: true,
-    message: "All Summer Vacation Forms are fetched Successfully",
-    data: result,
+    message: result.length > 0?"All Summer Vacation Forms are fetched Successfully":"No records found",
+    data: result.length > 0?result:[],
+
   });
 };

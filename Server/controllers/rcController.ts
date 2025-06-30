@@ -4,6 +4,7 @@ import {
   getAllRCs,
   deleteRC,
   updateRC,
+  getAllRCDetailsService,
 } from "../services/rcServices";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
@@ -11,7 +12,9 @@ import { getRCById } from "../services/rcServices";
 import { AuthRequest } from "../types/roles";
 import { rcCreateSchema, rcUpdateSchema } from "../validation/rc.schema";
 import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../services/helper";
-
+import { getRCDetailsByUserIdService, createRCDetailsService, updateRCDetailsService } from "../services/rcServices";
+import { rcDetailsSchema } from "../validation/rcDetails.schema";
+import { handleFileUpload } from "../services/cloudflare/fileUpload";
 
 export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
@@ -44,19 +47,15 @@ export async function createRCController(req: AuthRequest, res: Response): Promi
 
 export async function getRCsController(req: AuthRequest, res: Response): Promise<void> {
   const rcs = await getAllRCs();
-  if (!rcs || rcs.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No RCs found",
-    });
-    return;
-  }
+
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: rcs,
-    message: "Fetched all RCs successfully",
+    data: rcs || [],
+    count:rcs?rcs.length:0,
+    message:rcs && rcs.length>0 
+    ?"Fetched all RCs successfully"
+    : "No RCs found",
   });
 }
 
@@ -114,3 +113,167 @@ export async function deleteRCController(req: AuthRequest, res: Response): Promi
   });
 }
 
+export async function getRCDetailsController(req: AuthRequest, res: Response): Promise<void> {
+  if (!req.User?.id) {
+    throw AppError("User ID missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const userId = Number(req.User.id);
+  const details = await getRCDetailsByUserIdService(userId);
+
+  if (!details) {
+    throw AppError("RC Details not found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "RC Details fetched successfully",
+    count: 1,
+    data: [details],
+  });
+}
+
+export const postRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User?.id) {
+    throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
+  }
+  const userId = req.User.id;
+
+  let passportPhotoFile: Express.Multer.File | undefined;
+  let rcSignatureFile: Express.Multer.File | undefined;
+
+  if (
+    req.files &&
+    !Array.isArray(req.files) &&
+    typeof req.files === "object"
+  ) {
+    passportPhotoFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["passportPhoto"]?.[0];
+    rcSignatureFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["rcSignature"]?.[0];
+  }
+
+  const passportPhotoUrl = passportPhotoFile
+    ? await handleFileUpload(passportPhotoFile, String(userId), "rc", "passport")
+    : undefined;
+
+  const rcSignatureUrl = rcSignatureFile
+    ? await handleFileUpload(rcSignatureFile, String(userId), "rc", "signature")
+    : undefined;
+
+  const rawPayload = {
+    ...req.body,
+    passportPhotoUrl,
+    rcSignatureUrl,
+    dob: req.body.dob
+      ? new Date(req.body.dob)
+      : undefined,
+  };
+
+  const validated = rcDetailsSchema.safeParse(rawPayload);
+  if (!validated.success) {
+    throw AppError(validated.error.errors[0].message, httpStatus.BAD_REQUEST);
+  }
+
+  const data = validated.data;
+
+  const inserted = await createRCDetailsService({
+    ...data,
+    userId: Number(userId),
+    dob: data.dob.toISOString().split("T")[0], 
+  });
+
+  res.status(httpStatus.CREATED).json({
+    success: true,
+    message: "RC Details created successfully",
+    count: inserted.length,
+    data: inserted,
+  });
+};
+
+
+
+
+export const putRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User?.id) {
+    throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const userId = Number(req.User.id);
+
+  let passportPhotoFile: Express.Multer.File | undefined;
+  let rcSignatureFile: Express.Multer.File | undefined;
+
+  if (
+    req.files &&
+    !Array.isArray(req.files) &&
+    typeof req.files === "object"
+  ) {
+    passportPhotoFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["passportPhoto"]?.[0];
+    rcSignatureFile = (req.files as { [fieldname: string]: Express.Multer.File[] })["rcSignature"]?.[0];
+  }
+
+  const passportPhotoUrl = passportPhotoFile
+    ? await handleFileUpload(passportPhotoFile, String(userId), "rc", "passport")
+    : undefined;
+
+  const rcSignatureUrl = rcSignatureFile
+    ? await handleFileUpload(rcSignatureFile, String(userId), "rc", "signature")
+    : undefined;
+
+  const rawPayload = {
+    ...req.body,
+    passportPhotoUrl,
+    rcSignatureUrl,
+    dob: req.body.dob ? new Date(req.body.dob) : undefined,
+  };
+
+  const parsed = rcDetailsSchema.safeParse(rawPayload);
+  if (!parsed.success) {
+    throw AppError(parsed.error.errors[0].message, httpStatus.BAD_REQUEST);
+  }
+
+  const validatedData = parsed.data;
+
+  const updatePayload = {
+    ...validatedData,
+    userId, 
+    dob: validatedData.dob.toISOString().split("T")[0],
+  };
+
+  const result = await updateRCDetailsService(updatePayload);
+
+  if (!result || result.length === 0) {
+    throw AppError("Failed to update RC Details", httpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "RC Details updated successfully",
+    count: result.length,
+    data: result,
+  });
+};
+
+
+export const getAllRCDetailsController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const rcList = await getAllRCDetailsService();
+
+  if (!rcList || rcList.length === 0) {
+    throw AppError("No RC Details found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    message: "All RC Details fetched successfully",
+    count: rcList.length,
+    data: rcList,
+  });
+};

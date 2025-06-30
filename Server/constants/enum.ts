@@ -17,12 +17,18 @@ export const userRole = {
   EXECUTIVE_WARDEN: "EXECUTIVE_WARDEN",
 };
 
+export const endeavour = {
+  HIGHER_STUDIES: "HIGHER_STUDIES",
+  JOB: "JOB",
+  COMPETITIVE_EXAMS: "COMPETITIVE_EXAMS",
+  OTHERS: "OTHERS"
+};
+
 export const admissionApprovalStatus = {
   SUBMITTED: "0",
   MANAGER: "1",
-  RC: "2",
-  DEPUTYWARDEN: "3",
-  EXECUTIVEWARDEN: "4",
+  ROOM_ALLOCATED : "2",
+  WARDEN: "3",
   DECLINED: "-1",
 };
 
@@ -61,4 +67,10 @@ export const grievanceApprovalStatus = {
   RC: "1",
   MANAGER: "2",
   DECLINED: "-1",
+};
+
+export const declaration = {
+  ADMISSION: "ADMISSION",
+  SUMMER_VACATION: "SUMMER_VACATION",
+  CHECK:"CHECK"
 };

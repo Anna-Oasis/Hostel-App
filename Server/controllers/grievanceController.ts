@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { createGrievance, getGrievancesForDeputyWarden, getGrievancesByRollNumber} from "../services/grievanceService";
+import { createGrievance, getGrievancesForDeputyWarden, getGrievancesByRollNumber, getGrievanceByGrievanceId} from "../services/grievanceService";
 import { updateGrievanceStatus } from "../services/grievanceService";
 import { AuthRequest } from "../types/roles";
 import { getGrievancesForManager, getGrievancesForRC } from "../services/grievanceService";
@@ -8,23 +8,16 @@ import { AppError } from "../utils/AppError";
 import {  
   rcGrievanceDecisionSchema 
 } from "../validation/grievance.schema";
-import { getRCById } from "../services/rcServices";
+import { getRCByUserId } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
-import { getRCidfromUserId, getRollNoFromUserId } from "../services/helper";
+import { getRollNoFromUserId } from "../services/helper";
 import { grievanceApprovalStatus} from "../constants/enum";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
-      httpStatus.UNAUTHORIZED
-    );
-  }
-
-  if(req.User.role !== "student"){
-    throw AppError(
-      "Invalid User!",
       httpStatus.UNAUTHORIZED
     );
   }
@@ -52,6 +45,7 @@ export const createGrievanceController = async (req: AuthRequest, res: Response)
   res.status(httpStatus.CREATED).json({
     success: true,
     data: result,
+    count:result.length,
     message: "Grievance created successfully",
   });
 };
@@ -60,15 +54,11 @@ export const getGrievancesByUserController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
-  }
-
-  if (req.User.role !== "student") {
-    throw AppError("Invalid User!", httpStatus.UNAUTHORIZED);
   }
 
   const rollNumber = await getRollNoFromUserId(Number(req.User.id));
@@ -76,96 +66,82 @@ export const getGrievancesByUserController = async (
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }
   console.log("Roll Number:", rollNumber);
+
   const result = await getGrievancesByRollNumber(rollNumber);
 
-  if (result.length === 0) {
-    res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No grievances found for this user",
-    });
-    return;
-  }
-
   res.status(httpStatus.OK).json({
-    success: true,
-    data: result,
-    message: "Grievances fetched successfully",
-  });
-};
-
+  success: true,
+  data: result || [],
+  count:result ? result.length : 0,
+  message:result && result.length > 0 
+  ? "Grievances fetched successfully"
+  :  "No Grievances found ",
+});
+}
 
 export const viewGrievancesByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.User.id));
-  if (!rc_id) {
-    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-  }
-  
-  const rc = await getRCById(Number(rc_id));
+  const rc = await getRCByUserId(Number(req.User.id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
-  }
-
-  if(!rc[0].hostel || !rc[0].floor){
-    throw AppError("Hostel or floor is not assigned to RC", httpStatus.NOT_FOUND);
   }
 
   if (rc[0].hostel == null || rc[0].floor == null) {
     throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
   }
-  const grievances = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
 
-  if (!grievances || grievances.length === 0) {
-    res.status(httpStatus.OK).json({ 
-      success: false, 
-      data: [],
-      message: "No grievances found",
-    });
-    return;
-  }
+  const result = await getGrievancesForRC(rc[0].hostel, rc[0].floor);
 
-  res.status(httpStatus.OK).json({ 
-    success: true, 
-    data: grievances,
-    message: "Fetched Grievances successfully",
-  });
-};
-
+  res.status(httpStatus.OK).json({
+  success: true,
+  data: result || [],
+  count:result ? result.length : 0,
+  message:result && result.length > 0 
+  ? "Grievances fetched successfully"
+  :  "No Grievances found ",
+});
+}
 
 export const approveOrDeclineGrievancesByRCController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User || !req.User.id || !req.User.role) {
+  if (!req.User) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
     );
   }
 
-  const rc_id = await getRCidfromUserId(Number(req.User.id));
-  if (!rc_id) {
-    throw AppError("RC not found for the user", httpStatus.NOT_FOUND);
-  }
-  
-  const rc = await getRCById(Number(rc_id));
+  const rc = await getRCByUserId(Number(req.User.id));
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
   console.log("RC Details:", rc);
 
-  const grievanceId=Number(req.params.grievance_id);
+  const { grievance_id } = req.params;
+
+  if (!grievance_id || isNaN(Number(grievance_id))) {
+    throw AppError("Invalid or missing Grievance ID", httpStatus.BAD_REQUEST);
+  }
+
+  const grievanceId = Number(grievance_id);
+
+  const grievance=await getGrievanceByGrievanceId(grievanceId);
+
+  if(!grievance) {
+    throw AppError("No Grievance found for this grievance id", httpStatus.BAD_REQUEST);
+  }
 
   const validated=rcGrievanceDecisionSchema.parse(req.body);
   let status;
@@ -187,72 +163,58 @@ export const approveOrDeclineGrievancesByRCController = async (
 
   res.status(httpStatus.OK).json({
     success: true,
+    data:    updateResult || [],
+    count:   updateResult ? updateResult.length : 0,
     message: "Grievance approval submitted successfully",
-    status: validated.approve ? "Approved" : "Declined",
+    status:  validated.approve ? "Approved" : "Declined",
   });
 };
 
-
 export const getGrievancesForManagerController=async (req:AuthRequest,res:Response)=>
 {
-    if (!req.User || !req.User.id || !req.User.role) {
-      throw AppError(
-        "User information is missing from request",
-        httpStatus.UNAUTHORIZED
-      );
-    }
+  const result = await getGrievancesForManager();
 
-    if(req.User.role !== "manager"){
-      throw AppError(
-        "Invalid User!",
-        httpStatus.UNAUTHORIZED
-      );
-    }
-
-    const data = await getGrievancesForManager();
-
-    if (data.length === 0) {
-      res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No Grievances Found"
-      });
-      return;
-    }
-
-    res.status(httpStatus.OK).json({
-      success: true,
-      data: data,
-      message: "Grievances Fetched Successfully"
-    });
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result || [],
+    count:result ? result.length : 0,
+    message:result && result.length > 0 
+    ? "Grievances fetched successfully"
+    :  "No Grievance found",
+  });
 }
 
 export const resolveGrievanceByManagerController = async (req: AuthRequest,res:Response)=>
 {
-    if (!req.User || !req.User.id || !req.User.role) {
+    if (!req.User) {
       throw AppError(
         "User information is missing from request",
         httpStatus.UNAUTHORIZED
       );
     }
 
-    if(req.User.role !== "manager"){
-      throw AppError(
-        "Invalid User!",
-        httpStatus.UNAUTHORIZED
-      );
+    const { grievance_id } = req.params;
+
+    if (!grievance_id || isNaN(Number(grievance_id))) {
+      throw AppError("Invalid or missing Grievance ID", httpStatus.BAD_REQUEST);
     }
 
-    const grievanceId=Number(req.params.grievance_id);
+  const grievanceId = Number(grievance_id);
+    
+    const grievance=await getGrievanceByGrievanceId(grievanceId);
+
+    if(!grievance) {
+      throw AppError("No Grievance found for the provided id", httpStatus.BAD_REQUEST);
+    }
+
     const data = await updateGrievanceStatus({
       grievance_id: grievanceId,
       status: grievanceApprovalStatus.MANAGER,
       updatedBy: req.User.role
     });
 
-    if(data.length===0)
-    {
-      throw AppError("Grievance with Grievance ID not Found",httpStatus.NOT_FOUND);
+    if (!data) {
+      throw AppError("Failed to update grievance", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
     res.status(httpStatus.OK)
@@ -260,6 +222,7 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
       {
         success:true,
         data:data,
+        count:data.length,
         message:"Grievance Resolved Successfully"
       }
     );
@@ -267,34 +230,14 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
 
 export const getGrievancesForDeputyWardenController = async (req:AuthRequest,res:Response)=>
 {
-    if (!req.User || !req.User.id || !req.User.role) {
-      throw AppError(
-        "User information is missing from request",
-        httpStatus.UNAUTHORIZED
-      );
-    }
-
-    if(req.User.role !== "deputyWarden"){
-      throw AppError(
-        "Invalid User!",
-        httpStatus.UNAUTHORIZED
-      );
-    }
-
-    const data = await getGrievancesForDeputyWarden();
-
-    if (data.length === 0) {
-      res.status(httpStatus.OK).json({
-      success: false,
-      data: [],
-      message: "No grievances found for Deputy Warden"
-      });
-      return;
-    }
+    const result = await getGrievancesForDeputyWarden();
 
     res.status(httpStatus.OK).json({
       success: true,
-      message: "All grievances are fetched for Deputy Warden",
-      data: data
+      data: result || [],
+      count:result ? result.length : 0,
+      message:result && result.length > 0 
+      ? "All grievances are fetched for Deputy Warden successfully"
+      :  "No Grievances found ",
     });
 }

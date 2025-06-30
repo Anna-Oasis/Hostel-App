@@ -7,6 +7,7 @@ import { eq, and, inArray, or, isNull } from "drizzle-orm";
 import { summerVacationApprovalsModel } from "../models/summerVacationApprovals";
 import { summerVacationApprovalStatus } from "../constants/enum";
 import { studentModel } from "../models/studentModel";
+import { roomModel } from "../models/roomModel";
 
 export const createSummerVacationForm = async (data: NewSummerVacation) => {
   return await db.insert(summerVacationModel).values(data).returning();
@@ -104,9 +105,40 @@ export const approveSummerVacationByDeputyWarden = async (
     .where(eq(summerVacationModel.id, summer_vacation_id));
 
   await db.insert(summerVacationApprovalsModel).values({
-    summer_vacation_id: summer_vacation_id,
-    user_id: user_id,
-    approve: approve,
+    summer_vacation_id,
+    user_id,
+    approve,
     ...(comment && { comment }),
   });
+
+  // Step 3: Deallocate student room if approved
+  if (approve) {
+    // Get student's roll number
+    const result = await db
+      .select({
+        rollNo: studentModel.rollNo,
+      })
+      .from(summerVacationModel)
+      .innerJoin(
+        studentModel,
+        eq(summerVacationModel.roll_number, studentModel.rollNo)
+      )
+      .where(eq(summerVacationModel.id, summer_vacation_id));
+
+    const studentRollNo = result[0]?.rollNo;
+
+    if (!studentRollNo) {
+      throw new Error("Student not found for summer vacation record");
+    }
+
+    // Set roomNumber, floor, hostelBlock to null for the student
+    await db
+      .update(studentModel)
+      .set({
+        roomNumber: null,
+        floor: null,
+        hostelBlock: null,
+      })
+      .where(eq(studentModel.rollNo, studentRollNo));
+  }
 };
