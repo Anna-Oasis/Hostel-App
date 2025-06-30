@@ -18,3 +18,4 @@ export * from './roomModel';
 export * from './preAdmission';
 export * from './declarationModel';
 export * from './admissionSession';
+export * from './rcDetails';
