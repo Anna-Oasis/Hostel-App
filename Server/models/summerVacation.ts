@@ -21,11 +21,6 @@ export const summerVacationModel = pgTable("summer_vacation", {
   roll_number: varchar("roll_number", { length: 20 })
     .notNull()
     .references(() => studentModel.rollNo, { onDelete: "cascade" }),
-
-  declarartion_id: integer("declaration_id")
-        .notNull()
-        .references(() => declarationModel.id, { onDelete: "no action" }).unique(),
-
   // Summer vacation form details
   vacation_from: timestamp("vacation_from").notNull(),
   address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
