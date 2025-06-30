@@ -6,14 +6,14 @@ import AdmissionSessionHistory from '@/components/executiveWarden/AdmissionSessi
 import { FilePlus2, History } from 'lucide-react-native'
 
 const AdmissionSession = () => {
-  const [activeTab, setActiveTab] = useState<'form' | 'history'>('form')
+  const [activeTab, setActiveTab] = useState<'form' | 'history'>('history')
 
   return (
     <View className="flex-1 bg-white">
       <TabSwitch
         tabs={[
-          { label: 'Start Session', value: 'form' },
           { label: 'History', value: 'history' },
+          { label: 'Start Session', value: 'form' },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
