@@ -12,7 +12,7 @@ import {
 } from "../services/admissionServices";
 import { Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
-import { admissionApprovalStatus } from "../constants/enum";
+import { admissionApprovalStatus, declaration } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { managerAdmissionDecisionSchema } from "../validation/manager.schema";
 import { AuthRequest } from "../types/roles";
@@ -32,6 +32,7 @@ import { getRCById } from "../services/rcServices";
 import { findStudentByRollNo } from "../services/detailsService";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/admission.schema";
+import { getLatestDeclaration } from "../services/declarationServices";
 
 // GET – Fetch all admissions waiting for approval based on user role - manager, deputy warden, or executive warden
 export async function fetchAdmissionWaitingForApprovalController(
@@ -202,14 +203,15 @@ export async function createAdmissionController(
     );
   }
 
+  const declaration_latest = await getLatestDeclaration(declaration.ADMISSION);
+
   const newAdmission = await createAdmission({
     ...parsedData,
-    declaration_id:parsedData.declaration_id,
+    declaration_id: declaration_latest[0].id,
     status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
 
     updatedAt: new Date(),
-    declaration_id: 1, // replace this with the actual declaration ID
 
   });
 
@@ -480,11 +482,6 @@ export const allocateRoomController = async (
       httpStatus.INTERNAL_SERVER_ERROR
     );
   }
-
-
-    // Update student hostel details
-    const studentUpdate = await updateStudentHostelDetails(rollNo, validated.room, validated.floor, validated.hostel_block!);
-
   // Update admission status
   const admissionUpdate = await updateAdmissionStatus({
     admission_id: Number(admission_id),

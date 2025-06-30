@@ -1,7 +1,6 @@
 import { db } from "../config/dbConnection";
 import { eq,desc } from "drizzle-orm";
 import { declarationModel, NewDeclaration } from "../models/declarationModel";
-import { timestamp } from "drizzle-orm/gel-core";
 
 export const postDeclaration = async (type:string,declarations: string[])=>
 {

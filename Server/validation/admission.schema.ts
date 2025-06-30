@@ -3,10 +3,6 @@ import { hostelBlock } from "../constants/enum";
 
 export const createAdmissionSchema = z.object({
   roll_number: z.string().min(6, "Roll number is required"),
-    declaration_id: z.number({
-    required_error: "declaration_id is required",
-    invalid_type_error: "declaration_id must be a number",
-  }),
   academicYear: z
     .string()
     .min(9, "Academic year is required")
@@ -22,7 +18,7 @@ export const createAdmissionSchema = z.object({
   hostelBlock: z
     .enum(Object.values(hostelBlock) as [string, ...string[]])
     .refine((val) => val !== "", { message: "Hostel block is required" }),
-    
+
   messPreference: z
     .string()
     .min(1, "Mess preference is required")
@@ -33,18 +29,13 @@ export const createAdmissionSchema = z.object({
     .max(100, "Transaction ID must be less than 100 characters"),
 });
 
-
 export const roomAllocationSchema = z.object({
   room: z.coerce.number({ invalid_type_error: "room must be a number" }),
   floor: z.coerce.number({ invalid_type_error: "floor must be a number" }),
-  hostel_block: z
-    .enum(Object.values(hostelBlock) as [string, ...string[]]),
+  hostel_block: z.enum(Object.values(hostelBlock) as [string, ...string[]]),
 });
-
 
 export const wardenDecisionSchema = z.object({
   approve: z.boolean(),
   comment: z.string().optional(),
 });
-
-
