@@ -54,7 +54,6 @@ export default function DetailsPage() {
         if (page < 3) {
           next();
         } else {
-          setLoading(true);
           const formData = new FormData();
           formData.append("user_id", userId?.toString() || "");
           formData.append("name", values.name);
@@ -134,7 +133,8 @@ export default function DetailsPage() {
             }
           }
           console.log(formData);
-          if (details.length === 0) {
+          console.log(details)
+          if (details === null || details.length === 0) {
             await submitStudentDetails(formData);
           } else {
             await updateStudentDetails(details.rollNo, formData);
@@ -148,7 +148,6 @@ export default function DetailsPage() {
           } catch (e) {
             console.error("Failed to fetch updated details:", e);
           }
-          setLoading(false);
         }
       }}
     >
