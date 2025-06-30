@@ -186,7 +186,12 @@ export async function createAdmissionController(
   const parsedData = createAdmissionSchema.parse(admissionData);
 
   const studentData = await findStudentByRollNo(parsedData.roll_number)
-
+  if (!studentData || studentData.length === 0) {
+    throw AppError(
+      "Student not found for the provided roll number",
+      httpStatus.NOT_FOUND
+    );
+  }
   if(!studentData[0].approve) {
     throw AppError("Student is not approved", httpStatus.BAD_REQUEST);
   }
