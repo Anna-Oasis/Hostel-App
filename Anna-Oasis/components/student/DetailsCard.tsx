@@ -14,7 +14,7 @@ const DetailsCard = () => {
     const fetchDetails = async () => {
         try {
             const details = await getStudentDetails();
-            if (!details.success){
+            if (details.count === 0){
                 Alert.alert("Personal Details","Please fill your personal details first");
                 router.push("/User/Student/Details/Edit");
             } else {
