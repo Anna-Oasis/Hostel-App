@@ -17,8 +17,8 @@ import {
   approveVacatingFormByManagerController,
   getVacatingFormsForManagerController
 } from '../controllers/vacatingHostelController';
-import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsController } from '../controllers/detailsController';
 import {getDeclarationForOthersController} from '../controllers/declarationController';
+import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
 
 const managerRouter = Router();
 
@@ -82,7 +82,7 @@ managerRouter.get(
   "/details/:rollNo",
   authenticateUser,
   hasRole(['manager']),
-  errorWrapper(getStudentDetailsController)
+  errorWrapper(getStudentDetailsUsingRollNoController)
 );
 
 managerRouter.put(

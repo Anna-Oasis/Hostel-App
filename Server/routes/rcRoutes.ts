@@ -26,7 +26,7 @@ import {
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
-import { fetchStudentDetailsForRcController } from "../controllers/studentController";
+import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
   getAttendanceByRcController
@@ -41,7 +41,7 @@ import {
   postRCDetailsController,
   putRCDetailsController,
 } from "../controllers/rcController";
-
+import { upload } from "../middleware/multer";
 
 
 const rcRouter = Router();
@@ -160,6 +160,34 @@ rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyH
 //get all types of Latest Declarations  
 rcRouter.get("/declaration",authenticateUser,hasRole(['rc']),errorWrapper(getDeclarationForOthersController));
 
+rcRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  getRCDetailsController
+);
+
+rcRouter.post(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
+  postRCDetailsController
+);
+
+rcRouter.put(
+  "/details",
+  authenticateUser,
+  hasRole(["rc"]),
+  upload.fields([
+    { name: "passportPhoto", maxCount: 1 },
+    { name: "rcSignature", maxCount: 1 },
+  ]),
+  putRCDetailsController
+);
 
 export default rcRouter;
 

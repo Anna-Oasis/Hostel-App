@@ -11,6 +11,9 @@ export const rcDetailsSchema = z.object({
   residentialAddress: z.string().min(1, "Residential address is required"),
   bloodGroup: z.string().min(1),
   medicalHistory: z.string().default(""),
+
+  passportPhotoUrl: z.string().url().optional(),
+  rcSignatureUrl: z.string().url().optional(),
 });
 
 export type RCDetailsInput = z.infer<typeof rcDetailsSchema>;

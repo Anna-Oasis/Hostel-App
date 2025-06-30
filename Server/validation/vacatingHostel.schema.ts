@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { endeavour } from "../constants/enum";
 
 export const vacatingFormSchema = z.object({
   roll_number: z.string().min(1, "Roll number is required"),
