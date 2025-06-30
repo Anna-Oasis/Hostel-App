@@ -80,9 +80,20 @@ export async function getLatestAdmissionSessionForSemesterController(req: AuthRe
   }
   try {
     const session = await getLatestAdmissionSessionForSemesterService(semester);
+    
+    let isOpen = false;
+    if (session) {
+      const currentDate = new Date();
+      const fromDate = new Date(session.from);
+      const toDate = new Date(session.to);
+      
+      isOpen = currentDate >= fromDate && currentDate <= toDate;
+    }
+    
     res.status(httpStatus.OK).json({
       success: true,
       data: session || null,
+      isOpen,
       message: session
         ? "Fetched latest active admission session successfully"
         : "No active admission session found for the given semester",

@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import { getStudentDetails } from "@/utils/student/studentDetailsApi";
 import useUserStore from "@/stores/userStore";
 import HelperText from "@/components/HelperText";
-import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 
 export default function StudentMain() {
   const menuItems = [

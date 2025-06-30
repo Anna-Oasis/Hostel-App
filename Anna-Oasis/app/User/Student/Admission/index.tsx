@@ -14,10 +14,12 @@ import useLoadingStore from "@/stores/loadingStore";
 import AdmissionHistory from "./History/index"; 
 import TabSwitch from "@/components/TabSwitch";
 import { FilePlus2, History as HistoryIcon } from "lucide-react-native";
+import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
+  const [isSessionChecked, setIsSessionChecked] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const details = useUserStore((state) => state.details);
   const setLoading = useLoadingStore((state) => state.setLoading);
@@ -49,6 +51,31 @@ const AdmissionForm = () => {
         return null;
     }
   };
+
+  useEffect(() => {
+    const fetchAdmissionSession = async () => {
+      try {
+        const session = await getAdmissionSession(details.semester);
+        if (!session.isOpen) {
+          router.replace("/User/Student/Admission/Closed");
+        } else {
+          setIsSessionChecked(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch admission session:", error);
+        setIsSessionChecked(true); // Allow form to render on error
+      }
+    };
+    fetchAdmissionSession();
+  }, [details]);
+
+  if (!isSessionChecked) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <Text>Checking admission session...</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white">

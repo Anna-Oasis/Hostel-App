@@ -77,7 +77,7 @@ export async function getAdmissionSession(semester: string) {
         },
       }
     );
-    return response.data.data;
+    return response.data;
   } catch (error: any) {
     Alert.alert(
       "Fetch Error",
