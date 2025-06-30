@@ -17,6 +17,7 @@ import {
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
+import { createAdmissionSessionController, getAdmissionSessionsController, updateAdmissionSessionController } from "../controllers/admissionSessionController";
 import { getAllRCDetailsController } from "../controllers/rcController";
 
 const executiveWardenRouter = Router();
@@ -51,6 +52,25 @@ executiveWardenRouter.put(
   authenticateUser,
   hasRole(["executiveWarden"]),
   errorWrapper(allocateRoomController)
+);
+
+executiveWardenRouter.post(
+  "/admissions/session",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(createAdmissionSessionController)
+);
+executiveWardenRouter.get(
+  "/admissions/session",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(getAdmissionSessionsController)
+);
+executiveWardenRouter.put(
+  "/admissions/session/:id",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(updateAdmissionSessionController)
 );
 
 // Room details route

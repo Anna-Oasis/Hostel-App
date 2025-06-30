@@ -29,6 +29,7 @@ import {
   createVacatingHostelFormController,
   getVacatingHostelFormsOfaStudentController
 } from "../controllers/vacatingHostelController";
+import { getLatestAdmissionSessionForSemesterController } from "../controllers/admissionSessionController";
 
 const studentRouter = Router();
 
@@ -74,5 +75,12 @@ studentRouter.get("/summer_vacation/:roll_number",authenticateUser, hasRole(['st
 
 //get all types of Latest Declarations  
 studentRouter.get("/declaration",authenticateUser,hasRole(['student']),errorWrapper(getDeclarationForOthersController));
+// GET latest active admission session for a semester
+studentRouter.get(
+  "/admission/session/:semester",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(getLatestAdmissionSessionForSemesterController)
+);
 
 export default studentRouter;
