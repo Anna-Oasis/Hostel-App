@@ -6,6 +6,7 @@ import TextField from '@/components/form/TextField';
 import { Button, ButtonText } from '@/components/ui/button';
 import { bloodGroups } from '@/constants/details';
 import { initialValues } from '@/constants/rcDetails';
+import rcDetailsValidation from '@/constants/validations/rcDetailsValidation';
 import useUserStore from '@/stores/userStore';
 import { Formik } from 'formik';
 import React from 'react';
@@ -18,6 +19,7 @@ const RCDetailsEditPage = () => {
     return (
         <Formik
             initialValues={details ? { ...initialValues, ...details } : initialValues}
+            validationSchema={rcDetailsValidation}
             onSubmit={(values) => {
                  const formData = new FormData();
 
@@ -56,7 +58,7 @@ const RCDetailsEditPage = () => {
 
             }}
         >
-            {({ handleSubmit, validateForm }) => (
+            {({ handleSubmit}) => (
                 <ScrollView  contentContainerStyle={{
                     padding: 20,
                     gap: 12,
@@ -82,11 +84,7 @@ const RCDetailsEditPage = () => {
                         <ImagePickerField label='Passport Photo' value='passportPhotoUrl' placeholder='upload'/>
                         <ImagePickerField label='Signature' value='rcSignatureUrl' placeholder='upload'/>
 
-                        <Button onPress={async() => {
-                                const formErrors = await validateForm();
-                                if (Object.keys(formErrors).length > 0) {
-                                    console.log("Formik validation errors:", formErrors);
-                                }
+                        <Button onPress={() => {
                                 handleSubmit();
                         }}>
                             <ButtonText>Edit Details</ButtonText>
