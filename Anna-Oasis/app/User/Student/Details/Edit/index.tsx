@@ -49,7 +49,7 @@ export default function DetailsPage() {
     <Formik
       initialValues={details ? { ...initialValues, ...details } : initialValues}
       // initialValues={testValues} // For testing purposes, replace with initialValues in production
-      // validationSchema={validationSchemas[page]}
+      validationSchema={validationSchemas[page]}
       onSubmit={async (values) => {
         if (page < 3) {
           next();
@@ -133,8 +133,8 @@ export default function DetailsPage() {
               } as any);
             }
           }
-
-          if (!details) {
+          console.log(formData);
+          if (details.length === 0) {
             await submitStudentDetails(formData);
           } else {
             await updateStudentDetails(details.rollNo, formData);

@@ -82,6 +82,7 @@ export async function createStudentDetailsController(req: AuthRequest, res: Resp
         httpStatus.UNAUTHORIZED
       );
     }
+    console.log("Request Body:", req.body);
 
     const validation = studentSchema.safeParse(req.body);
     if (!validation.success) {

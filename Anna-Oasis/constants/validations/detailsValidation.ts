@@ -16,7 +16,6 @@ const validationSchemas = [
     email: Yup.string().email("Invalid email format").required("Required"),
     emergencyContact: Yup.string().matches(phoneRegex, "Include country code (e.g., +91...)").required("Required"),
     dateOfBirth: Yup.string().matches(dateRegex, "Use YYYY-MM-DD").required("Required"),
-    age: Yup.number().min(15).max(99).required("Required"),
     gender: Yup.string().oneOf(["male", "female", "other"], "Please select a gender").required("Required"),
     nationality: Yup.string().required("Required"),
     bloodGroup: Yup.string()

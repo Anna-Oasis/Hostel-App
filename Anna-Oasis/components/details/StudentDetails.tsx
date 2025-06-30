@@ -99,14 +99,12 @@ const StudentDetails = () => {
           value="dateOfBirth"
           placeholder="YYYY-MM-DD"
         />
-        <TextField label="Age" value="age" placeholder="Age" />
         <RadioField
           label="Gender"
           value="gender"
           options={[
             { label: "Male", value: "male" },
             { label: "Female", value: "female" },
-            { label: "Other", value: "other" },
           ]}
         />
         <SelectField

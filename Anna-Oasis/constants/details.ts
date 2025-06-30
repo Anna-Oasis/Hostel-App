@@ -152,7 +152,6 @@ const initialValues = {
   email: "",
   emergencyContact: "",
   dateOfBirth: "",
-  age: "",
   nationality: "",
   bloodGroup: "",
   medicalHistory: "",

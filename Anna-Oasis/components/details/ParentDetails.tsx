@@ -20,7 +20,7 @@ const ParentDetails = () => (
       <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
       <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
       <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
-      <SelectField label="Father's Country" value="fatherCountry" options={countries} />
+      <SelectField label="Father's Residential Country" value="fatherCountry" options={countries} />
     </View>
 
     <View className="bg-white rounded-xl shadow p-4 mb-6">
@@ -46,12 +46,12 @@ const ParentDetails = () => (
     <View className="bg-white rounded-xl shadow p-4 mb-6">
       <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Residential Address (Foreign)</Text>
       <Divider className="mb-3" />
-      <TextField label="Foreign House No" value="resForeignHouseNo" placeholder="House No" />
-      <TextField label="Foreign Street" value="resForeignStreet" placeholder="Street" />
-      <TextField label="Foreign City" value="resForeignCity" placeholder="City" />
-      <TextField label="Foreign State" value="resForeignState" placeholder="State" />
-      <SelectField label="Foreign Country" value="resForeignCountry" options={countries} />
-      <TextField label="Foreign Postal Code" value="resForeignPostalCode" placeholder="Postal Code" />
+      <TextField label="House No" value="resForeignHouseNo" placeholder="House No" />
+      <TextField label="Street" value="resForeignStreet" placeholder="Street" />
+      <TextField label="City" value="resForeignCity" placeholder="City" />
+      <TextField label="State" value="resForeignState" placeholder="State" />
+      <SelectField label="Country" value="resForeignCountry" options={countries} />
+      <TextField label="Postal Code" value="resForeignPostalCode" placeholder="Postal Code" />
     </View>
   </View>
 );
