@@ -1,25 +1,27 @@
 import { Router } from "express";
-import {
+/*import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
   updateAdmissionController
-} from "../controllers/admissionController";
+} from "../controllers/admissionController";*/
 import {
   createGrievanceController,
   getGrievancesByUserController,
 } from "../controllers/grievanceController";
 import errorWrapper from "../middleware/errorWrapper";
-import {createSummerVacationFromController,getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
+import {
+  createSummerVacationFromController,
+  getAllSummerVacationFormsOfStudent} from '../controllers/summerVacationController';
 import { upload } from "../middleware/multer";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
 import {
-  getStudentDetailsController,
+  getStudentDetailsUsingRollNoController,
   createStudentDetailsController,
   updateStudentDetailsController,
   getStudentDetailsUsingUserIdController,
 } from "../controllers/detailsController";
-import { createLeaveFormFromController,getAllLeaveFormsFromController} from "../controllers/leaveController";
+import { createLeaveFormController,getAllLeaveFormsByRollNoController} from "../controllers/leaveController";
 
 
 import {
@@ -32,11 +34,12 @@ const studentRouter = Router();
 
 
 //admission - students
-studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
+/*studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
 studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
-studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
+studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));*/
 
+//Grievance
 studentRouter.post("/grievance", authenticateUser, hasRole(["student"]),errorWrapper(createGrievanceController));
 studentRouter.get("/grievance",authenticateUser, hasRole(["student"]), errorWrapper(getGrievancesByUserController));
 
@@ -51,19 +54,17 @@ const fileFields = upload.fields([
 
 
 // student Details
-studentRouter.get("/details", authenticateUser, hasRole(['student']),errorWrapper(getStudentDetailsUsingUserIdController))
-studentRouter.get("/details/:rollNo",authenticateUser ,hasRole(['student']),errorWrapper(getStudentDetailsController));
+studentRouter.get("/details", authenticateUser, hasRole(['student']),errorWrapper(getStudentDetailsUsingUserIdController));
 studentRouter.post("/details",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(createStudentDetailsController));
-studentRouter.put("/details/:rollNo",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(updateStudentDetailsController));
+studentRouter.put("/details/:roll_number",fileFields,authenticateUser ,hasRole(['student']),errorWrapper(updateStudentDetailsController));
 
 // Vacating Hostel
 studentRouter.get("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(getVacatingHostelFormsOfaStudentController));
 studentRouter.post("/vacating_hostel",authenticateUser ,hasRole(['student']),errorWrapper(createVacatingHostelFormController));
 
-// LEAVE FORMS
-studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormFromController));
-//get all the leave forms
-studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsFromController));
+//LEAVE FORMS
+studentRouter.post("/leave",authenticateUser,hasRole(['student']),errorWrapper(createLeaveFormController));
+studentRouter.get("/leave/:roll_number",authenticateUser, hasRole(['student']),errorWrapper(getAllLeaveFormsByRollNoController));
 
 // SUMMER VACATION FORMS
 // create a new Summer vacation form

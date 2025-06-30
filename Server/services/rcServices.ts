@@ -68,7 +68,6 @@ export async function getRCById(rc_id: number) {
   return rc;
 }
 
-
 export async function getRCByUserId(userId: number) {
   const rc = await db
     .select()
@@ -79,13 +78,9 @@ export async function getRCByUserId(userId: number) {
 }
 
 export const getRCDetailsByUserIdService = async (userId: number) => {
-  const result = await db
-    .select()
-    .from(rcDetailsModel)
-    .where(eq(rcDetailsModel.userId, userId));
+  const result = await db.select().from(rcDetailsModel).where(eq(rcDetailsModel.userId, userId));
   return result[0];
 };
-
 
 export const createRCDetailsService = async (data: NewRCDetails) => {
   return await db.insert(rcDetailsModel).values(data).returning();
@@ -93,10 +88,9 @@ export const createRCDetailsService = async (data: NewRCDetails) => {
 
 export const updateRCDetailsService = async (data: RCDetailsUpdate) => {
   const { userId, ...updateFields } = data;
+  return await db.update(rcDetailsModel).set(updateFields).where(eq(rcDetailsModel.userId, userId)).returning();
+};
 
-  return await db
-    .update(rcDetailsModel)
-    .set(updateFields)
-    .where(eq(rcDetailsModel.userId, userId))
-    .returning();
+export const getAllRCDetailsService = async () => {
+  return await db.select().from(rcDetailsModel);
 };

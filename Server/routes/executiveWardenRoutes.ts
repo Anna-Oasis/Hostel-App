@@ -16,6 +16,7 @@ import {
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
 import { createAdmissionSessionController, getAdmissionSessionsController, updateAdmissionSessionController } from "../controllers/admissionSessionController";
+import { getAllRCDetailsController } from "../controllers/rcController";
 
 const executiveWardenRouter = Router();
 
@@ -72,7 +73,7 @@ executiveWardenRouter.put(
 
 // Room details route
 executiveWardenRouter.get(
-  "/rooms",
+  "/rooms/:academicYear",
   authenticateUser,
   hasRole(["executiveWarden"]),
   errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
@@ -89,6 +90,12 @@ executiveWardenRouter.put(
   authenticateUser,
   hasRole(["executiveWarden"]),
   errorWrapper(updateLeaveStatusForRC)
+);
+executiveWardenRouter.get(
+  "/rc/details",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  getAllRCDetailsController
 );
 
 export default executiveWardenRouter;

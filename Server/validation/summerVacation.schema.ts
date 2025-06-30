@@ -19,4 +19,6 @@ export const summerVacationSchema = z.object({
     .max(100, "Address too long"),
 
   returned_items: z.array(z.string().max(100)).optional().default([]),
+  mobile: z.string().regex(/^(\+\d{1,3})?\d{10}$/, "Invalid mobile number"),
+  email: z.string().email(),
 });

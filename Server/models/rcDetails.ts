@@ -2,7 +2,11 @@ import { pgTable, integer, varchar, text, date } from "drizzle-orm/pg-core";
 import { rcModel } from "./rcModel";
 
 export const rcDetailsModel = pgTable("rc_details", {
-  userId: integer("user_id").notNull().primaryKey().references(() => rcModel.userId, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .primaryKey()
+    .references(() => rcModel.userId, { onDelete: "cascade" }),
+
   name: varchar("name", { length: 100 }).notNull(),
   dept: varchar("dept", { length: 100 }).notNull(),
   registerNo: varchar("register_no", { length: 20 }).notNull(),
@@ -13,6 +17,8 @@ export const rcDetailsModel = pgTable("rc_details", {
   residentialAddress: text("residential_address").notNull(),
   bloodGroup: varchar("blood_group", { length: 5 }).notNull(),
   medicalHistory: text("medical_history").notNull(),
+  passportPhotoUrl: text("passport_photo_url"),
+  rcSignatureUrl: text("rc_signature_url"),
 });
 
 export type RCDetails = typeof rcDetailsModel.$inferSelect;
