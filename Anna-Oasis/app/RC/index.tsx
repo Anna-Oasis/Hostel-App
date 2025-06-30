@@ -6,6 +6,7 @@ import {
   UsersIcon,
   ClipboardListIcon,
   CalendarCheckIcon,
+  User,
 } from "lucide-react-native";
 import { useEffect } from "react";
 import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
@@ -54,6 +55,12 @@ export default function RCPage() {
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,
       color: "#D97706",
+    },
+    {
+      title: "Personal Details",
+      route: "/RC/Details",
+      icon: User,
+      color: "#4F46E5",
     },
   ];
 
