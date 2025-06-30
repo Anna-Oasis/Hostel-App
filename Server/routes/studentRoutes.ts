@@ -1,10 +1,10 @@
 import { Router } from "express";
-/*import {
+import {
   createAdmissionController,
   getAdmissionByAdmissionIdController,
   getAdmissionByRollNumberController,
   updateAdmissionController
-} from "../controllers/admissionController";*/
+} from "../controllers/admissionController";
 import {
   createGrievanceController,
   getGrievancesByUserController,
