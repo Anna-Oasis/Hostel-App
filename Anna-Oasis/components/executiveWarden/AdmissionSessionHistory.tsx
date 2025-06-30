@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ScrollView } from 'react-native'
+import { ScrollView, Alert } from 'react-native'
 import { Box } from "@/components/ui/box"
 import { Text } from "@/components/ui/text"
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button"
@@ -8,41 +8,43 @@ import { Icon } from "@/components/ui/icon"
 import { Pencil, X as CloseIcon } from "lucide-react-native"
 import AdmissionSessionForm from './AdmissionSessionForm'
 import EmptyPage from "@/components/EmptyPage"
-
-const fetchAdmissionSessions = async () => {
-  return {
-    success: true,
-    data: [
-      {
-        id: 1,
-        from: "2024-07-01",
-        to: "2024-12-31",
-        semesters: [3, 5, 7],
-        academic_year: "2025-2026"
-      }
-    ],
-    count: 1,
-    message: "Fetched admission sessions successfully"
-  }
-}
+import { getAdmissionSessions, editAdmissionSession } from "@/utils/executiveWarden/ewAdmissionSessionApi"
+import ModalCallable from "@/components/modals/ModalCallable"
 
 const AdmissionSessionHistory = () => {
   const [loading, setLoading] = useState(true)
   const [sessions, setSessions] = useState<any[]>([])
   const [showModal, setShowModal] = useState(false)
   const [editSession, setEditSession] = useState<any | null>(null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
-    fetchAdmissionSessions().then(res => {
-      if (res.success) setSessions(res.data)
+    getAdmissionSessions().then(data => {
+      if (data) setSessions(data)
       setLoading(false)
-    })
+    }).catch(() => setLoading(false))
   }, [])
 
-  const handleEdit = (values: any) => {
-    console.log('Edit values:', values)
-    setShowModal(false)
-    setEditSession(null)
+  const handleEdit = async (values: any) => {
+    if (!editSession) return;
+    try {
+      const updatedSession = await editAdmissionSession(editSession.id, {
+        from: values.from,
+        to: values.to,
+        semesters: values.semesters.map((s: string) => Number(s)),
+        academic_year: values.academic_year,
+      });
+      setSessions(prev =>
+        prev.map(session =>
+          session.id === editSession.id ? updatedSession : session
+        )
+      );
+      setShowSuccessModal(true);
+    } catch (e) {
+      Alert.alert("Edit Error", "An error occurred while editing the admission session. Please try again.");
+    }
+    setShowModal(false);
+    setEditSession(null);
   }
 
   if (loading) {
@@ -142,6 +144,12 @@ const AdmissionSessionHistory = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <ModalCallable
+        show={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Success"
+        message="Admission session updated successfully."
+      />
     </Box>
   )
 }
