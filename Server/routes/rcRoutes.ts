@@ -15,7 +15,7 @@ import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from '../middleware/rbacMiddleware';
 import {
   approveSummerVacationFormByRCController,
-  // getSummerVacationFormsForRCController
+  getSummerVacationFormsForRCController
 } from '../controllers/summerVacationController';
 import {
   getVacatingFormsForRCController,
@@ -77,12 +77,12 @@ rcRouter.put(
 );
 
 // Summer vacation routes
-// rcRouter.get(
-//   "/summer_vacation",
-//   authenticateUser,
-//   hasRole(['rc']),
-//   errorWrapper(getSummerVacationFormsForRCController)
-// );
+rcRouter.get(
+  "/summer_vacation",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getSummerVacationFormsForRCController)
+);
 rcRouter.put(
   "/summer_vacation/:summer_vacation_id",
   authenticateUser,

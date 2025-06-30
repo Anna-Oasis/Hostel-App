@@ -174,43 +174,43 @@ export const getSummerVacationFormsForDeputyWardenController = async (
   });
 };
 
-// export const getSummerVacationFormsForRCController = async (
-//   req: AuthRequest,
-//   res: Response
-// ) => {
-//   if (!req.User || !req.User.id) {
-//     throw AppError(
-//       "User information is missing from request",
-//       httpStatus.UNAUTHORIZED
-//     );
-//   }
+export const getSummerVacationFormsForRCController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
 
-//   const rcId = await getRCidfromUserId(Number(req.User.id));
-//   if (!rcId || isNaN(rcId)) {
-//     throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
-//   }
-//   const RCs = await getRCById(rcId);
-//   console.log("RCs", RCs);
-//   if (!RCs || RCs.length === 0) {
-//     throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
-//   }
-//   const RC = RCs[0];
-//   const floors = RC.floor ? RC.floor : [];
-//   const hostelBlock = RC.hostel;
+  const rcId = await getRCidfromUserId(Number(req.User.id));
+  if (!rcId || isNaN(rcId)) {
+    throw AppError("Invalid RC id", httpStatus.BAD_REQUEST);
+  }
+  const RCs = await getRCById(rcId);
+  console.log("RCs", RCs);
+  if (!RCs || RCs.length === 0) {
+    throw AppError("No such RC exists", httpStatus.BAD_REQUEST);
+  }
+  const RC = RCs[0];
+  const floors = RC.floor ? RC.floor : [];
+  const hostelBlock = RC.hostel;
 
-//   const result =
-//     await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
-//       hostelBlock,
-//       floors
-//     );
+  const result =
+    await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
+      hostelBlock,
+      floors
+    );
 
 
-//   res.status(httpStatus.OK).json({
-//     success: true,
-//     data: result||[],
-//     count:result?result.length:0,
-//     message: result && result.length >0
-//     ?"All Summer Vacation Forms are fetched Successfully"
-//     : "No records found",
-//   });
-// };
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result||[],
+    count:result?result.length:0,
+    message: result && result.length >0
+    ?"All Summer Vacation Forms are fetched Successfully"
+    : "No records found",
+  });
+};
