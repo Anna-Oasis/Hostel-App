@@ -31,7 +31,7 @@ import {
   createAttendanceByRcController,
   getAttendanceByRcController
 } from "../controllers/attendanceController";
-import { getRCLeaveApprovals } from "../services/rcLeaveService";
+import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
 
 import {getDeclarationForOthersController} from '../controllers/declarationController';
@@ -187,6 +187,13 @@ rcRouter.put(
     { name: "rcSignature", maxCount: 1 },
   ]),
   putRCDetailsController
+);
+
+rcRouter.get(
+  "/admissions/session",
+  authenticateUser,
+  hasRole(["rc"]),
+  errorWrapper(getAdmissionSessionsController)
 );
 
 export default rcRouter;

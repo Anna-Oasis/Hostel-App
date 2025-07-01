@@ -30,11 +30,12 @@ import {
   getRCsController,
   updateRCController,
 } from "../controllers/rcController";
-import { fetchRoomDetailsByBlockAndAcademicYearController, fetchRoomDetailsByAcademicYearController } from "../controllers/roomController";
+import { fetchRoomDetailsByAcademicYearController } from "../controllers/roomController";
 import {
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
+import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 
@@ -181,6 +182,12 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   getAllRCDetailsController
+);
+deputyWardenRouter.get(
+  "/admissions/session",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(getAdmissionSessionsController)
 );
 
 export default deputyWardenRouter;
