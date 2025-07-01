@@ -15,13 +15,17 @@ import {
 } from "@/utils/rc/rcDetails";
 import { router } from "expo-router";
 import { Formik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, ScrollView, Text, Alert } from "react-native";
 
 const RCDetailsEditPage = () => {
   const details = useUserStore((state) => state.details);
   const setDetails = useUserStore((state) => state.setDetails);
   const [submit, setSubmit] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log(details)
+  },[details])
 
   return (
     <Formik
@@ -61,11 +65,11 @@ const RCDetailsEditPage = () => {
           }
         }
 
-        if (details.length > 0) {
+        if (details) {
           setSubmit(true);
           await updateDetails(formData);
           const response = await fetchdata();
-          setDetails(response);
+          setDetails(response[0]);
           Alert.alert("Success", "Details updated successfully");
           router.replace("/RC/Details");
           setSubmit(false);
@@ -73,6 +77,8 @@ const RCDetailsEditPage = () => {
           setSubmit(true);
           await handleEnterDetails(formData);
           const response = await fetchdata();
+          Alert.alert("Success", "Details updated successfully");
+          router.replace("/RC/Details");
           setDetails(response[0]);
           setSubmit(false);
         }
@@ -148,7 +154,7 @@ const RCDetailsEditPage = () => {
               <ButtonText>
                 {submit
                   ? "Loading..."
-                  : details.length > 0
+                  : details
                   ? "Edit Details"
                   : "Submit Details"}
               </ButtonText>
