@@ -18,12 +18,12 @@ import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
+  const [academicYear, setAcademicYear] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
   const [isSessionChecked, setIsSessionChecked] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const details = useUserStore((state) => state.details);
   const setLoading = useLoadingStore((state) => state.setLoading);
-  const currentYear = new Date().getFullYear();
   const gender = details?.gender;
 
   if (!details) {
@@ -60,10 +60,11 @@ const AdmissionForm = () => {
           router.replace("/User/Student/Admission/Closed");
         } else {
           setIsSessionChecked(true);
+          setAcademicYear(session.data.academic_year);
         }
       } catch (error) {
         console.error("Failed to fetch admission session:", error);
-        setIsSessionChecked(true); // Allow form to render on error
+        setIsSessionChecked(true);
       }
     };
     fetchAdmissionSession();
@@ -79,7 +80,6 @@ const AdmissionForm = () => {
 
   return (
     <View className="flex-1 bg-white">
-      {/* Tab Header */}
       <TabSwitch
         tabs={[
           { label: "Admission Form", value: "form" },
@@ -94,7 +94,6 @@ const AdmissionForm = () => {
         className="mt-4 mb-2"
       />
 
-      {/* Tab Content */}
       {activeTab === "form" ? (
         <Formik
           initialValues={initialValues}
@@ -105,10 +104,9 @@ const AdmissionForm = () => {
             } else {
               const declaration = values.declaration || [];
               const details = useUserStore.getState().details;
-              const academicYear = `${currentYear}-${currentYear + 1}`;
               const requestBody = {
                 roll_number: details?.rollNo || "",
-                academicYear,
+                academicYear: academicYear,
                 studentAgreed: declaration.includes("studentAgreed"),
                 parentAgreed: declaration.includes("parentAgreed"),
                 previousResident: values.previousResident === "Yes",
@@ -119,7 +117,7 @@ const AdmissionForm = () => {
               setLoading(true);
               await submitStudentAdmission(requestBody);
               setLoading(false);
-              setActiveTab("history"); // redirect to history tab after submission
+              setActiveTab("history");
             }
           }}
         >
@@ -143,8 +141,7 @@ const AdmissionForm = () => {
                   {hostelBlock && (
                     <View>
                       <Text className="mb-2 font-semibold">
-                        Admission for hostel block {hostelBlock} for the year{" "}
-                        {currentYear}
+                        Admission for hostel block {hostelBlock} for the academic year {academicYear}
                       </Text>
                     </View>
                   )}
