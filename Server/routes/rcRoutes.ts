@@ -164,7 +164,7 @@ rcRouter.get(
   "/details",
   authenticateUser,
   hasRole(["rc"]),
-  getRCDetailsController
+  errorWrapper(getRCDetailsController)
 );
 
 rcRouter.post(
@@ -175,7 +175,7 @@ rcRouter.post(
     { name: "passportPhoto", maxCount: 1 },
     { name: "rcSignature", maxCount: 1 },
   ]),
-  postRCDetailsController
+  errorWrapper(postRCDetailsController)
 );
 
 rcRouter.put(
@@ -186,7 +186,7 @@ rcRouter.put(
     { name: "passportPhoto", maxCount: 1 },
     { name: "rcSignature", maxCount: 1 },
   ]),
-  putRCDetailsController
+  errorWrapper(putRCDetailsController)
 );
 
 rcRouter.get(

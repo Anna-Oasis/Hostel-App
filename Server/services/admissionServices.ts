@@ -19,6 +19,15 @@ interface AdmissionUpdateParams {
   status: typeof admissionApprovalStatus[keyof typeof admissionApprovalStatus];
 }
 
+export async function findStudentByUserId(userId: number) {
+  const result = await db
+    .select()
+    .from(studentModel)
+    .where(eq(studentModel.user_id, userId));
+
+  return result[0];
+}
+
 export async function createAdmission(admissionData: NewAdmission) {
   const result = await db
     .insert(admissionModel)

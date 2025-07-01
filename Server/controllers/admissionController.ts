@@ -33,7 +33,8 @@ import { findStudentByRollNo } from "../services/detailsService";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/admission.schema";
 import { getLatestDeclaration } from "../services/declarationServices";
-
+import { handleFileUpload } from "../services/cloudflare/fileUpload";
+import { findStudentByUserId } from "../services/admissionServices"; 
 // GET – Fetch all admissions waiting for approval based on user role - manager, deputy warden, or executive warden
 export async function fetchAdmissionWaitingForApprovalController(
   req: AuthRequest,
@@ -178,30 +179,44 @@ export async function approveByManagerController(
 }
 
 // student/admissions: POST – Create the admission for the student
-export async function createAdmissionController(
-  req: AuthRequest,
-  res: Response
-) {
-  const admissionData = req.body;
-  const parsedData = createAdmissionSchema.parse(admissionData);
+export async function createAdmissionController(req: AuthRequest, res: Response) {
+  const userId = req.User?.id;
+  const userRole = req.User?.role;
 
-  const studentData = await findStudentByRollNo(parsedData.roll_number)
-  if (!studentData || studentData.length === 0) {
-    throw AppError(
-      "Student not found for the provided roll number",
-      httpStatus.NOT_FOUND
-    );
+  if (!userId || !userRole) {
+    throw AppError("Unauthorized access", httpStatus.UNAUTHORIZED);
   }
-  if(!studentData[0].approve) {
+
+  // Only students can access this route
+  if (userRole !== "student") {
+    throw AppError("Only students can submit admission forms", httpStatus.FORBIDDEN);
+  }
+
+  // Get student details using authenticated user's ID
+  const studentData = await findStudentByUserId(Number(userId));
+  console.log("Student Data:", studentData);
+  if (!studentData) {
+    throw AppError("Student record not found", httpStatus.NOT_FOUND);
+  }
+
+  if (!studentData.approve) {
     throw AppError("Student is not approved", httpStatus.BAD_REQUEST);
   }
 
+  // Attach roll_number to the request body
+  const admissionData = {
+    ...req.body,
+    roll_number: studentData.rollNo,
+  };
+
+  const parsedData = createAdmissionSchema.parse(admissionData);
+
+  // Check if an admission already exists for the academic year
   const existingAdmissions = await checkForAdmissionByRollNumberAndAcademicYear(
     parsedData.roll_number,
     parsedData.academicYear
   );
   if (existingAdmissions.length > 0) {
-    //checks whether an admission already exists for the provided roll number and academic year
     throw AppError(
       "Admission already exists for the provided roll number and academic year",
       httpStatus.BAD_REQUEST
@@ -210,14 +225,19 @@ export async function createAdmissionController(
 
   const declaration_latest = await getLatestDeclaration(declaration.ADMISSION);
 
+  // Handle file upload if present
+  let transactionPhotoUrl: string | undefined;
+  if (req.file) {
+    transactionPhotoUrl = await handleFileUpload(req.file, parsedData.roll_number, "admission", "transaction");
+  }
+
   const newAdmission = await createAdmission({
     ...parsedData,
     declaration_id: declaration_latest[0].id,
     status: admissionApprovalStatus.SUBMITTED,
     submission_Date: new Date(),
-
     updatedAt: new Date(),
-
+    transactionPhotoUrl,
   });
 
   res.status(httpStatus.CREATED).json({
@@ -226,6 +246,7 @@ export async function createAdmissionController(
     message: "Admission created successfully",
   });
 }
+
 
 // student/admissions: GET – \roll_number as path param and fetch the admission details and status of a particular student
 export async function getAdmissionByRollNumberController(

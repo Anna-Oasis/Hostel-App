@@ -35,7 +35,14 @@ const studentRouter = Router();
 
 
 //admission - students
-studentRouter.post("/admission", authenticateUser, hasRole(["student"]), errorWrapper(createAdmissionController));
+studentRouter.post(
+  "/admission",
+  authenticateUser,
+  hasRole(["student"]),
+  upload.single("transactionPhotoUrl"),
+  errorWrapper(createAdmissionController)
+);
+
 studentRouter.get("/admission/student/:roll_number", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByRollNumberController));
 studentRouter.get("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(getAdmissionByAdmissionIdController));
 studentRouter.put("/admission/:admissionId", authenticateUser, hasRole(["student"]), errorWrapper(updateAdmissionController));
