@@ -1,3 +1,4 @@
+import api from '@/api';
 import DatePickerField from '@/components/form/DatePickerField';
 import ImagePickerField from '@/components/form/ImagePickerField';
 import PhoneInputField from '@/components/form/PhoneInputField';
@@ -8,35 +9,38 @@ import { bloodGroups } from '@/constants/details';
 import { initialValues } from '@/constants/rcDetails';
 import rcDetailsValidation from '@/constants/validations/rcDetailsValidation';
 import useUserStore from '@/stores/userStore';
+import { fetchdata, handleEnterDetails, updateDetails } from '@/utils/rc/rcDetails';
 import { Formik } from 'formik';
-import React from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView, Text, Alert } from 'react-native';
 
 const RCDetailsEditPage = () => {
     const details = useUserStore((state) => state.details);
+    const setDetails = useUserStore((state) => state.setDetails)
+    const [submit, setSubmit] = useState<boolean>(false)
     
 
     return (
         <Formik
             initialValues={details ? { ...initialValues, ...details } : initialValues}
             validationSchema={rcDetailsValidation}
-            onSubmit={(values) => {
+            onSubmit={async (values) => {
                  const formData = new FormData();
 
                 formData.append("name", values.name);
                 formData.append("dept", values.dept);
-                formData.append("register_no", values.register_no);
+                formData.append("registerNo", values.registerNo);
                 formData.append("dob", values.dob);
                 formData.append("mobile", values.mobile);
                 formData.append("email", values.email);
-                formData.append("guardian_name", values.guardian_name);
-                formData.append("residential_address", values.residential_address);
-                formData.append("blood_group", values.blood_group);
-                formData.append("medical_history", values.medical_history);
+                formData.append("guardianName", values.guardianName);
+                formData.append("residentialAddress", values.residentialAddress);
+                formData.append("bloodGroup", values.bloodGroup);
+                formData.append("medicalHistory", values.medicalHistory);
 
                 const imageFields = [
-                { key: "passportPhotoUrl", name: "passportPhotoUrl" },
-                { key: "rcSignatureUrl", name: "rcSignatureUrl" },
+                { key: "passportPhotoUrl", name: "passportPhoto" },
+                { key: "rcSignatureUrl", name: "rcSignature" },
                 ] as const;
 
                 for (const field of imageFields) {
@@ -54,7 +58,18 @@ const RCDetailsEditPage = () => {
                     }
                 }
 
-                console.log(formData)
+                if (details) {
+                    setSubmit(true)
+                    await updateDetails(formData);
+                    await fetchdata(setDetails)
+                    setSubmit(false)
+                }
+                else{
+                    setSubmit(true)
+                    await handleEnterDetails(formData)
+                    await fetchdata(setDetails)
+                    setSubmit(false)
+                }
 
             }}
         >
@@ -65,16 +80,16 @@ const RCDetailsEditPage = () => {
                     flexDirection: "column",
                 }}>
                     <View>
-                        <Text className='text-center text-2xl m-2 font-medium'>Edit Details</Text>
+                        <Text className='text-center text-2xl m-2 font-medium'>{details ? 'Edit Details' : 'Fill Details'}</Text>
                         <TextField value='name' label='Name' placeholder='Enter name'/>
                         <TextField value='dept' label='Department' placeholder='Department'/>
-                        <TextField value='register_no' label='Register Number' placeholder='Register No'/>
+                        <TextField value='registerNo' label='Register Number' placeholder='Register No'/>
                         <DatePickerField label='Date of Birth' value='dob' placeholder="YYYY-MM-DD"/>
                         <PhoneInputField label='Mobile' value='mobile'/>
                         <TextField value='email' label='Email' placeholder='Email'/>
-                        <TextField value='guardian_name' label='Guardian Name' placeholder='Gaurdian Name'/>
-                        <TextField value='residential_address' label='Residential Address' placeholder='Address'/>
-                        <SelectField label='Blood Group' value='blood_groups' options={bloodGroups}/>
+                        <TextField value='guardianName' label='Guardian Name' placeholder='Gaurdian Name'/>
+                        <TextField value='residentialAddress' label='Residential Address' placeholder='Address'/>
+                        <SelectField label='Blood Group' value='bloodGroup' options={bloodGroups}/>
                         <TextField
                             label="Medical History (Type NIL if none)"
                             value="medicalHistory"
@@ -87,7 +102,7 @@ const RCDetailsEditPage = () => {
                         <Button onPress={() => {
                                 handleSubmit();
                         }}>
-                            <ButtonText>Edit Details</ButtonText>
+                            <ButtonText>{submit ? 'Loading...' : details ? 'Edit Details' : 'Fill Details'}</ButtonText>
                         </Button>
                     </View>
                     

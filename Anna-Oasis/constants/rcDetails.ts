@@ -1,14 +1,14 @@
 export const initialValues = {
   name: "",
   dept: "",
-  register_no: "",
+  registerNo: "",
   dob: "",
   mobile: "",
   email: "",
-  guardian_name: "",
-  residential_address: "",
-  blood_group: "",
-  medical_history: "",
+  guardianName: "",
+  residentialAddress: "",
+  bloodGroup: "",
+  medicalHistory: "",
   passportPhotoUrl: "",
   rcSignatureUrl: ""
 };

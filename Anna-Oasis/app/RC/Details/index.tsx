@@ -1,33 +1,24 @@
 import { Table, TableBody, TableData, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Box } from '@/components/ui/box';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View, Text,Image } from 'react-native';
 import { Fab, FabLabel, FabIcon } from "@/components/ui/fab"
 import { Pencil } from 'lucide-react-native'
 import { useRouter } from 'expo-router';
-import api from '@/api';
+import useUserStore from '@/stores/userStore';
+import { fetchdata } from '@/utils/rc/rcDetails';
 
 const RCDetailsViewPage = () => {
 
-    const rc_detials = {
-    "user_id": "rc_user_1234",
-    "name": "jhon doe",
-    "dept": "Information Technology",
-    "register_no": "2023IT101",
-    "dob": "2005-08-15",
-    "mobile": "+91-9876543210",
-    "email": "jhon@example.com",
-    "guardian_name": "Arun Kumar",
-    "residential_address": "123, Anna Nagar, Chennai, Tamil Nadu, 600040",
-    "blood_group": "O+",
-    "medical_history": "None",
-    "passportPhotoUrl": "https://example.com/uploads/passport_photo.jpg",
-    "rcSignatureUrl": "https://example.com/uploads/rc_signature.png"
-    }
     const imageFields = [
         "passportPhotoUrl",
         "rcSignatureUrl"
     ]
+
+    const router = useRouter()
+    const rcDetailsStore = useUserStore((state) => state.setDetails)
+    const rcDetails = useUserStore((state) => state.details)
+    const [fetch, setFetch] = useState<boolean>(false)
 
 
     function formatKey(key: string) {
@@ -37,7 +28,12 @@ const RCDetailsViewPage = () => {
             .replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
-    const router = useRouter()
+
+    useEffect(() => {
+        setFetch(true)
+        fetchdata(rcDetailsStore)
+        setFetch(false)
+    }, [])
 
     return (
         <Box>
@@ -46,33 +42,46 @@ const RCDetailsViewPage = () => {
                     <Table className='w-full'>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="py-2 font-bold text-base">Field</TableHead>
-                                <TableHead className="py-2 font-bold text-base">Value</TableHead>
+                                {rcDetails && 
+                                    <>
+                                        <TableHead className="py-2 font-bold text-base">Field</TableHead>
+                                        <TableHead className="py-2 font-bold text-base">Value</TableHead>
+                                    </>
+                                }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {Object.entries(rc_detials).map(([key, value], idx) => (
-                                <TableRow key={idx}>
-                                    <TableData className="py-2">
-                                        <Text className="font-bold text-gray-800">{formatKey(key)}</Text>
-                                    </TableData>
-                                    <TableData className="py-2">
-                                        {imageFields.includes(key) && typeof value === 'string' && value ? (
-                                            <Image
-                                            source={{ uri: value }}
-                                            className="w-20 h-20 rounded-lg my-1"
-                                            resizeMode="contain"
-                                            />
-                                        ) : (
-                                            <Text className={value === null || value === undefined || value === "" ? "text-gray-400" : "text-gray-800"}>
-                                            {value === null || value === undefined || value === ""
-                                                ? "not assigned yet"
-                                                : String(value)}
-                                            </Text>
-                                        )}
-                                    </TableData>
-                                </TableRow>
-                            ))}
+                            {rcDetails ? Object.entries(rcDetails).map(([key, value], idx) => (
+                                key !== 'userId' && (
+                                    <TableRow key={idx}>
+                                        <TableData className="py-2">
+                                            <Text className="font-bold text-gray-800">{formatKey(key)}</Text>
+                                        </TableData>
+                                        <TableData className="py-2">
+                                            {imageFields.includes(key) && typeof value === 'string' && value ? (
+                                                <Image
+                                                source={{ uri: value }}
+                                                className="w-20 h-20 rounded-lg my-1"
+                                                resizeMode="contain"
+                                                />
+                                            ) : (
+                                                <Text className={value === null || value === undefined || value === "" ? "text-gray-400" : "text-gray-800"}>
+                                                {value === null || value === undefined || value === ""
+                                                    ? "not assigned yet"
+                                                    : String(value)}
+                                                </Text>
+                                            )}
+                                        </TableData>
+                                    </TableRow>
+                            ))) : 
+                                (<View className='h-[200px] flex items-center justify-center '>
+                                    {fetch ? 
+                                        <Text>Fetching...</Text>
+                                        :
+                                        <Text>No Details found, Please Fill</Text>
+                                    }
+                                </View>)
+                            }
                         </TableBody>
                     </Table>
                 </View>
@@ -86,7 +95,7 @@ const RCDetailsViewPage = () => {
                 onPress={() => router.push('/RC/Details/Edit')}
             >
                 <FabIcon as={Pencil} />
-                <FabLabel>Edit Details</FabLabel>
+                <FabLabel>{rcDetails ? 'Edit Details' : 'Fill Details'}</FabLabel>
             </Fab>
         </Box>
     );
