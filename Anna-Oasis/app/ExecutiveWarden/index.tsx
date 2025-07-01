@@ -43,7 +43,7 @@ export default function ExecutiveWardenPage() {
     },
     {
       title: "View Room Details",
-      route: "/ExecutiveWarden/RoomDetails",
+      route: "/ExecutiveWarden/Rooms",
       icon: Users2Icon,
       color: "#8B5CF6",
     },

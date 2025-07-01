@@ -1,7 +1,7 @@
 import { View, ActivityIndicator, ScrollView } from 'react-native'
 import { useEffect, useState } from 'react'
-import { getAdmissionSessions } from '@/utils/deputyWarden/dwAdmissionApi'
-import { getRoomsByAcademicYear } from '@/utils/deputyWarden/dwRoomApi'
+import { getAdmissionSessions } from '@/utils/executiveWarden/ewAdmissionSessionApi'
+import { getRoomsByAcademicYear } from '@/utils/executiveWarden/ewRoomApi'
 import SelectField from '@/components/form/SelectField'
 import { Formik } from 'formik'
 import { Button, ButtonText } from "@/components/ui/button"
