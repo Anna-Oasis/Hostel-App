@@ -34,11 +34,17 @@ export default function DeputyWardenPage() {
       icon: BarChart2Icon,
       color: "#10B981",
     },
-        {
+    {
       title: "RC Leave Approvals",
       route: "/DeputyWarden/RcLeave",
       icon: UsersIcon,
       color: "#9870a4",
+    },
+    {
+      title: "View Room Data",
+      route: "/DeputyWarden/Rooms",
+      icon: UsersIcon,
+      color: "#F59E0B",
     },
   ];
 
@@ -54,7 +60,9 @@ export default function DeputyWardenPage() {
             variant="solid"
           >
             <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonText className="mt-3 text-base font-medium">
+              {item.title}
+            </ButtonText>
           </Button>
         ))}
       </View>

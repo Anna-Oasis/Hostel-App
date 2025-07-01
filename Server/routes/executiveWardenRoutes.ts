@@ -10,7 +10,7 @@ import {
 } from "../controllers/admissionController";
 import errorWrapper from "../middleware/errorWrapper";
 import { authenticateUser, hasRole } from "../middleware/rbacMiddleware";
-import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { fetchRoomDetailsByBlockAndAcademicYearController, fetchRoomDetailsByAcademicYearController } from "../controllers/roomController";
 import { postDeclarationFromController,getLatestDeclarationFromController} from "../controllers/declarationController";
 import {
   getRCLeaves,
@@ -78,7 +78,7 @@ executiveWardenRouter.get(
   "/rooms/:academicYear",
   authenticateUser,
   hasRole(["executiveWarden"]),
-  errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
+  errorWrapper(fetchRoomDetailsByAcademicYearController)
 );
 
 executiveWardenRouter.get(

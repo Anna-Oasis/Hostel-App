@@ -1,4 +1,4 @@
-import { fetchRoomDetailsByBlockAndAcademicYear } from "../services/roomServices";
+import { fetchRoomDetailsByBlockAndAcademicYear, fetchRoomDetailsByAcademicYear } from "../services/roomServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -53,6 +53,30 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
     hostelBlockValue,
     academicYear
   );
+
+  if (!roomDetails?.length) {
+    throw AppError("No room data found", httpStatus.NOT_FOUND);
+  }
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    count: roomDetails.length,
+    data: roomDetails,
+    message: "Room details fetched successfully",
+  });
+};
+
+export const fetchRoomDetailsByAcademicYearController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { academicYear } = req.params;
+
+  if (!academicYear || !/^\d{4}-\d{4}$/.test(academicYear)) {
+    throw AppError("Invalid academic year format. Use YYYY-YYYY.", httpStatus.BAD_REQUEST);
+  }
+
+  const roomDetails = await fetchRoomDetailsByAcademicYear(academicYear);
 
   if (!roomDetails?.length) {
     throw AppError("No room data found", httpStatus.NOT_FOUND);

@@ -30,7 +30,7 @@ import {
   getRCsController,
   updateRCController,
 } from "../controllers/rcController";
-import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { fetchRoomDetailsByBlockAndAcademicYearController, fetchRoomDetailsByAcademicYearController } from "../controllers/roomController";
 import {
   getRCLeaves,
   updateLeaveStatusForRC,
@@ -107,7 +107,7 @@ deputyWardenRouter.get(
   "/rooms/:academicYear",
   authenticateUser,
   hasRole(["deputyWarden"]),
-  errorWrapper(fetchRoomDetailsByBlockAndAcademicYearController)
+  errorWrapper(fetchRoomDetailsByAcademicYearController)
 );
 
 // Vacating hostel routes
