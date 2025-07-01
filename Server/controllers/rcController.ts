@@ -121,16 +121,21 @@ export async function getRCDetailsController(req: AuthRequest, res: Response): P
   const userId = Number(req.User.id);
   const details = await getRCDetailsByUserIdService(userId);
 
-  if (!details) {
-    throw AppError("RC Details not found", httpStatus.NOT_FOUND);
-  }
-
-  res.status(httpStatus.OK).json({
-    success: true,
-    message: "RC Details fetched successfully",
-    count: 1,
-    data: [details],
-  });
+  res.status(httpStatus.OK).json(
+    !details
+      ? {
+          success: true,
+          message: "RC Details not found",
+          count: 0,
+          data: [],
+        }
+      : {
+          success: true,
+          message: "RC Details fetched successfully",
+          count: 1,
+          data: [details],
+        }
+  );
 }
 
 export const postRCDetailsController = async (

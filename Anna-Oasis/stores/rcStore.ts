@@ -36,7 +36,7 @@ const useRCStore = create<RCStore>((set) => ({
     });
   },
   setHostelBlock: (block) => set({ hostelBlock: block }),
-  resetRooms: () => set({ rooms: [], hostelBlock: null, maxFloor: 0 }),
+  resetRooms: () => set({ rooms: [], hostelBlock: null, maxFloor: 0, }),
 }));
 
 export default useRCStore;

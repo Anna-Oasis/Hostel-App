@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Alert } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -11,15 +11,28 @@ import {
 import { useEffect } from "react";
 import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
 import useRCStore from "@/stores/rcStore";
+import { fetchdata } from "@/utils/rc/rcDetails";
+import useUserStore from "@/stores/userStore";
+import RCDetailsCard from "@/components/rc/DetailsCard";
 
 export default function RCPage() {
   const setRooms = useRCStore((state) => state.setRooms);
   const rooms = useRCStore((state) => state.rooms);
+  const setDetails = useUserStore((state) => state.setDetails);
 
-  const fetchRooms = async () => {
+  const fetchDetailsAndRooms = async () => {
     try {
       const rooms = await getAllRooms();
       setRooms(rooms);
+      const rcDetails = await fetchdata();
+      if (rcDetails.length == 0) {
+        Alert.alert("RC Details", "Please enter your details first.");
+        setDetails({});
+        router.push("/RC/Details/Edit");
+      } else {
+        setDetails(rcDetails[0]);
+        console.log("RC Details:", rcDetails);
+      }
     } catch (error) {
       console.error("Error fetching rooms:", error);
     }
@@ -27,7 +40,7 @@ export default function RCPage() {
 
   useEffect(() => {
     if (!rooms || rooms.length === 0) {
-      fetchRooms();
+      fetchDetailsAndRooms();
     }
   }, [rooms]);
 
@@ -66,6 +79,7 @@ export default function RCPage() {
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
+      <RCDetailsCard />
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
           <Button
