@@ -7,7 +7,7 @@ import { Formik } from "formik";
 import { ScrollView, View, KeyboardAvoidingView, Platform } from "react-native";
 import { summerVacationValidation } from "@/constants/validations/summerVacationValidation";
 import { submitSummerVacationRequest } from "@/utils/student/studentVacationApi";
-import TimePickerField from "@/components/form/TimePickerfield";
+import TimePickerField from "@/components/form/TimePickerField";
 import useLoadingStore from "@/stores/loadingStore";
 
 export default function SummerVacationForm() {

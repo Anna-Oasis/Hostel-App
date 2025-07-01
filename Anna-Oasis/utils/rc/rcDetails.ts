@@ -39,7 +39,7 @@ export const updateDetails = async (formData : any) => {
             });
 
             Alert.alert("Success", "Details updated successfully");
-            setTimeout(() => router.push("/RC/Details"), 1000)
+            setTimeout(() => router.push("/RC/Details" as any), 1000)
 
         } 
         catch (err: any) {
@@ -63,7 +63,7 @@ export const handleEnterDetails = async (formData : any) => {
             });
 
             Alert.alert("Success", "Details entered successfully");
-            setTimeout(() => router.push("/RC/Details"), 1000)
+            setTimeout(() => router.push("/RC/Details" as any), 1000)
 
         } 
         catch (err: any) {
