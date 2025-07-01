@@ -3,7 +3,7 @@ import { View, ScrollView, Text } from "react-native";
 import { useFormikContext } from "formik";
 import TextField from "@/components/form/TextField";
 import DatePickerField from "@/components/form/DatePickerField";
-import TimePickerField from "@/components/form/TimePickerField";
+import TimePickerField from "@/components/form/TimePickerfield";
 import CheckBoxField from "@/components/form/CheckBoxField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { vacatingItems } from "@/constants/vacatingHostels";
