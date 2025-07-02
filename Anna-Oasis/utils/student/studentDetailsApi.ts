@@ -74,3 +74,21 @@ export async function updateStudentDetails(rollNo: string, formData: FormData) {
     Alert.alert("Error", "Failed to update details. Please try again.");
   }
 }
+
+export async function getStudentAdmissionDetails(roll_number: string) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+  try {
+    const response = await api.get(`/api/student/admission/student/${roll_number}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch student admission details:", error);
+    throw error;
+  }
+}

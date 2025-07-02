@@ -11,6 +11,7 @@ export interface AdmissionRequestBody {
   hostelBlock: string;
   messPreference: string;
   transaction_id: string;
+  transactionPhotoUrl?: string; // file URI
 }
 
 export async function submitStudentAdmission(data: AdmissionRequestBody) {
@@ -19,9 +20,31 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
     if (!token) {
       throw new Error("User is not authenticated");
     }
-    const response = await api.post("/api/student/admission", data, {
+
+    const formData = new FormData();
+    formData.append("roll_number", data.roll_number);
+    formData.append("academicYear", data.academicYear);
+    formData.append("studentAgreed", String(data.studentAgreed));
+    formData.append("parentAgreed", String(data.parentAgreed));
+    formData.append("previousResident", String(data.previousResident));
+    formData.append("hostelBlock", data.hostelBlock);
+    formData.append("messPreference", data.messPreference);
+    formData.append("transaction_id", data.transaction_id);
+
+    if (data.transactionPhotoUrl) {
+      const uriParts = data.transactionPhotoUrl.split(".");
+      const fileType = uriParts[uriParts.length - 1];
+      formData.append("transactionPhotoUrl", {
+        uri: data.transactionPhotoUrl,
+        name: `transaction.${fileType}`,
+        type: `image/${fileType === "jpg" ? "jpeg" : fileType}`,
+      } as any);
+    }
+    console.log(data)
+    const response = await api.post("/api/student/admission", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     console.log("Admission response:", response.data);
@@ -33,7 +56,7 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
   } catch (error: any) {
     Alert.alert(
       "Admission Error",
-      error.response.data.message || "An error occurred during admission"
+      error.response?.data?.message || "An error occurred during admission"
     );
   }
 }

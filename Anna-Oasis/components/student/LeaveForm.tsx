@@ -29,12 +29,11 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
         initialValues={{
           leave_type: "",
           from_date: "",
-          from_time: "",
           to_date: "",
-          to_time: "",
           reason: "",
-          destination: "",
-          emergency_contact: "",
+          address_of_stay: "",
+          mobile: "",
+          email: "",
         }}
         validationSchema={studentLeaveFormValidation}
         onSubmit={onSubmit}
@@ -53,22 +52,10 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
               label="From Date"
             />
 
-            <TimePickerField
-              label="From Time"
-              value="from_time"
-              placeholder="Select Time"
-            />
-
             <DatePickerField
               placeholder="YYYY-MM-DD"
               value="to_date"
               label="To Date"
-            />
-
-            <TimePickerField
-              label="To Time"
-              value="to_time"
-              placeholder="Select Time"
             />
 
             <TextField
@@ -79,14 +66,20 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
 
             <MultiLineText
               placeholder="Enter The Address of your full address with door no, Street, Area, District, country"
-              value="destination"
-              label="Destination"
+              value="address_of_stay"
+              label="Address of Stay"
             />
 
             <PhoneInputField
-              placeholder="Enter emergency contact number"
-              value="emergency_contact"
-              label="Emergency Contact"
+              placeholder="Enter emergency contact number in your address of stay"
+              value="mobile"
+              label="Emergency contact number"
+            />
+
+            <TextField
+              placeholder="Guardian email address"
+              value="email"
+              label="Email Address"
             />
 
             <Button
@@ -105,4 +98,3 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
 };
 
 export default LeaveForm;
- 

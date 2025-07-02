@@ -13,9 +13,6 @@ export const vacatingFormSchema = z.object({
     .string({
       required_error: "Vacating time is required",
       invalid_type_error: "Vacating time must be a string in HH:mm:ss format",
-    })
-    .regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
-      message: "Vacating time must be in HH:mm:ss format",
     }),
 
   future_address: z.string().min(1, "Future address is required"),

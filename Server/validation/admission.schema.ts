@@ -30,7 +30,7 @@ export const createAdmissionSchema = z.object({
     .min(3, "Transaction ID is required")
     .max(100, "Transaction ID must be less than 100 characters"),
 
-  transactionPhotoUrl: z.string().optional(), // optional if you're not sending image
+  transactionPhotoUrl: z.string().optional(),
 });
 
 

@@ -11,7 +11,7 @@ export const admissionSessionModel = pgTable("admission_session", {
   from: date("from").notNull(),
   to: date("to").notNull(),
   semesters: integer("semesters").array().notNull(),
-  academic_year: varchar("academic_year", { length: 9 }).notNull(),
+  academic_year: varchar("academic_year", { length: 9 }).notNull().unique(),
 });
 
 export type AdmissionSession = typeof admissionSessionModel.$inferSelect;

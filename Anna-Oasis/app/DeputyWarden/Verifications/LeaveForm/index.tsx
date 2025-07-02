@@ -118,7 +118,8 @@ export default function LeaveFormVerificationPage() {
                   "To": leave.to_date,
                   "Reason": leave.reason,
                   "Address of Stay": leave.address_of_stay,
-                  "Emergency Contact": leave.emergency_contact,
+                  "Emergency Contact": leave.mobile,
+                  "Email": leave.email,
                   "Status": leave.status === "2" ? "Pending" : leave.status,
                 }}
                 onApprove={() => handleDecision(leave.id, true)}

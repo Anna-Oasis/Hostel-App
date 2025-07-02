@@ -38,17 +38,7 @@ const AdmissionHistory = () => {
             title={`Admission ${item.academicYear}`}
             subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
             badge={getAdmissionBadgeStatus(item.status)}
-            data={{
-              "Roll Number": item.roll_number,
-              "Academic Year": item.academicYear,
-              "Admission Category": item.admissionCategory,
-              "Previous Resident": item.previousResident ? "Yes" : "No",
-              "Student Agreed": item.studentAgreed ? "Yes" : "No",
-              "Parent Agreed": item.parentAgreed ? "Yes" : "No",
-              "Transaction ID": item.transaction_id,
-              "Submission Date": item.submission_Date,
-              "Status": getAdmissionBadgeStatus(item.status),
-            }}
+            data={item}
           />
         ))
       )}

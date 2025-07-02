@@ -127,6 +127,7 @@ export async function getAdmissionsByStatus(status: string) {
   const result = await db
     .select()
     .from(admissionModel)
+    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
     .where(eq(admissionModel.status, status))
     .orderBy(admissionModel.submission_Date);
   return result;

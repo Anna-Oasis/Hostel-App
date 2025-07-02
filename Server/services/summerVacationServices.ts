@@ -24,20 +24,7 @@ export const getAllSummerVacationForms = async (rollNo: string) => {
 export const getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor =
   async (hostelBlock: string, floors: number[]) => {
     return await db
-      .select({
-        id: summerVacationModel.id,
-        floor: studentModel.floor,
-        block: studentModel.hostelBlock,
-        room_number: studentModel.roomNumber,
-        roll_number: summerVacationModel.roll_number,
-        vacation_from: summerVacationModel.vacation_from,
-        address_of_stay: summerVacationModel.address_of_stay,
-        returned_items: summerVacationModel.returned_items,
-        status: summerVacationModel.status,
-        created_at: summerVacationModel.created_at,
-        updated_at: summerVacationModel.updated_at,
-        student_name: studentModel.name,
-      })
+      .select()
       .from(summerVacationModel)
       .innerJoin(
         studentModel,
@@ -46,6 +33,7 @@ export const getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor =
       .where(
         and(
           eq(studentModel.hostelBlock, hostelBlock),
+          eq(summerVacationModel.status, summerVacationApprovalStatus.SUBMITTED),
           floors.length === 0
             ? undefined
             : or(
@@ -85,6 +73,10 @@ export const getSummerVacationFormsForDeputyWarden = async () => {
   return await db
     .select()
     .from(summerVacationModel)
+    .innerJoin(
+      studentModel,
+      eq(summerVacationModel.roll_number, studentModel.rollNo)
+    )
     .where(eq(summerVacationModel.status, summerVacationApprovalStatus.RC));
 };
 

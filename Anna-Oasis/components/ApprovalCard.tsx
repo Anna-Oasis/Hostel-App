@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, Animated, Dimensions } from 'react-native';
+import { View, Text, Animated, Dimensions, Image } from 'react-native';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Badge, BadgeText } from "@/components/ui/badge"
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@/components/ui/modal';
@@ -35,6 +35,8 @@ type approvalCardProps = {
   badge?: badgeStatus,
   /** JSON object containing data to be displayed in the details modal */
   data ?: Record<string, any>,
+  /** Optional custom title for the approve button */
+  ApproveButtonTitle?: string,
 }
 
 /**
@@ -47,6 +49,15 @@ function formatKey(key: string) {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
+
+const imageKeys = [
+  "passportPhotoUrl",
+  "studentSignatureUrl",
+  "parentGuardianSignatureUrl",
+  "categoryProofUrl",
+  "admissionSlipUrl",
+  "transactionPhotoUrl",
+];
 
 /**
  * ApprovalCard Component
@@ -174,13 +185,27 @@ const ApprovalCard = (props: approvalCardProps) => {
                     <Text className="text-base font-semibold text-black">
                       {formatKey(key)}
                     </Text>
-                    <Text
-                      className="text-base font-normal text-gray-800 mt-1"
-                      numberOfLines={4}
-                      ellipsizeMode="tail"
-                    >
-                      {typeof value === 'string' ? value : JSON.stringify(value)}
-                    </Text>
+                    {imageKeys.includes(key) && typeof value === "string" ? (
+                      <Image
+                        source={{ uri: value }}
+                        style={{
+                          width: 180,
+                          height: 180,
+                          borderRadius: 8,
+                          marginTop: 8,
+                          backgroundColor: "#eee",
+                        }}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Text
+                        className="text-base font-normal text-gray-800 mt-1"
+                        numberOfLines={4}
+                        ellipsizeMode="tail"
+                      >
+                        {typeof value === 'string' ? value : JSON.stringify(value)}
+                      </Text>
+                    )}
                   </View>
                 ))}
               </View>
@@ -193,14 +218,15 @@ const ApprovalCard = (props: approvalCardProps) => {
                   onPress={() => {
                     setViewDetails(false);
                     props.onApprove?.();
-                  }}
-                  className="bg-green-600 w-[95px] h-10 rounded-lg justify-center"
-                >
-                  <ButtonText className="text-white text-center">Approve</ButtonText>
+                    }}
+                    className="bg-green-600 min-w-[95px] px-3 h-10 justify-center rounded-lg"
+                  >
+                  <ButtonText className="text-white text-center">
+                    {props.ApproveButtonTitle || "Approve"}
+                  </ButtonText>
                 </Button>
               )}
-
-              {props.onDecline && (
+            {props.onDecline && (
                 <Button
                   onPress={() => {
                     setViewDetails(false);

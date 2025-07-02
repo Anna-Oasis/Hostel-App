@@ -15,6 +15,7 @@ import AdmissionHistory from "./History/index";
 import TabSwitch from "@/components/TabSwitch";
 import { FilePlus2, History as HistoryIcon } from "lucide-react-native";
 import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
+import PaymentPage from "@/components/admission/PaymentPage";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
@@ -44,8 +45,10 @@ const AdmissionForm = () => {
       case 0:
         return <AdmissionDetails />;
       case 1:
-        return <HostelMessDeclaration />;
+        return <PaymentPage />
       case 2:
+        return <HostelMessDeclaration />;
+      case 3:
         return <PreviewPage onEdit={prev} onSubmit={handleSubmit} />;
       default:
         return null;
@@ -99,7 +102,7 @@ const AdmissionForm = () => {
           initialValues={initialValues}
           validationSchema={validationSchemas[page]}
           onSubmit={async (values) => {
-            if (page < 2) {
+            if (page < 3) {
               next();
             } else {
               const declaration = values.declaration || [];
@@ -113,6 +116,7 @@ const AdmissionForm = () => {
                 hostelBlock: values.hostelBlock || "",
                 messPreference: values.messPreference || "",
                 transaction_id: values.transactionId,
+                transactionPhotoUrl: values.transactionPhotoUrl,
               };
               setLoading(true);
               await submitStudentAdmission(requestBody);
@@ -147,7 +151,7 @@ const AdmissionForm = () => {
                   )}
                   {renderPage(handleSubmit, values)}
                   <View className="flex-row justify-between">
-                    {page < 2 && (
+                    {page < 3 && (
                       <>
                         {page > 0 && (
                           <Button onPress={prev}>
@@ -155,7 +159,7 @@ const AdmissionForm = () => {
                           </Button>
                         )}
                         <Button onPress={() => handleSubmit()}>
-                          <ButtonText>Next</ButtonText>
+                          <ButtonText>{(page == 3? "Submit" : "Next")}</ButtonText>
                         </Button>
                       </>
                     )}

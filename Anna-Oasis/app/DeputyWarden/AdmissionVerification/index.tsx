@@ -1,9 +1,6 @@
 import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  getAllEWAdmissions,
-  handleUpdateEWAdmission,
-} from "@/utils/executiveWarden/ewAdmissionApi";
+import { getAllDWAdmissions, handleUpdateAdmission } from "@/utils/deputyWarden/dwAdmissionApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import { Inbox } from "lucide-react-native";
@@ -25,7 +22,7 @@ export default function AdmissionVerificationPage() {
 
   const fetchAdmissions = async () => {
     try {
-      const data = await getAllEWAdmissions();
+      const data = await  getAllDWAdmissions();
       // data is now [{ admission: {...}, student: {...} }, ...]
       setAdmissions(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -38,7 +35,7 @@ export default function AdmissionVerificationPage() {
   }, []);
 
   const handleApprove = async (admissionId: string) => {
-    await handleUpdateEWAdmission(admissionId, {
+    await handleUpdateAdmission(admissionId, {
       approve: true,
       comment: "Approved",
     });
@@ -51,7 +48,7 @@ export default function AdmissionVerificationPage() {
 
   const handleDeclineSubmit = async (comment: string) => {
     if (declineModal.admissionId) {
-      await handleUpdateEWAdmission(declineModal.admissionId, {
+      await handleUpdateAdmission(declineModal.admissionId, {
         approve: false,
         comment,
       });
@@ -97,7 +94,7 @@ export default function AdmissionVerificationPage() {
                 data={{ ...item.admission, ...item.student }}
                 onApprove={() =>
                   router.push(
-                    `/ExecutiveWarden/AdmissionVerification/${item.admission.hostelBlock}/${item.admission.academicYear}/${item.admission.id}`
+                    `/DeputyWarden/AdmissionVerification/${item.admission.hostelBlock}/${item.admission.academicYear}/${item.admission.id}`
                   )
                 }
                 onDecline={() => handleDecline(String(item.admission.id))}

@@ -38,7 +38,7 @@ import {
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
-
+import { getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
 const deputyWardenRouter = Router();
 
 // Admission routes
@@ -189,5 +189,12 @@ deputyWardenRouter.get(
   hasRole(["deputyWarden"]),
   errorWrapper(getAdmissionSessionsController)
 );
+deputyWardenRouter.get(
+  "/student/details/:rollNo",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(getStudentDetailsUsingRollNoController)
+);
+
 
 export default deputyWardenRouter;

@@ -6,7 +6,8 @@ import useUserStore from "@/stores/userStore";
 
 export async function submitSummerVacationRequest(data: {
   vacation_from: string;
-  vacation_time: string;
+  email: string;
+  mobile: string;
   roll_number?: string;
   address_of_stay: string;
   returned_items: string[];
@@ -16,19 +17,24 @@ export async function submitSummerVacationRequest(data: {
   // console.log("Submitting summer vacation request with data:", data, roll_number);
   const requestData = {
     ...data,
-    roll_number:  useUserStore.getState().details?.rollNo,
+    roll_number: useUserStore.getState().details?.rollNo,
   };
   try {
-    const response = await api.post("/api/student/summer_vacation", requestData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log("Leave request submitted successfully:", response.data);
-    Alert.alert("Success", "Leave request has been submitted successfully");
-    router.replace("/User/Student");
+    const response = await api.post(
+      "/api/student/summer_vacation",
+      requestData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   } catch (error) {
+    Alert.alert(
+      "Submission Error",
+      "Failed to submit summer vacation request. Please try again later."
+    );
     console.error("Failed to submit leave request:", error);
     if (typeof error === "object" && error !== null && "response" in error) {
       const err = error as { response: any };
@@ -56,23 +62,28 @@ export interface SummerVacationForm {
   updated_at: string; // ISO date
 }
 
-export type VacationFormStatus = "0" | "2" | "-1" | "1"; 
+export type VacationFormStatus = "0" | "2" | "-1" | "1";
 
 export const VacationStatusMap: Record<VacationFormStatus, string> = {
   "0": "Pending",
   "2": "Approved",
   "-1": "Rejected",
-  "1" : "Pending ( Approved by RC )",
+  "1": "Pending ( Approved by RC )",
 };
 
-export async function fetchSummerVacationForms(roll_number : string): Promise<SummerVacationFormResponse> {
+export async function fetchSummerVacationForms(
+  roll_number: string
+): Promise<SummerVacationFormResponse> {
   const token = await getToken();
   try {
-    const response = await api.get(`/api/student/summer_vacation/${roll_number}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(
+      `/api/student/summer_vacation/${roll_number}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch summer vacation forms:", error);
