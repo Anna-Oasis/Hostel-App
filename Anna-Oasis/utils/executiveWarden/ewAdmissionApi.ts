@@ -52,3 +52,32 @@ export async function handleUpdateEWAdmission(
     throw error;
   }
 }
+
+export async function ewAllocateRoom(
+  admissionId: string,
+  body: Record<string, any>
+) {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.put(
+      `/api/executive_warden/admissions/room/${admissionId}`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error: any) {
+    Alert.alert(
+      "Room Allocation Error",
+      error.response?.data?.message ||
+        "An error occurred while allocating the room"
+    );
+    throw error;
+  }
+}

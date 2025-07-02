@@ -9,6 +9,8 @@ import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import { Inbox } from "lucide-react-native";
 import DeclineComment from "@/components/modals/DeclineComment";
 import EmptyPage from "@/components/EmptyPage";
+import TabSwitch from "@/components/TabSwitch";
+import { useRouter } from "expo-router";
 
 export default function AdmissionVerificationPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
@@ -18,10 +20,13 @@ export default function AdmissionVerificationPage() {
   }>({
     open: false,
   });
+  const [activeTab, setActiveTab] = useState<"room" | "final">("room");
+  const router = useRouter();
 
   const fetchAdmissions = async () => {
     try {
       const data = await getAllEWAdmissions();
+      // data is now [{ admission: {...}, student: {...} }, ...]
       setAdmissions(Array.isArray(data) ? data : []);
     } catch (err) {
       setAdmissions([]);
@@ -55,25 +60,66 @@ export default function AdmissionVerificationPage() {
     setDeclineModal({ open: false, admissionId: undefined });
   };
 
+  // Use admission.status for filtering
+  const roomAllocAdmissions = admissions.filter(
+    (item) => item.admission.status === "1"
+  );
+  const finalApprovalAdmissions = admissions.filter(
+    (item) => item.admission.status === "2"
+  );
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <TabSwitch
+        tabs={[
+          { label: "Room Allocation", value: "room" },
+          { label: "Final Approval", value: "final" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="mt-4 mb-2"
+      />
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {admissions.length === 0 ? (
+        {activeTab === "room" ? (
+          roomAllocAdmissions.length === 0 ? (
+            <EmptyPage
+              title="No pending admissions"
+              description=""
+              icon={Inbox}
+            />
+          ) : (
+            roomAllocAdmissions.map((item: any, idx: number) => (
+              <ApprovalCard
+                key={item.admission.id || idx}
+                title={item.admission.roll_number}
+                subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
+                badge={getAdmissionBadgeStatus(item.admission.status)}
+                data={{ ...item.admission, ...item.student }}
+                onApprove={() =>
+                  router.push(
+                    `/ExecutiveWarden/AdmissionVerification/${item.admission.hostelBlock}/${item.admission.academicYear}/${item.admission.id}`
+                  )
+                }
+                onDecline={() => handleDecline(String(item.admission.id))}
+              />
+            ))
+          )
+        ) : finalApprovalAdmissions.length === 0 ? (
           <EmptyPage
             title="No pending admissions"
             description=""
             icon={Inbox}
           />
         ) : (
-          admissions.map((item: any, idx: number) => (
+          finalApprovalAdmissions.map((item: any, idx: number) => (
             <ApprovalCard
-              key={item.id || idx}
-              title={item.roll_number}
-              subTitle={`Block: ${item.hostelBlock}, Year: ${item.academicYear}`}
-              badge={getAdmissionBadgeStatus(item.status)}
+              key={item.admission.id || idx}
+              title={item.admission.roll_number}
+              subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
+              badge={getAdmissionBadgeStatus(item.admission.status)}
               data={item}
-              onApprove={() => handleApprove(String(item.id))}
-              onDecline={() => handleDecline(String(item.id))}
+              onApprove={() => handleApprove(String(item.admission.id))}
+              onDecline={() => handleDecline(String(item.admission.id))}
             />
           ))
         )}

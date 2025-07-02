@@ -29,7 +29,6 @@ import {
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
 import { getRCById } from "../services/rcServices";
-import { findStudentByRollNo } from "../services/detailsService";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/admission.schema";
 import { getLatestDeclaration } from "../services/declarationServices";
