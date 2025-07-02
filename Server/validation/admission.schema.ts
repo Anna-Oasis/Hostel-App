@@ -7,13 +7,14 @@ export const createAdmissionSchema = z.object({
     .string()
     .min(9, "Academic year is required")
     .regex(/^\d{4}-\d{4}$/, "Academic year must be in format YYYY-YYYY"),
-  studentAgreed: z.boolean().refine((val) => val === true, {
+
+  studentAgreed: z.coerce.boolean().refine((val) => val === true, {
     message: "Student must agree to the terms",
   }),
-  parentAgreed: z.boolean().refine((val) => val === true, {
+  parentAgreed: z.coerce.boolean().refine((val) => val === true, {
     message: "Parent must agree to the terms",
   }),
-  previousResident: z.boolean(),
+  previousResident: z.coerce.boolean(),
 
   hostelBlock: z
     .enum(Object.values(hostelBlock) as [string, ...string[]])
@@ -23,11 +24,15 @@ export const createAdmissionSchema = z.object({
     .string()
     .min(1, "Mess preference is required")
     .max(20, "Mess preference must be less than 20 characters"),
+
   transaction_id: z
     .string()
     .min(3, "Transaction ID is required")
     .max(100, "Transaction ID must be less than 100 characters"),
+
+  transactionPhotoUrl: z.string().optional(), // optional if you're not sending image
 });
+
 
 export const roomAllocationSchema = z.object({
   room: z.coerce.number({ invalid_type_error: "room must be a number" }),
