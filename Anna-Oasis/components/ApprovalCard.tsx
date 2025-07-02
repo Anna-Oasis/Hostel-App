@@ -35,6 +35,8 @@ type approvalCardProps = {
   badge?: badgeStatus,
   /** JSON object containing data to be displayed in the details modal */
   data ?: Record<string, any>,
+  /** Optional custom title for the approve button */
+  ApproveButtonTitle?: string,
 }
 
 /**
@@ -215,14 +217,15 @@ const ApprovalCard = (props: approvalCardProps) => {
                   onPress={() => {
                     setViewDetails(false);
                     props.onApprove?.();
-                  }}
-                  className="bg-green-600 w-[95px] h-10 rounded-lg justify-center"
-                >
-                  <ButtonText className="text-white text-center">Approve</ButtonText>
+                    }}
+                    className="bg-green-600 min-w-[95px] px-3 h-10 justify-center rounded-lg"
+                  >
+                  <ButtonText className="text-white text-center">
+                    {props.ApproveButtonTitle || "Approve"}
+                  </ButtonText>
                 </Button>
               )}
-
-              {props.onDecline && (
+            {props.onDecline && (
                 <Button
                   onPress={() => {
                     setViewDetails(false);

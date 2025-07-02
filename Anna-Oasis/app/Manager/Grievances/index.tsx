@@ -57,16 +57,16 @@ export default function GrievancesPage() {
       ) : (
         grievances.map((item, idx) => (
           <ApprovalCard
-            key={item.grievanceId || idx}
-            title={item.formDetails.subject}
-            subTitle={`By ${item.rollNo}`}
-            badge={getGrievanceBadgeStatus(item.formDetails.status)}
-            onApprove={() => handleApprove(item.grievanceId)}
+            key={item.grievances.id || idx}
+            title={item.grievances.subject}
+            subTitle={`By ${item.student?.rollNo || item.grievances.roll_number}`}
+            badge={getGrievanceBadgeStatus(item.grievances.status)}
+            onApprove={() => handleApprove(item.grievances.id)}
             data={{
-              ...item.formDetails,
-              rollNo: item.rollNo,
-              grievanceId: item.grievanceId,
+              ...item.grievances,
+              ...(item.student || {}),
             }}
+            ApproveButtonTitle="Mark as Resolved"
           />
         ))
       )}
