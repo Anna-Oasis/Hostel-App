@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View} from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -10,12 +10,6 @@ import {
 
 export default function VerificationsPage() {
   const menuItems = [
-    {
-      title: "Admissions",
-      route: "/DeputyWarden/Verifications/Admissions",
-      icon: FileCheckIcon,
-      color: "#6366F1",
-    },
     {
       title: "Leave Form",
       route: "/DeputyWarden/Verifications/LeaveForm",

@@ -53,9 +53,9 @@ function LeaveFormPage() {
         from_date: values.from_date,
         to_date: values.to_date,
         reason: values.reason,
-        address_of_stay:
-          values.destination || values.address_of_stay || values.address,
-        emergency_contact: values.emergency_contact,
+        address_of_stay: values.address_of_stay,
+        mobile: values.mobile,
+        email: values.email,
       };
       await submitLeaveForm(payload);
       setShowModal(true);

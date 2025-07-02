@@ -10,8 +10,8 @@ import {
   BuildingIcon,
 } from "lucide-react-native";
 import DetailsCard from "@/components/student/DetailsCard";
-import { useEffect } from "react";
-import { getStudentDetails } from "@/utils/student/studentDetailsApi";
+import { useEffect, useState } from "react";
+import { getStudentDetails, getStudentAdmissionDetails } from "@/utils/student/studentDetailsApi";
 import useUserStore from "@/stores/userStore";
 import HelperText from "@/components/HelperText";
 
@@ -57,6 +57,8 @@ export default function StudentMain() {
 
   const setDetails = useUserStore((state) => state.setDetails);
   const details = useUserStore((state) => state.details);
+  const [admissionStatus, setAdmissionStatus] = useState<number | null>(null);
+  const [admissionCount, setAdmissionCount] = useState<number>(0);
 
   const fetchDetails = async () => {
     try {
@@ -69,9 +71,25 @@ export default function StudentMain() {
         router.push("/User/Student/Details/Edit");
       } else {
         setDetails(details.data);
+        // Call admission details API and log the data
+        if (details.data?.rollNo) {
+          const admissionData = await getStudentAdmissionDetails(details.data.rollNo);
+          console.log("Student Admission Data:", admissionData);
+          setAdmissionCount(admissionData.count);
+          if (admissionData.count > 0 && admissionData.data?.[0]?.status) {
+            setAdmissionStatus(Number(admissionData.data[0].status));
+          } else {
+            setAdmissionStatus(null);
+          }
+        } else {
+          setAdmissionCount(0);
+          setAdmissionStatus(null);
+        }
       }
     } catch (error) {
       console.error("Error fetching student details:", error);
+      setAdmissionCount(0);
+      setAdmissionStatus(null);
     }
   };
 
@@ -91,9 +109,22 @@ export default function StudentMain() {
             </HelperText>
           </View>
         )}
+        {(admissionCount === 0 || (admissionStatus !== null && admissionStatus < 3)) && (
+          <View className="w-full mb-2">
+            <HelperText>
+              Please wait until your admission is approved and room is allocated.
+            </HelperText>
+          </View>
+        )}
         {menuItems.map((item, idx) => {
+          // Disable logic:
+          // If admissionCount == 0 or admissionStatus < 3,
+          // only allow "Personal Details" and "Admission"
+          const isAdmissionOrPersonal =
+            item.title === "Personal Details" || item.title === "Admission";
           const isDisabled =
-            details?.approve === false && item.title !== "Personal Details";
+            ((admissionCount === 0 || (admissionStatus !== null && admissionStatus < 3)) && !isAdmissionOrPersonal) ||
+            (details?.approve === false && item.title !== "Personal Details");
           return (
             <Button
               key={idx}

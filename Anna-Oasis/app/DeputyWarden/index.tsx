@@ -6,10 +6,17 @@ import {
   FileTextIcon,
   UsersIcon,
   BarChart2Icon,
+  FilePlus2Icon,
 } from "lucide-react-native";
 
 export default function DeputyWardenPage() {
   const menuItems = [
+    {
+      title: "Admission Verification",
+      route: "/DeputyWarden/AdmissionVerification",
+      icon: FilePlus2Icon,
+      color: "#F97316",
+    },
     {
       title: "Verifications",
       route: "/DeputyWarden/Verifications",

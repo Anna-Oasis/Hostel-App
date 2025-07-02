@@ -62,15 +62,15 @@ export default function PaymentVerificationsPage() {
             description="All admissions have been reviewed."
           />
         ) : (
-          admissions.map((admission) => (
+          admissions.map((item) => (
             <ApprovalCard
-              key={admission.id}
-              title={`${admission.roll_number}`}
-              subTitle={`Block: ${admission.hostelBlock}, Year: ${admission.academicYear}`}
-              badge={getAdmissionBadgeStatus(admission.status)}
-              data={admission}
-              onApprove={() => handleApprove(admission.id)}
-              onDecline={() => handleDecline(admission.id)}
+              key={item.admission.id}
+              title={`${item.admission.roll_number}`}
+              subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
+              badge={getAdmissionBadgeStatus(item.admission.status)}
+              data={{ ...item.admission, ...item.student }}
+              onApprove={() => handleApprove(item.admission.id)}
+              onDecline={() => handleDecline(item.admission.id)}
             />
           ))
         )}
@@ -90,4 +90,3 @@ export default function PaymentVerificationsPage() {
     </View>
   );
 }
-
