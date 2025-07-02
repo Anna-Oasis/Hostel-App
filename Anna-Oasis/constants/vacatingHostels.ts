@@ -8,9 +8,12 @@ export const vacatingItems = [
 ];
 
 export const initialValues = {
-  vacateDate: '',
-  vacateTime: '',
-  futureAddress: '',
-  itemsReturned: [],
-  declarationAccepted: []
+  roll_number: '',
+  vacating_date: '',
+  vacating_time: '',
+  future_address: '',
+  returned_items: [],
+  endeavour: '',
+  endeavourDescription: '',
+  feedback: ''
 };

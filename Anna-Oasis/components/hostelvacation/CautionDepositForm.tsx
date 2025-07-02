@@ -5,15 +5,7 @@ import { Text } from "@/components/ui/text";
 import { NOTE } from "@/constants/validations/cautionDepositValidation";
 import HelperText from "../HelperText";
 
-interface CautionDepositFormProps {
-  onSubmit: () => void;
-  onBack?: () => void;
-}
-
-export default function CautionDepositForm({
-  onSubmit,
-  onBack,
-}: CautionDepositFormProps) {
+export default function CautionDepositForm() {
   return (
     <View style={{ flex: 1, padding: 10, backgroundColor: "#fff" }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -35,24 +27,15 @@ export default function CautionDepositForm({
           />
           <TextField
             label="Address of the bank"
-            value="bankAddress"
+            value="addressOfTheBank"
             placeholder="Enter Bank Address"
           />
           <TextField
             label="IFS Code"
-            value="ifscCode"
+            value="IFSCode"
             placeholder="Enter IFS Code"
           />
           <HelperText>{NOTE}</HelperText>
-
-          <Button className="mt-4" onPress={onSubmit}>
-            <ButtonText>Submit</ButtonText>
-          </Button>
-          {onBack && (
-            <Button className="mt-2 bg-gray-200" onPress={onBack}>
-              <ButtonText className="text-gray-800">Back</ButtonText>
-            </Button>
-          )}
         </View>
       </ScrollView>
     </View>
