@@ -11,7 +11,10 @@ import {
 } from "lucide-react-native";
 import DetailsCard from "@/components/student/DetailsCard";
 import { useEffect, useState } from "react";
-import { getStudentDetails, getStudentAdmissionDetails } from "@/utils/student/studentDetailsApi";
+import {
+  getStudentDetails,
+  getStudentAdmissionDetails,
+} from "@/utils/student/studentDetailsApi";
 import useUserStore from "@/stores/userStore";
 import HelperText from "@/components/HelperText";
 
@@ -73,7 +76,9 @@ export default function StudentMain() {
         setDetails(details.data);
         // Call admission details API and log the data
         if (details.data?.rollNo) {
-          const admissionData = await getStudentAdmissionDetails(details.data.rollNo);
+          const admissionData = await getStudentAdmissionDetails(
+            details.data.rollNo
+          );
           console.log("Student Admission Data:", admissionData);
           setAdmissionCount(admissionData.count);
           if (admissionData.count > 0 && admissionData.data?.[0]?.status) {
@@ -109,21 +114,27 @@ export default function StudentMain() {
             </HelperText>
           </View>
         )}
-        {(admissionCount === 0 || (admissionStatus !== null && admissionStatus < 3)) && (
+        {(admissionCount === 0 ||
+          (admissionStatus !== null && admissionStatus < 3) ||
+          details?.roomNumber == null) && (
           <View className="w-full mb-2">
             <HelperText>
-              Please wait until your admission is approved and room is allocated.
+              Please wait until your admission is approved and room is
+              allocated.
             </HelperText>
           </View>
         )}
         {menuItems.map((item, idx) => {
           // Disable logic:
-          // If admissionCount == 0 or admissionStatus < 3,
+          // If admissionCount == 0 or admissionStatus < 3 or details.roomNumber is null,
           // only allow "Personal Details" and "Admission"
           const isAdmissionOrPersonal =
             item.title === "Personal Details" || item.title === "Admission";
           const isDisabled =
-            ((admissionCount === 0 || (admissionStatus !== null && admissionStatus < 3)) && !isAdmissionOrPersonal) ||
+            ((admissionCount === 0 ||
+              (admissionStatus !== null && admissionStatus < 3) ||
+              details?.roomNumber == null) &&
+              !isAdmissionOrPersonal) ||
             (details?.approve === false && item.title !== "Personal Details");
           return (
             <Button

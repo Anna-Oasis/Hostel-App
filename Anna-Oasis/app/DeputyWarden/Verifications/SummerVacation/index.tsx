@@ -2,7 +2,8 @@ import ApprovalCard from "@/components/ApprovalCard";
 import {
   getStudentVacationsByDw,
   updateVacationStatusByDw,
-  VacationForm,
+  SummerVacation,
+  Student,
 } from "@/utils/deputyWarden/dwSummerVacationApi";
 import { getSummerVacationBadgeStatus } from "@/utils/getBadgeStatus";
 import { useEffect, useState } from "react";
@@ -12,7 +13,9 @@ import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
 
 export default function SummerVacationVericationPage() {
-  const [leaves, setLeaves] = useState<VacationForm[]>([]);
+  const [leaves, setLeaves] = useState<
+    { summer_vacation: SummerVacation; student: Student }[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [currentRejectId, setCurrentRejectId] = useState<number | null>(null);
@@ -45,7 +48,15 @@ export default function SummerVacationVericationPage() {
       if (result.success) {
         setLeaves((prev) =>
           prev.map((leave) =>
-            leave.id === leaveId ? { ...leave, status: "2" } : leave
+            leave.summer_vacation.id === leaveId
+              ? {
+                  ...leave,
+                  summer_vacation: {
+                    ...leave.summer_vacation,
+                    status: "2",
+                  },
+                }
+              : leave
           )
         );
         setSuccessModalContent({
@@ -87,13 +98,8 @@ export default function SummerVacationVericationPage() {
         false,
         comment
       );
-
       if (result.success) {
-        setLeaves((prev) =>
-          prev.map((leave) =>
-            leave.id === currentRejectId ? { ...leave, status: "-1" } : leave
-          )
-        );
+        await fetchLeaves();
         setSuccessModalContent({
           title: "Success",
           message: "Vacation request rejected",
@@ -149,21 +155,13 @@ export default function SummerVacationVericationPage() {
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
         {leaves.map((leave) => (
           <ApprovalCard
-            key={leave.id}
-            title={`ROLL.NO : (${leave.roll_number})`}
-            subTitle={`Vacation from: ${leave.vacation_from}`}
-            data={{
-              ID: leave.id,
-              "Roll Number": leave.roll_number,
-              "Vacation From": leave.vacation_from,
-              "Address of Stay": leave.address_of_stay,
-              "Returned Items": leave.returned_items.join(", "),
-              Status: leave.status,
-              "Created At": new Date(leave.created_at).toLocaleDateString(),
-            }}
-            badge={getSummerVacationBadgeStatus(leave.status)}
-            onApprove={() => handleApprove(leave.id)}
-            onDecline={() => handleRejectClick(leave.id)}
+            key={leave.summer_vacation.id}
+            title={`${leave.student.name} - ${leave.summer_vacation.roll_number}`}
+            subTitle={`Vacation from: ${new Date(leave.summer_vacation.vacation_from).toLocaleDateString()}`}
+            data={{...leave.summer_vacation, ...leave.student }}
+            badge={getSummerVacationBadgeStatus(leave.summer_vacation.status)}
+            onApprove={() => handleApprove(leave.summer_vacation.id)}
+            onDecline={() => handleRejectClick(leave.summer_vacation.id)}
           />
         ))}
       </ScrollView>

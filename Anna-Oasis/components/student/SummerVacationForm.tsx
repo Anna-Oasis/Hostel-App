@@ -7,8 +7,11 @@ import { Formik } from "formik";
 import { ScrollView, View, KeyboardAvoidingView, Platform } from "react-native";
 import { summerVacationValidation } from "@/constants/validations/summerVacationValidation";
 import { submitSummerVacationRequest } from "@/utils/student/studentVacationApi";
-import TimePickerField from "@/components/form/TimePickerField";
 import useLoadingStore from "@/stores/loadingStore";
+import useUserStore from "@/stores/userStore";
+import PhoneInputField from "../form/PhoneInputField";
+import ModalCallable from "@/components/modals/ModalCallable";
+import { useState } from "react";
 
 export default function SummerVacationForm() {
   const hostelItemsOptions = [
@@ -19,67 +22,120 @@ export default function SummerVacationForm() {
   ];
 
   const setLoading = useLoadingStore((state) => state.setLoading);
+  const roll_number = useUserStore((state) => state.details.rollNo) || "";
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState("");
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white"
+      className="flex-1 bg-[#f8fafc]"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-1 p-4 items-center">
-          <Formik
-            initialValues={{
-              vacationDate: "",
-              vacationTime: "",
-              address: "",
-              email: "",
-              hostelItems: [],
-              declaration: [],
-            }}
-            validationSchema={summerVacationValidation(hostelItemsOptions)}
-            onSubmit={async (values) => {
-              try {
-                setLoading(true);
-                await submitSummerVacationRequest({
-                  vacation_from: values.vacationDate,
-                  vacation_time: values.vacationTime,
-                  address_of_stay: values.address,
-                  returned_items: values.hostelItems,
-                });
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            {({ handleSubmit }) => (
-              <View className="space-y-4">
-                <DatePickerField minimumDate={new Date()} value="vacationDate" label="Date of vacate" />
-                <TimePickerField value="vacationTime" label="Time of vacate" />
-                <TextField label="Address of stay during vacation" value="address" placeholder="Address..." />
-                <TextField label="Parent's Email" value="email" placeholder="Parent's Email" />
+      <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
+        <ModalCallable
+          show={modalVisible}
+          onClose={() => setModalVisible(false)}
+          title="Success"
+          message={modalMsg}
+        />
+        <Text className="text-3xl font-bold text-gray-900 mb-2 text-center">
+          Summer Vacation Form
+        </Text>
+        <Text className="text-base text-gray-600 mb-6 text-center">
+          Please fill out the details below to submit your summer vacation
+          request.
+        </Text>
+        <Formik
+          initialValues={{
+            roll_number: roll_number,
+            email: "",
+            mobile: "",
+            vacation_from: "",
+            address_of_stay: "",
+            returned_items: [],
+          }}
+          validationSchema={summerVacationValidation(hostelItemsOptions)}
+          onSubmit={async (values) => {
+            try {
+              setLoading(true);
+              await submitSummerVacationRequest({
+                roll_number: values.roll_number,
+                email: values.email,
+                mobile: values.mobile,
+                vacation_from: values.vacation_from,
+                address_of_stay: values.address_of_stay,
+                returned_items: values.returned_items,
+              });
+              setModalMsg("Your summer vacation request has been submitted successfully!");
+              setModalVisible(true);
+            } finally {
+              setLoading(false);
+            }
+          }}
+        >
+          {({ handleSubmit }) => (
+            <View className="space-y-6">
+              {/* Personal & Contact Section */}
+              <View className="bg-white rounded-2xl shadow p-4 mb-2">
+                <Text className="text-lg font-semibold text-gray-800 mb-2">
+                  Contact Details
+                </Text>
+                <TextField
+                  label="Parent's Email"
+                  value="email"
+                  placeholder="Parent's Email"
+                />
+                <PhoneInputField
+                  label="Mobile Number"
+                  value="mobile"
+                  placeholder="Mobile Number"
+                />
+              </View>
+
+              {/* Vacation Details Section */}
+              <View className="bg-white rounded-2xl shadow p-4 mb-2">
+                <Text className="text-lg font-semibold text-gray-800 mb-2">
+                  Vacation Details
+                </Text>
+                <DatePickerField
+                  minimumDate={new Date()}
+                  value="vacation_from"
+                  label="Date of Vacate"
+                />
+                <TextField
+                  label="Address of Stay During Vacation"
+                  value="address_of_stay"
+                  placeholder="Address..."
+                />
+              </View>
+
+              {/* Hostel Items Section */}
+              <View className="bg-white rounded-2xl shadow p-4 mb-2">
+                <Text className="text-lg font-semibold text-gray-800 mb-2">
+                  Hostel Items Handover
+                </Text>
                 <CheckBoxField
                   options={hostelItemsOptions}
-                  value="hostelItems"
+                  value="returned_items"
                   label="Items handed over to hostel"
                 />
-                <View className="p-4 flex items-center gap-2">
-                  <Text className="text-red-500 text-center">
-                    I acknowledge that I vacated the room responsibly and will pay for any damages found later.
-                  </Text>
-                  <CheckBoxField
-                    value="declaration"
-                    options={[{ label: "I accept the declaration terms", value: "declare" }]}
-                  />
-                </View>
-                <Button onPress={() => handleSubmit()}>
-                  <ButtonText className="text-white font-semibold">SUBMIT</ButtonText>
+              </View>
+
+              {/* Submit Button */}
+              <View className="items-center mt-4">
+                <Button
+                  onPress={() => handleSubmit()}
+                  className="w-full rounded-lg"
+                >
+                  <ButtonText className="text-white text-lg font-semibold">
+                    Submit Vacation Request
+                  </ButtonText>
                 </Button>
               </View>
-            )}
-          </Formik>
-        </View>
+            </View>
+          )}
+        </Formik>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
-

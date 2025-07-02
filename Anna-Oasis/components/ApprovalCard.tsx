@@ -56,6 +56,7 @@ const imageKeys = [
   "parentGuardianSignatureUrl",
   "categoryProofUrl",
   "admissionSlipUrl",
+  "transactionPhotoUrl",
 ];
 
 /**

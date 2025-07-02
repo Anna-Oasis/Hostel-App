@@ -4,19 +4,33 @@ export const summerVacationValidation = (hostelItemsOptions: { label: string; va
   const requiredItemValues = hostelItemsOptions.map((item) => item.value);
 
   return Yup.object().shape({
-    vacationDate: Yup.string().required("Date of vacate is required"),
-    vacationTime: Yup.string().required("Time of vacate is required"),
-    address: Yup.string().required("Address is required"),
-    email: Yup.string().email("Enter a valid email").required("Parent's email is required"),
-    hostelItems: Yup.array()
-      .required("You must select all hostel items")
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Parent's email is required"),
+    mobile: Yup.string()
+      .min(10, "Mobile number too short")
+      .max(15, "Mobile number too long")
+      .required("Mobile number is required"),
+    vacation_from: Yup.string()
+      .required("Date of vacate is required")
+      .test(
+        "is-date",
+        "Invalid ISO timestamp for vacation_from",
+        (val) => !!val && !isNaN(Date.parse(val))
+      ),
+    address_of_stay: Yup.string()
+      .min(3, "Address is too short")
+      .max(100, "Address too long")
+      .required("Address is required"),
+    returned_items: Yup.array()
+      .of(Yup.string().max(100))
       .test(
         "all-items-selected",
         "You must select all hostel items",
         (value) =>
           Array.isArray(value) &&
           requiredItemValues.every((item) => value.includes(item))
-      ),
-    declaration: Yup.array().min(1).required(),
+      )
+      .required("You must handover all the hostel items to resident counsellor"),
   });
 };

@@ -1,10 +1,19 @@
-import { useLocalSearchParams, router } from 'expo-router';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { useEffect, useState } from 'react';
-import useRoomStore from '@/stores/roomStore';
-import { getRoomsByAcademicYear } from '@/utils/deputyWarden/dwRoomApi';
-import { dwAllocateRoom, handleUpdateAdmission } from '@/utils/deputyWarden/dwAdmissionApi';
-import useLoadingStore from '@/stores/loadingStore';
+import { useLocalSearchParams, router } from "expo-router";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { useEffect, useState } from "react";
+import useRoomStore from "@/stores/roomStore";
+import { getRoomsByAcademicYear } from "@/utils/deputyWarden/dwRoomApi";
+import {
+  dwAllocateRoom,
+  handleUpdateAdmission,
+} from "@/utils/deputyWarden/dwAdmissionApi";
+import useLoadingStore from "@/stores/loadingStore";
 import {
   Select,
   SelectTrigger,
@@ -34,7 +43,9 @@ export default function RoomAllocation() {
   const setRooms = useRoomStore((state) => state.setRooms);
   const rooms = useRoomStore((state) => state.rooms);
   const [floors, setFloors] = useState<number[]>([]);
-  const [roomsByFloor, setRoomsByFloor] = useState<{ [floor: number]: Room[] }>({});
+  const [roomsByFloor, setRoomsByFloor] = useState<{ [floor: number]: Room[] }>(
+    {}
+  );
   const [selectedFloor, setSelectedFloor] = useState<number | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<{
     roomNumber: number;
@@ -58,7 +69,9 @@ export default function RoomAllocation() {
             floorMap[room.floor].push(room);
           });
           setRoomsByFloor(floorMap);
-          const floorNumbers = Object.keys(floorMap).map(Number).sort((a, b) => a - b);
+          const floorNumbers = Object.keys(floorMap)
+            .map(Number)
+            .sort((a, b) => a - b);
           setFloors(floorNumbers);
           setSelectedFloor(floorNumbers.length > 0 ? floorNumbers[0] : null);
         })
@@ -96,7 +109,7 @@ export default function RoomAllocation() {
         comment: "Approved",
       });
       Alert.alert("Success", "Room Allocated successfully");
-      router.replace("/ExecutiveWarden/AdmissionVerification");
+      router.replace("/DeputyWarden/AdmissionVerification");
     } catch (error: any) {
       Alert.alert(
         "Update Error",
@@ -199,7 +212,7 @@ export default function RoomAllocation() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

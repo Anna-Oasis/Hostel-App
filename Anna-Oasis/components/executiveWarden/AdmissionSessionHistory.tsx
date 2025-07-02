@@ -34,11 +34,9 @@ const AdmissionSessionHistory = () => {
         semesters: values.semesters.map((s: string) => Number(s)),
         academic_year: values.academic_year,
       });
-      setSessions(prev =>
-        prev.map(session =>
-          session.id === editSession.id ? updatedSession : session
-        )
-      );
+      await getAdmissionSessions().then(data => {
+        if (data) setSessions(data)
+      });
       setShowSuccessModal(true);
     } catch (e) {
       Alert.alert("Edit Error", "An error occurred while editing the admission session. Please try again.");
@@ -66,7 +64,7 @@ const AdmissionSessionHistory = () => {
         ) : (
           sessions.map(session => (
             <Box
-              key={session.id}
+              key={session.id ?? Math.random()} // fallback to random if id is missing (should not happen)
               className="bg-white rounded-2xl p-5 mb-4 border border-gray-100"
             >
               <Text className="text-xl font-bold mb-2 text-typography-1">
@@ -79,7 +77,7 @@ const AdmissionSessionHistory = () => {
                 To: <Text className="font-semibold">{session.to}</Text>
               </Text>
               <Text className="mb-3 text-typography-1">
-                Semesters: <Text className="font-semibold">{session.semesters.join(', ')}</Text>
+                Semesters: <Text className="font-semibold">{Array.isArray(session.semesters) ? session.semesters.join(', ') : ''}</Text>
               </Text>
               <Button
                 size="md"
