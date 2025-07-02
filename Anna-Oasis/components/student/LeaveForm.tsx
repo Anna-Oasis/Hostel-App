@@ -29,9 +29,7 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
         initialValues={{
           leave_type: "",
           from_date: "",
-          from_time: "",
           to_date: "",
-          to_time: "",
           reason: "",
           address_of_stay: "",
           mobile: "",
@@ -54,22 +52,10 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
               label="From Date"
             />
 
-            <TimePickerField
-              label="From Time"
-              value="from_time"
-              placeholder="Select Time"
-            />
-
             <DatePickerField
               placeholder="YYYY-MM-DD"
               value="to_date"
               label="To Date"
-            />
-
-            <TimePickerField
-              label="To Time"
-              value="to_time"
-              placeholder="Select Time"
             />
 
             <TextField

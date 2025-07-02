@@ -113,7 +113,7 @@ function LeaveFormPage() {
                 title={`${leave.leave_type} Leave`}
                 subTitle={`${leave.from_date} to ${leave.to_date}`}
                 badge={
-                  leave.status === "3"
+                  leave.status === "2"
                     ? badgeStatus.Approved
                     : leave.status === "-1"
                     ? badgeStatus.Rejected
@@ -121,13 +121,14 @@ function LeaveFormPage() {
                 }
                 data={{
                   "Leave Type": leave.leave_type,
-                  From: leave.from_date,
-                  To: leave.to_date,
+                  "From Date": leave.from_date,
+                  "To Date": leave.to_date,
                   Reason: leave.reason,
                   "Address of Stay": leave.address_of_stay,
-                  "Emergency Contact": leave.emergency_contact,
+                  "Mobile": leave.mobile,
+                  "Email": leave.email,
                   Status:
-                    leave.status === "3"
+                    leave.status === "2"
                       ? "Approved"
                       : leave.status === "-1"
                       ? "Rejected"
