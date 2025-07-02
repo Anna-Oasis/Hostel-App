@@ -10,6 +10,11 @@ const validationSchemas = [
     hostelBlock: Yup.string().required("Required"),
     messPreference: Yup.string().required("Required"),
     previousResident: Yup.string().required("Required"),
+  }),
+  Yup.object({
+    transactionPhotoUrl: Yup.string().required(
+      "Transaction screenshot is required"
+    ),
     transactionId: Yup.string().trim().required("Transaction ID is required"),
   }),
   // Page 1: Declaration

@@ -84,8 +84,9 @@ export async function getLatestAdmissionSessionForSemesterController(req: AuthRe
     let isOpen = false;
     if (session) {
       const currentDate = new Date();
-      const fromDate = new Date(session.from);
-      const toDate = new Date(session.to);
+      // Parse as local date at midnight
+      const fromDate = new Date(session.from + "T00:00:00");
+      const toDate = new Date(session.to + "T23:59:59");
       
       isOpen = currentDate >= fromDate && currentDate <= toDate;
     }

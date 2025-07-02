@@ -18,6 +18,7 @@ const initialValues = {
   transactionId: "",
   academicYear: "",
   hostelBlock: undefined,
+  transactionPhotoUrl: "",
   declaration: [] as string[]
 };
 
