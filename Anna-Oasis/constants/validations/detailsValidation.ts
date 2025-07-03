@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 const phoneRegex = /^\+[1-9]\d{1,14}$/;
-const pinRegex = /^[0-9\s\-]{3,10}$/;
+const pinRegex = /^[0-9\s\-]{5,10}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const allowedBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 

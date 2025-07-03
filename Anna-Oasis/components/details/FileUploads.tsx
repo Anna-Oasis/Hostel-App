@@ -15,15 +15,27 @@ const FileUploads = () => {
   const details = useUserStore((state) => state.details);
 
   useEffect(() => {
+    console.log(details)
     if (details) {
       const isForeign = details.govtIdType === "Passport" ? "Yes" : "No";
       setFieldValue("isForeignNational", isForeign);
     } else {
       if (values.isForeignNational === undefined) {
         setFieldValue("isForeignNational", "No");
+        setFieldValue("govtIdType", govtIdTypes[0]?.value || "");
       }
     }
   }, [details, setFieldValue, values.isForeignNational, details?.govtIdType]);
+
+  useEffect(() => {
+    if (values.isForeignNational === "Yes") {
+      setFieldValue("govtIdType", "Passport");
+    } else if (values.isForeignNational === "No") {
+      setFieldValue("govtIdType", govtIdTypes[0]?.value || "");
+    }
+    console.log("Updated govtIdType based on isForeignNational:", values.govtIdType);
+    console.log("Current govtId value:", values.govtId);
+  }, [values.isForeignNational, setFieldValue, values.govtIdType, values.govtId]);
 
   return (
     <>

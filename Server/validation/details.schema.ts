@@ -58,7 +58,7 @@ export const studentSchema = z.object({
   resForeignCity: z.string({ required_error: "City (Foreign) is required" }).min(1, "Foreign city cannot be empty"),
   resForeignState: z.string({ required_error: "State (Foreign) is required" }).min(1, "Foreign state cannot be empty"),
   resForeignCountry: z.string({ required_error: "Country (Foreign) is required" }).min(1, "Foreign country cannot be empty"),
-  resForeignPostalCode: z.string({ required_error: "Postal Code (Foreign) is required" }).regex(postalCodeRegex, "Invalid foreign postal code"),
+  resForeignPostalCode: z.string({ required_error: "Postal Code (Foreign) is required" }),
 
   // Local Guardian
   localGuardianName: z.string({ required_error: "Local guardian name is required" }).min(1, "Guardian name cannot be empty"),
