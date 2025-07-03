@@ -15,6 +15,7 @@ const RcLeaveHistory = () => {
     const fetchLeaveHistory = async () => {
       try {
         const history = await getRCLeaves();
+        console.log("RC Leave History:", history);
         setLeaveHistory(history);
       } catch (error) {
         console.error("Error fetching RC leave history:", error);
@@ -45,7 +46,8 @@ const RcLeaveHistory = () => {
                 Reason: leave.reason,
                 Leaving: leave.leaving,
                 Arrival: leave.arrival,
-                "Created At": new Date(leave.created_at).toLocaleString(),
+                "Created At": new Date(leave.createdAt).toLocaleString(),
+
                 Status:
                   leave.approved === "1"
                     ? "Pending"

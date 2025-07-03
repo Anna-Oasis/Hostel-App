@@ -1,7 +1,6 @@
 import { View } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { ReactNode } from "react";
 import { Inbox } from "lucide-react-native";
 
 interface EmptyPageProps {

@@ -8,15 +8,28 @@ export interface RCLeaveResponse {
 }
 
 export interface RCLeave {
-    id: number;
-    rc_id: number;
-    leaving: string;        
-    arrival: string;    
-    reason: string;
-    approved: string;      
-    created_at: string;    
-    dw_approved_at: string; 
-    ew_updated_at: string;  
+    leave: {
+      id: number;
+      rc_id: number;
+      leaving: string;
+      arrival: string;
+      reason: string;
+      approved: string;
+      created_at: string;
+      dw_approved_at?: string;
+      ew_updated_at?: string;
+    };
+    rc: {
+      id: number;
+      userId: number;
+      name: string;
+      hostel: string;
+      onLeave: boolean;
+      floor: number[];
+      alternatingToRCId: number | null;
+      createdAt: string;
+      updatedAt: string;
+    };
 }
 
 

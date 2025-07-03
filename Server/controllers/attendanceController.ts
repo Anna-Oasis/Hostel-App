@@ -45,6 +45,8 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
   
   let attendanceRecords;
   let message;
+  console.log("RC ID:", rc_id);
+  console.log("Alternating RC ID:", alternatingRCId);
 
   if (alternatingRCId) {
     const [currentRCAttendance, alternateRCAttendance] = await Promise.all([

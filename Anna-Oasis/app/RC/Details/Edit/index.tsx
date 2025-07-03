@@ -78,9 +78,9 @@ const RCDetailsEditPage = () => {
           await handleEnterDetails(formData);
           const response = await fetchdata();
           Alert.alert("Success", "Details updated successfully");
-          router.replace("/RC/Details");
           setDetails(response[0]);
           setSubmit(false);
+          router.replace("/RC/Details");
         }
       }}
     >
@@ -117,7 +117,7 @@ const RCDetailsEditPage = () => {
             <TextField
               value="guardianName"
               label="Guardian Name"
-              placeholder="Gaurdian Name"
+              placeholder="Guardian Name"
             />
             <TextField
               value="residentialAddress"

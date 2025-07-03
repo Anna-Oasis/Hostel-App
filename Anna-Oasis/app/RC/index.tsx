@@ -27,7 +27,7 @@ export default function RCPage() {
       const rcDetails = await fetchdata();
       if (rcDetails.length == 0) {
         Alert.alert("RC Details", "Please enter your details first.");
-        setDetails({});
+        setDetails(null);
         router.push("/RC/Details/Edit");
       } else {
         setDetails(rcDetails[0]);
@@ -39,10 +39,8 @@ export default function RCPage() {
   };
 
   useEffect(() => {
-    if (!rooms || rooms.length === 0) {
-      fetchDetailsAndRooms();
-    }
-  }, [rooms]);
+    fetchDetailsAndRooms();
+  }, []);
 
   const menuItems = [
     {

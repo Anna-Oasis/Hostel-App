@@ -70,24 +70,38 @@ export async function updateRCLeaveStatus(leaveId : number, status : string) {
 
 export const getRCLeaveToBeApprovedByDeputyWarden = async () => {
   const leave_form = await db
-    .select()
+    .select({
+      leave: rcLeaveModel,
+      rc: rcModel,
+    })
     .from(rcLeaveModel)
+    .innerJoin(
+      rcModel,
+      eq(rcLeaveModel.rc_id, rcModel.id)
+    )
     .where(
-    and(
+      and(
         eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED)
-    ))
+      ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;
 };
 
 export const getRCLeaveToBeApprovedByExecutiveWarden = async () => {
   const leave_form = await db
-    .select()
+    .select({
+      leave: rcLeaveModel,
+      rc: rcModel,
+    })
     .from(rcLeaveModel)
+    .innerJoin(
+      rcModel,
+      eq(rcLeaveModel.rc_id, rcModel.id)
+    )
     .where(
-    and(
+      and(
         eq(rcLeaveModel.approved, rcLeaveApprovalStatus.DEPUTYWARDEN)
-    ))
+      ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;
 };

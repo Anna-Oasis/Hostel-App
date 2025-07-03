@@ -126,8 +126,9 @@ export const approveOrDeclineByRC = async (
   }
 
   // 4. Check permission
+  console.log(rc.hostel, student.hostelBlock, rc.floor, student.floor);
   const isHostelMatch = rc.hostel === student.hostelBlock;
-  if (!student.floor) {
+  if (student.floor === undefined || student.floor === null) {
     throw AppError(
       "Student floor information is missing",
       httpStatus.BAD_REQUEST

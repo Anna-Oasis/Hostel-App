@@ -32,7 +32,7 @@ export default function ApplyForLeavePage() {
         tabs={[
           { label: "Leave Form", value: "form" },
           { label: "History", value: "history" },
-          { label: "Relive the Alter RC", value: "Close Leave" },
+          { label: "Relieve the Alter RC", value: "Close Leave" },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -59,7 +59,7 @@ export default function ApplyForLeavePage() {
             onPress={async () => {
               const result = await completeRCLeave();
               if (result.success) {
-                setModalMsg("Great! Relived the Alternate RC from the Your attendance Duty");
+                setModalMsg("Great! Relieved the Alternate RC from the Your attendance Duty");
                 setSuccessModalVisible(true);
               } else {
                 setModalMsg("Failed to close leave");

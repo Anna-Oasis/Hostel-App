@@ -60,8 +60,6 @@ export const getRCLeaves = async (
   switch (req.User.role) {
     case "deputyWarden" :
       const result = await getRCLeaveToBeApprovedByDeputyWarden()
-      
-      
       res.status(httpStatus.OK).json({
         success : true,
         data : result || [],
@@ -139,9 +137,6 @@ export const getRCLeaveController = async (req: AuthRequest, res: Response) => {
   }
   const rc_id = await getRCidfromUserId(Number(req.User.id));
   const leaveForms = await getRCLeaveApprovals(rc_id);
-  if (!leaveForms || leaveForms.length === 0) {
-    throw AppError("No leave forms found for this RC", httpStatus.NOT_FOUND);
-  }
 
   res.status(httpStatus.OK).json({
     success: true,
