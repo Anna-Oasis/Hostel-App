@@ -24,7 +24,6 @@ export default function RCManagementPage() {
   const [submitting, setSubmitting] = useState(false);
   const [removeModalVisible, setRemoveModalVisible] = useState(false);
 
-  // Fetch RCs from backend
   const handleFetchRCs = async () => {
     setLoading(true);
     try {
@@ -41,7 +40,6 @@ export default function RCManagementPage() {
     handleFetchRCs();
   }, []);
 
-  // Remove RC
   const handleRemoveRC = async (rcId: string) => {
     setSubmitting(true);
     try {
@@ -54,10 +52,14 @@ export default function RCManagementPage() {
     setSubmitting(false);
   };
 
-  // Assign Floors Modal
   const openAssignModal = (rc: any) => {
     setSelectedRC(rc);
-    setSelectedFloors(rc.floor || []);
+    const assignedFloors = Array.isArray(rc.floor)
+      ? rc.floor
+          .map((idx: number) => floors[idx])
+          .filter((f: string | undefined) => f !== undefined)
+      : [];
+    setSelectedFloors(assignedFloors);
     setModalVisible(true);
   };
 
@@ -73,12 +75,13 @@ export default function RCManagementPage() {
     );
   };
 
-  // Assign Floors API
   const handleAssign = async () => {
     if (!selectedRC) return;
     setSubmitting(true);
     try {
-      const floorNumbers = selectedFloors.map(floor => floors.indexOf(floor));
+      const floorNumbers = selectedFloors
+        .map(floor => floors.indexOf(floor))
+        .filter(idx => idx !== -1);
       await assignFloors(selectedRC.id, {
         name: selectedRC.name,
         hostel: selectedRC.hostel,
@@ -86,7 +89,7 @@ export default function RCManagementPage() {
       });
       setRcList((prevList) =>
         prevList.map((rc) =>
-          rc.id === selectedRC.id ? { ...rc, floor: selectedFloors } : rc
+          rc.id === selectedRC.id ? { ...rc, floor: floorNumbers } : rc
         )
       );
       closeAssignModal();
@@ -96,7 +99,6 @@ export default function RCManagementPage() {
     setSubmitting(false);
   };
 
-  // Add RC API
   const handleAddRC = async (formData: FormData) => {
     setSubmitting(true);
     try {
@@ -131,7 +133,11 @@ export default function RCManagementPage() {
             <RCListTable
               rcList={rcList.map((rc) => ({
                 ...rc,
-                assignedFloors: rc.floor || [],
+                assignedFloors: Array.isArray(rc.floor)
+                  ? rc.floor
+                      .map((idx: number) => floors[idx])
+                      .filter((f: string | undefined) => f !== undefined)
+                  : [],
               }))}
               onAssign={openAssignModal}
             />

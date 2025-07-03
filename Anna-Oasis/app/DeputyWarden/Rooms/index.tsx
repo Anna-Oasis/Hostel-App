@@ -80,7 +80,7 @@ const RoomView = () => {
             onPress={handleSubmit as any}
             className="mt-3 mb-4"
           >
-            <ButtonText>Submit</ButtonText>
+            <ButtonText>Fetch room data</ButtonText>
           </Button>
           <ScrollView className="flex-1">
             {Object.keys(roomDetails).length === 0 && (
@@ -101,24 +101,31 @@ const RoomView = () => {
                         <Text className="text-base font-semibold mb-2 text-slate-700">
                           Floor {floor}
                         </Text>
-                        <View className="flex-row flex-wrap -mx-2">
-                          {rooms.map((room, idx) => (
-                            <View
-                              key={room.roomNumber ?? idx}
-                              className="w-[30%] bg-slate-100 rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm"
-                            >
-                              <Text className="font-bold text-base text-slate-900 mb-1">
-                                Room {room.roomNumber}
-                              </Text>
-                              <Text className="text-xs text-slate-500 text-center">
-                                {room.rollNo &&
-                                Array.isArray(room.rollNo) &&
-                                room.rollNo.length > 0
-                                  ? room.rollNo.join(", ")
-                                  : "Vacant"}
-                              </Text>
-                            </View>
-                          ))}
+                        <View className="flex-row flex-wrap justify-center -mx-2">
+                          {[...rooms]
+                            .sort((a, b) => {
+                              // Sort by roomNumber (numeric), fallback to 0 if missing
+                              const numA = Number(a.roomNumber) || 0;
+                              const numB = Number(b.roomNumber) || 0;
+                              return numA - numB;
+                            })
+                            .map((room, idx) => (
+                              <View
+                                key={room.roomNumber ?? idx}
+                                className="w-[30%] bg-slate-100 rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm"
+                              >
+                                <Text className="font-bold text-base text-slate-900 mb-1">
+                                  Room {room.roomNumber}
+                                </Text>
+                                <Text className="text-xs text-slate-500 text-center">
+                                  {room.rollNo &&
+                                  Array.isArray(room.rollNo) &&
+                                  room.rollNo.length > 0
+                                    ? room.rollNo.join(", ")
+                                    : "Vacant"}
+                                </Text>
+                              </View>
+                            ))}
                         </View>
                       </View>
                     )
