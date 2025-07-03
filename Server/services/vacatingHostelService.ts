@@ -78,7 +78,7 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     )
     .where(
       and(
-        eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER),
+        eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.SUBMITTED),
 
         eq(studentModel.hostelBlock, rc.hostel),
         inArray(studentModel.floor, rc.floor)
@@ -170,7 +170,7 @@ export const getVacatingFormsWaitingForManager = async () => {
   const approvedForms = await db
     .select({ id: vacatingHostelModel.id })
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.SUBMITTED));
+    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.RC));
 
   if (approvedForms.length === 0) {
     return [];
@@ -194,7 +194,7 @@ export const getVacatingFormsWaitingForDeputyWarden = async () => {
   return await db
     .select()
     .from(vacatingHostelModel)
-    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.RC));
+    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER));
 };
 
 /*
