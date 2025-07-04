@@ -54,7 +54,7 @@ rcRouter.get(
   errorWrapper(getAdmissionWaitingForApprovalByRCController)
 );
 rcRouter.put(
-  "/admissions/room/:admission_id",
+  "/admissions/:admission_id",
   authenticateUser,
   hasRole(["rc"]),
   errorWrapper(allocateRoomController)
