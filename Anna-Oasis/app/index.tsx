@@ -1,21 +1,47 @@
-import { Text, View } from "react-native";
-import { Button, ButtonText } from "@/components/ui/button";
-import TestForm from "@/components/TestForm";
+
+import { useEffect, useState } from "react";
+import { View, Text } from "react-native";
+import { useRouter } from "expo-router";
+import { getToken, verifyToken, redirectByRole } from "@/utils/authUtils";
 
 export default function Index() {
-  return (
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //   }}
-    // >
-    //   <Text>Edit app/index.tsx to edit this screen.</Text>
-    //   <Button size="md" variant="solid" action="primary">
-    //     <ButtonText>Hello World!</ButtonText>
-    //   </Button>
-    // </View>
-    <TestForm />
-  );
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkTokenAndRedirect = async () => {
+      try {
+        const token = await getToken();
+
+        if (token) {
+          const user = await verifyToken(token);
+
+          if (user) {
+            console.log("Token is valid, redirecting based on role...", user.role);
+            redirectByRole(user.role);
+            return;
+          }
+        }
+        
+        router.replace("/Login");
+      } catch (error) {
+        console.error("Session expired - Please login", error);
+        router.replace("/Login");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkTokenAndRedirect();
+  }, [router]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <Text className="text-base text-gray-600">Loading...</Text>
+      </View>
+    );
+  }
+
+  return null;
 }

@@ -8,20 +8,42 @@ import {
 } from "@/components/ui/radio";
 import { CircleIcon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useFormikContext, ErrorMessage } from "formik";
+import { useFormikContext } from "formik";
+import Label from "@/components/form/Label";
 
+/**
+ * Props for the RadioField component
+ *
+ * @interface RadioFieldProps
+ * @property {string} [label] - Optional label text for the field
+ * @property {string} value - Field name in the Formik form values
+ * @property {Array<{label: string, value: string}>} options - Available options for selection
+ */
 interface RadioFieldProps {
+  label?: string;
   value: string;
   options: { label: string; value: string }[];
 }
 
 /**
  * RadioField component renders a group of radio buttons and integrates with Formik for form state management.
+ * It provides a user-friendly way to select from mutually exclusive options.
  *
- * @param {string} value - The name of the field in Formik values.
- * @param {Array<{ label: string, value: string }>} options - An array of options for the radio buttons.
+ * @example
+ * <RadioField
+ *   label="Gender"
+ *   value="gender"
+ *   options={[
+ *     { label: "Male", value: "Male" },
+ *     { label: "Female", value: "Female" },
+ *     { label: "Other", value: "Other" }
+ *   ]}
+ * />
+ *
+ * @param {RadioFieldProps} props - Component props
+ * @returns {JSX.Element} A radio button group
  */
-function RadioField({ value, options }: RadioFieldProps) {
+function RadioField({ label, value, options }: RadioFieldProps) {
   const { values, setFieldValue, touched, errors } = useFormikContext<any>();
 
   /**
@@ -35,12 +57,12 @@ function RadioField({ value, options }: RadioFieldProps) {
   };
 
   return (
-    <View>
+    <View className="mb-4">
+      {label && <Label text={label} />}
       <RadioGroup
         value={values[value]}
         onChange={(prop) => {
           handleRadioChange(prop);
-          console.log(value);
         }}
       >
         {options.map((option) => (
@@ -59,7 +81,7 @@ function RadioField({ value, options }: RadioFieldProps) {
         ))}
       </RadioGroup>
       {touched[value] && typeof errors[value] === 'string' && (
-        <Text italic style={{ color: "red", marginTop: 5 }}>{errors[value]}</Text>
+        <Text italic className="text-red-500 mt-1 text-xs">{errors[value]}</Text>
       )}
     </View>
   );
