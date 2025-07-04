@@ -1,4 +1,4 @@
-import { View, Alert } from "react-native";
+import { View, ScrollView, Alert } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -104,58 +104,60 @@ export default function StudentMain() {
 
   return (
     <>
-      <View className="flex-row flex-wrap justify-between items-center p-8">
-        <DetailsCard />
-        {details?.approve === false && (
-          <View className="w-full mb-2">
-            <HelperText>
-              Your profile is not verified yet. You cannot access other features
-              until manager verifies your profile.
-            </HelperText>
-          </View>
-        )}
-        {(admissionCount === 0 ||
-          (admissionStatus !== null && admissionStatus < 3) ||
-          details?.roomNumber == null) && (
-          <View className="w-full mb-2">
-            <HelperText>
-              Please wait until your admission is approved and room is
-              allocated.
-            </HelperText>
-          </View>
-        )}
-        {menuItems.map((item, idx) => {
-          // Disable logic:
-          // If admissionCount == 0 or admissionStatus < 3 or details.roomNumber is null,
-          // only allow "Personal Details" and "Admission"
-          const isAdmissionOrPersonal =
-            item.title === "Personal Details" || item.title === "Admission";
-          const isDisabled =
-            ((admissionCount === 0 ||
-              (admissionStatus !== null && admissionStatus < 3) ||
-              details?.roomNumber == null) &&
-              !isAdmissionOrPersonal) ||
-            (details?.approve === false && item.title !== "Personal Details");
-          return (
-            <Button
-              key={idx}
-              onPress={() => router.push(item.route as any)}
-              className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"
-              style={[
-                { backgroundColor: item.color },
-                isDisabled && { opacity: 0.5 },
-              ]}
-              variant="solid"
-              disabled={isDisabled}
-            >
-              <ButtonIcon as={item.icon} size="xl" color="white" />
-              <ButtonText className="mt-3 text-base font-medium">
-                {item.title}
-              </ButtonText>
-            </Button>
-          );
-        })}
-      </View>
+      <ScrollView>
+        <View className="flex-row flex-wrap justify-between items-center p-8">
+          <DetailsCard />
+          {details?.approve === false && (
+            <View className="w-full mb-2">
+              <HelperText>
+                Your profile is not verified yet. You cannot access other
+                features until manager verifies your profile.
+              </HelperText>
+            </View>
+          )}
+          {(admissionCount === 0 ||
+            (admissionStatus !== null && admissionStatus < 3) ||
+            details?.roomNumber == null) && (
+            <View className="w-full mb-2">
+              <HelperText>
+                Please wait until your admission is approved and room is
+                allocated.
+              </HelperText>
+            </View>
+          )}
+          {menuItems.map((item, idx) => {
+            // Disable logic:
+            // If admissionCount == 0 or admissionStatus < 3 or details.roomNumber is null,
+            // only allow "Personal Details" and "Admission"
+            const isAdmissionOrPersonal =
+              item.title === "Personal Details" || item.title === "Admission";
+            const isDisabled =
+              ((admissionCount === 0 ||
+                (admissionStatus !== null && admissionStatus < 3) ||
+                details?.roomNumber == null) &&
+                !isAdmissionOrPersonal) ||
+              (details?.approve === false && item.title !== "Personal Details");
+            return (
+              <Button
+                key={idx}
+                onPress={() => router.push(item.route as any)}
+                className="w-[48%] h-40 mb-4 rounded-xl flex-col justify-center items-center"
+                style={[
+                  { backgroundColor: item.color },
+                  isDisabled && { opacity: 0.5 },
+                ]}
+                variant="solid"
+                disabled={isDisabled}
+              >
+                <ButtonIcon as={item.icon} size="xl" color="white" />
+                <ButtonText className="mt-3 text-base font-medium">
+                  {item.title}
+                </ButtonText>
+              </Button>
+            );
+          })}
+        </View>
+      </ScrollView>
     </>
   );
 }
