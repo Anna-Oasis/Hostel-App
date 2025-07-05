@@ -70,8 +70,8 @@ export default function ExecutiveWardenPage() {
                 variant="solid"
               >
                 <View className="flex-1 justify-center items-center">
-                  <ButtonIcon as={item.icon} size="lg" color="white" />
-                  <ButtonText className="mt-4 text-lg font-semibold text-white text-center px-2">
+                  <ButtonIcon as={item.icon} size="xxl" color="white" />
+                  <ButtonText className="mt-4 text-lg leading-none font-semibold text-white text-center px-2">
                     {item.title}
                   </ButtonText>
                 </View>

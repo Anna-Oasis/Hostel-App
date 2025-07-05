@@ -22,7 +22,7 @@ export default function AppBar({ title }: AppBarProps) {
     >
       <View className="flex-row items-center">
         <Image
-          source={require('@/assets/images/logo.jpg')}
+          source={require('@/assets/images/logo.png')}
           style={{ width: 36, height: 36, marginRight: 10 }}
           resizeMode="contain"
         />
