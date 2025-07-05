@@ -13,25 +13,25 @@ export default function ManagerPage() {
       title: "Payment Verifications",
       route: "/Manager/PaymentVerifications",
       icon: BadgeDollarSignIcon,
-      color: "#4F46E5",
+      color: "#022B60",
     },
     {
       title: "Profile Verifications",
       route: "/Manager/ProfileVerifications",
       icon: FileTextIcon,
-      color: "#6366F1",
+      color: "#022B60",
     },
     {
       title: "Grievances",
       route: "/Manager/Grievances",
       icon: FileTextIcon,
-      color: "#EF4444",
+      color: "#022B60",
     },
     {
       title: "Caution Deposit",
       route: "/Manager/CautionDeposit",
       icon: ShieldCheckIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 

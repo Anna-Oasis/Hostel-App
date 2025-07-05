@@ -54,7 +54,7 @@ export async function allocateRoomAdmission(admissionId: string, updateData: any
   }
   console.log("Allocating room for admission:", admissionId, updateData);
   const response = await api.put(
-    `/api/resident_counsellor/admissions/${admissionId}`,
+    `/api/resident_counsellor/admissions/room/${admissionId}`,
     updateData,
     {
       headers: {

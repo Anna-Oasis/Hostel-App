@@ -91,7 +91,7 @@ export default function AdmissionVerificationPage() {
                 title={item.admission.roll_number}
                 subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
                 badge={getAdmissionBadgeStatus(item.admission.status)}
-                data={{ ...item.admission, ...item.student }}
+                data={{  ...item.student, ...item.admission }}
                 onApprove={() =>
                   router.push(
                     `/DeputyWarden/AdmissionVerification/${item.admission.hostelBlock}/${item.admission.academicYear}/${item.admission.id}`
@@ -114,7 +114,7 @@ export default function AdmissionVerificationPage() {
               title={item.admission.roll_number}
               subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
               badge={getAdmissionBadgeStatus(item.admission.status)}
-              data={item}
+              data={{  ...item.student, ...item.admission }}
               onApprove={() => handleApprove(String(item.admission.id))}
               onDecline={() => handleDecline(String(item.admission.id))}
             />

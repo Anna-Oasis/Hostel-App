@@ -24,37 +24,37 @@ export default function StudentMain() {
       title: "Personal Details",
       route: "/User/Student/Details",
       icon: UserIcon,
-      color: "#6366F1",
+      color: "#022B60",
     },
     {
       title: "Admission",
       route: "/User/Student/Admission",
       icon: HomeIcon,
-      color: "#4F46E5",
+      color: "#022B60",
     },
     {
       title: "Leave Form",
       route: "/User/Student/LeaveForm",
       icon: ClipboardIcon,
-      color: "#0891B2",
+      color: "#022B60",
     },
     {
       title: "Summer Vacation",
       route: "/User/Student/SummerVacation",
       icon: CalendarIcon,
-      color: "#D97706",
+      color: "#022B60",
     },
     {
       title: "Grievances",
       route: "/User/Student/Grievances",
       icon: FileTextIcon,
-      color: "#EF4444",
+      color: "#022B60",
     },
     {
       title: "Hostel Vacation",
       route: "/User/Student/HostelVacation",
       icon: BuildingIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 

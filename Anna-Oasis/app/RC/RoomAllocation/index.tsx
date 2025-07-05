@@ -24,7 +24,7 @@ export default function RoomAllocationPage() {
   }, []);
 
   const handleApprove = (admissionId: string) => {
-    router.push(`/RC/RoomAllocation/Approve/${admissionId}` as any)
+    router.replace(`/RC/RoomAllocation/Approve/${admissionId}` as any)
     console.log("Approved");
   }
 
@@ -60,6 +60,7 @@ export default function RoomAllocationPage() {
               }}
               onApprove={() => handleApprove(String(item.admission.id))}
               onDecline={() => handleDecline(String(item.admission.id))}
+              ApproveButtonTitle="Allocate Room"
             />
           ))
         )}

@@ -47,31 +47,31 @@ export default function RCPage() {
       title: "Room Allocation",
       route: "/RC/RoomAllocation",
       icon: HomeIcon,
-      color: "#4F46E5",
+      color: "#022B60",
     },
     {
       title: "Student Verification",
       route: "/RC/StudentVerification",
       icon: UsersIcon,
-      color: "#0891B2",
+      color: "#022B60",
     },
     {
       title: "Attendance",
       route: "/RC/Attendance",
       icon: ClipboardListIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
     {
       title: "Leave",
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,
-      color: "#D97706",
+      color: "#022B60",
     },
     {
       title: "Personal Details",
       route: "/RC/Details",
       icon: User,
-      color: "#4F46E5",
+      color: "#022B60",
     },
   ];
 

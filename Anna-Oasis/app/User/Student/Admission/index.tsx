@@ -20,7 +20,7 @@ import PaymentPage from "@/components/admission/PaymentPage";
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
   const [academicYear, setAcademicYear] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<"form" | "history">("form");
+  const [activeTab, setActiveTab] = useState<"form" | "history">("history");
   const [isSessionChecked, setIsSessionChecked] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const details = useUserStore((state) => state.details);
@@ -85,8 +85,8 @@ const AdmissionForm = () => {
     <View className="flex-1 bg-white">
       <TabSwitch
         tabs={[
-          { label: "Admission Form", value: "form" },
           { label: "History", value: "history" },
+          { label: "Admission Form", value: "form" },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}

@@ -14,25 +14,25 @@ export default function StudentVerificationPage() {
       title: "Leave Form",
       route: "/RC/StudentVerification/LeaveForm",
       icon: ClipboardIcon,
-      color: "#6366F1",
+      color: "#022B60",
     },
     {
       title: "Grievances",
       route: "/RC/StudentVerification/Grievances",
       icon: FileTextIcon,
-      color: "#EF4444",
+      color: "#022B60",
     },
     {
       title: "Summer Vacation",
       route: "/RC/StudentVerification/SummerVacation",
       icon: CalendarIcon,
-      color: "#D97706",
+      color: "#022B60",
     },
     {
       title: "Vacating Hostel",
       route: "/RC/StudentVerification/VacatingHostel",
       icon: LogOutIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 

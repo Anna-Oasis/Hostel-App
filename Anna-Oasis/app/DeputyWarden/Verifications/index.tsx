@@ -14,19 +14,19 @@ export default function VerificationsPage() {
       title: "Leave Form",
       route: "/DeputyWarden/Verifications/LeaveForm",
       icon: ClipboardIcon,
-      color: "#0891B2",
+      color: "#022B60",
     },
     {
       title: "Summer Vacation",
       route: "/DeputyWarden/Verifications/SummerVacation",
       icon: CalendarIcon,
-      color: "#D97706",
+      color: "#022B60",
     },
     {
       title: "Vacating Hostel",
       route: "/DeputyWarden/Verifications/VacatingHostel",
       icon: LogOutIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 
