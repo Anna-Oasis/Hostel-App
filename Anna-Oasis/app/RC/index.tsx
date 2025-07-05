@@ -87,8 +87,8 @@ export default function RCPage() {
             style={{ backgroundColor: item.color }}
             variant="solid"
           >
-            <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">
+            <ButtonIcon as={item.icon} size="xxl" color="white" />
+            <ButtonText className="mt-3 text-lg leading-none font-medium">
               {item.title}
             </ButtonText>
           </Button>

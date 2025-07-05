@@ -49,7 +49,7 @@ const LoginCard = () => {
             size="lg"
             variant="solid"
             action="primary"
-            className="mt-6 rounded-lg bg-slate-900"
+            className="mt-6 rounded-lg bg-[#022B60]"
             onPress={() => handleSubmit()}
           >
             <ButtonText className="text-white font-semibold">Login</ButtonText>
@@ -59,10 +59,10 @@ const LoginCard = () => {
             size="lg"
             variant="outline"
             action="secondary"
-            className="mt-3 rounded-lg border-2 border-slate-500"
+            className="mt-3 rounded-lg border-2 border-[#022B60]/80"
             onPress={() => router.push("/Signup")}
           >
-            <ButtonText className="text-slate-500 font-semibold">
+            <ButtonText className="text-[#022B60]/80 font-semibold">
               Create Account
             </ButtonText>
           </Button>

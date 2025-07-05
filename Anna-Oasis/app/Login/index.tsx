@@ -35,8 +35,8 @@ export default function Login() {
               />
             </View>
             <Image
-              source={require("@/assets/images/logo.jpg")}
-              className="w-48 h-48 my-8"
+              source={require("@/assets/images/logo.png")}
+              className="w-56 h-56 my-8"
               resizeMode="contain"
             />
             <Text className="text-base text-gray-600">Login to continue</Text>
