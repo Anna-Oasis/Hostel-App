@@ -414,7 +414,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                   setViewDetails(false);
                   props.onDecline?.();
                 }}
-                className="bg-white border-[#022B60] border-2 w-[90px] h-10 rounded-lg justify-center"
+                className="bg-white border-[#022B60] border-2 min-w-[95px] px-3 h-10 justify-center rounded-lg"
               >
                 <ButtonText className="text-[#022B60] text-center">
                   {props.DeclineButtonTitle || "Decline"}

@@ -71,7 +71,7 @@ const RCDetailsEditPage = () => {
           const response = await fetchdata();
           setDetails(response[0]);
           Alert.alert("Success", "Details updated successfully");
-          router.replace("/RC/Details");
+          router.replace("/RC");
           setSubmit(false);
         } else {
           setSubmit(true);
@@ -80,7 +80,7 @@ const RCDetailsEditPage = () => {
           Alert.alert("Success", "Details updated successfully");
           setDetails(response[0]);
           setSubmit(false);
-          router.replace("/RC/Details");
+          router.replace("/RC");
         }
       }}
     >
