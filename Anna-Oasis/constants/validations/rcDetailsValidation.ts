@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { allowedBloodGroups } from '@/constants/validations/detailsValidation';
 
 const rcDetailsValidation = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -15,8 +16,7 @@ const rcDetailsValidation = Yup.object().shape({
   residentialAddress: Yup.string().required('Address is required'),
   bloodGroup: Yup.string()
     .required('Blood group is required')
-    .oneOf(
-      ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+    .oneOf(allowedBloodGroups,
       'Invalid blood group'
     ),
   medicalHistory: Yup.string().optional(),
