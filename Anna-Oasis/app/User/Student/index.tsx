@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from "react-native";
+import { View, Alert } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/utils/student/studentDetailsApi";
 import useUserStore from "@/stores/userStore";
 import HelperText from "@/components/HelperText";
+import RefreshableScrollView from "@/components/common/RefreshableScrollView";
 
 export default function StudentMain() {
   const menuItems = [
@@ -62,9 +63,11 @@ export default function StudentMain() {
   const details = useUserStore((state) => state.details);
   const [admissionStatus, setAdmissionStatus] = useState<number | null>(null);
   const [admissionCount, setAdmissionCount] = useState<number>(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchDetails = async () => {
     try {
+      setIsRefreshing(true);
       const details = await getStudentDetails();
       if (details.count === 0) {
         Alert.alert(
@@ -95,6 +98,8 @@ export default function StudentMain() {
       console.error("Error fetching student details:", error);
       setAdmissionCount(0);
       setAdmissionStatus(null);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -104,7 +109,10 @@ export default function StudentMain() {
 
   return (
     <>
-      <ScrollView>
+      <RefreshableScrollView
+        onRefresh={fetchDetails}
+        refreshing={isRefreshing}
+      >
         <View className="flex-row flex-wrap justify-between items-center p-8">
           <DetailsCard />
           {details?.approve === false && (
@@ -157,7 +165,7 @@ export default function StudentMain() {
             );
           })}
         </View>
-      </ScrollView>
+      </RefreshableScrollView>
     </>
   );
 }

@@ -2,7 +2,10 @@ import * as Yup from "yup";
 const phoneRegex = /^\+[1-9]\d{1,14}$/;
 const pinRegex = /^[0-9\s\-]{5,10}$/;
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-const allowedBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+export const allowedBloodGroups = [
+  "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-",
+  "A1+", "A1-", "A2+", "A2-", "A1B+", "A1B-", "A2B+", "A2B-", "Bombay"
+];
 
 const validationSchemas = [
   // Student Details
@@ -15,7 +18,20 @@ const validationSchemas = [
     mobile: Yup.string().matches(phoneRegex, "Include country code (e.g., +91...)").required("Required"),
     email: Yup.string().email("Invalid email format").required("Required"),
     emergencyContact: Yup.string().matches(phoneRegex, "Include country code (e.g., +91...)").required("Required"),
-    dateOfBirth: Yup.string().matches(dateRegex, "Use YYYY-MM-DD").required("Required"),
+     dateOfBirth: Yup.string()
+      .matches(dateRegex, "Use YYYY-MM-DD")
+      .required("Required")
+      .test(
+        "min-age",
+        "You must be at least 16 years old",
+        value => {
+          if (!value) return false;
+          const dob = new Date(value);
+          const minAge = new Date();
+          minAge.setFullYear(minAge.getFullYear() - 16);
+          return dob <= minAge;
+        }
+      ),
     gender: Yup.string().oneOf(["male", "female", "other"], "Please select a gender").required("Required"),
     nationality: Yup.string().required("Required"),
     bloodGroup: Yup.string()

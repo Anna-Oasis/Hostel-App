@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import * as ImagePicker from "expo-image-picker";
 import { useFormikContext } from "formik";
+import HelperText from "../HelperText";
 
 interface Props {
   label: string;
@@ -42,15 +43,18 @@ const ImagePickerField = ({ label, value, placeholder }: Props) => {
       >
         <Text className="text-black font-medium">Upload {label}</Text>
       </Button>
-      {touched[value] && errors[value] && (
-        typeof errors[value] === "string" ? (
+      <HelperText>Note: maximum image upload size is 3 MB</HelperText>
+      {touched[value] &&
+        errors[value] &&
+        (typeof errors[value] === "string" ? (
           <Text className="text-red-500 mt-2">{errors[value]}</Text>
         ) : Array.isArray(errors[value]) ? (
           (errors[value] as string[]).map((err, idx) => (
-            <Text className="text-red-500 mt-2" key={idx}>{err}</Text>
+            <Text className="text-red-500 mt-2" key={idx}>
+              {err}
+            </Text>
           ))
-        ) : null
-      )}
+        ) : null)}
     </View>
   );
 };

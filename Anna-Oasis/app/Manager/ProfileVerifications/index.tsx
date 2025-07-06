@@ -96,6 +96,7 @@ const ProfileVerifications = () => {
               data={profile}
               onApprove={() => handleApprove(profile.rollNo)}
               onDecline={() => handleDecline(profile.rollNo)}
+              DeclineButtonTitle="Suggest changes"
             />
           ))
         )}

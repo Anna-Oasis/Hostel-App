@@ -2,7 +2,10 @@ import * as Yup from "yup";
 
 export const loginValidationSchema = Yup.object().shape({
   email: Yup.string()
-    .email("Invalid email address")
+    .matches(
+      /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/,
+      "Enter a valid email address"
+    )
     .required("Email is required"),
   password: Yup.string().required("Password is required"),
 });
@@ -17,7 +20,7 @@ export const validationSchema = Yup.object().shape({
       .required("Email is required"),
     password: Yup.string()
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^~`])[A-Za-z\d@$!%*?&]{8,}$/,
         "Password must be at least 8 characters, include uppercase, lowercase, number, and special character"
       )
       .required("Password is required"),

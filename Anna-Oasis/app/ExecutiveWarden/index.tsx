@@ -35,17 +35,17 @@ export default function ExecutiveWardenPage() {
       icon: FileCheck2Icon,
       color: "#022B60",
     },
-    {
-      title: "Edit Declaration",
-      route: "/ExecutiveWarden/Declaration",
-      icon: FileEditIcon,
-      color: "#022B60",
-    },
+    // {
+    //   title: "Edit Declaration",
+    //   route: "/ExecutiveWarden/Declaration",
+    //   icon: FileEditIcon,
+    //   color: "#022B60",
+    // },
     {
       title: "View Room Details",
       route: "/ExecutiveWarden/Rooms",
       icon: Users2Icon,
-      color: "#8B5CF6",
+      color: "#022B60",
     },
   ];
 

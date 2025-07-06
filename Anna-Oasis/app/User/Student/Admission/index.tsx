@@ -131,9 +131,9 @@ const AdmissionForm = () => {
                 setFieldValue("hostelBlock", "Flora");
               } else if (
                 gender === "female" &&
-                values.hostelBlock !== "Lavendar"
+                values.hostelBlock !== "Lavender"
               ) {
-                setFieldValue("hostelBlock", "Lavendar");
+                setFieldValue("hostelBlock", "Lavender");
               }
             }, [gender, setFieldValue]);
 

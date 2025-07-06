@@ -1,4 +1,4 @@
-import { View, Alert } from "react-native";
+import { Alert, View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -8,20 +8,22 @@ import {
   CalendarCheckIcon,
   User,
 } from "lucide-react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
 import useRCStore from "@/stores/rcStore";
 import { fetchdata } from "@/utils/rc/rcDetails";
 import useUserStore from "@/stores/userStore";
 import RCDetailsCard from "@/components/rc/DetailsCard";
+import RefreshableScrollView from "@/components/common/RefreshableScrollView";
 
 export default function RCPage() {
   const setRooms = useRCStore((state) => state.setRooms);
-  const rooms = useRCStore((state) => state.rooms);
   const setDetails = useUserStore((state) => state.setDetails);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchDetailsAndRooms = async () => {
     try {
+      setIsRefreshing(true);
       const rooms = await getAllRooms();
       setRooms(rooms);
       const rcDetails = await fetchdata();
@@ -35,6 +37,8 @@ export default function RCPage() {
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -76,7 +80,12 @@ export default function RCPage() {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <RefreshableScrollView
+      className="flex-1 bg-gray-50"
+      contentContainerStyle={{ padding: 16 }}
+      onRefresh={fetchDetailsAndRooms}
+      refreshing={isRefreshing}
+    >
       <RCDetailsCard />
       <View className="flex-row flex-wrap justify-between">
         {menuItems.map((item, idx) => (
@@ -94,6 +103,6 @@ export default function RCPage() {
           </Button>
         ))}
       </View>
-    </View>
+    </RefreshableScrollView>
   );
 }
