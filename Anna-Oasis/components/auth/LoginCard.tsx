@@ -52,7 +52,7 @@ const LoginCard = () => {
             className="mt-6 rounded-lg bg-[#022B60]"
             onPress={() => handleSubmit()}
           >
-            <ButtonText className="text-white font-semibold">Login</ButtonText>
+            <ButtonText className="text-white font-semibold"> Login </ButtonText>
           </Button>
 
           <Button

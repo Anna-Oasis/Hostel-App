@@ -108,11 +108,10 @@ const StudentDetails = () => {
             { label: "Female", value: "female" },
           ]}
         />
-        <SearchableSelectField
+        <SelectField
           label="Nationality"
           value="nationality"
           options={nationalities}
-          placeholder="Search nationality..."
         />
         <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
         {values?.admissionCategory === "Other" && (

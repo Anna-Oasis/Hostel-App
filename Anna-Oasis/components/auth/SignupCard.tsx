@@ -1,4 +1,3 @@
-import React from "react";
 import { View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import { Formik } from "formik";
 import TextField from "@/components/form/TextField";
