@@ -37,7 +37,7 @@ const SearchableSelectField = ({ label, value, options, placeholder }: Searchabl
   const handleInputBlur = () => {
     setTimeout(() => {
       setIsOpen(false);
-    }, 1000);
+    }, 3000);
   };
 
   return (

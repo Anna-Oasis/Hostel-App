@@ -45,7 +45,7 @@ const ParentDetails = () => (
     </View>
 
     <View className="bg-white rounded-xl shadow p-4 mb-6">
-      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Residential Address (Foreign)</Text>
+      <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Residential Address (Foreign) - If not available enter NIL</Text>
       <Divider className="mb-3" />
       <TextField label="House No" value="resForeignHouseNo" placeholder="House No" />
       <TextField label="Street" value="resForeignStreet" placeholder="Street" />

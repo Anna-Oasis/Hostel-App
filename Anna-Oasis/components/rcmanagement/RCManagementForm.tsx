@@ -5,6 +5,7 @@ import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
 import { Button, ButtonText } from "@/components/ui/button";
 import { hostelOptions, initialValues, validationSchema } from "@/constants/validations/rcManagementValidation";
+import PasswordField from "../form/PasswordField";
 
 export default function RCManagementForm({
   onSubmit,
@@ -41,11 +42,10 @@ export default function RCManagementForm({
         <View style={{ padding: 16 }}>
           <TextField label="Name" value="name" placeholder="Enter RC Name" />
           <TextField label="Email" value="email" placeholder="Enter Email" />
-          <TextField
+          <PasswordField
             label="Password"
             value="password"
             placeholder="Enter Password"
-            props={{ secureTextEntry: true }}
           />
           <SelectField label="Hostel" value="hostel" options={hostelOptions} />
 

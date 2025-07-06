@@ -52,6 +52,8 @@ type approvalCardProps = {
   data?: Record<string, any>;
   /** Optional custom title for the approve button */
   ApproveButtonTitle?: string;
+
+  DeclineButtonTitle?: string;
 };
 
 /**
@@ -415,7 +417,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                 className="bg-white border-[#022B60] border-2 w-[90px] h-10 rounded-lg justify-center"
               >
                 <ButtonText className="text-[#022B60] text-center">
-                  Decline
+                  {props.DeclineButtonTitle || "Decline"}
                 </ButtonText>
               </Button>
             )}
@@ -435,11 +437,9 @@ const ApprovalCard = (props: approvalCardProps) => {
           }}
         >
           <View className="flex-1 bg-black">
-        <View
-          className="absolute top-[50px] right-5 z-50 bg-black/50 rounded-2xl p-2"
-        >
+        <View className="absolute top-[50px] right-5 z-50 bg-black/50 rounded-2xl p-2">
           <TouchableOpacity onPress={closeImageModal}>
-            <Text className="text-white text-2xl font-bold">×</Text>
+            <Icon as={CloseIcon} size="xl" color="white" />
           </TouchableOpacity>
         </View>
 
