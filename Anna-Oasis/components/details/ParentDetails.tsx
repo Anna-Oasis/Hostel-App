@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from "@/components/form/TextField";
 import PhoneInputField from "@/components/form/PhoneInputField";
+import SearchableSelectField from "../form/SearchableSelectField";
 import SelectField from "@/components/form/SelectField";
 import countries from "@/constants/countries";
 import indianStates from "@/constants/indianStates";
@@ -20,7 +21,7 @@ const ParentDetails = () => (
       <TextField label="Father's Occupation" value="fatherOccupation" placeholder="Father's occupation" />
       <PhoneInputField label="Father's Mobile" value="fatherMobile" placeholder="Father's phone number" />
       <TextField label="Father's Email" value="fatherEmail" placeholder="Father's email" />
-      <SelectField label="Father's Residential Country" value="fatherCountry" options={countries} />
+      <SearchableSelectField label="Father's Residential Country" value="fatherCountry" options={countries} />
     </View>
 
     <View className="bg-white rounded-xl shadow p-4 mb-6">
@@ -30,7 +31,7 @@ const ParentDetails = () => (
       <TextField label="Mother's Occupation" value="motherOccupation" placeholder="Mother's occupation" />
       <PhoneInputField label="Mother's Mobile" value="motherMobile" placeholder="Mother's phone number" />
       <TextField label="Mother's Email" value="motherEmail" placeholder="Mother's email" />
-      <SelectField label="Mother's Country" value="motherCountry" options={countries} />
+      <SearchableSelectField label="Mother's Country" value="motherCountry" options={countries} />
     </View>
 
     <View className="bg-white rounded-xl shadow p-4 mb-6">
@@ -50,7 +51,7 @@ const ParentDetails = () => (
       <TextField label="Street" value="resForeignStreet" placeholder="Street" />
       <TextField label="City" value="resForeignCity" placeholder="City" />
       <TextField label="State" value="resForeignState" placeholder="State" />
-      <SelectField label="Country" value="resForeignCountry" options={countries} />
+      <SearchableSelectField label="Country" value="resForeignCountry" options={countries} />
       <TextField label="Postal Code" value="resForeignPostalCode" placeholder="Postal Code" />
     </View>
   </View>

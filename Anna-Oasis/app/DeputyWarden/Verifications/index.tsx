@@ -14,19 +14,19 @@ export default function VerificationsPage() {
       title: "Leave Form",
       route: "/DeputyWarden/Verifications/LeaveForm",
       icon: ClipboardIcon,
-      color: "#0891B2",
+      color: "#022B60",
     },
     {
       title: "Summer Vacation",
       route: "/DeputyWarden/Verifications/SummerVacation",
       icon: CalendarIcon,
-      color: "#D97706",
+      color: "#022B60",
     },
     {
       title: "Vacating Hostel",
       route: "/DeputyWarden/Verifications/VacatingHostel",
       icon: LogOutIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 
@@ -41,8 +41,8 @@ export default function VerificationsPage() {
             style={{ backgroundColor: item.color }}
             variant="solid"
           >
-            <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonIcon as={item.icon} size='xxl' color="white" />
+            <ButtonText className="mt-3 text-lg leading-none font-medium">{item.title}</ButtonText>
           </Button>
         ))}
       </View>

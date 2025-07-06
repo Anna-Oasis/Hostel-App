@@ -15,31 +15,31 @@ export default function ExecutiveWardenPage() {
       title: "Start Admission Session",
       route: "/ExecutiveWarden/AdmissionSession",
       icon: PlayCircleIcon,
-      color: "#A21CAF",
+      color: "#022B60",
     },
     {
       title: "Admission Verification",
       route: "/ExecutiveWarden/AdmissionVerification",
       icon: ClipboardCheckIcon,
-      color: "#16A34A",
+      color: "#022B60",
     },
     {
       title: "RC Management",
       route: "/ExecutiveWarden/RCManagement",
       icon: Users2Icon,
-      color: "#0EA5E9",
+      color: "#022B60",
     },
     {
       title: "RC Leave Approvals",
       route: "/ExecutiveWarden/RcLeave",
       icon: FileCheck2Icon,
-      color: "#F59E42",
+      color: "#022B60",
     },
     {
       title: "Edit Declaration",
       route: "/ExecutiveWarden/Declaration",
       icon: FileEditIcon,
-      color: "#F43F5E",
+      color: "#022B60",
     },
     {
       title: "View Room Details",
@@ -70,8 +70,8 @@ export default function ExecutiveWardenPage() {
                 variant="solid"
               >
                 <View className="flex-1 justify-center items-center">
-                  <ButtonIcon as={item.icon} size="lg" color="white" />
-                  <ButtonText className="mt-4 text-lg font-semibold text-white text-center px-2">
+                  <ButtonIcon as={item.icon} size="xxl" color="white" />
+                  <ButtonText className="mt-4 text-lg leading-none font-semibold text-white text-center px-2">
                     {item.title}
                   </ButtonText>
                 </View>

@@ -59,7 +59,7 @@ export default function AttendancePage() {
         {/* Tab structure */}
         <View className="flex flex-row w-full justify-center mt-4 mb-2">
           <View
-            className={`px-6 py-2 rounded-t-lg ${activeTab === "submit" ? "bg-blue-500" : "bg-gray-200"} mr-2`}
+            className={`px-6 py-2 rounded-t-lg ${activeTab === "submit" ? "bg-[#022B60]" : "bg-gray-200"} mr-2`}
             style={{}}
           >
             <Text
@@ -70,7 +70,7 @@ export default function AttendancePage() {
             </Text>
           </View>
           <View
-            className={`px-6 py-2 rounded-t-lg ${activeTab === "history" ? "bg-blue-500" : "bg-gray-200"}`}
+            className={`px-6 py-2 rounded-t-lg ${activeTab === "history" ? "bg-[#022B60]" : "bg-gray-200"}`}
             style={{}}
           >
             <Text

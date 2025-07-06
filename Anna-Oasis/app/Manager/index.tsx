@@ -13,25 +13,25 @@ export default function ManagerPage() {
       title: "Payment Verifications",
       route: "/Manager/PaymentVerifications",
       icon: BadgeDollarSignIcon,
-      color: "#4F46E5",
+      color: "#022B60",
     },
     {
       title: "Profile Verifications",
       route: "/Manager/ProfileVerifications",
       icon: FileTextIcon,
-      color: "#6366F1",
+      color: "#022B60",
     },
     {
       title: "Grievances",
       route: "/Manager/Grievances",
       icon: FileTextIcon,
-      color: "#EF4444",
+      color: "#022B60",
     },
     {
       title: "Caution Deposit",
       route: "/Manager/CautionDeposit",
       icon: ShieldCheckIcon,
-      color: "#10B981",
+      color: "#022B60",
     },
   ];
 
@@ -46,8 +46,8 @@ export default function ManagerPage() {
             style={{ backgroundColor: item.color }}
             variant="solid"
           >
-            <ButtonIcon as={item.icon} size="xl" color="white" />
-            <ButtonText className="mt-3 text-base font-medium">{item.title}</ButtonText>
+            <ButtonIcon as={item.icon} size="xxl" color="white" />
+            <ButtonText className="mt-3 text-lg leading-none font-medium">{item.title}</ButtonText>
           </Button>
         ))}
       </View>

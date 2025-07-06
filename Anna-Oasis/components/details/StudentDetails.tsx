@@ -1,5 +1,6 @@
 import TextField from "@/components/form/TextField";
 import SelectField from "@/components/form/SelectField";
+import SearchableSelectField from "@/components/form/SearchableSelectField";
 import DatePickerField from "@/components/form/DatePickerField";
 import RadioField from "@/components/form/RadioField";
 import PhoneInputField from "@/components/form/PhoneInputField";
@@ -107,10 +108,11 @@ const StudentDetails = () => {
             { label: "Female", value: "female" },
           ]}
         />
-        <SelectField
+        <SearchableSelectField
           label="Nationality"
           value="nationality"
           options={nationalities}
+          placeholder="Search nationality..."
         />
         <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
         {values?.admissionCategory === "Other" && (

@@ -73,7 +73,8 @@
     "react-native-webview": "13.12.5",
     "tailwindcss": "^3.4.17",
     "yup": "^1.6.1",
-    "zustand": "^5.0.5"
+    "zustand": "^5.0.5",
+    "expo-linear-gradient": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

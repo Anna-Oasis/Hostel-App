@@ -59,7 +59,7 @@ function TabSwitch<T extends string>({
           <TouchableOpacity
             key={tab.value}
             className={`flex-1 py-3 items-center border-b-2 ${
-              activeTab === tab.value ? "border-blue-600" : "border-gray-200"
+              activeTab === tab.value ? "border-[#022B60]/80" : "border-gray-200"
             }`}
             onPress={() => onTabChange(tab.value)}
           >
@@ -68,13 +68,13 @@ function TabSwitch<T extends string>({
                 as={IconComponent}
                 size="md"
                 className={`mb-1 ${
-                  activeTab === tab.value ? "text-blue-600" : "text-gray-400"
+                  activeTab === tab.value ? "text-[#022B60]" : "text-gray-400"
                 }`}
               />
             )}
             <Text
               className={`text-lg font-semibold ${
-                activeTab === tab.value ? "text-blue-600" : "text-gray-500"
+                activeTab === tab.value ? "text-[#022B60]" : "text-gray-500"
               }`}
             >
               {tab.label}

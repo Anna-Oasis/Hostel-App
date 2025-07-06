@@ -29,7 +29,7 @@ const HOSTEL_FEES = [
 
 const HOSTEL_TOTALS = [
   {
-    label: "Total for 1st Semester (One Time + Semester + Mess)",
+    label: "Total for new admission (One Time + Semester + Mess)",
     amount: "₹1,16,300",
   },
   {
