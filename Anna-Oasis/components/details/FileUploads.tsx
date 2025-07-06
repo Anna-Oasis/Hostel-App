@@ -97,7 +97,7 @@ const FileUploads = () => {
       <View className="bg-white rounded-xl shadow p-4">
         <Text className="text-lg font-semibold mb-2 text-gray-800 text-center">Other Required Documents</Text>
         <Divider className="mb-3" />
-        <ImagePickerField label="Passport Photo" value="passportPhotoUrl" placeholder="Upload" />
+        <ImagePickerField label="Student Passport Size Photo" value="passportPhotoUrl" placeholder="Upload" />
         <ImagePickerField label="Student Signature" value="studentSignatureUrl" placeholder="Upload" />
         <ImagePickerField label="Parent/Guardian Signature" value="parentGuardianSignatureUrl" placeholder="Upload" />
         <ImagePickerField label="Admission Slip" value="admissionSlipUrl" placeholder="Upload" />
