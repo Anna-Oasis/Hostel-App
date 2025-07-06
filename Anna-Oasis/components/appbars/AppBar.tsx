@@ -7,6 +7,8 @@ import { removeToken } from '@/utils/authUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useUserStore from '@/stores/userStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
+import LogOutModal from '@/components/modals/LogOut';
 
 const FORM_STORAGE_KEY = 'student_details_form_draft';
 
@@ -16,6 +18,7 @@ interface AppBarProps {
 
 export default function AppBar({ title }: AppBarProps) {
   const resetUser = useUserStore((state) => state.resetUser);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -29,6 +32,7 @@ export default function AppBar({ title }: AppBarProps) {
   };
 
   const insets = useSafeAreaInsets();
+
   return (
     <View
       className="w-full flex-row justify-between items-center px-4 bg-white shadow-sm"
@@ -53,8 +57,8 @@ export default function AppBar({ title }: AppBarProps) {
           <ButtonIcon as={HelpCircle} className="w-6 h-6" color="#444444" />
           <ButtonText className="sr-only">Support</ButtonText>
         </Button>
-        <Button
-          onPress={handleLogout}
+         <Button
+          onPress={() => setShowLogoutModal(true)}
           className="p-3 rounded-full bg-transparent"
           variant="link"
         >
@@ -62,6 +66,11 @@ export default function AppBar({ title }: AppBarProps) {
           <ButtonText className="sr-only">Logout</ButtonText>
         </Button>
       </View>
+       <LogOutModal
+        show={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </View>
   );
 }
