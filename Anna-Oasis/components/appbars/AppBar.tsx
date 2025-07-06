@@ -6,6 +6,8 @@ import { router } from 'expo-router';
 import { removeToken } from '@/utils/authUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useUserStore from '@/stores/userStore';
+import { useState } from 'react';
+import LogOutModal from '@/components/modals/LogOut';
 
 interface AppBarProps {
   title: string;
@@ -13,8 +15,15 @@ interface AppBarProps {
 
 export default function AppBar({ title }: AppBarProps) {
   const resetUser = useUserStore((state) => state.resetUser);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const insets = useSafeAreaInsets();
+
+    const handleLogout = () => {
+    removeToken();
+    resetUser();
+    router.replace('/Login');
+  };
   return (
     <View
       className="w-full flex-row justify-between items-center px-4 bg-white shadow-sm"
@@ -41,12 +50,8 @@ export default function AppBar({ title }: AppBarProps) {
             Support
           </ButtonText>
         </Button>
-        <Button
-          onPress={() => {
-            removeToken();
-            resetUser();
-            router.replace('/Login');
-          }}
+         <Button
+          onPress={() => setShowLogoutModal(true)}
           className="p-3 rounded-full bg-transparent"
           variant="link"
         >
@@ -56,6 +61,11 @@ export default function AppBar({ title }: AppBarProps) {
           </ButtonText>
         </Button>
       </View>
+       <LogOutModal
+        show={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </View>
   );
 }
