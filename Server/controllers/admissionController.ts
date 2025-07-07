@@ -156,7 +156,7 @@ export async function approveByManagerController(
   }
 
   const updatedAdmission = await updateAdmission(Number(admission_id), {
-    status: admissionApprovalStatus.MANAGER,
+    status: approve? admissionApprovalStatus.MANAGER : admissionApprovalStatus.DECLINED,
     updatedAt: new Date(),
   });
 
@@ -346,8 +346,10 @@ export async function updateApprovalStatusByManagerController(
   res: Response
 ) {
   const { admission_id } = req.params;
-  const user = req.User;
-  const parsedData = managerAdmissionDecisionSchema.parse(req.body);
+  const user_id = req.User?.id;
+  const parsedData = managerAdmissionDecisionSchema.parse({user_id,...req.body});
+
+  console.log(parsedData)
 
   // If status is false, comment is required
   if (

@@ -5,7 +5,8 @@ import { Router } from 'express';
 import {
   fetchAdmissionWaitingForApprovalController,
   approveByManagerController,
-  fetchAdmissionsApprovedByUser
+  fetchAdmissionsApprovedByUser,
+  updateApprovalStatusByManagerController
 } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import {
