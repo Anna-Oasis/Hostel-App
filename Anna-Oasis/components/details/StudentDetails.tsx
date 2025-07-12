@@ -8,7 +8,10 @@ import {
   Departments,
   semesters,
   bloodGroups,
-  courses,
+  ugCourses,
+  pgCourses,
+  ugBranches,
+  pgBranches,
 } from "@/constants/details";
 import nationalities from "@/constants/nationalities";
 import HelperText from "@/components/HelperText";
@@ -22,6 +25,7 @@ import { View } from "react-native";
 interface StudentFormValues {
   name: string;
   rollNo?: string;
+  courseType: string;
   course: string;
   branch: string;
   semester: string;
@@ -42,10 +46,30 @@ const StudentDetails = () => {
   const details = useUserStore((state) => state.details);
   const { values } = useFormikContext<StudentFormValues>();
 
+  // Get available courses based on courseType
+  const getAvailableCourses = () => {
+    if (values.courseType === "UG") return ugCourses;
+    if (values.courseType === "PG") return pgCourses;
+    return [];
+  };
+
+  // Get available branches based on courseType and course
+  const getAvailableBranches = () => {
+    if (values.courseType === "UG" && values.course) {
+      return ugBranches[values.course as keyof typeof ugBranches] || [];
+    }
+    if (values.courseType === "PG" && values.course) {
+      return pgBranches[values.course as keyof typeof pgBranches] || [];
+    }
+    return [];
+  };
+
   return (
     <View>
       <Text className="text-2xl font-bold text-center mb-2 mt-2">
-        {details ? "Update Your Personal Details" : "Enter Your Personal Details"}
+        {details
+          ? "Update Your Personal Details"
+          : "Enter Your Personal Details"}
       </Text>
       <Divider className="mb-6" />
 
@@ -58,15 +82,39 @@ const StudentDetails = () => {
         <TextField label="Name" value="name" placeholder="Enter name" />
         {!details && (
           <>
-            <TextField label="Roll No" value="rollNo" placeholder="Roll number" />
+            <TextField
+              label="Roll No"
+              value="rollNo"
+              placeholder="Roll number"
+            />
             <HelperText>
-              Note: You cannot change your roll number once submitted. It will be
-              linked with your account
+              Note: You cannot change your roll number once submitted. It will
+              be linked with your account
             </HelperText>
           </>
         )}
-        <SelectField label="Course" value="course" options={courses} />
-        <SelectField label="Branch" value="branch" options={Departments} />
+        <RadioField
+          label="Course Type"
+          value="courseType"
+          options={[
+            { label: "Undergraduate (UG)", value: "UG" },
+            { label: "Postgraduate (PG)", value: "PG" },
+          ]}
+        />
+        {values.courseType && (
+          <SelectField
+            label="Course"
+            value="course"
+            options={getAvailableCourses()}
+          />
+        )}
+        {values.course && (
+          <SelectField
+            label="Branch"
+            value="branch"
+            options={getAvailableBranches()}
+          />
+        )}
         <SelectField label="Semester" value="semester" options={semesters} />
       </View>
 
@@ -113,7 +161,11 @@ const StudentDetails = () => {
           value="nationality"
           options={nationalities}
         />
-        <SelectField label="Admission Category" value="admissionCategory" options={admissionCategories} />
+        <SelectField
+          label="Admission Category"
+          value="admissionCategory"
+          options={admissionCategories}
+        />
         {values?.admissionCategory === "Other" && (
           <TextField
             label="Reason to join the hostel"

@@ -21,6 +21,7 @@ interface SelectFieldProps {
   label?: string;
   value: string;
   options: { label: string; value: string }[];
+  disabled?: boolean;
 }
 
 /**
