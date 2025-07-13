@@ -430,10 +430,78 @@ const pgCourses = [
   { label: "MCA", value: "MCA" },
 ];
 
+const beDepartments = [
+  // FACULTY OF CIVIL ENGINEERING
+  { label: "Civil Engineering", value: "Civil Engineering" },
+  { label: "Geoinformatics", value: "Geoinformatics" },
+
+  // FACULTY OF MECHANICAL ENGINEERING
+  { label: "Mechanical Engineering", value: "Mechanical Engineering" },
+  { label: "Aeronautical Engineering", value: "Aeronautical Engineering" },
+  { label: "Automobile Engineering", value: "Automobile Engineering" },
+  { label: "Industrial Engineering", value: "Industrial Engineering" },
+  { label: "Manufacturing Engineering", value: "Manufacturing Engineering" },
+  { label: "Mining Engineering", value: "Mining Engineering" },
+  {
+    label: "Printing and Packaging Technology",
+    value: "Printing and Packaging Technology",
+  },
+  { label: "Production Engineering", value: "Production Engineering" },
+  {
+    label: "Materials Science and Engineering",
+    value: "Materials Science and Engineering",
+  },
+  { label: "Robotics and Automation", value: "Robotics and Automation" },
+
+  // FACULTY OF ELECTRICAL ENGINEERING
+  {
+    label: "Electrical and Electronics Engineering",
+    value: "Electrical and Electronics Engineering",
+  },
+  {
+    label: "Electronics and Instrumentation Engineering",
+    value: "Electronics and Instrumentation Engineering",
+  },
+
+  // FACULTY OF COMPUTER SCIENCE AND INFORMATION ENGINEERING
+  { label: "Computer Science and Engineering", value: "Computer Science and Engineering" },
+
+  // FACULTY OF ELECTRONICS AND COMMUNICATION ENGINEERING
+  { label: "Electronics and Communication Engineering", value: "Electronics and Communication Engineering" },
+  { label: "Biomedical Engineering", value: "Biomedical Engineering" },
+];
+
+const btechDepartments = [
+  // FACULTY OF COMPUTER SCIENCE AND INFORMATION ENGINEERING
+  { label: "Information Technology", value: "Information Technology" },
+  { label: "Artificial Intelligence and Data Science", value: "Artificial Intelligence and Data Science" },
+
+  // FACULTY OF ELECTRONICS AND COMMUNICATION ENGINEERING
+  { label: "Electronics Engineering (VLSI Design & Technologies)", value: "Electronics Engineering (VLSI Design & Technologies)" },
+
+  // FACULTY OF TECHNOLOGY
+  { label: "Chemical Engineering", value: "Chemical Engineering" },
+  { label: "Food Technology", value: "Food Technology" },
+  { label: "Pharmaceutical Technology", value: "Pharmaceutical Technology" },
+  { label: "Industrial Bio-Technology", value: "Industrial Bio-Technology" },
+  { label: "Rubber and Plastics Technology", value: "Rubber and Plastics Technology" },
+  { label: "Textile Technology", value: "Textile Technology" },
+  { label: "Leather Technology", value: "Leather Technology" },
+  { label: "Ceramic Technology", value: "Ceramic Technology" },
+  { label: "Apparel Technology", value: "Apparel Technology" },
+  { label: "Petroleum Engineering and Technology", value: "Petroleum Engineering and Technology" },
+];
+
+const barchDepartments = [
+  // FACULTY OF ARCHITECTURE & PLANNING
+  { label: "Architecture", value: "Architecture" },
+  { label: "Planning", value: "Planning" },
+];
+
 const ugBranches = {
-  "B.E.": Departments,
-  "B.Tech": Departments,
-  "B.Arch": [{ label: "Architecture", value: "Architecture" }],
+  "B.E.": beDepartments,
+  "B.Tech": btechDepartments,
+  "B.Arch": barchDepartments,
 };
 
 const semesters = [
