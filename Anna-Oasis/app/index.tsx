@@ -2,17 +2,25 @@ import { useEffect, useState } from "react";
 import { View, Text, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { getToken, verifyToken, redirectByRole } from "@/utils/authUtils";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function Index() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-
+  const { expoPushToken, notification, error } = useNotification();
+  if(error){
+    console.error("Notification error:", error);
+  }
+  console.log(JSON.stringify(notification, null, 2));
+  console.log("Expo Push Token:", expoPushToken);
+  console.log(JSON.stringify(notification?.request.content.title));
+  console.log(JSON.stringify(notification?.request.content.data, null, 2));
   useEffect(() => {
     const checkTokenAndRedirect = async () => {
       try {
         const token = await getToken();
-
+        
         if (token) {
           const user = await verifyToken(token);
 

@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sad_scientist.AnnaOasis"
+      "package": "com.sad_scientist.AnnaOasis",
+      "googleServicesFile" : "./google-services.json"
     },
     "web": {
       "bundler": "metro",
