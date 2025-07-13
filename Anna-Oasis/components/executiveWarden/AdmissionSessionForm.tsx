@@ -9,11 +9,7 @@ import { validationSchema, initialValues } from '@/constants/validations/admissi
 import { createAdmissionSession } from '@/utils/executiveWarden/ewAdmissionSessionApi'
 import useLoadingStore from '@/stores/loadingStore'
 import ModalCallable from '@/components/modals/ModalCallable'
-
-const semesterOptions = Array.from({ length: 8 }, (_, i) => ({
-  label: `Semester ${i + 1}`,
-  value: `${i + 1}`,
-}))
+import { semesters } from '@/constants/details'
 
 interface AdmissionSessionFormProps {
   initialValues?: typeof initialValues
@@ -73,7 +69,7 @@ const AdmissionSessionForm = ({
                 <CheckBoxField
                   label="Open admission for semesters"
                   value="semesters"
-                  options={semesterOptions}
+                  options={semesters}
                 />
                 <TextField
                   label="Academic Year"
