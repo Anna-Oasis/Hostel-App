@@ -22,20 +22,17 @@ const FileUploads = () => {
     } else {
       if (values.isForeignNational === undefined) {
         setFieldValue("isForeignNational", "No");
-        setFieldValue("govtIdType", govtIdTypes[0]?.value || "");
       }
     }
-  }, [details, setFieldValue, values.isForeignNational, details?.govtIdType]);
+  }, [details, setFieldValue]);
 
   useEffect(() => {
     if (values.isForeignNational === "Yes") {
       setFieldValue("govtIdType", "Passport");
-    } else if (values.isForeignNational === "No") {
+    } else if (values.isForeignNational === "No" && !values.govtIdType) {
       setFieldValue("govtIdType", govtIdTypes[0]?.value || "");
     }
-    console.log("Updated govtIdType based on isForeignNational:", values.govtIdType);
-    console.log("Current govtId value:", values.govtId);
-  }, [values.isForeignNational, setFieldValue, values.govtIdType, values.govtId]);
+  }, [values.isForeignNational, setFieldValue]);
 
   return (
     <>
@@ -107,4 +104,5 @@ const FileUploads = () => {
 };
 
 export default FileUploads;
+
 
