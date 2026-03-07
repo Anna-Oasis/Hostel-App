@@ -14,7 +14,7 @@ module.exports = function(api) {
                 "tailwind.config": "./tailwind.config.js"
             }
             }],
-            'react-native-worklets/plugin',
+            'react-native-reanimated/plugin',
         ]
     };
 };
