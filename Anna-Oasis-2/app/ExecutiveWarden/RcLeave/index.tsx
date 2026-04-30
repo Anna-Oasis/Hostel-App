@@ -1,0 +1,171 @@
+import ApprovalCard from "@/components/ApprovalCard";
+import { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+} from "react-native";
+import {
+  getRCLeavebyEw,
+  updateRCLeaveStatusByEw,
+} from "@/utils/executiveWarden/ewRCLeaveApi";
+import { getRCLeaveBadgeStatus } from "@/utils/getBadgeStatus";
+import EmptyPage from "@/components/EmptyPage";
+import { Inbox } from "lucide-react-native";
+import DeclineComment from "@/components/modals/DeclineComment";
+import ModalCallable from "@/components/modals/ModalCallable";
+
+// Update the type for the new API response
+type RcLeaveApiItem = {
+  leave: {
+    id: number;
+    rc_id: number;
+    leaving: string;
+    arrival: string;
+    reason: string;
+    approved: string;
+    created_at: string;
+    dw_approved_at?: string;
+    ew_updated_at?: string;
+  };
+  rc: {
+    id: number;
+    userId: number;
+    name: string;
+    hostel: string;
+    onLeave: boolean;
+    floor: number[];
+    alternatingToRCId: number | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+
+export default function RcLeavePage() {
+  const [leaves, setLeaves] = useState<RcLeaveApiItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [declineModal, setDeclineModal] = useState<{ open: boolean; leaveId?: number }>({ open: false });
+  const [successModal, setSuccessModal] = useState<{ show: boolean; title?: string; message?: string }>({ show: false });
+
+  const fetchLeaves = async () => {
+    try {
+      setLoading(true);
+      const result = await getRCLeavebyEw();
+      if (result.success && Array.isArray(result.data)) {
+        setLeaves(result.data);
+      }
+    } catch (err: any) {
+      console.error("Error fetching RC leaves:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (leaveId: number) => {
+    try {
+      const result = await updateRCLeaveStatusByEw(leaveId, "true");
+      if (result.success) {
+        await fetchLeaves();
+        setSuccessModal({ show: true, title: "Approved", message: "RC Leave approved successfully." });
+      } else {
+        Alert.alert("Error", result.message || "Approval failed.");
+      }
+    } catch (err: any) {
+      Alert.alert("Error", err?.message || "Error approving leave.");
+    } 
+  };
+
+  // Open modal to get comment for rejection
+  const handleDecline = (leaveId: number) => {
+    setDeclineModal({ open: true, leaveId });
+  };
+
+  // Called when comment is submitted from modal
+  const handleDeclineSubmit = async (comment: string) => {
+    if (declineModal.leaveId) {
+      try {
+        const result = await updateRCLeaveStatusByEw(declineModal.leaveId, "false", comment);
+        if (result.success) {
+          await fetchLeaves();
+          setSuccessModal({ show: true, title: "Rejected", message: "RC Leave has been rejected." });
+        } else {
+          Alert.alert("Error", result.message || "Rejection failed.");
+        }
+      } catch (err: any) {
+        Alert.alert("Error", err?.message || "Error rejecting leave.");
+      }
+    }
+    setDeclineModal({ open: false, leaveId: undefined });
+  };
+
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
+
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-gray-600">Loading RC leave requests...</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {leaves.length === 0 ? (
+          <EmptyPage
+            title="No RC Leave requests found."
+            description=""
+            icon={Inbox}
+          />
+        ) : (
+          leaves.map((item) => (
+            <ApprovalCard
+              key={item.leave.id}
+              title={`${item.rc.name} (${item.rc.hostel})`}
+              subTitle={`Leave: ${item.leave.leaving} → ${item.leave.arrival}`}
+              data={{
+                "RC Name": item.rc.name,
+                "Hostel": item.rc.hostel,
+                "Floors": Array.isArray(item.rc.floor)
+                  ? item.rc.floor.map((f) => ["GF", "FF", "SF", "TF"][f] ?? f).join(", ")
+                  : "",
+                "Reason": item.leave.reason,
+                "Leaving": item.leave.leaving,
+                "Arrival": item.leave.arrival,
+                "Created At": new Date(item.leave.created_at).toLocaleString(),
+                "Status":
+                  item.leave.approved === "1"
+                    ? "Pending"
+                    : item.leave.approved === "-1"
+                    ? "Rejected"
+                    : item.leave.approved === "2"
+                    ? "Approved"
+                    : "Pending",
+              }}
+              badge={getRCLeaveBadgeStatus(item.leave.approved)}
+              onApprove={() => handleApprove(item.leave.id)}
+              onDecline={() => handleDecline(item.leave.id)}
+            />
+          ))
+        )}
+      </ScrollView>
+      <DeclineComment
+        visible={declineModal.open}
+        onClose={() => setDeclineModal({ open: false, leaveId: undefined })}
+        onSubmit={handleDeclineSubmit}
+        title="Decline RC Leave"
+        placeholder="Enter reason for declining..."
+        submitLabel="Decline"
+        cancelLabel="Cancel"
+      />
+      <ModalCallable
+        show={successModal.show}
+        onClose={() => setSuccessModal({ show: false })}
+        title={successModal.title}
+        message={successModal.message}
+      />
+    </View>
+  );
+}
