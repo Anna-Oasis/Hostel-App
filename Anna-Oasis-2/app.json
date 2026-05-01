@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Anna-Oasis",
-    "slug": "anna-oasis",
+    "slug": "anna-oasis-2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.annaoasis.app",
+      "bundleIdentifier": "edu.annauniv.cirih",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -20,7 +20,9 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sad_scientist.AnnaOasis"
+      "package": "edu.annauniv.cirih",
+      "compileSdkVersion": 36,
+      "targetSdkVersion": 36
     },
     "web": {
       "bundler": "metro",
@@ -42,10 +44,13 @@
         "expo-build-properties",
         {
           "android": {
-            "buildToolsVersion": "35.0.0"
+            "buildToolsVersion": "35.0.0",
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true
@@ -55,9 +60,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "84cdcd06-8ff1-48ff-8e01-a2729a03d3ac"
+        "projectId": "7f7b6ca3-8497-477d-9169-2bfde0006512"
       }
     },
-    "owner": "anna-oasis"
+    "owner": "anna_oasis"
   }
 }
