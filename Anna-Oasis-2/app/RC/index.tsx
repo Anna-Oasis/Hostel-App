@@ -9,23 +9,18 @@ import {
   User,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
-import useRCStore from "@/stores/rcStore";
 import { fetchdata } from "@/utils/rc/rcDetails";
 import useUserStore from "@/stores/userStore";
 import RCDetailsCard from "@/components/rc/DetailsCard";
 import RefreshableScrollView from "@/components/common/RefreshableScrollView";
 
 export default function RCPage() {
-  const setRooms = useRCStore((state) => state.setRooms);
   const setDetails = useUserStore((state) => state.setDetails);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchDetailsAndRooms = async () => {
     try {
       setIsRefreshing(true);
-      const rooms = await getAllRooms();
-      setRooms(rooms);
       const rcDetails = await fetchdata();
       if (rcDetails.length == 0) {
         Alert.alert("RC Details", "Please enter your details first.");
@@ -96,7 +91,7 @@ export default function RCPage() {
             style={{ backgroundColor: item.color }}
             variant="solid"
           >
-            <ButtonIcon as={item.icon} size="xxl" color="white" />
+            <ButtonIcon as={item.icon} size="xl" color="white" />
             <ButtonText className="mt-3 text-lg leading-none font-medium">
               {item.title}
             </ButtonText>

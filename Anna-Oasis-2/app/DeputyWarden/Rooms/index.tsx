@@ -45,7 +45,7 @@ const RoomView = () => {
       initialValues={{ academicYear: "" }}
       onSubmit={async (values) => {
         try {
-          const data = await getRoomsByAcademicYear('2025-2026');
+          const data = await getRoomsByAcademicYear(values.academicYear);
           const grouped: Record<string, Record<string, any[]>> = {};
           data.forEach((room: any) => {
             const block = room.hostelBlock || "Unknown Block";

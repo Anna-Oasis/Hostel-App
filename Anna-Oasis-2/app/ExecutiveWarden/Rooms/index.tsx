@@ -101,7 +101,7 @@ const RoomView = () => {
                         <Text className="text-base font-semibold mb-2 text-slate-700">
                           Floor {floor}
                         </Text>
-                        <View className="flex-row flex-wrap -mx-2">
+                        <View className="flex-row flex-wrap -mx-2 justify-center">
                           {rooms.map((room, idx) => (
                             <View
                               key={room.roomNumber ?? idx}

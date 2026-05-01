@@ -8,7 +8,8 @@ import { ChevronDownIcon } from "@/components/ui/icon";
 import { useState, useEffect } from "react";
 import useRCStore from "@/stores/rcStore";
 import AttendanceHistory from "@/components/rc/AttendanceHistory";
-
+import { getAdmissionSessions } from "@/utils/rc/rcAdmissionApi";
+import { getAllRooms } from "@/utils/rc/rcAdmissionApi";
 
 export default function AttendancePage() {
 
@@ -53,6 +54,43 @@ export default function AttendancePage() {
     });
   };
 
+  const [sessionOptions, setSessionOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [selectedFloor, setSelectedFloor] = useState<number | null>(
+     null
+  );
+  const [selectedSession, setSelectedSession] = useState<string>('')
+  const rooms = useRCStore((state) => state.rooms)
+  const setRooms = useRCStore((state) => state.setRooms);
+
+  const handleSessionChange = (value : string) => {
+    setSelectedSession(value)
+  }
+
+  useEffect(() => {
+    getAdmissionSessions()
+      .then((data) => {
+        const options = data.map((item: any) => ({
+          label: item.academic_year,
+          value: item.academic_year,
+        }));
+        setSessionOptions(options);
+      })
+      .catch((err) => {
+        console.log("Error fetching admission sessions:", err);
+      })
+  }, []);
+
+  const handleFetchRooms = async () => {
+    try {
+      const roomList = await getAllRooms(selectedSession);
+      setRooms(roomList);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    }
+  };
+
   return (
     <ScrollView>
       <View className="flex-1 justify-center items-center p-2">
@@ -84,12 +122,47 @@ export default function AttendancePage() {
         {/* Tab content */}
         {activeTab === "submit" ? (
           <>
-            <Text className="text-2xl m-2 mt-6 font-bold">RC Name Attendance</Text>
+            <Text className="text-2xl my-8 font-bold">Attendance</Text>
+            <View className="flex gap-3 items-center mt-2">
+              <Text className="text-lg">Select Admission Session</Text>
+              <Select
+                selectedValue={
+                  selectedFloor !== null ? "Select Academic Session" : undefined
+                }
+                onValueChange={handleSessionChange} 
+              >
+                <SelectTrigger variant="outline" size="md" className="w-full">
+                  <SelectInput placeholder="Select Academic Session" />
+                  <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                </SelectTrigger>
+                <SelectPortal>
+                  <SelectBackdrop />
+                  <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                      <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    {sessionOptions.map((session, idx) => (
+                      <SelectItem
+                        key={idx}
+                        label={session.label}
+                        value={String(session.value)}
+                      />
+                    ))}
+                  </SelectContent>
+                </SelectPortal>
+              </Select>
+              <Button
+                onPress={handleFetchRooms}
+                size="md"
+              >
+                <ButtonText className="text-white text-lg font-semibold">Fetch Rooms</ButtonText>
+              </Button>
+            </View>
             <View className="flex flex-row gap-4 items-center mt-6">
               <Text className="text-lg">Select Floor</Text>
               <Select className="w-[150px]" onValueChange={(value) => setFloor(value)}>
                 <SelectTrigger>
-                  <SelectInput placeholder="Select Floor" className="flex-1 my-3 py-2" />
+                  <SelectInput placeholder="Select Floor" className="flex-1 my-3 px-2" />
                   <SelectIcon as={ChevronDownIcon} />
                 </SelectTrigger>
                 <SelectPortal>
@@ -166,7 +239,7 @@ export default function AttendancePage() {
               </ScrollView>
             ) : (
               <View className="mt-52">
-                <Text className="text-3xl">Select floor for attendance</Text>
+                <Text className="text-2xl">Select floor for attendance</Text>
               </View>
             )}
           </>

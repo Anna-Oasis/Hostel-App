@@ -3,7 +3,7 @@ import AppBar from "@/components/appbars/AppBar";
 
 const TITLES: Record<string, string> = {
   "": "Executive Warden",
-  AdmissionVerification: "Admission Verification",
+  AdmissionVerification: "Admissions",
   RCManagement: "RC Management",
 };
 

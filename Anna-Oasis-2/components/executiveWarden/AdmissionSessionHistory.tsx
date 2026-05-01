@@ -103,43 +103,60 @@ const AdmissionSessionHistory = () => {
           setEditSession(null)
         }}
         size="md"
+        className='py-10'
       >
         <ModalBackdrop />
         <ModalContent>
-          <ModalHeader>
-            <Text className="text-xl font-bold text-typography-950">
-              Edit Admission Session
-            </Text>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} size="md" className="stroke-background-400" />
-            </ModalCloseButton>
-          </ModalHeader>
-          <ModalBody>
-            {editSession && (
-              <AdmissionSessionForm
-                initialValues={{
-                  from: editSession.from,
-                  to: editSession.to,
-                  semesters: editSession.semesters.map((s: number) => String(s)),
-                  academic_year: editSession.academic_year,
+          <ScrollView >
+            <ModalHeader>
+              <Text className="text-xl font-bold text-typography-950">
+                Edit Admission Session
+              </Text>
+              <ModalCloseButton>
+                <Icon as={CloseIcon} size="md" className="stroke-background-400" />
+              </ModalCloseButton>
+            </ModalHeader>
+            <ModalBody>
+              {editSession && (
+                <AdmissionSessionForm
+                  initialValues={{
+                    from: editSession.from,
+                    to: editSession.to,
+                    semesters: editSession.semesters.map((s: number) => String(s)),
+                    academic_year: editSession.academic_year,
+                  }}
+                  onSubmit={handleEdit}
+                  editMode
+                />
+              )}
+            </ModalBody>
+             <ModalBody>
+              {editSession && (
+                <AdmissionSessionForm
+                  initialValues={{
+                    from: editSession.from,
+                    to: editSession.to,
+                    semesters: editSession.semesters.map((s: number) => String(s)),
+                    academic_year: editSession.academic_year,
+                  }}
+                  onSubmit={handleEdit}
+                  editMode
+                />
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                variant="outline"
+                action="secondary"
+                onPress={() => {
+                  setShowModal(false)
+                  setEditSession(null)
                 }}
-                onSubmit={handleEdit}
-                editMode
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="outline"
-              action="secondary"
-              onPress={() => {
-                setShowModal(false)
-                setEditSession(null)
-              }}
-            >
-              <ButtonText>Cancel</ButtonText>
-            </Button>
-          </ModalFooter>
+              >
+                <ButtonText>Cancel</ButtonText>
+              </Button>
+            </ModalFooter>
+          </ScrollView>
         </ModalContent>
       </Modal>
       <ModalCallable
