@@ -39,7 +39,7 @@ import { getAdmissionSessionsController } from "../controllers/admissionSessionC
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
-import {insertRoomStructureByDeputyWarden} from '../controllers/roomStructureController';
+// import {insertRoomStructureByDeputyWarden} from '../controllers/roomStructureController';
 
 const deputyWardenRouter = Router();
 
@@ -199,10 +199,10 @@ deputyWardenRouter.get(
 );
 
 //room structure creation
-deputyWardenRouter.post(
-  "/student/room/structure",
-  authenticateUser,
-  hasRole(['executiveWarden']),
-  errorWrapper(insertRoomStructureByDeputyWarden)
-)
+// deputyWardenRouter.post(
+//   "/student/room/structure",
+//   authenticateUser,
+//   hasRole(['executiveWarden']),
+//   errorWrapper(insertRoomStructureByDeputyWarden)
+// )
 export default deputyWardenRouter;
