@@ -5,7 +5,7 @@ import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 
-import { insertRoomStructure } from "../roomStructure";
+import { insertRoomStructure } from "../utils/roomStructure";
 
 export async function createAdmissionSessionController(req: AuthRequest, res: Response) {
   const parseResult = createAdmissionSessionSchema.safeParse(req.body);
