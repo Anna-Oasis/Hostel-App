@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Anna-Oasis",
-    "slug": "Anna-Oasis",
+    "slug": "anna-oasis",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -20,9 +20,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sad_scientist.AnnaOasis",
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35
+      "package": "com.sad_scientist.AnnaOasis"
     },
     "web": {
       "bundler": "metro",
@@ -44,8 +42,6 @@
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
             "buildToolsVersion": "35.0.0"
           }
         }
@@ -59,15 +55,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "6cdf77f9-864f-4b58-94fe-ca5ad2442c95"
+        "projectId": "84cdcd06-8ff1-48ff-8e01-a2729a03d3ac"
       }
     },
-    "owner": "anna_oasis",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/6cdf77f9-864f-4b58-94fe-ca5ad2442c95"
-    }
+    "owner": "anna-oasis"
   }
 }

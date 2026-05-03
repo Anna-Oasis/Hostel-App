@@ -1,44 +1,47 @@
-import { roomModel } from "./models/roomModel";
-import { declarationModel } from "./models/declarationModel";
-import * as readline from 'readline';
+import { roomModel } from "../models/roomModel";
+import { declarationModel } from "../models/declarationModel";
+// import * as readline from 'readline';
+// import process from 'node:process';
 
 import { config } from 'dotenv';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { logger } from './utils/logger';
-
+import httpStatus from "http-status";
+// import { drizzle } from 'drizzle-orm/postgres-js';
+// import postgres from 'postgres';
+// import { logger } from './utils/logger';
+import { db } from "../config/dbConnection";
 config({ path: '.env' }); 
 
-let db: ReturnType<typeof drizzle>;
-
-export async function initDb() {
-  const client = postgres(process.env.DATABASE_URL!);
-  try {
-    await client`SELECT 1`;
-    logger.config('✅ Database connected successfully');
-    db = drizzle(client);
-  } catch (err) {
-    logger.error(`Database connection failed: ${err}`);
-    process.exit(1);
-  }
-}
-
-export { db };
+// let db: ReturnType<typeof drizzle>;
 
 // Create readline interface for user input
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+// const rl = readline.createInterface({
+//   input: process.stdin,
+//   output: process.stdout
+// });
+
+// export async function initDb() {
+//   const client = postgres(process.env.DATABASE_URL!);
+//   try {
+//     await client`SELECT 1`;
+//     logger.config('Database connected successfully');
+//     db = drizzle(client);
+//   } catch (err) {
+//     logger.error(`Database connection failed: ${err}`);
+//     process.exit(1);
+//   }
+// }
+
+// export { db };
+
 
 // Helper function to prompt user input
-function prompt(question: string): Promise<string> {
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      resolve(answer.trim());
-    });
-  });
-}
+// function prompt(question: string): Promise<string> {
+//   return new Promise((resolve) => {
+//     rl.question(question, (answer:any) => {
+//       resolve(answer.trim());
+//     });
+//   });
+// }
 
 // Helper function to validate academic year format (e.g., "2024-2025")
 function isValidAcademicYear(year: string): boolean {
@@ -46,24 +49,26 @@ function isValidAcademicYear(year: string): boolean {
   return regex.test(year);
 }
 
-async function insertRoomStructure() {
+async function insertRoomStructure(academicYear:string) {
   try {
     // Initialize database connection first
-    await initDb();
+    // await initDb();
 
-    console.log("🏠 Hostel Room Structure Setup");
-    console.log("===============================\n");
+    // console.log("Hostel Room Structure Setup");
+    // console.log("===============================\n");
 
     // Get academic year
-    let academicYear: string;
+    // let academicYear: string;
     do {
-      academicYear = await prompt("Enter academic year (format: YYYY-YYYY, e.g., 2024-2025): ");
+    //   academicYear = await prompt("Enter academic year (format: YYYY-YYYY, e.g., 2024-2025): ");
       if (!isValidAcademicYear(academicYear)) {
-        console.log("❌ Invalid format! Please use YYYY-YYYY format.");
-      }
+        // console.log("Invalid format! Please use YYYY-YYYY format.");
+        return {status:httpStatus.BAD_REQUEST,message:"Inconsistent Academic Year Passed"};
+    }
+
     } while (!isValidAcademicYear(academicYear));
 
-    console.log(`\n📅 Academic Year: ${academicYear}`);
+    // console.log(`\nAcademic Year: ${academicYear}`);
 
     // Only student rooms as per your structure
     const roomsToInsert: Array<{
@@ -180,41 +185,54 @@ async function insertRoomStructure() {
     }
 
     // Show summary and confirm
-    console.log(`\n📊 Summary:`);
-    console.log(`Total rooms to be created: ${roomsToInsert.length}`);
+    // console.log(`\nSummary:`);
+    // console.log(`Total rooms to be created: ${roomsToInsert.length}`);
 
-    const blockSummary = roomsToInsert.reduce((acc, room) => {
-      acc[room.hostelBlock] = (acc[room.hostelBlock] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    // const blockSummary = roomsToInsert.reduce((acc, room) => {
+    //   acc[room.hostelBlock] = (acc[room.hostelBlock] || 0) + 1;
+    //   return acc;
+    // }, {} as Record<string, number>);
 
-    Object.entries(blockSummary).forEach(([block, count]) => {
-      console.log(`  ${block}: ${count} rooms`);
-    });
+    // Object.entries(blockSummary).forEach(([block, count]) => {
+    //   console.log(`  ${block}: ${count} rooms`);
+    // });
 
-    const confirm = await prompt("\n❓ Do you want to proceed with inserting these rooms? (y/N): ");
+    // const confirm = await prompt("\nDo you want to proceed with inserting these rooms? (y/N): ");
 
-    if (confirm.toLowerCase() !== 'y' && confirm.toLowerCase() !== 'yes') {
-      console.log("❌ Operation cancelled.");
-      rl.close();
-      return;
-    }
+    // if (confirm.toLowerCase() !== 'y' && confirm.toLowerCase() !== 'yes') {
+    //   console.log("Operation cancelled.");
+    // //   rl.close();
+    //   return;
+    // }
 
     // Insert rooms into database
-    console.log("\n🔄 Inserting rooms into database...");
+    // console.log("\nInserting rooms into database...");
 
     // Insert in batches to avoid potential issues with large datasets
+    // const batchSize = 100;
+    // for (let i = 0; i < roomsToInsert.length; i += batchSize) {
+    //   const batch = roomsToInsert.slice(i, i + batchSize);
+    //   await db.insert(roomModel).values(batch);
+    // //   console.log(`Inserted batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(roomsToInsert.length/batchSize)}`);
+    // }
+
+    // console.log(`\nSuccessfully inserted ${roomsToInsert.length} rooms!`);
+
+
+    // console.log("Initial declaration inserted.");
+
+
+
     const batchSize = 100;
-    for (let i = 0; i < roomsToInsert.length; i += batchSize) {
-      const batch = roomsToInsert.slice(i, i + batchSize);
-      await db.insert(roomModel).values(batch);
-      console.log(`✅ Inserted batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(roomsToInsert.length/batchSize)}`);
+
+    await db.transaction(async (bt) => {
+        for (let i = 0; i < roomsToInsert.length; i += batchSize) {
+        const batch = roomsToInsert.slice(i, i + batchSize);
+        await bt.insert(roomModel).values(batch);
     }
+    });
 
-    console.log(`\n🎉 Successfully inserted ${roomsToInsert.length} rooms!`);
-    console.log("Database setup complete.");
-
-    // Insert initial declaration
+    // // Insert initial declaration
     const initialDeclaration = {
       type: "ADMISSION",
       declarations: [
@@ -225,18 +243,16 @@ async function insertRoomStructure() {
     };
 
     await db.insert(declarationModel).values(initialDeclaration);
-    console.log("✅ Initial declaration inserted.");
+
+    return {
+        status:httpStatus.OK,
+        academicYear:academicYear,
+        count:roomsToInsert.length
+    }
 
   } catch (error) {
-    console.error("❌ Error during room structure setup:", error);
-  } finally {
-    rl.close();
+    console.error("Error during room structure setup:", error);
   }
-}
-
-// Run the script
-if (require.main === module) {
-  insertRoomStructure();
 }
 
 export { insertRoomStructure };
