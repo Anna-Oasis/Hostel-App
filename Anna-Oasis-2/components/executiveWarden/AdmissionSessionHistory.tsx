@@ -130,20 +130,6 @@ const AdmissionSessionHistory = () => {
                 />
               )}
             </ModalBody>
-             <ModalBody>
-              {editSession && (
-                <AdmissionSessionForm
-                  initialValues={{
-                    from: editSession.from,
-                    to: editSession.to,
-                    semesters: editSession.semesters.map((s: number) => String(s)),
-                    academic_year: editSession.academic_year,
-                  }}
-                  onSubmit={handleEdit}
-                  editMode
-                />
-              )}
-            </ModalBody>
             <ModalFooter>
               <Button
                 variant="outline"
