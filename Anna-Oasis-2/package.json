@@ -45,7 +45,7 @@
     "formik": "^2.4.9",
     "libphonenumber-js": "^1.12.42",
     "lucide-react-native": "^0.510.0",
-    "nativewind": "4.2.3",
+    "nativewind": "^4.2.3",
     "react": "19.1.0",
     "react-aria": "^3.48.0",
     "react-dom": "19.1.0",

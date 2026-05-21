@@ -8,4 +8,4 @@ const nativeWindConfig = withNativeWind(config, {
   input: './global.css',
 });
 
-module.exports = wrapWithReanimatedMetroConfig(nativeWindConfig);
+module.exports = nativeWindConfig;
