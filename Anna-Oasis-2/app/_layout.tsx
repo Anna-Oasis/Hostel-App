@@ -11,8 +11,9 @@ export default function Layout() {
 
       <GluestackUIProvider mode="light">
         <Stack screenOptions={{ headerShown: false }} />
-        <Loader />
+        {/* <Loader /> */}
       </GluestackUIProvider>
     </>
   );
 }
+
