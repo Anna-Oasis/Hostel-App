@@ -41,7 +41,7 @@ function PhoneInputField({ label, value, placeholder }: PhoneInputFieldProps) {
         ref={phoneInput}
         defaultValue={values[value]}
         defaultCode="IN"
-        layout="first"
+        layout="second"
         onChangeText={(text: string) => {
           setFieldValue(value, text);
         }}
@@ -55,9 +55,13 @@ function PhoneInputField({ label, value, placeholder }: PhoneInputFieldProps) {
           borderRadius: 6, 
           backgroundColor: 'transparent',
         }}
+        countryPickerButtonStyle={{
+          width: 90,
+          justifyContent: "center",
+        }}
         textContainerStyle={{ 
-          backgroundColor: 'transparent', 
-          paddingVertical: 6 
+          height : '100%',
+          backgroundColor: "#fff",
         }}
       />
       {touched[value] && errors[value] && (

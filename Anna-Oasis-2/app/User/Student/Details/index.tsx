@@ -42,7 +42,7 @@ const DetailsPage = () => {
   return (
     <Box className="flex-1 p-2">
       <ScrollView contentContainerStyle={{ padding: 8 }}>
-        <View className="bg-white rounded-xl shadow-sm mb-4 p-2">
+        <View className="bg-white rounded-xl shadow-sm mb-4 p-2 w-full sm:w-[80%] md:w-[60%] self-center">
           <Table className="w-full">
             <TableHeader>
               <TableRow>

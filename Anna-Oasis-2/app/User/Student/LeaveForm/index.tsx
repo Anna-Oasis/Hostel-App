@@ -100,7 +100,7 @@ function LeaveFormPage() {
       )}
 
       {activeTab === "history" && (
-        <ScrollView className="flex-1 px-4 py-2">
+        <ScrollView className="flex-1 px-4 py-2 w-full sm:w-[80%] md:w-[60%] self-center">
           {leaveHistory.length === 0 ? (
             <EmptyPage
               title="No leave forms found."

@@ -18,7 +18,7 @@ const HostelVacationHistory = () => {
 
   return (
     <ScrollView>
-      <View className="flex-1 bg-white p-2">
+      <View className="flex-1 bg-white p-2 w-full sm:w-[80%] md:w-[60%] self-center">
         {history.length === 0 ? (
           <EmptyPage
             title="No Hostel Vacation History"

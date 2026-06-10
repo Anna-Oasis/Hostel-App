@@ -142,7 +142,7 @@ export default function HostelVacationPage() {
           {({handleSubmit, errors}
           ) => (
             <ScrollView ref={scrollViewRef}>
-              <View className="m-4 flex gap-3">
+              <View className="m-4 flex gap-3 w-full sm:w-[80%] md:w-[50%] self-center">
                 {renderPage()}
                 <View className="flex-row justify-between">
                   {page < 1 && (

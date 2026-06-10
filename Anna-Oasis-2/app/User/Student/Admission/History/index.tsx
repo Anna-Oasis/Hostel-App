@@ -37,6 +37,7 @@ const AdmissionHistory = () => {
       contentContainerStyle={{ padding: 16 }}
       onRefresh={fetchHistory}
       refreshing={isRefreshing}
+      className='w-full sm:w-[80%] md:w-[80%] self-center'
     >
       
       {!rollNo ? (

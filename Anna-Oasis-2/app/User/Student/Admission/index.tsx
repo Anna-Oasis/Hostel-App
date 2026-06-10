@@ -141,10 +141,10 @@ const AdmissionForm = () => {
 
             return (
               <ScrollView ref={scrollViewRef}>
-                <View className="m-4 flex gap-3">
+                <View className="m-4 flex gap-3 w-full sm:w-[80%] md:w-[60%] self-center">
                   {hostelBlock && (
                     <View>
-                      <Text className="mb-2 font-semibold">
+                      <Text className="mb-2 font-semibold text-center">
                         Admission for hostel block {hostelBlock} for the academic year {academicYear}
                       </Text>
                     </View>

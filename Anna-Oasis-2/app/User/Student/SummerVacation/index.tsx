@@ -28,13 +28,13 @@ export default function SummerVacationPage() {
         }}
       />
       {activeTab === "form" && (
-        <View className="flex-1">
+        <View className="flex-1 w-full sm:w-[80%] md:w-[60%] self-center">
           <SummerVacationForm />
         </View>
       )}
 
       {activeTab === "history" && (
-        <View className="flex-1">
+        <View className="flex-1 w-full sm:w-[80%] md:w-[60%] self-center">
           <SummerVacationHistory />
         </View>
       )}

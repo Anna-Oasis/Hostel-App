@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useFormikContext } from "formik";
 import Label from "@/components/form/Label";
@@ -48,39 +48,62 @@ export default function TimePickerField({ label, value, placeholder }: TimePicke
 
   return (
     <View style={{ marginBottom: 1 }}>
-      {label && <Label text={label} />}
-      <Pressable
-        onPress={() => setShow(true)}
-        style={{
-          borderWidth: 1,
-          borderColor: "#ccc",
-          borderRadius: 6,
-          padding: 12,
-          backgroundColor: "#fff",
-        }}
-        accessibilityRole="button"
-        accessibilityLabel={label}
-      >
-        <Text style={{ color: timeValue ? "#111" : "#888" }}>
-          {timeValue ? timeValue : placeholder || "Select Time"}
-        </Text>
-      </Pressable>
-      {show && (
-        <DateTimePicker
-          value={timeValue ? new Date(`1970-01-01T${timeValue}:00`) : new Date()}
-          mode="time"
-          is24Hour={true}
-          display="default"
-          onChange={(_, selectedDate) => {
-            setShow(false);
-            if (selectedDate) {
-              const hours = selectedDate.getHours().toString().padStart(2, "0");
-              const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
-              setFieldValue(value, `${hours}:${minutes}`);
-            }
+      {Platform.OS === "web" ? (
+        <>
+          {label && <Label text={label} />}
+
+          <input
+            type="time"
+            value={values[value] || ""}
+            onChange={(e) => setFieldValue(value, e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              fontSize: "16px",
+              boxSizing: "border-box",
+            }}/>
+        </>
+      )
+    :
+    (
+    <>
+        {label && <Label text={label} />}
+        <Pressable
+          onPress={() => setShow(true)}
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 6,
+            padding: 12,
+            backgroundColor: "#fff",
           }}
-        />
-      )}
+          accessibilityRole="button"
+          accessibilityLabel={label}
+        >
+          <Text style={{ color: timeValue ? "#111" : "#888" }}>
+            {timeValue ? timeValue : placeholder || "Select Time"}
+          </Text>
+        </Pressable>
+        {show && (
+          <DateTimePicker
+            value={timeValue ? new Date(`1970-01-01T${timeValue}:00`) : new Date()}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={(_, selectedDate) => {
+              setShow(false);
+              if (selectedDate) {
+                const hours = selectedDate.getHours().toString().padStart(2, "0");
+                const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
+                setFieldValue(value, `${hours}:${minutes}`);
+              }
+            }}
+          />
+        )}
+      </>
+    )}
     </View>
   );
 }

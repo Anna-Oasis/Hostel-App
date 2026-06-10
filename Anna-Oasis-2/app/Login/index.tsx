@@ -37,7 +37,7 @@ export default function Login() {
                   Sign in to access your account
                 </Text>
               </View>
-              <View className="bg-white rounded-2xl shadow-xl p-6 mx-2">
+              <View className="bg-white rounded-2xl shadow-xl p-6 mx-2 w-full sm:w-[80%] md:w-[50%] self-center">
                 <LoginCard />
               </View>
             </View>

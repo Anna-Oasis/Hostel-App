@@ -10,7 +10,7 @@ const Signup = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   const router = useRouter();
 
   return (
-    <View  className="flex-1 bg-gray-50">
+    <View  className="flex-1 bg-gray-50 w-full sm:w-[80%] md:w-[50%] self-center">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{flex : 1}}

@@ -20,6 +20,7 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   return (
     <ScrollView
       contentContainerStyle={{ padding: 20 }}
+      className='w-full sm:w-[80%] md:w-[50%] self-center'
       showsVerticalScrollIndicator={false}
     >
       <Text className="text-3xl font-bold text-gray-900 mb-4">
@@ -50,12 +51,14 @@ const LeaveForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
               placeholder="YYYY-MM-DD"
               value="from_date"
               label="From Date"
+              minimumDate={new Date()}
             />
 
             <DatePickerField
               placeholder="YYYY-MM-DD"
               value="to_date"
               label="To Date"
+              minimumDate={new Date()}
             />
 
             <TextField

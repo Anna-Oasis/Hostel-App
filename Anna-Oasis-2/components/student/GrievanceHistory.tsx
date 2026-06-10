@@ -69,7 +69,7 @@ const GrievanceHistory = () => {
 
   return (
     <ScrollView>
-      <View className='m-2'>
+      <View className='m-2 w-full sm:w-[80%] md:w-[60%] self-center'>
         {grievanceListRaw.length === 0 ? (
           <EmptyPage
             title="No Grievances Found"

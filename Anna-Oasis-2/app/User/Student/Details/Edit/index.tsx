@@ -212,7 +212,7 @@ export default function DetailsPage() {
               flexDirection: "column",
             }}
           >
-            <View>
+            <View className='w-full sm:w-[80%] md:w-[60%] self-center'>
               {renderPage()}
 
               <View className="flex-row justify-between mt-6">

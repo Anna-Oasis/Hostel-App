@@ -9,7 +9,7 @@ import { grievanceValidationSchema } from "@/constants/validations/grievanceVali
 
 const GrievanceForm = ({ onSubmit }: { onSubmit: (values: any) => void }) => {
   return (
-    <View className="flex bg-white ">
+    <View className="flex bg-white w-full sm:w-[80%] md:w-[50%] self-center">
       <Text className="text-3xl font-bold text-gray-900 mb-4">File a Grievance</Text>
       <Formik
         initialValues={grievanceInitialValues}

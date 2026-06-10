@@ -113,7 +113,7 @@ export default function StudentMain() {
         onRefresh={fetchDetails}
         refreshing={isRefreshing}
       >
-        <View className="flex-row flex-wrap justify-between items-center p-8">
+        <View className="flex-row flex-wrap justify-between items-center p-8 w-full sm:w-[80%] md:w-[50%] self-center">
           <DetailsCard />
           {details?.approve === false && (
             <View className="w-full mb-2">
