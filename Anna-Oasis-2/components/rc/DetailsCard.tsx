@@ -17,7 +17,7 @@ const RCDetailsCard = () => {
     }
 
     return (
-        <View className="w-full mb-4 min-h-[100px] bg-white rounded-xl shadow p-4 flex-row items-start w-full sm:w-[80%] md:w-[50%] self-center">
+        <View className="w-full mb-4 min-h-[100px] bg-white rounded-xl shadow p-4 flex-row items-start sm:w-[80%] md:w-[50%] self-center">
             {details?.passportPhotoUrl ? (
                 <Image
                     source={{ uri: details.passportPhotoUrl }}
