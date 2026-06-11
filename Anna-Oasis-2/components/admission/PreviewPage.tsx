@@ -18,7 +18,8 @@ const imageFields = [
   "studentSignatureUrl",
   "parentGuardianSignatureUrl",
   "categoryProofUrl",
-  "admissionSlipUrl"
+  "admissionSlipUrl",
+  "transactionPhotoUrl"
 ];
 
 function formatKey(key: string) {
