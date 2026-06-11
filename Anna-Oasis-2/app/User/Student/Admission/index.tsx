@@ -8,7 +8,7 @@ import HostelMessDeclaration from "@/components/admission/HostelMessDeclaration"
 import PreviewPage from "@/components/admission/PreviewPage";
 import AdmissionDetails from "@/components/admission/AdmissionDetails";
 import useUserStore from "@/stores/userStore";
-import { router } from "expo-router";
+import { router, Redirect } from "expo-router";
 import { submitStudentAdmission } from "@/utils/student/studentAdmissionApi";
 import useLoadingStore from "@/stores/loadingStore";
 import AdmissionHistory from "./History/index"; 
@@ -28,8 +28,7 @@ const AdmissionForm = () => {
   const gender = details?.gender;
 
   if (!details) {
-    router.replace("/User/Student/Details/Edit");
-    return null;
+      return <Redirect href="/User/Student/Details/Edit" />;
   }
 
   const next = () => {
@@ -70,10 +69,10 @@ const AdmissionForm = () => {
         setIsSessionChecked(true);
       }
     };
-    fetchAdmissionSession();
-  }, [details]);
+     if(activeTab === "form") fetchAdmissionSession();
+  }, [details, activeTab]);
 
-  if (!isSessionChecked) {
+  if (activeTab === "form" && !isSessionChecked) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <Text>Checking admission session...</Text>
