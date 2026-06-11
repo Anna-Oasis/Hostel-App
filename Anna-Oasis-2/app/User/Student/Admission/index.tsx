@@ -70,10 +70,10 @@ const AdmissionForm = () => {
         setIsSessionChecked(true);
       }
     };
-    fetchAdmissionSession();
-  }, [details]);
+    if(activeTab === "form") fetchAdmissionSession();
+  }, [details, activeTab]);
 
-  if (!isSessionChecked) {
+  if (activeTab === "form" && !isSessionChecked) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <Text>Checking admission session...</Text>
