@@ -54,7 +54,7 @@ const RcLeaveForm = () => {
         }}
       >
         {({ handleSubmit }) => (
-          <View className="space-y-4 p-4">
+          <View className="space-y-4 p-4 w-full sm:w-[80%] md:w-[50%] self-center">
             <Text className="text-2xl font-bold mb-4">RC Leave Form</Text>
             <DatePickerField
               label="Leaving Date"

@@ -136,7 +136,7 @@ const ApprovalCard = (props: approvalCardProps) => {
   };
 
   return (
-    <View className="m-2">
+    <View className="m-2 w-full sm:w-[80%] md:w-[50%] self-center">
       <View
         className="rounded-2xl bg-white p-4 shadow-lg"
         style={{
@@ -196,7 +196,7 @@ const ApprovalCard = (props: approvalCardProps) => {
       <Modal isOpen={viewDetails} onClose={() => setViewDetails(false)}>
         <ModalBackdrop />
         <ModalContent
-          style={{ maxHeight: Dimensions.get("window").height * 0.8 }}
+          style={{ maxHeight: Dimensions.get("window").height * 0.9, maxWidth: Dimensions.get("window").height * 1 }}
         >
           <ModalHeader className="border-b-2">
             <Text className="text-2xl font-bold mb-2 text-black">Details</Text>

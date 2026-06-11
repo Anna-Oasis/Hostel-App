@@ -61,7 +61,7 @@ const RCDetailsViewPage = () => {
       <ScrollView contentContainerStyle={{ padding: 8 }}>
         <RCDetailsCard />
         <Divider className="my-4" />
-        <View className="bg-white rounded-xl shadow-sm mb-4 p-2">
+        <View className="bg-white rounded-xl shadow-sm mb-4 p-2 w-full sm:w-[80%] md:w-[50%] self-center">
           <Table className="w-full">
             <TableHeader>
               <TableRow>

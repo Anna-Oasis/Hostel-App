@@ -82,7 +82,7 @@ export default function RCPage() {
       refreshing={isRefreshing}
     >
       <RCDetailsCard />
-      <View className="flex-row flex-wrap justify-between">
+      <View className="flex-row flex-wrap justify-between w-full sm:w-[80%] md:w-[50%] self-center">
         {menuItems.map((item, idx) => (
           <Button
             key={idx}

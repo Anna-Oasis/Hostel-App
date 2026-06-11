@@ -108,7 +108,7 @@ const ApprovePage = () => {
   };
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <View className="flex-1 bg-white p-4 w-full sm:w-[80%] md:w-[50%] self-center">
       <ScrollView className="flex-1">
         <Text className="text-xl font-bold mb-4">
           Approve Room Allocation - {id}
@@ -214,7 +214,7 @@ const ApprovePage = () => {
         )}
       </ScrollView>
       <Button
-        className="mt-4"
+        className="mt-4 w-full sm:w-[80%] md:w-[50%] self-center"
         disabled={!selectedRoom}
         onPress={handleAllocation}
         variant="solid"

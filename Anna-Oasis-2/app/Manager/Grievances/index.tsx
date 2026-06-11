@@ -46,7 +46,7 @@ export default function GrievancesPage() {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
-      <Text size="md" className="mb-4 text-typography-400">
+      <Text size="md" className="mb-4 text-typography-400 text-center">
         Please approve the grievances once they are resolved.
       </Text>
       {grievances.length === 0 ? (

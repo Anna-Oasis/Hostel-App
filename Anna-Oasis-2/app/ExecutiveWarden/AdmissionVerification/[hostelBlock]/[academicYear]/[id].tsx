@@ -115,7 +115,7 @@ export default function RoomAllocation() {
 
   return (
     <View className="flex-1 bg-white p-4">
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1 w-full sm:w-[80%] md:w-[50%] self-center">
         <UIText className="text-xl font-bold mb-4">
           Room Allocation - {id}
         </UIText>
@@ -183,7 +183,7 @@ export default function RoomAllocation() {
         )}
       </ScrollView>
       <Button
-        className="mt-4"
+        className="mt-4 w-full sm:w-[80%] md:w-[50%] self-center"
         disabled={!selectedRoom}
         onPress={handleAllocation}
         variant="solid"

@@ -37,7 +37,7 @@ export default function ManagerPage() {
 
   return (
     <View className="flex-1 bg-gray-50 p-4">
-      <View className="flex-row flex-wrap justify-between">
+      <View className="flex-row flex-wrap justify-between w-full sm:w-[80%] md:w-[50%] self-center">
         {menuItems.map((item, idx) => (
           <Button
             key={idx}

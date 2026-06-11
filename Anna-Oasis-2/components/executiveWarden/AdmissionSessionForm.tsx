@@ -63,7 +63,7 @@ const AdmissionSessionForm = ({
               contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
               keyboardShouldPersistTaps="handled"
             >
-              <View className="bg-white p-6 rounded-2xl shadow-sm gap-6 mx-2">
+              <View className="bg-white p-6 rounded-2xl shadow-sm gap-6 mx-2 w-full sm:w-[80%] md:w-[50%] self-center">
                 <DatePickerField label="Admission open from" value="from" />
                 <DatePickerField label="To Date" value="to" />
                 <CheckBoxField

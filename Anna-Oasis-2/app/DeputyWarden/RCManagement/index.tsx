@@ -120,7 +120,7 @@ export default function RCManagementPage() {
   }
 
   return (
-    <View className="flex-1 bg-white p-4">
+    <View className="flex-1 bg-white p-4 w-full sm:w-[80%] md:w-[50%] self-center">
       {showAddForm ? (
         <RCManagementForm
           onSubmit={handleAddRC}

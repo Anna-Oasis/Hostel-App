@@ -54,7 +54,7 @@ const AdmissionSessionHistory = () => {
   }
 
   return (
-    <Box className="flex-1 bg-background-0">
+    <Box className="flex-1 bg-background-0 w-full sm:w-[80%] md:w-[50%] self-center">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {sessions.length === 0 ? (
           <EmptyPage
@@ -106,7 +106,7 @@ const AdmissionSessionHistory = () => {
         className='py-10'
       >
         <ModalBackdrop />
-        <ModalContent>
+        <ModalContent className='h-[100%]'>
           <ScrollView >
             <ModalHeader>
               <Text className="text-xl font-bold text-typography-950">

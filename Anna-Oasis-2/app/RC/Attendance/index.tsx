@@ -88,7 +88,7 @@ export default function AttendancePage() {
         {/* Tab content */}
         {activeTab === "submit" ? (
           <>
-            <Text className="text-2xl m-2 mt-6 font-bold">RC Name Attendance</Text>
+            <Text className="text-2xl m-2 mt-6 font-bold">Attendance</Text>
             <View className="flex flex-row gap-4 items-center mt-6">
               <Text className="text-lg">Select Floor</Text>
               <Select className="w-[150px]" onValueChange={(value) => setFloor(value)}>
@@ -114,7 +114,7 @@ export default function AttendancePage() {
                 {Object.entries(studentsByRoom).map(([roomNumber, studentsInRoom]) => (
                   <View
                     key={roomNumber}
-                    className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4"
+                    className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
                   >
                     <Text className="text-xl font-semibold mb-2">
                       Room {roomNumber}

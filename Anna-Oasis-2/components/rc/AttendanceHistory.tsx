@@ -28,7 +28,7 @@ const AttendanceHistory = () => {
       {history.map((item) => (
         <View
           key={item.id}
-          className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4"
+          className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
         >
           <Text className="text-lg font-bold mb-1">
             {item.date} - {item.hostel} - Floor {item.floor}

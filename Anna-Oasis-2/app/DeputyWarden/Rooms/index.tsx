@@ -61,7 +61,7 @@ const RoomView = () => {
       }}
     >
       {({ handleSubmit }) => (
-        <View className="flex-1 bg-white p-4">
+        <View className="flex-1 bg-white p-4 w-full sm:w-[80%] md:w-[50%] self-center">
           <Text className="text-xl font-bold mb-4">RoomView</Text>
           <HelperText>
             This feature is in development, soon you will be able to have

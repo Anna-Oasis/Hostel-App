@@ -91,8 +91,9 @@ const RCDetailsEditPage = () => {
             gap: 12,
             flexDirection: "column",
           }}
+          className="bg-white"
         >
-          <View>
+          <View className="w-full sm:w-[80%] md:w-[50%] self-center">
             <Text className="text-center text-2xl m-2 font-medium">
               {details ? "Edit Details" : "Fill Details"}
             </Text>
