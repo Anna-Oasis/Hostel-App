@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { PDFDocument } from 'pdf-lib';
-
 export interface PDFData {
   [fieldName: string]: string;
 }
@@ -33,15 +32,15 @@ export async function generatePdf(templateName: string, data: PDFData): Promise<
 
     const filledPdfBytes = await pdfDoc.save();
     
-    // Optional: Save to file system as well
-    const outputPath = path.resolve(__dirname, '../test_output', templateName);
-    const outputDir = path.dirname(outputPath);
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-    fs.writeFileSync(outputPath, filledPdfBytes);
+    // // Optional: Save to file system as well
+    // const outputPath = path.resolve(__dirname, '../test_output', templateName);
+    // const outputDir = path.dirname(outputPath);
+    // if (!fs.existsSync(outputDir)) {
+    //   fs.mkdirSync(outputDir, { recursive: true });
+    // }
+    // fs.writeFileSync(outputPath, filledPdfBytes);
     
-    console.log(`✅ PDF generated: ${outputPath}`);
+    // console.log(`✅ PDF generated: ${outputPath}`);
     
     return Buffer.from(filledPdfBytes);
   } catch (error) {
@@ -51,3 +50,15 @@ export async function generatePdf(templateName: string, data: PDFData): Promise<
 }
 
 
+// generatePdf("fee-receipt", {
+//   name : "Gogul",
+//   rollNo : "234567",
+//   course : "B.Tech",
+//   year : "4",
+//   branch : "Information Technology",
+//   semester : "7",
+//   dateOfPayment : "6-7-2026",
+//   amount : "96000",
+//   dateOfGeneration : "7-8-9000",
+//   refId : "txl;ahksdf;lkahsdf"
+// })
