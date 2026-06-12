@@ -1,0 +1,61 @@
+import api from "@/api";
+import { getToken } from "../authUtils";
+import { Alert, Platform } from "react-native";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from "expo-sharing";
+import { Buffer } from "buffer";
+
+export async function downloadFeeReceipt(data: Object) {
+    const token = await getToken();
+
+    if (!token) {
+        throw new Error("No authentication token found");
+    }
+
+    try {
+        const response = await api.post(
+            "/api/student/feeReceipt",
+            { data },
+            {
+                responseType: "arraybuffer",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        const base64 = Buffer.from(response.data).toString("base64");
+
+        const fileName = "fee-receipt.pdf";
+
+  
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], { type: "application/pdf" });
+
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return;
+        
+    } catch (error) {
+        console.error(error);
+        Alert.alert("Error", "Failed to download. Please try again.");
+    }
+}

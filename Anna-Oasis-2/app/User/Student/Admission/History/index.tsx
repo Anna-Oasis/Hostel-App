@@ -7,6 +7,7 @@ import { getAdmissionBadgeStatus } from '@/utils/getBadgeStatus'
 import { Button, ButtonText } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react-native'
 import RefreshableScrollView from '@/components/common/RefreshableScrollView'
+import { downloadFeeReceipt } from '@/utils/student/studentFeeReceiptApi'
 
 const AdmissionHistory = () => {
   const details = useUserStore((state) => state.details)
@@ -32,6 +33,37 @@ const AdmissionHistory = () => {
     fetchHistory()
   }, [rollNo])
 
+  const download = async (item : any) => {
+      const {
+        name,
+        rollNo,
+        course,
+        semester,
+        branch
+      } = details;
+
+      const year = Math.ceil(Number(semester) / 2);
+
+      const txId = item.transaction_id
+      const paymentDate = item.submission_Date
+      const amount = item.previousResident ? "96,300" : "1,16,300"
+
+      await downloadFeeReceipt({
+        "name": name,
+        "rollNo": rollNo,
+        "course": course,
+        "year": String(year),
+        "branch": branch,
+        "semester": semester,
+        "dateOfPayment": new Date(paymentDate).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
+                        }),
+        "amount": amount,
+        "refId" : txId
+      })
+
+  }
+
   return (
     <RefreshableScrollView
       contentContainerStyle={{ padding: 16 }}
@@ -52,6 +84,8 @@ const AdmissionHistory = () => {
             subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
             badge={getAdmissionBadgeStatus(item.status)}
             data={item}
+            downloadButton='Fee Receipt'
+            onDownload={() => download(item)}
           />
         ))
       )}
