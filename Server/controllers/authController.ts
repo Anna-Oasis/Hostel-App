@@ -201,7 +201,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Hostel Portal - Password Reset OTP",
+      subject: "Anna Oasis - Password Reset OTP",
       text: `Your temporary verification code is ${otp}. This code will expire in 10 minutes.`,
     });
 
