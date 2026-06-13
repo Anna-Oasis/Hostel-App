@@ -8,7 +8,7 @@ import AppError from "../utils/AppError";
 
 export const getLatestDeclarationFromController = async (req:AuthRequest,res:Response)=>
 {
-    const type:string=req.params.type;
+    const type = req.params.type as string;
     const allowedTypes = Object.values(declaration);
 
     if (!type || !allowedTypes.includes(type)) 

@@ -257,7 +257,7 @@ export async function getAdmissionByRollNumberController(
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
 
-  const admission = await getAdmissionByRollNumber(roll_number);
+  const admission = await getAdmissionByRollNumber(roll_number as string);
 
   res.status(200).json({
     success: true,

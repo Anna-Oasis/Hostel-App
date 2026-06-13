@@ -44,7 +44,7 @@ export async function getStudentDetailsUsingRollNoController(
   req: AuthRequest,
   res: Response
 ) {
-  const { rollNo } = req.params;
+const rollNo = req.params.rollNo as string;
 
   if (!rollNo) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
@@ -162,7 +162,7 @@ export async function updateStudentDetailsController(
     );
   }
 
-  const rollNo = req.params.roll_number;
+const rollNo = req.params.roll_number as string;
   const { body, files } = req;
 
   if (!rollNo) {
@@ -258,7 +258,7 @@ export async function approveStudentDetailsByManagerController(
     );
   }
 
-  const rollNo = req.params.rollNo;
+ const rollNo = req.params.rollNo as string;
 
   const validatedData = studentDetailsDecisionSchema.parse(req.body);
 
