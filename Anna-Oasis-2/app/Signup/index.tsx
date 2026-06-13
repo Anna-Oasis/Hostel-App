@@ -13,7 +13,7 @@ export default function Signup() {
       <SignupForm
         onSubmit={(values) => {
           setLoading(true);
-          console.log("Signup values:", values);
+          // console.log("Signup values:", values);
           handleSignup(values, () => router.push("/Login"));
           setLoading(false);
         }}

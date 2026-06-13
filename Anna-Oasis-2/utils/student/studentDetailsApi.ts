@@ -15,18 +15,18 @@ export async function submitStudentDetails(formData: FormData) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Form submitted successfully:", response.data);
-    Alert.alert("Success", "Form has submitted successfully");
+    // console.log("Form submitted successfully:", response.data);
+    window.alert("Success\nForm has submitted successfully");
     setTimeout(() => router.replace("/User/Student"), 1000);
   } catch (error) {
     console.error(error);
      if (typeof error === "object" && error !== null && "response" in error) {
       const err = error as { response: any };
-      console.log("Error response data:", err.response.data);
-      console.log("Error response status:", err.response.status);
-      console.log("Error response headers:", err.response.headers);
+      // console.log("Error response data:", err.response.data);
+      // console.log("Error response status:", err.response.status);
+      // console.log("Error response headers:", err.response.headers);
     }
-    Alert.alert("Error", "Failed to submit form. Please try again.");
+    window.alert("Error\nFailed to submit form. Please try again.");
   }
 }
 
@@ -60,18 +60,18 @@ export async function updateStudentDetails(rollNo: string, formData: FormData) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Form updated successfully:", response.data);
-    Alert.alert("Success", "Details updated successfully");
+    // console.log("Form updated successfully:", response.data);
+    window.alert("Success\nDetails updated successfully");
     setTimeout(() => router.replace("/User/Student"), 1000);
   } catch (error) {
     console.error(error);
     if (typeof error === "object" && error !== null && "response" in error) {
       const err = error as { response: any };
-      console.log("Error response data:", err.response.data);
-      console.log("Error response status:", err.response.status);
-      console.log("Error response headers:", err.response.headers);
+      // console.log("Error response data:", err.response.data);
+      // console.log("Error response status:", err.response.status);
+      // console.log("Error response headers:", err.response.headers);
     }
-    Alert.alert("Error", "Failed to update details. Please try again.");
+    window.alert("Error\nFailed to update details. Please try again.");
   }
 }
 

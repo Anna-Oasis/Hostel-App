@@ -27,22 +27,11 @@ export default function RemoveRCModal({
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const confirmRemove = (rcId: string, rcName: string) => {
-    Alert.alert(
-      "Remove RC",
-      `Are you sure you want to remove "${rcName}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: () => {
-            setRemovingId(rcId);
-            onRemove(rcId);
-            setRemovingId(null);
-          },
-        },
-      ]
-    );
+    if (window.confirm(`Remove RC\nAre you sure you want to remove "${rcName}"?`)) {
+      setRemovingId(rcId);
+      onRemove(rcId);
+      setRemovingId(null);
+    }
   };
 
   return (

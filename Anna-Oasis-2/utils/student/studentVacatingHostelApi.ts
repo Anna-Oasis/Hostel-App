@@ -32,7 +32,7 @@ export const submitStudentVacatingForm = async (
     };
 
     const token = await getToken();
-    console.log("Submitting vacating form with data:", reqBody);
+    // console.log("Submitting vacating form with data:", reqBody);
 
     const response = await api.post("/api/student/vacating_hostel", reqBody, {
       headers: {
@@ -42,11 +42,8 @@ export const submitStudentVacatingForm = async (
 
     return response.data.success;
   } catch (error: any) {
-    Alert.alert(
-      "Error",
-      "An error occurred while submitting the vacating form. Please try again later."
-    );
-    console.log(`Error :  ${error}`);
+    window.alert("Error\nAn error occurred while submitting the vacating form. Please try again later.");
+    // console.log(`Error :  ${error}`);
     return false;
   }
 };
@@ -61,7 +58,7 @@ export const getVacatingHistory = async () => {
     });
     return res.data.data;
   } catch (error) {
-    console.log(`Error :  ${error}`);
+    // console.log(`Error :  ${error}`);
     return false;
   }
 };

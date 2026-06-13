@@ -27,7 +27,7 @@ const RoomView = () => {
         setSessionOptions(options);
       })
       .catch((err) => {
-        console.log("Error fetching admission sessions:", err);
+        // console.log("Error fetching admission sessions:", err);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -56,7 +56,7 @@ const RoomView = () => {
           });
           setRoomDetails(grouped);
         } catch (err) {
-          console.log("Error fetching room details:", err);
+          // console.log("Error fetching room details:", err);
         }
       }}
     >

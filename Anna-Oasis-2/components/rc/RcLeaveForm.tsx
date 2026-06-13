@@ -19,7 +19,7 @@ const RcLeaveForm = () => {
     const fetchRCList = async () => {
       try {
         const result = await getRCList();
-        console.log(details);
+        // console.log(details);
         if (result.success) {
           setAlterrc(result);
         } else {

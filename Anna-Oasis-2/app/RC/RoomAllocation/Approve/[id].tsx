@@ -54,7 +54,7 @@ const ApprovePage = () => {
         setSessionOptions(options);
       })
       .catch((err) => {
-        console.log("Error fetching admission sessions:", err);
+        // console.log("Error fetching admission sessions:", err);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -72,7 +72,7 @@ const ApprovePage = () => {
   const handleFetchRooms = async () => {
     try {
       const roomList = await getAllRooms(selectedSession);
-      console.log(roomList)
+      // console.log(roomList)
       setRooms(roomList);
     } catch (error) {
       console.error('Error fetching rooms:', error);
@@ -89,19 +89,16 @@ const ApprovePage = () => {
         floor: selectedRoom.floor,
         hostel_block: hostelBlock,
       });
-      Alert.alert("Success", "Room Allocated successfully");
+      window.alert("Success\nRoom Allocated successfully");
       router.replace("/RC/RoomAllocation");
     } catch (error: any) {
-      Alert.alert(
-        "Update Error",
-        error?.response?.data?.message ||
+      window.alert(["Update Error", error?.response?.data?.message ||
           error?.message ||
-          "An error occurred while updating the admission"
-      );
-      console.log(
-        "Error allocating room:",
-        error?.response?.data || error.message
-      );
+          "An error occurred while updating the admission"].filter(Boolean).join("\n"));
+      // console.log(
+        // "Error allocating room:",
+        // error?.response?.data || error.message
+      // );
     } finally {
       setLoading(false);
     }

@@ -39,13 +39,13 @@ export async function fetchLeaveForms(roll_number: number) {
     return res.data.data;
   } catch (err: any) {
     if (err.response) {
-      console.log("Error response data:", err.response.data);
-      console.log("Error response status:", err.response.status);
-      console.log("Error response headers:", err.response.headers);
+      // console.log("Error response data:", err.response.data);
+      // console.log("Error response status:", err.response.status);
+      // console.log("Error response headers:", err.response.headers);
     } else if (err.request) {
-      console.log("No response received:", err.request);
+      // console.log("No response received:", err.request);
     } else {
-      console.log("Error", err.message);
+      // console.log("Error", err.message);
     }
     throw new Error(err.message || "Failed to fetch leave forms");
   }

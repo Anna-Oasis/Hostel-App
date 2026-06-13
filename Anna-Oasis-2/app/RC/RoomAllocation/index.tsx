@@ -15,7 +15,7 @@ export default function RoomAllocationPage() {
       const data = await getAllRCAdmissions();
       setAdmissions(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.log("Error fetching RC admissions:", err);
+      // console.log("Error fetching RC admissions:", err);
     }
   };
 
@@ -25,7 +25,7 @@ export default function RoomAllocationPage() {
 
   const handleApprove = (admissionId: string) => {
     router.replace(`/RC/RoomAllocation/Approve/${admissionId}` as any)
-    console.log("Approved");
+    // console.log("Approved");
   }
 
   const handleDecline = async (admissionId: string) => {

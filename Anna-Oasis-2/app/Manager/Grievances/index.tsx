@@ -21,7 +21,7 @@ export default function GrievancesPage() {
         setGrievances(data || []);
       })
       .catch((error) => {
-        console.log("Error fetching Manager grievances:", error);
+        // console.log("Error fetching Manager grievances:", error);
       })
       .finally(() => {
         setLoading(false);
@@ -38,7 +38,7 @@ export default function GrievancesPage() {
       await updateManagerGrievanceState(id);
       fetchGrievances();
     } catch (error) {
-      console.log("Error approving grievance:", error);
+      // console.log("Error approving grievance:", error);
     } finally {
       setLoading(false);
     }

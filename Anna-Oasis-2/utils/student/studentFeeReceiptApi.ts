@@ -56,6 +56,6 @@ export async function downloadFeeReceipt(data: Object) {
         
     } catch (error) {
         console.error(error);
-        Alert.alert("Error", "Failed to download. Please try again.");
+        window.alert("Error\nFailed to download. Please try again.");
     }
 }

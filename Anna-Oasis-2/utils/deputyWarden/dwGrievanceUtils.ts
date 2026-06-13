@@ -22,11 +22,8 @@ export async function getDeputyWardenGrievances() {
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching grievances"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching grievances"].filter(Boolean).join("\n"));
     throw error;
   }
 }

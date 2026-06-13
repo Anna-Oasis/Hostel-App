@@ -21,11 +21,11 @@ export default function SummerVacationPage() {
       if (result.success) {
         setLeaves(result.data);
       } else {
-        Alert.alert("Error", result.message || "Failed to fetch leaves");
+        window.alert(["Error", result.message || "Failed to fetch leaves"].filter(Boolean).join("\n"));
         setLeaves([]);
       }
     } catch (err: any) {
-      Alert.alert("Error", err.message || "An error occurred while fetching leaves");
+      window.alert(["Error", err.message || "An error occurred while fetching leaves"].filter(Boolean).join("\n"));
       setLeaves([]);
     }
     setLoading(false);
@@ -37,12 +37,12 @@ export default function SummerVacationPage() {
       const result = await updateVacationStatus(leaveId, true);
       if (result.success) {
         fetchLeaves();
-        Alert.alert("Success", "Vacation request approved successfully");
+        window.alert("Success\nVacation request approved successfully");
       } else {
-        Alert.alert("Error", result.message || "Failed to approve vacation request");
+        window.alert(["Error", result.message || "Failed to approve vacation request"].filter(Boolean).join("\n"));
       }
     } catch (err: any) {
-      Alert.alert("Error", err.message || "An error occurred while approving the request");
+      window.alert(["Error", err.message || "An error occurred while approving the request"].filter(Boolean).join("\n"));
     }
     setLoading(false);
   };
@@ -55,7 +55,7 @@ export default function SummerVacationPage() {
   const handleRejectConfirm = async (reason: string) => {
     if (!currentRejectId) return;
     if (!reason.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection");
+      window.alert("Error\nPlease provide a reason for rejection");
       return;
     }
     setLoading(true);
@@ -63,14 +63,14 @@ export default function SummerVacationPage() {
       const result = await updateVacationStatus(currentRejectId, false, reason);
       if (result.success) {
         await fetchLeaves();
-        Alert.alert("Success", "Vacation request rejected");
+        window.alert("Success\nVacation request rejected");
         setRejectModalVisible(false);
         setCurrentRejectId(null);
       } else {
-        Alert.alert("Error", result.message || "Failed to reject vacation request");
+        window.alert(["Error", result.message || "Failed to reject vacation request"].filter(Boolean).join("\n"));
       }
     } catch (err: any) {
-      Alert.alert("Error", err.message || "An error occurred while rejecting the request");
+      window.alert(["Error", err.message || "An error occurred while rejecting the request"].filter(Boolean).join("\n"));
     }
     setLoading(false);
   };

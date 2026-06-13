@@ -51,7 +51,7 @@ export interface RCLeave {
 
 export const completeRCLeave = async () => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token) {
         throw new Error("No authentication token found");
@@ -68,7 +68,7 @@ export const completeRCLeave = async () => {
 
 export const submitRCLeaveForm = async (payload: RCLeaveFormPayload) => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token) {
         throw new Error("No authentication token found");
@@ -81,8 +81,8 @@ export const submitRCLeaveForm = async (payload: RCLeaveFormPayload) => {
     });
     const data = response.data as CreateRCLeaveResponse;
     if (data.success) {
-        console.log('RC Leave Form submitted successfully:', data);
-        Alert.alert("Success", "RC Leave Form submitted successfully");
+        // console.log('RC Leave Form submitted successfully:', data);
+        window.alert("Success\nRC Leave Form submitted successfully");
         router.replace("/RC");
     } else {
         console.error('Failed to submit RC Leave Form:', data.message);
@@ -92,7 +92,7 @@ export const submitRCLeaveForm = async (payload: RCLeaveFormPayload) => {
 
 export const getRCLeaves = async (): Promise<RCLeaveResponseWithMsg> => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
     if (!token) {
         throw new Error("No authentication token found");
     }

@@ -108,19 +108,16 @@ export default function RoomAllocation() {
         approve: true,
         comment: "Approved",
       });
-      Alert.alert("Success", "Room Allocated successfully");
+      window.alert("Success\nRoom Allocated successfully");
       router.replace("/DeputyWarden/AdmissionVerification");
     } catch (error: any) {
-      Alert.alert(
-        "Update Error",
-        error?.response?.data?.message ||
+      window.alert(["Update Error", error?.response?.data?.message ||
           error?.message ||
-          "An error occurred while allocating the room"
-      );
-      console.log(
-        "Error allocating room:",
-        error?.response?.data || error.message
-      );
+          "An error occurred while allocating the room"].filter(Boolean).join("\n"));
+      // console.log(
+        // "Error allocating room:",
+        // error?.response?.data || error.message
+      // );
     } finally {
       setLoading(false);
     }

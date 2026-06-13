@@ -31,16 +31,13 @@ export async function submitSummerVacationRequest(data: {
       }
     );
   } catch (error) {
-    Alert.alert(
-      "Submission Error",
-      "Failed to submit summer vacation request. Please try again later."
-    );
+    window.alert("Submission Error\nFailed to submit summer vacation request. Please try again later.");
     console.error("Failed to submit leave request:", error);
     if (typeof error === "object" && error !== null && "response" in error) {
       const err = error as { response: any };
-      console.log("Error response data:", err.response.data);
-      console.log("Error response status:", err.response.status);
-      console.log("Error response headers:", err.response.headers);
+      // console.log("Error response data:", err.response.data);
+      // console.log("Error response status:", err.response.status);
+      // console.log("Error response headers:", err.response.headers);
     }
   }
 }

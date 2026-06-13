@@ -18,7 +18,7 @@ export const fetchdata = async () => {
 
     return response.data.data;
   } catch (err: any) {
-    Alert.alert("Error", "Failed to fetch details.");
+    window.alert("Error\nFailed to fetch details.");
   }
 };
 
@@ -40,13 +40,10 @@ export const updateDetails = async (formData: any) => {
       }
     );
 
-    Alert.alert("Success", "Details updated successfully");
+    window.alert("Success\nDetails updated successfully");
     setTimeout(() => router.push("/RC/Details" as any), 1000);
   } catch (err: any) {
-    Alert.alert(
-      "Error",
-      err.message || "Something went wrong. Please try again."
-    );
+    window.alert(["Error", err.message || "Something went wrong. Please try again."].filter(Boolean).join("\n"));
   }
 };
 
@@ -68,12 +65,9 @@ export const handleEnterDetails = async (formData: any) => {
       }
     );
 
-    Alert.alert("Success", "Details entered successfully");
+    window.alert("Success\nDetails entered successfully");
     setTimeout(() => router.push("/RC/Details" as any), 1000);
   } catch (err: any) {
-    Alert.alert(
-      "Error",
-      err.message || "Something went wrong. Please try again."
-    );
+    window.alert(["Error", err.message || "Something went wrong. Please try again."].filter(Boolean).join("\n"));
   }
 };

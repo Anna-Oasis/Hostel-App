@@ -13,14 +13,11 @@ export async function getAllManagerGrievances() {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Manager grievances response:", response.data.data);
+    // console.log("Manager grievances response:", response.data.data);
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching grievances"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching grievances"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -42,11 +39,8 @@ export async function updateManagerGrievanceState(grievanceId: number) {
     );
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Update Error",
-      error.response?.data?.message ||
-        "An error occurred while updating grievance status"
-    );
+    window.alert(["Update Error", error.response?.data?.message ||
+        "An error occurred while updating grievance status"].filter(Boolean).join("\n"));
     throw error;
   }
 }

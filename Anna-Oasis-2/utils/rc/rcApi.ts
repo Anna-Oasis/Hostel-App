@@ -21,7 +21,7 @@ export interface RCInfo {
 
 export const getRCList = async (): Promise<RCListResponse> => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token) {
         throw new Error("No authentication token found");

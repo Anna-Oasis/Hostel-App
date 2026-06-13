@@ -24,14 +24,11 @@ export const handelRCAttendance = async (attendanceObj: {
         },
       }
     );
-    console.log("Attendance submitted:", response.data);
-    Alert.alert("Success", "Attendance submitted successfully");
+    // console.log("Attendance submitted:", response.data);
+    window.alert("Success\nAttendance submitted successfully");
   } catch (error: any) {
-    Alert.alert(
-      "Submit Error",
-      error.response?.data?.message ||
-        "An error occurred while submitting attendance"
-    );
+    window.alert(["Submit Error", error.response?.data?.message ||
+        "An error occurred while submitting attendance"].filter(Boolean).join("\n"));
     throw error;
   }
 };
@@ -49,11 +46,8 @@ export async function getAllRCStudents() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching students"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching students"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -71,11 +65,8 @@ export async function getAttendanceHistory() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching attendance history"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching attendance history"].filter(Boolean).join("\n"));
     throw error;
   }
 }

@@ -20,13 +20,13 @@ const LoginCard = () => {
           if (token) {
             const user = await verifyToken(token);
             if (user) {
-              console.log(
-                "Login successful, redirecting based on role...",
-                user.role
-              );
+              // console.log(
+                // "Login successful, redirecting based on role...",
+                // user.role
+              // );
               redirectByRole(user.role);
             } else {
-              Alert.alert("Error", "Invalid token, please login again.");
+              window.alert("Error\nInvalid token, please login again.");
             }
           }
         })

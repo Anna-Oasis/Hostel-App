@@ -129,7 +129,7 @@ const ApprovalCard = (props: approvalCardProps) => {
   }, []);
 
   const openImageModal = (imageUri: string) => {
-    console.log("Opening image modal with URI:", imageUri);
+    // console.log("Opening image modal with URI:", imageUri);
     setSelectedImage(imageUri);
     setImageError(false);
   };
@@ -469,9 +469,11 @@ const ApprovalCard = (props: approvalCardProps) => {
             height: Dimensions.get("window").height,
           }}
           resizeMode="contain"
-          onLoad={() => console.log("Image loaded successfully")}
+          onLoad={() => {
+            // console.log("Image loaded successfully");
+          }}
           onError={(error) => {
-            console.log("Image load error:", error);
+            // console.log("Image load error:", error);
             setImageError(true);
           }}
             />

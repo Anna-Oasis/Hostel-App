@@ -15,11 +15,8 @@ export async function getAllManagerAdmissions() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admissions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admissions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -42,14 +39,11 @@ export async function managerApprove(admissionId: string) {
         },
       }
     );
-    Alert.alert("Success", "Admission approved successfully");
+    window.alert("Success\nAdmission approved successfully");
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Approval Error",
-      error.response?.data?.message ||
-        "An error occurred while approving the admission"
-    );
+    window.alert(["Approval Error", error.response?.data?.message ||
+        "An error occurred while approving the admission"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -72,14 +66,11 @@ export async function managerDecline(admissionId: string, comment: string) {
         },
       }
     );
-    Alert.alert("Declined", "Admission declined successfully");
+    window.alert("Declined\nAdmission declined successfully");
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Decline Error",
-      error.response?.data?.message ||
-        "An error occurred while declining the admission"
-    );
+    window.alert(["Decline Error", error.response?.data?.message ||
+        "An error occurred while declining the admission"].filter(Boolean).join("\n"));
     throw error;
   }
 }

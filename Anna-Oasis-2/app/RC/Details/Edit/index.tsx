@@ -24,7 +24,7 @@ const RCDetailsEditPage = () => {
   const [submit, setSubmit] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(details)
+    // console.log(details)
   },[details])
 
   return (
@@ -70,14 +70,14 @@ const RCDetailsEditPage = () => {
           await updateDetails(formData);
           const response = await fetchdata();
           setDetails(response[0]);
-          Alert.alert("Success", "Details updated successfully");
+          window.alert("Success\nDetails updated successfully");
           router.replace("/RC");
           setSubmit(false);
         } else {
           setSubmit(true);
           await handleEnterDetails(formData);
           const response = await fetchdata();
-          Alert.alert("Success", "Details updated successfully");
+          window.alert("Success\nDetails updated successfully");
           setDetails(response[0]);
           setSubmit(false);
           router.replace("/RC");

@@ -17,7 +17,7 @@ export default function GrievancesPage() {
         setGrievances(data || []);
       })
       .catch((error) => {
-        console.log("Error fetching RC grievances:", error);
+        // console.log("Error fetching RC grievances:", error);
       });
   };
 
@@ -32,7 +32,7 @@ export default function GrievancesPage() {
       setModalVisible(true);
       fetchGrievances();
     } catch (error) {
-      console.log("Error approving grievance:", error);
+      // console.log("Error approving grievance:", error);
     }
   };
 
@@ -41,7 +41,7 @@ export default function GrievancesPage() {
       await updateGrievanceStatus(id, false);
       fetchGrievances();
     } catch (error) {
-      console.log("Error declining grievance:", error);
+      // console.log("Error declining grievance:", error);
     }
   };
 

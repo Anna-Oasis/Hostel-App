@@ -15,11 +15,8 @@ export async function getAllRCAdmissions() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admissions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admissions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -40,11 +37,8 @@ export async function getAdmissionSessions() {
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admission sessions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission sessions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -62,11 +56,8 @@ export async function getAllRooms(academicYear : string) {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching rooms"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching rooms"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -76,7 +67,7 @@ export async function allocateRoomAdmission(admissionId: string, updateData: any
   if (!token) {
     throw new Error("User is not authenticated");
   }
-  console.log("Allocating room for admission:", admissionId, updateData);
+  // console.log("Allocating room for admission:", admissionId, updateData);
   const response = await api.put(
     `/api/resident_counsellor/admissions/room/${admissionId}`,
     updateData,

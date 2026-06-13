@@ -148,7 +148,7 @@ export default function HostelVacationPage() {
                   {page < 1 && (
                     <>
                       <Button onPress={() => {
-                        console.log("Current Formik errors:", errors);
+                        // console.log("Current Formik errors:", errors);
                         handleSubmit();
                       }}>
                         <ButtonText>Next</ButtonText>
@@ -161,7 +161,7 @@ export default function HostelVacationPage() {
                         <ButtonText>Back</ButtonText>
                       </Button>
                       <Button onPress={() => {
-                        console.log("Current Formik errors:", errors);
+                        // console.log("Current Formik errors:", errors);
                         handleSubmit();
                       }}>
                         <ButtonText>Submit</ButtonText>

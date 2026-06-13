@@ -39,7 +39,7 @@ const AdmissionSessionHistory = () => {
       });
       setShowSuccessModal(true);
     } catch (e) {
-      Alert.alert("Edit Error", "An error occurred while editing the admission session. Please try again.");
+      window.alert("Edit Error\nAn error occurred while editing the admission session. Please try again.");
     }
     setShowModal(false);
     setEditSession(null);

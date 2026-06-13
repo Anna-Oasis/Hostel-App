@@ -41,10 +41,7 @@ const ProfileVerifications = () => {
       setSuccessMessage("Profile approved successfully!");
       setShowSuccessModal(true);
     } catch (e) {
-      Alert.alert(
-        "Error",
-        "Failed to approve profile. Please try again later."
-      );
+      window.alert("Error\nFailed to approve profile. Please try again later.");
     }
     setLoading(false);
   };
@@ -64,10 +61,7 @@ const ProfileVerifications = () => {
       setSuccessMessage("Profile declined successfully!");
       setShowSuccessModal(true);
     } catch (e) {
-      Alert.alert(
-        "Error",
-        "Failed to decline profile. Please try again later."
-      );
+      window.alert("Error\nFailed to decline profile. Please try again later.");
     }
     setLoading(false);
   };

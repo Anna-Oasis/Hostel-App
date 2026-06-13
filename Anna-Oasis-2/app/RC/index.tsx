@@ -23,12 +23,12 @@ export default function RCPage() {
       setIsRefreshing(true);
       const rcDetails = await fetchdata();
       if (rcDetails.length == 0) {
-        Alert.alert("RC Details", "Please enter your details first.");
+        window.alert("RC Details\nPlease enter your details first.");
         setDetails(null);
         router.push("/RC/Details/Edit");
       } else {
         setDetails(rcDetails[0]);
-        console.log("RC Details:", rcDetails);
+        // console.log("RC Details:", rcDetails);
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);

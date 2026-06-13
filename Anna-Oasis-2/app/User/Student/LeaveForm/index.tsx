@@ -25,11 +25,11 @@ function LeaveFormPage() {
     setLoading(true);
     try {
       const data = await fetchLeaveForms(roll_number);
-      console.log("Fetched Leave History:", data);
+      // console.log("Fetched Leave History:", data);
       setLeaveHistory(data);
     } catch (err: any) {
       console.error(err);
-      Alert.alert("Error", err.message || "Failed to fetch leave history.");
+      window.alert(["Error", err.message || "Failed to fetch leave history."].filter(Boolean).join("\n"));
       setLeaveHistory([]);
     } finally {
       setLoading(false);

@@ -24,11 +24,8 @@ export async function createAdmissionSession(sessionData: {
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Create Error",
-      error.response?.data?.message ||
-        "An error occurred while creating the admission session"
-    );
+    window.alert(["Create Error", error.response?.data?.message ||
+        "An error occurred while creating the admission session"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -49,11 +46,8 @@ export async function getAdmissionSessions() {
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admission sessions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission sessions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -83,11 +77,8 @@ export async function editAdmissionSession(
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Edit Error",
-      error.response?.data?.message ||
-        "An error occurred while editing the admission session"
-    );
+    window.alert(["Edit Error", error.response?.data?.message ||
+        "An error occurred while editing the admission session"].filter(Boolean).join("\n"));
     throw error;
   }
 }

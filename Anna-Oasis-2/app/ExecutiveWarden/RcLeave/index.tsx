@@ -69,10 +69,10 @@ export default function RcLeavePage() {
         await fetchLeaves();
         setSuccessModal({ show: true, title: "Approved", message: "RC Leave approved successfully." });
       } else {
-        Alert.alert("Error", result.message || "Approval failed.");
+        window.alert(["Error", result.message || "Approval failed."].filter(Boolean).join("\n"));
       }
     } catch (err: any) {
-      Alert.alert("Error", err?.message || "Error approving leave.");
+      window.alert(["Error", err?.message || "Error approving leave."].filter(Boolean).join("\n"));
     } 
   };
 
@@ -90,10 +90,10 @@ export default function RcLeavePage() {
           await fetchLeaves();
           setSuccessModal({ show: true, title: "Rejected", message: "RC Leave has been rejected." });
         } else {
-          Alert.alert("Error", result.message || "Rejection failed.");
+          window.alert(["Error", result.message || "Rejection failed."].filter(Boolean).join("\n"));
         }
       } catch (err: any) {
-        Alert.alert("Error", err?.message || "Error rejecting leave.");
+        window.alert(["Error", err?.message || "Error rejecting leave."].filter(Boolean).join("\n"));
       }
     }
     setDeclineModal({ open: false, leaveId: undefined });

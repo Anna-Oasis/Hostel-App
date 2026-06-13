@@ -27,7 +27,7 @@ export default function CautionDepositManager() {
       const data = await fetchManagerVacatingForms();
       setApplications(data);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to fetch forms");
+      window.alert(["Error", err.message || "Failed to fetch forms"].filter(Boolean).join("\n"));
       setApplications([]);
     }
     setLoading(false);
@@ -56,7 +56,7 @@ export default function CautionDepositManager() {
       setSelectedApp(null);
       getApplications();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to approve form");
+      window.alert(["Error", err.message || "Failed to approve form"].filter(Boolean).join("\n"));
     }
   };
 
@@ -67,7 +67,7 @@ export default function CautionDepositManager() {
 
   const submitRejection = async (reason: string) => {
     if (!reason.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection.");
+      window.alert("Error\nPlease provide a reason for rejection.");
       return;
     }
     try {
@@ -84,7 +84,7 @@ export default function CautionDepositManager() {
       setSelectedApp(null);
       getApplications();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to reject form");
+      window.alert(["Error", err.message || "Failed to reject form"].filter(Boolean).join("\n"));
     }
   };
 

@@ -15,11 +15,8 @@ export async function getAllEWAdmissions() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admissions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admissions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -44,11 +41,8 @@ export async function handleUpdateEWAdmission(
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Update Error",
-      error.response?.data?.message ||
-        "An error occurred while updating the admission"
-    );
+    window.alert(["Update Error", error.response?.data?.message ||
+        "An error occurred while updating the admission"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -73,11 +67,8 @@ export async function ewAllocateRoom(
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Room Allocation Error",
-      error.response?.data?.message ||
-        "An error occurred while allocating the room"
-    );
+    window.alert(["Room Allocation Error", error.response?.data?.message ||
+        "An error occurred while allocating the room"].filter(Boolean).join("\n"));
     throw error;
   }
 }

@@ -15,11 +15,8 @@ export async function getAllDWAdmissions() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admissions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admissions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -44,11 +41,8 @@ export async function handleUpdateAdmission(
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Update Error",
-      error.response?.data?.message ||
-        "An error occurred while updating the admission"
-    );
+    window.alert(["Update Error", error.response?.data?.message ||
+        "An error occurred while updating the admission"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -66,11 +60,8 @@ export async function getAdmissionSessions() {
     });
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admission sessions"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission sessions"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -95,11 +86,8 @@ export async function dwAllocateRoom(
     );
     return response.data.data;
   } catch (error: any) {
-    Alert.alert(
-      "Room Allocation Error",
-      error.response?.data?.message ||
-        "An error occurred while allocating the room"
-    );
+    window.alert(["Room Allocation Error", error.response?.data?.message ||
+        "An error occurred while allocating the room"].filter(Boolean).join("\n"));
     throw error;
   }
 }

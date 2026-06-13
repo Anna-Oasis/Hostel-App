@@ -26,7 +26,7 @@ export default function VacatingHostelRCPage() {
       const data = await fetchRCVacatingApplications();
       setApplications(data);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to fetch applications");
+      window.alert(["Error", err.message || "Failed to fetch applications"].filter(Boolean).join("\n"));
       setApplications([]);
     }
     setLoading(false);
@@ -43,7 +43,7 @@ export default function VacatingHostelRCPage() {
       setSuccessModalVisible(true);
       getApplications();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to approve application");
+      window.alert(["Error", err.message || "Failed to approve application"].filter(Boolean).join("\n"));
     }
   };
 
@@ -54,7 +54,7 @@ export default function VacatingHostelRCPage() {
 
   const submitRejection = async (reason: string) => {
     if (!reason.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection.");
+      window.alert("Error\nPlease provide a reason for rejection.");
       return;
     }
     try {
@@ -66,7 +66,7 @@ export default function VacatingHostelRCPage() {
       setSuccessModalVisible(true);
       getApplications();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to reject application");
+      window.alert(["Error", err.message || "Failed to reject application"].filter(Boolean).join("\n"));
     }
     setDeclineModalVisible(false);
   };

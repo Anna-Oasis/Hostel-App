@@ -41,10 +41,10 @@ export const handleLogin = async (
 
     const data = response.data;
     await saveToken(data.data.token);
-    Alert.alert("Login Successful", `Welcome, ${data.data.name}`);
+    window.alert(["Login Successful", `Welcome, ${data.data.name}`].filter(Boolean).join("\n"));
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Login Failed", error.response?.data?.message || error.message);
+    window.alert(["Login Failed", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
   }
 };
 
@@ -70,12 +70,12 @@ export const verifyToken = async (token: string): Promise<User | null> => {
     return data.user;
   } catch (error: any) {
     if (error.response?.status === 401) {
-      Alert.alert("Session Expired", "Please log in again.");
+      window.alert("Session Expired\nPlease log in again.");
       await removeToken();
       router.replace("/Login");
       return null;
     }
-    Alert.alert("Token Verification Failed", error.response?.data?.message || error.message);
+    window.alert(["Token Verification Failed", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
     return null;
   }
 };
@@ -86,11 +86,11 @@ export const handleSignup = async (
 ) => {
   try {
     const response = await api.post("/register", values);
-    console.log("Signup API response:", response.data);
-    Alert.alert("Signup Successful", "You can now log in.");
+    // console.log("Signup API response:", response.data);
+    window.alert("Signup Successful\nYou can now log in.");
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Signup Failed", error.response?.data?.message || error.message);
+    window.alert(["Signup Failed", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
   }
 };
 
@@ -100,10 +100,10 @@ export const handleForgotPassword = async (
 ) => {
   try {
     await api.post("/forgot-password", { email });
-    Alert.alert("Code Sent", "A verification code has been sent to your email.");
+    window.alert("Code Sent\nA verification code has been sent to your email.");
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Error", error.response?.data?.message || error.message);
+    window.alert(["Error", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
   }
 };
 
@@ -116,7 +116,7 @@ export const handleVerifyOtp = async (
     const response = await api.post("/verify-otp", { email, otp });
     onSuccess(response.data.resetToken);
   } catch (error: any) {
-    Alert.alert("Invalid Code", error.response?.data?.message || error.message);
+    window.alert(["Invalid Code", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
   }
 };
 
@@ -131,10 +131,10 @@ export const handleResetPassword = async (
       { newPassword },
       { headers: { Authorization: `Bearer ${resetToken}` } }
     );
-    Alert.alert("Success", "Your password has been updated. Please log in.");
+    window.alert("Success\nYour password has been updated. Please log in.");
     onSuccess();
   } catch (error: any) {
-    Alert.alert("Reset Failed", error.response?.data?.message || error.message);
+    window.alert(["Reset Failed", error.response?.data?.message || error.message].filter(Boolean).join("\n"));
   }
 };
 

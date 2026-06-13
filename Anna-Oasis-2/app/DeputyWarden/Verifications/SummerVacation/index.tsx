@@ -65,17 +65,11 @@ export default function SummerVacationVericationPage() {
         });
         setShowSuccessModal(true);
       } else {
-        Alert.alert(
-          "Error",
-          result.message || "Failed to approve vacation request"
-        );
+        window.alert(["Error", result.message || "Failed to approve vacation request"].filter(Boolean).join("\n"));
       }
     } catch (err: any) {
       console.error("Error approving leave:", err);
-      Alert.alert(
-        "Error",
-        err.message || "An error occurred while approving the request"
-      );
+      window.alert(["Error", err.message || "An error occurred while approving the request"].filter(Boolean).join("\n"));
     }
   };
 
@@ -88,7 +82,7 @@ export default function SummerVacationVericationPage() {
     if (!currentRejectId) return;
 
     if (!comment.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection");
+      window.alert("Error\nPlease provide a reason for rejection");
       return;
     }
 
@@ -108,17 +102,11 @@ export default function SummerVacationVericationPage() {
         setShowRejectModal(false);
         setCurrentRejectId(null);
       } else {
-        Alert.alert(
-          "Error",
-          result.message || "Failed to reject vacation request"
-        );
+        window.alert(["Error", result.message || "Failed to reject vacation request"].filter(Boolean).join("\n"));
       }
     } catch (err: any) {
       console.error("Error rejecting leave:", err);
-      Alert.alert(
-        "Error",
-        err.message || "An error occurred while rejecting the request"
-      );
+      window.alert(["Error", err.message || "An error occurred while rejecting the request"].filter(Boolean).join("\n"));
     }
   };
 

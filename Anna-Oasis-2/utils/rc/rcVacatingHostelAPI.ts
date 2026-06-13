@@ -9,7 +9,7 @@ export async function fetchRCVacatingApplications() {
     const res = await api.get("/api/resident_counsellor/vacating_hostel", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Fetched RC vacating applications:", res.data.data);
+    // console.log("Fetched RC vacating applications:", res.data.data);
     if (!res.data?.success) throw new Error(res.data?.message || "Failed to fetch applications");
     return res.data.data;
   } catch (err: any) {

@@ -230,7 +230,7 @@ export default function DetailsPage() {
                   onPress={async () => {
                     const formErrors = await validateForm();
                     if (Object.keys(formErrors).length > 0) {
-                      console.log("Formik validation errors:", formErrors);
+                      // console.log("Formik validation errors:", formErrors);
                     }
                     // Save draft on next, clear on submit
                     if (page < 3) {

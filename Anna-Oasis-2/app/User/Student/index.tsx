@@ -70,10 +70,7 @@ export default function StudentMain() {
       setIsRefreshing(true);
       const details = await getStudentDetails();
       if (details.count === 0) {
-        Alert.alert(
-          "Personal Details",
-          "Please fill your personal details first"
-        );
+        window.alert("Personal Details\nPlease fill your personal details first");
         router.push("/User/Student/Details/Edit");
       } else {
         setDetails(details.data);
@@ -82,7 +79,7 @@ export default function StudentMain() {
           const admissionData = await getStudentAdmissionDetails(
             details.data.rollNo
           );
-          console.log("Student Admission Data:", admissionData);
+          // console.log("Student Admission Data:", admissionData);
           setAdmissionCount(admissionData.count);
           if (admissionData.count > 0 && admissionData.data?.[0]?.status) {
             setAdmissionStatus(Number(admissionData.data[0].status));

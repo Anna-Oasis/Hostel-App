@@ -40,24 +40,18 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
         type: `image/${fileType === "jpg" ? "jpeg" : fileType}`,
       } as any);
     }
-    console.log(data)
+    // console.log(data)
     const response = await api.post("/api/student/admission", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("Admission response:", response.data);
-    Alert.alert(
-      "Admission Successful",
-      "Your admission request has been successfully submitted. You can check your admission status"
-    );
+    // console.log("Admission response:", response.data);
+    window.alert("Admission Successful\nYour admission request has been successfully submitted. You can check your admission status");
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Admission Error",
-      error.response?.data?.message || "An error occurred during admission"
-    );
+    window.alert(["Admission Error", error.response?.data?.message || "An error occurred during admission"].filter(Boolean).join("\n"));
   }
 }
 
@@ -77,11 +71,8 @@ export async function getStudentAdmissionStatus(roll_no: string) {
     );
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admission status"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission status"].filter(Boolean).join("\n"));
     throw error;
   }
 }
@@ -102,11 +93,8 @@ export async function getAdmissionSession(semester: string) {
     );
     return response.data;
   } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching admission session data"
-    );
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission session data"].filter(Boolean).join("\n"));
     throw error;
   }
 }

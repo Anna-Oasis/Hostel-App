@@ -9,7 +9,7 @@ export async function fetchRCLeaveForms() {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.data?.success) throw new Error(res.data?.message || "Failed to fetch leave forms");
-    console.log("Fetched leave forms:", res.data.data);
+    // console.log("Fetched leave forms:", res.data.data);
     return res.data.data;
   } catch (err: any) {
     throw new Error(err.message || "Failed to fetch leave forms");

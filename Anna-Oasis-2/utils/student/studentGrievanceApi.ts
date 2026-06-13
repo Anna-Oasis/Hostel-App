@@ -17,12 +17,9 @@ export const handleGrievance = async (requestBody: {
     });
     return response.data.success;
   } catch (error: any) {
-    console.log(`Error :  ${error.message}`);
-    Alert.alert(
-      "Error",
-      error.response?.data?.message ||
-        "An error occurred while submitting the grievance"
-    );
+    // console.log(`Error :  ${error.message}`);
+    window.alert(["Error", error.response?.data?.message ||
+        "An error occurred while submitting the grievance"].filter(Boolean).join("\n"));
     return false;
   }
 };
@@ -38,12 +35,9 @@ export const getHistoryOfGrievance = async () => {
     });
     return response.data.data;
   } catch (error: any) {
-    console.log(`Error :  ${error.message}`);
-    Alert.alert(
-      "Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching grievance history"
-    );
+    // console.log(`Error :  ${error.message}`);
+    window.alert(["Error", error.response?.data?.message ||
+        "An error occurred while fetching grievance history"].filter(Boolean).join("\n"));
     return false;
   }
 };

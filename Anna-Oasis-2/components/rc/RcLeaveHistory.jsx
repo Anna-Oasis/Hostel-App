@@ -15,7 +15,7 @@ const RcLeaveHistory = () => {
     const fetchLeaveHistory = async () => {
       try {
         const history = await getRCLeaves();
-        console.log("RC Leave History:", history);
+        // console.log("RC Leave History:", history);
         setLeaveHistory(history);
       } catch (error) {
         console.error("Error fetching RC leave history:", error);

@@ -30,7 +30,7 @@ export default function RCManagementPage() {
       const data = await fetchRCs();
       setRcList(data);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to fetch RCs");
+      window.alert(["Error", err.message || "Failed to fetch RCs"].filter(Boolean).join("\n"));
       setRcList([]);
     }
     setLoading(false);
@@ -47,7 +47,7 @@ export default function RCManagementPage() {
       setRcList((prev) => prev.filter((rc) => rc.id !== rcId));
       setRemoveModalVisible(false);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to remove RC.");
+      window.alert(["Error", err.message || "Failed to remove RC."].filter(Boolean).join("\n"));
     }
     setSubmitting(false);
   };
@@ -94,7 +94,7 @@ export default function RCManagementPage() {
       );
       closeAssignModal();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to assign floors.");
+      window.alert(["Error", err.message || "Failed to assign floors."].filter(Boolean).join("\n"));
     }
     setSubmitting(false);
   };
@@ -106,7 +106,7 @@ export default function RCManagementPage() {
       setRcList((prev) => [...prev, newRC]);
       setShowAddForm(false);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to add RC.");
+      window.alert(["Error", err.message || "Failed to add RC."].filter(Boolean).join("\n"));
     }
     setSubmitting(false);
   };

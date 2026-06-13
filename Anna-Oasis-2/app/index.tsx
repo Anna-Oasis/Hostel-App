@@ -17,7 +17,7 @@ export default function Index() {
           const user = await verifyToken(token);
 
           if (user) {
-            console.log("Token is valid, redirecting based on role...", user.role);
+            // console.log("Token is valid, redirecting based on role...", user.role);
             setTimeout(() => {
               redirectByRole(user.role);
               setLoading(false);
