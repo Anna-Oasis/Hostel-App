@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import {
   fetchStudentDetailsForVerification,
@@ -72,6 +72,15 @@ const ProfileVerifications = () => {
     setLoading(false);
   };
 
+  const [searchRollNo, setSearchRollNo] = useState("");
+
+  const filteredProfiles = profiles.filter((profile) =>
+      profile.rollNo
+        ?.toString()
+        .toLowerCase()
+        .includes(searchRollNo.toLowerCase())
+    );
+
   return (
     <View className="flex-1">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -81,24 +90,32 @@ const ProfileVerifications = () => {
             description="All profiles have been reviewed."
           />
         ) : (
-          profiles.map((profile) => (
-            <ApprovalCard
-              key={profile.id}
-              title={`${profile.name} (${profile.rollNo})`}
-              subTitle={`Course: ${profile.course}, Branch: ${profile.branch}`}
-              badge={
-                profile.approve === true
-                  ? badgeStatus.Approved
-                  : profile.approve === false
-                  ? badgeStatus.Pending
-                  : badgeStatus.Pending
-              }
-              data={profile}
-              onApprove={() => handleApprove(profile.rollNo)}
-              onDecline={() => handleDecline(profile.rollNo)}
-              DeclineButtonTitle="Suggest changes"
+          <>
+            <TextInput
+              placeholder="Search by Roll No"
+              value={searchRollNo}
+              onChangeText={setSearchRollNo}
+              className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center"
             />
-          ))
+            {filteredProfiles.map((profile) => (
+              <ApprovalCard
+                key={profile.id}
+                title={`${profile.name} (${profile.rollNo})`}
+                subTitle={`Course: ${profile.course}, Branch: ${profile.branch}`}
+                badge={
+                  profile.approve === true
+                    ? badgeStatus.Approved
+                    : profile.approve === false
+                    ? badgeStatus.Pending
+                    : badgeStatus.Pending
+                }
+                data={profile}
+                onApprove={() => handleApprove(profile.rollNo)}
+                onDecline={() => handleDecline(profile.rollNo)}
+                DeclineButtonTitle="Suggest changes"
+              />
+            ))}
+          </>
         )}
       </ScrollView>
       <DeclineComment

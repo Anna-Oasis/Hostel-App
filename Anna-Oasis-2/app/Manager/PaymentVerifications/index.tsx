@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, TextInput } from "react-native";
 import { useEffect, useState } from "react";
 import {
   getAllManagerAdmissions,
@@ -53,6 +53,16 @@ export default function PaymentVerificationsPage() {
     fetchAdmissions();
   };
 
+  const [searchRollNo, setSearchRollNo] = useState("");
+
+  const filteredAdmissions = admissions.filter((admission) =>
+      admission.rollNo
+        ?.toString()
+        .toLowerCase()
+        .includes(searchRollNo.toLowerCase())
+    );
+
+
   return (
     <View className="flex-1">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -62,17 +72,25 @@ export default function PaymentVerificationsPage() {
             description="All admissions have been reviewed."
           />
         ) : (
-          admissions.map((item) => (
-            <ApprovalCard
-              key={item.admission.id}
-              title={`${item.admission.roll_number}`}
-              subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
-              badge={getAdmissionBadgeStatus(item.admission.status)}
-              data={{ ...item.admission, ...item.student }}
-              onApprove={() => handleApprove(item.admission.id)}
-              onDecline={() => handleDecline(item.admission.id)}
+          <>
+            <TextInput
+              placeholder="Search by Roll No"
+              value={searchRollNo}
+              onChangeText={setSearchRollNo}
+              className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center"
             />
-          ))
+            {filteredAdmissions.map((item) => (
+              <ApprovalCard
+                key={item.admission.id}
+                title={`${item.admission.roll_number}`}
+                subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
+                badge={getAdmissionBadgeStatus(item.admission.status)}
+                data={{ ...item.admission, ...item.student }}
+                onApprove={() => handleApprove(item.admission.id)}
+                onDecline={() => handleDecline(item.admission.id)}
+              />
+            ))}
+          </>
         )}
       </ScrollView>
       <DeclineComment
