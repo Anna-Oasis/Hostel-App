@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { View, Image, Platform } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import * as ImagePicker from "expo-image-picker";
@@ -15,14 +15,38 @@ const ImagePickerField = ({ label, value, placeholder }: Props) => {
   const { setFieldValue, values, errors, touched } = useFormikContext<any>();
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      base64: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.7,
-    });
-    if (!result.canceled && result.assets?.[0]?.uri) {
-      setFieldValue(value, result.assets[0].uri);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        quality: 0.7,
+        base64: true, // Forces extraction of raw binary components safely
+      });
+
+      if (result.canceled || !result.assets?.[0]) return;
+
+      const selectedAsset = result.assets[0];
+
+      if (Platform.OS === 'web') {
+        // If the web context successfully creates an internal base64 property, use it directly
+        if (selectedAsset.base64) {
+          setFieldValue(value, `data:image/jpeg;base64,${selectedAsset.base64}`);
+        } else if (selectedAsset.uri) {
+          // Fallback parsing strategy if browser permissions interfere with direct base64 processing
+          const response = await fetch(selectedAsset.uri);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setFieldValue(value, reader.result as string);
+          };
+          reader.readAsDataURL(blob);
+        }
+      } else {
+        // Mobile runtime profile
+        setFieldValue(value, selectedAsset.uri);
+      }
+    } catch (error) {
+      alert("Error encountered selecting media asset: "+"\n"+error);
     }
   };
 

@@ -1,7 +1,7 @@
 import api from "@/api";
 import { Alert } from "react-native";
 import { getToken } from "../authUtils";
-
+import { appendImageToFormData } from "../imageHelper";
 export interface AdmissionRequestBody {
   roll_number: string;
   academicYear: string;
@@ -31,16 +31,18 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
     formData.append("messPreference", data.messPreference);
     formData.append("transaction_id", data.transaction_id);
 
-    if (data.transactionPhotoUrl) {
-      const uriParts = data.transactionPhotoUrl.split(".");
-      const fileType = uriParts[uriParts.length - 1];
-      formData.append("transactionPhotoUrl", {
-        uri: data.transactionPhotoUrl,
-        name: `transaction.${fileType}`,
-        type: `image/${fileType === "jpg" ? "jpeg" : fileType}`,
-      } as any);
-    }
-    // console.log(data)
+    // if (data.transactionPhotoUrl) {
+    //   const uriParts = data.transactionPhotoUrl.split(".");
+    //   const fileType = uriParts[uriParts.length - 1];
+    //   formData.append("transactionPhotoUrl", {
+    //     uri: data.transactionPhotoUrl,
+    //     name: `transaction.${fileType}`,
+    //     type: `image/${fileType === "jpg" ? "jpeg" : fileType}`,
+    //   } as any);
+    // }
+    //  The optimized helper replacement
+    appendImageToFormData(formData, "transactionPhotoUrl", data.transactionPhotoUrl);
+    // console.log(formData)
     const response = await api.post("/api/student/admission", formData, {
       headers: {
         Authorization: `Bearer ${token}`,

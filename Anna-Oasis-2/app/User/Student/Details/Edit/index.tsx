@@ -13,6 +13,7 @@ import useUserStore from "@/stores/userStore";
 import { submitStudentDetails, updateStudentDetails, getStudentDetails } from "@/utils/student/studentDetailsApi";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { appendImageToFormData } from "@/utils/imageHelper";
 
 const FORM_STORAGE_KEY = "student_details_form_draft";
 
@@ -33,7 +34,7 @@ export default function DetailsPage() {
     try {
       await AsyncStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(values));
     } catch (e) {
-      console.warn("Failed to save draft:", e);
+      // console.warn("Failed to save draft:", e);
     }
   };
 
@@ -42,7 +43,7 @@ export default function DetailsPage() {
     try {
       await AsyncStorage.removeItem(FORM_STORAGE_KEY);
     } catch (e) {
-      console.warn("Failed to clear draft:", e);
+      // console.warn("Failed to clear draft:", e);
     }
   };
 
@@ -171,17 +172,7 @@ export default function DetailsPage() {
             ] as const;
             type ImageFieldKey = (typeof imageFields)[number]["key"];
             for (const field of imageFields) {
-              const uri = values[field.key as ImageFieldKey];
-              if (uri) {
-                const filename = uri.split("/").pop() || "image.jpg";
-                const match = /\.(\w+)$/.exec(filename);
-                const type = match ? `image/${match[1]}` : "image";
-                formData.append(field.name, {
-                  uri,
-                  name: filename,
-                  type,
-                } as any);
-              }
+              appendImageToFormData(formData, field.name, values[field.key])
             }
             if (details === null || details.length === 0) {
               await submitStudentDetails(formData);
@@ -197,7 +188,7 @@ export default function DetailsPage() {
                 router.replace("/User/Student")
               }
             } catch (e) {
-              console.error("Failed to fetch updated details:", e);
+              // console.error("Failed to fetch updated details:", e);
             }
             setIsSubmitting(false);
           }
@@ -230,7 +221,7 @@ export default function DetailsPage() {
                   onPress={async () => {
                     const formErrors = await validateForm();
                     if (Object.keys(formErrors).length > 0) {
-                      // console.log("Formik validation errors:", formErrors);
+                      console.log("Formik validation errors:", formErrors);
                     }
                     // Save draft on next, clear on submit
                     if (page < 3) {

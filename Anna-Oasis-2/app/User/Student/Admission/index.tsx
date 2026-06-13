@@ -65,7 +65,7 @@ const AdmissionForm = () => {
           setAcademicYear(session.data.academic_year);
         }
       } catch (error) {
-        console.error("Failed to fetch admission session:", error);
+        // console.error("Failed to fetch admission session:", error);
         setIsSessionChecked(true);
       }
     };
@@ -117,6 +117,7 @@ const AdmissionForm = () => {
                 transaction_id: values.transactionId,
                 transactionPhotoUrl: values.transactionPhotoUrl,
               };
+              // console.log(requestBody)
               setLoading(true);
               await submitStudentAdmission(requestBody);
               setLoading(false);

@@ -17,6 +17,7 @@ import { router } from "expo-router";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { View, ScrollView, Text, Alert } from "react-native";
+import { appendImageToFormData } from "@/utils/imageHelper";
 
 const RCDetailsEditPage = () => {
   const details = useUserStore((state) => state.details);
@@ -51,18 +52,7 @@ const RCDetailsEditPage = () => {
         ] as const;
 
         for (const field of imageFields) {
-          const uri = values[field.key];
-          if (uri) {
-            const filename = uri.split("/").pop() || "image.jpg";
-            const match = /\.(\w+)$/.exec(filename);
-            const type = match ? `image/${match[1]}` : "image";
-
-            formData.append(field.name, {
-              uri,
-              name: filename,
-              type,
-            } as any);
-          }
+          appendImageToFormData(formData, field.name, values[field.key]);
         }
 
         if (details) {
