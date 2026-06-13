@@ -5,7 +5,8 @@
 .env.test.local
 .env.production.local
 npm-debug.log*
-dist/
+Server/dist/
+Anna-Oasis/dist/
 build/
 coverage/
 .DS_Store
