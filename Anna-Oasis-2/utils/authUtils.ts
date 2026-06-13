@@ -122,21 +122,47 @@ export const redirectByRole = (role: string | null) => {
 };
 
 
-export const requestOTP = async (email : string) : Promise<boolean | void> => {
+
+export const handleForgotPassword = async (
+  email: string,
+  onSuccess: () => void
+) => {
   try {
-    const response = await api.post(
-      "/forgot-password",
-      {"email" : email}
-    )
-
-    console.log("Forgot Password Response : ", response.data)
-
-    if(response.status == 200){
-        Alert.alert(response.data.message)
-        return true;
-    }
-
-  } catch (error : any) {
-    Alert.alert("Email Verification Failed", error.response?.data?.message || error.message);
+    await api.post("/forgot-password", { email });
+    Alert.alert("Code Sent", "A verification code has been sent to your email.");
+    onSuccess();
+  } catch (error: any) {
+    Alert.alert("Error", error.response?.data?.message || error.message);
   }
-}
+};
+
+export const handleVerifyOtp = async (
+  email: string,
+  otp: string,
+  onSuccess: (resetToken: string) => void
+) => {
+  try {
+    const response = await api.post("/verify-otp", { email, otp });
+    onSuccess(response.data.resetToken);
+  } catch (error: any) {
+    Alert.alert("Invalid Code", error.response?.data?.message || error.message);
+  }
+};
+
+export const handleResetPassword = async (
+  resetToken: string,
+  newPassword: string,
+  onSuccess: () => void
+) => {
+  try {
+    await api.post(
+      "/reset-password",
+      { newPassword },
+      { headers: { Authorization: `Bearer ${resetToken}` } }
+    );
+    Alert.alert("Success", "Your password has been updated. Please log in.");
+    onSuccess();
+  } catch (error: any) {
+    Alert.alert("Reset Failed", error.response?.data?.message || error.message);
+  }
+};
