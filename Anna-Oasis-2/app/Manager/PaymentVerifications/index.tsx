@@ -56,7 +56,7 @@ export default function PaymentVerificationsPage() {
   const [searchRollNo, setSearchRollNo] = useState("");
 
   const filteredAdmissions = admissions.filter((admission) =>
-      admission.rollNo
+      admission.admission.roll_number
         ?.toString()
         .toLowerCase()
         .includes(searchRollNo.toLowerCase())
