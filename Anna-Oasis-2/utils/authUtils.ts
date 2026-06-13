@@ -120,3 +120,23 @@ export const redirectByRole = (role: string | null) => {
       break;
   }
 };
+
+
+export const requestOTP = async (email : string) : Promise<boolean | void> => {
+  try {
+    const response = await api.post(
+      "/forgot-password",
+      {"email" : email}
+    )
+
+    console.log("Forgot Password Response : ", response.data)
+
+    if(response.status == 200){
+        Alert.alert(response.data.message)
+        return true;
+    }
+
+  } catch (error : any) {
+    Alert.alert("Email Verification Failed", error.response?.data?.message || error.message);
+  }
+}
