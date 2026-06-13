@@ -201,7 +201,9 @@ export async function createAdmissionController(req: AuthRequest, res: Response)
   if (!studentData.approve) {
     throw AppError("Student is not approved", httpStatus.BAD_REQUEST);
   }
-
+  req.body.studentAgreed = req.body.studentAgreed === "true"
+  req.body.parentAgreed = req.body.parentAgreed === "true"
+  req.body.previousResident = req.body.previousResident === "true"
   // Attach roll_number to the request body
   const admissionData = {
     ...req.body,
