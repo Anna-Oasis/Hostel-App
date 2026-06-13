@@ -30,6 +30,7 @@ import {
   getVacatingHostelFormsOfaStudentController
 } from "../controllers/vacatingHostelController";
 import { getLatestAdmissionSessionForSemesterController } from "../controllers/admissionSessionController";
+import { generateFeeReceiptController } from "../controllers/pdfController";
 
 const studentRouter = Router();
 
@@ -89,5 +90,13 @@ studentRouter.get(
   hasRole(["student"]),
   errorWrapper(getLatestAdmissionSessionForSemesterController)
 );
+
+//Fee-Receipt generation 
+studentRouter.post(
+  "/feeReceipt",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(generateFeeReceiptController)
+)
 
 export default studentRouter;

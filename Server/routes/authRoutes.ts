@@ -2,7 +2,7 @@
 // Handles user registration, login, and token verification
 
 import { Router, Response } from "express";
-import { register, login } from "../controllers/authController";
+import { register, login, forgotPassword, verifyOtp, resetPassword } from "../controllers/authController";
 import { authenticateUser } from "../middleware/rbacMiddleware";
 import { AuthRequest } from "../types/roles";
 
@@ -42,5 +42,26 @@ router.get("/verify-token", authenticateUser, (req: AuthRequest, res: Response) 
     });
   }
 });
+
+/**
+ * @route   POST /forgot-password
+ * @desc    Check user existence, generate 6-digit OTP, store in Valkey, and email it
+ * @access  Public
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @route   POST /verify-otp
+ * @desc    Verify the 6-digit OTP from Valkey and issue a short-lived reset JWT
+ * @access  Public
+ */
+router.post("/verify-otp", verifyOtp);
+
+/**
+ * @route   POST /reset-password
+ * @desc    Verify short-lived reset JWT and update password in PostgreSQL via Drizzle
+ * @access  Public (Protected by temporary Bearer Token in headers)
+ */
+router.post("/reset-password", resetPassword);
 
 export default router;

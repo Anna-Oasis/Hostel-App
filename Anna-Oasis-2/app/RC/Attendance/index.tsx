@@ -88,7 +88,7 @@ export default function AttendancePage() {
         {/* Tab content */}
         {activeTab === "submit" ? (
           <>
-            <Text className="text-2xl m-2 mt-6 font-bold">RC Name Attendance</Text>
+            <Text className="text-2xl m-2 mt-6 font-bold">Attendance</Text>
             <View className="flex flex-row gap-4 items-center mt-6">
               <Text className="text-lg">Select Floor</Text>
               <Select className="w-[150px]" onValueChange={(value) => setFloor(value)}>
