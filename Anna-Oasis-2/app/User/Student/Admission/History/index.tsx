@@ -46,7 +46,7 @@ const AdmissionHistory = () => {
 
       const txId = item.transaction_id
       const paymentDate = item.submission_Date
-      const amount = item.previousResident ? "96,300" : "1,16,300"
+      const amount = item.previousResident ? "1,18,000" : "1,40,000"
 
       await downloadFeeReceipt({
         "name": name,

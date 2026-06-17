@@ -425,7 +425,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                 </ButtonText>
               </Button>
             )}
-            {props.downloadButton && (
+            {props.badge === badgeStatus.Approved && props.downloadButton && (
                <Button
                 onPress={() => {
                     setViewDetails(false);
