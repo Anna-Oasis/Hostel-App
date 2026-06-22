@@ -23,8 +23,8 @@ export const studentModel = pgTable("student", {
   // Student Details
   name: varchar("name", { length: 100 }).notNull(),
   rollNo: varchar("roll_no", { length: 20 }).primaryKey(),
-  course: varchar("course", { length: 50 }).notNull(),
-  branch: varchar("branch", { length: 50 }).notNull(),
+  course: varchar("course", { length: 150 }).notNull(),
+  branch: varchar("branch", { length: 150 }).notNull(),
   semester: varchar("semester", { length: 10 }).notNull(),
   mobile: varchar("mobile", { length: 15 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
@@ -36,38 +36,38 @@ export const studentModel = pgTable("student", {
   govtId: varchar("govt_id", { length: 50 }).notNull(),
   bloodGroup: varchar("blood_group", { length: 10 }).notNull(),
   medicalHistory: text("medical_history").notNull(),
-  admissionCategory: varchar("admission_category", { length: 20 }).notNull(),
+  admissionCategory: varchar("admission_category", { length: 50 }).notNull(),
 
   // Father Details
   fatherName: varchar("father_name", { length: 100 }).notNull(),
   fatherOccupation: varchar("father_occupation", { length: 100 }).notNull(),
   fatherMobile: varchar("father_mobile", { length: 15 }).notNull(),
   fatherEmail: varchar("father_email", { length: 100 }).notNull(),
-  fatherCountry: varchar("father_country", { length: 50 }).notNull(),
+  fatherCountry: varchar("father_country", { length: 150 }).notNull(),
 
   // Mother Details
   motherName: varchar("mother_name", { length: 100 }).notNull(),
   motherOccupation: varchar("mother_occupation", { length: 100 }).notNull(),
   motherMobile: varchar("mother_mobile", { length: 15 }).notNull(),
   motherEmail: varchar("mother_email", { length: 100 }).notNull(),
-  motherCountry: varchar("mother_country", { length: 50 }).notNull(),
+  motherCountry: varchar("mother_country", { length: 150 }).notNull(),
 
   // Residential Address - India (Flat fields)
   resIndiaHouseNo: varchar("res_india_house_no", { length: 100 }).notNull(),
-  resIndiaStreet: varchar("res_india_street", { length: 100 }).notNull(),
-  resIndiaCity: varchar("res_india_city", { length: 50 }).notNull(),
-  resIndiaState: varchar("res_india_state", { length: 50 }).notNull(),
-  resIndiaCountry: varchar("res_india_country", { length: 50 }).notNull(),
+  resIndiaStreet: varchar("res_india_street", { length: 150 }).notNull(),
+  resIndiaCity: varchar("res_india_city", { length: 150 }).notNull(),
+  resIndiaState: varchar("res_india_state", { length: 150 }).notNull(),
+  resIndiaCountry: varchar("res_india_country", { length: 150 }).notNull(),
   resIndiaPostalCode: varchar("res_india_postal_code", {
     length: 20,
   }).notNull(),
 
   // Residential Address - Foreign (Optional Flat Fields)
   resForeignHouseNo: varchar("res_foreign_house_no", { length: 100 }),
-  resForeignStreet: varchar("res_foreign_street", { length: 100 }),
-  resForeignCity: varchar("res_foreign_city", { length: 50 }),
-  resForeignState: varchar("res_foreign_state", { length: 50 }),
-  resForeignCountry: varchar("res_foreign_country", { length: 50 }),
+  resForeignStreet: varchar("res_foreign_street", { length: 150 }),
+  resForeignCity: varchar("res_foreign_city", { length: 150 }),
+  resForeignState: varchar("res_foreign_state", { length: 150 }),
+  resForeignCountry: varchar("res_foreign_country", { length: 150 }),
   resForeignPostalCode: varchar("res_foreign_postal_code", { length: 20 }),
 
   // Local Guardian Details (Flat)
@@ -79,10 +79,10 @@ export const studentModel = pgTable("student", {
   localGuardianEmail: varchar("local_guardian_email", { length: 100 }),
 
   guardianHouseNo: varchar("guardian_house_no", { length: 100 }),
-  guardianStreet: varchar("guardian_street", { length: 100 }),
-  guardianCity: varchar("guardian_city", { length: 50 }),
-  guardianState: varchar("guardian_state", { length: 50 }),
-  guardianCountry: varchar("guardian_country", { length: 50 }),
+  guardianStreet: varchar("guardian_street", { length: 150 }),
+  guardianCity: varchar("guardian_city", { length: 150 }),
+  guardianState: varchar("guardian_state", { length: 150 }),
+  guardianCountry: varchar("guardian_country", { length: 150 }),
   guardianPostalCode: varchar("guardian_postal_code", { length: 20 }),
 
   // Timestamp
