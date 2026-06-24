@@ -234,7 +234,7 @@ export const fetchStudentDetailsForManagerVerificationController = async (
   }
 
   const result = await fetchStudentsForManagerVerification();
-  console.log("Fetched Students:", result);
+  console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({
     success: true,
