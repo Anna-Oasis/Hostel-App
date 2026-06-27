@@ -10,7 +10,7 @@ export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { academicYear } = req.params;
+  const { academicYear } = req.params as {academicYear : string};
 
   if (!academicYear || !/^\d{4}-\d{4}$/.test(academicYear)) {
     throw AppError("Invalid academic year format. Use YYYY-YYYY.", httpStatus.BAD_REQUEST);
@@ -70,7 +70,7 @@ export const fetchRoomDetailsByAcademicYearController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { academicYear } = req.params;
+  const { academicYear } = req.params as {academicYear : string};
 
   if (!academicYear || !/^\d{4}-\d{4}$/.test(academicYear)) {
     throw AppError("Invalid academic year format. Use YYYY-YYYY.", httpStatus.BAD_REQUEST);
