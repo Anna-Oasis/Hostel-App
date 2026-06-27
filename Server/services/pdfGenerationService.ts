@@ -51,6 +51,7 @@ export async function generatePdf(templateName: string, data: PDFData): Promise<
 
 
 // generatePdf("fee-receipt", {
+//billId : "001"
 //   name : "Gogul",
 //   rollNo : "234567",
 //   course : "B.Tech",
