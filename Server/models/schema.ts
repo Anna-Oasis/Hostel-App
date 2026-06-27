@@ -19,3 +19,5 @@ export * from './preAdmission';
 export * from './declarationModel';
 export * from './admissionSession';
 export * from './rcDetails';
+export * from './billCounter'
+export * from './billModal'
