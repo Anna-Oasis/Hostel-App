@@ -21,7 +21,8 @@ export async function generateFeeReceiptController(
         ...data,
         "dateOfGeneration" : new Date().toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
-                            })
+                            }),
+        "billId" : billId
     }
 
     const pdfBuffer = await generatePdf("fee-receipt", pdfData)
