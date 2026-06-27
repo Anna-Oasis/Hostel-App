@@ -167,7 +167,7 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params;
+  const { vacating_hostel_id } = req.params as {vacating_hostel_id : string};
   const { approve, comment } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {
@@ -199,7 +199,7 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params;
+  const { vacating_hostel_id } = req.params as {vacating_hostel_id : string};
   const { approve, comment, deductions, refund_amount, deduction_details } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {

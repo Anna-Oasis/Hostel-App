@@ -83,7 +83,7 @@ export const getAllLeaveFormsByRollNoController = async (
     );
   }
 
-  const rollNo = req.params.roll_number;
+  const rollNo = req.params.roll_number as string;
   //const rollNo = await getRollNoFromUserId(Number(req.User.id));
 
   if (!rollNo) {

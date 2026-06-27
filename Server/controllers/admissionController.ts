@@ -254,7 +254,7 @@ export async function getAdmissionByRollNumberController(
   req: AuthRequest,
   res: Response
 ) {
-  const { roll_number } = req.params;
+  const { roll_number } = req.params as {roll_number : string};
   if (!roll_number && roll_number.trim() === "" && roll_number.length < 5) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
   }
