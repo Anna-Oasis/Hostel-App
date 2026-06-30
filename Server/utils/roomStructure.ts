@@ -90,8 +90,17 @@ async function insertRoomStructure(academicYear:string) {
         rollNo: null,
       });
     }
-    // First Floor: Students Rooms (201-218)
+    // First Floor: Students Rooms (201-218, 219-236)
     for (let num = 201; num <= 218; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Flora",
+        academicYear,
+        floor: 1,
+        rollNo: null,
+      });
+    }
+    for (let num = 219; num <= 236; num++) {
       roomsToInsert.push({
         roomNumber: num,
         hostelBlock: "Flora",
