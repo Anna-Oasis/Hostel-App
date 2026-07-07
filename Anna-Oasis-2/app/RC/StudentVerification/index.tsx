@@ -29,6 +29,12 @@ export default function StudentVerificationPage() {
       color: "#022B60",
     },
     {
+      title: "Rooms",
+      route: "/RC/StudentVerification/Details",
+      icon: CalendarIcon,
+      color: "#022B60",
+    },
+    {
       title: "Vacating Hostel",
       route: "/RC/StudentVerification/VacatingHostel",
       icon: LogOutIcon,
