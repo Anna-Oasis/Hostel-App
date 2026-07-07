@@ -2,10 +2,7 @@ const admissionCategories = [
   { label: "NRI", value: "NRI" },
   { label: "CIWGC", value: "CIWGC" },
   { label: "FN", value: "FN" },
-  { label: "LDC", value: "LDC" },
-  { label: "SIDS", value: "SIDS" },
   { label: "ICCR", value: "ICCR" },
-  { label: "SII", value: "SII" },
   { label: "Other", value: "Other" },
 ];
 

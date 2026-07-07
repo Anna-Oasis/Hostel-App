@@ -106,59 +106,65 @@ export default function DetailsPage() {
             setIsSubmitting(false);
           } else {
             const formData = new FormData();
+            const trimmedValues : any = Object.fromEntries(
+              Object.entries(values).map(([key, value]) => [
+                key,
+                typeof value === "string" ? value.trim() : value,
+              ])
+            );
             formData.append("user_id", userId?.toString() || "");
-            formData.append("name", values.name);
-            formData.append("rollNo", values.rollNo);
-            formData.append("course", values.course);
-            formData.append("branch", values.branch);
-            formData.append("semester", values.semester);
-            formData.append("mobile", values.mobile);
-            formData.append("email", values.email);
-            formData.append("emergencyContact", values.emergencyContact);
-            formData.append("dateOfBirth", values.dateOfBirth);
-            formData.append("age", values.age);
-            formData.append("gender", values.gender);
-            formData.append("admissionCategory", values.admissionCategory);
-            if (values.admissionCategory === "Other" && values.admissionCategoryReason) {
-              formData.append("admissionCategoryReason", values.admissionCategoryReason);
+            formData.append("name", trimmedValues.name);
+            formData.append("rollNo", trimmedValues.rollNo);
+            formData.append("course", trimmedValues.course);
+            formData.append("branch", trimmedValues.branch);
+            formData.append("semester", trimmedValues.semester);
+            formData.append("mobile", trimmedValues.mobile);
+            formData.append("email", trimmedValues.email);
+            formData.append("emergencyContact", trimmedValues.emergencyContact);
+            formData.append("dateOfBirth", trimmedValues.dateOfBirth);
+            formData.append("age", trimmedValues.age);
+            formData.append("gender", trimmedValues.gender);
+            formData.append("admissionCategory", trimmedValues.admissionCategory);
+            if (trimmedValues.admissionCategory === "Other" && trimmedValues.admissionCategoryReason) {
+              formData.append("admissionCategoryReason", trimmedValues.admissionCategoryReason);
             }
-            formData.append("nationality", values.nationality);
-            formData.append("bloodGroup", values.bloodGroup);
-            formData.append("medicalHistory", values.medicalHistory);
-            formData.append("fatherName", values.fatherName);
-            formData.append("fatherOccupation", values.fatherOccupation);
-            formData.append("fatherMobile", values.fatherMobile);
-            formData.append("fatherEmail", values.fatherEmail);
-            formData.append("fatherCountry", values.fatherCountry);
-            formData.append("motherName", values.motherName);
-            formData.append("motherOccupation", values.motherOccupation);
-            formData.append("motherMobile", values.motherMobile);
-            formData.append("motherEmail", values.motherEmail);
-            formData.append("motherCountry", values.motherCountry);
-            formData.append("resIndiaHouseNo", values.resIndiaHouseNo);
-            formData.append("resIndiaStreet", values.resIndiaStreet);
-            formData.append("resIndiaCity", values.resIndiaCity);
-            formData.append("resIndiaState", values.resIndiaState);
+            formData.append("nationality", trimmedValues.nationality);
+            formData.append("bloodGroup", trimmedValues.bloodGroup);
+            formData.append("medicalHistory", trimmedValues.medicalHistory);
+            formData.append("fatherName", trimmedValues.fatherName);
+            formData.append("fatherOccupation", trimmedValues.fatherOccupation);
+            formData.append("fatherMobile", trimmedValues.fatherMobile);
+            formData.append("fatherEmail", trimmedValues.fatherEmail);
+            formData.append("fatherCountry", trimmedValues.fatherCountry);
+            formData.append("motherName", trimmedValues.motherName);
+            formData.append("motherOccupation", trimmedValues.motherOccupation);
+            formData.append("motherMobile", trimmedValues.motherMobile);
+            formData.append("motherEmail", trimmedValues.motherEmail);
+            formData.append("motherCountry", trimmedValues.motherCountry);
+            formData.append("resIndiaHouseNo", trimmedValues.resIndiaHouseNo);
+            formData.append("resIndiaStreet", trimmedValues.resIndiaStreet);
+            formData.append("resIndiaCity", trimmedValues.resIndiaCity);
+            formData.append("resIndiaState", trimmedValues.resIndiaState);
             formData.append("resIndiaCountry", "India");
-            formData.append("resIndiaPostalCode", values.resIndiaPostalCode);
-            formData.append("resForeignHouseNo", values.resForeignHouseNo);
-            formData.append("resForeignStreet", values.resForeignStreet);
-            formData.append("resForeignCity", values.resForeignCity);
-            formData.append("resForeignState", values.resForeignState);
-            formData.append("resForeignCountry", values.resForeignCountry);
-            formData.append("resForeignPostalCode", values.resForeignPostalCode);
-            formData.append("localGuardianName", values.localGuardianName);
-            formData.append("localGuardianRelationship", values.localGuardianRelationship);
-            formData.append("localGuardianMobile", values.localGuardianMobile);
-            formData.append("localGuardianEmail", values.localGuardianEmail);
-            formData.append("guardianHouseNo", values.guardianHouseNo);
-            formData.append("guardianStreet", values.guardianStreet);
-            formData.append("guardianCity", values.guardianCity);
-            formData.append("guardianState", values.guardianState);
-            formData.append("guardianCountry", values.guardianCountry);
-            formData.append("guardianPostalCode", values.guardianPostalCode);
-            formData.append("govtIdType", values.govtIdType);
-            formData.append("govtId", values.govtId);
+            formData.append("resIndiaPostalCode", trimmedValues.resIndiaPostalCode);
+            formData.append("resForeignHouseNo", trimmedValues.resForeignHouseNo);
+            formData.append("resForeignStreet", trimmedValues.resForeignStreet);
+            formData.append("resForeignCity", trimmedValues.resForeignCity);
+            formData.append("resForeignState", trimmedValues.resForeignState);
+            formData.append("resForeignCountry", trimmedValues.resForeignCountry);
+            formData.append("resForeignPostalCode", trimmedValues.resForeignPostalCode);
+            formData.append("localGuardianName", trimmedValues.localGuardianName);
+            formData.append("localGuardianRelationship", trimmedValues.localGuardianRelationship);
+            formData.append("localGuardianMobile", trimmedValues.localGuardianMobile);
+            formData.append("localGuardianEmail", trimmedValues.localGuardianEmail);
+            formData.append("guardianHouseNo", trimmedValues.guardianHouseNo);
+            formData.append("guardianStreet", trimmedValues.guardianStreet);
+            formData.append("guardianCity", trimmedValues.guardianCity);
+            formData.append("guardianState", trimmedValues.guardianState);
+            formData.append("guardianCountry", trimmedValues.guardianCountry);
+            formData.append("guardianPostalCode", trimmedValues.guardianPostalCode);
+            formData.append("govtIdType", trimmedValues.govtIdType);
+            formData.append("govtId", trimmedValues.govtId);
             const imageFields = [
               { key: "passportPhotoUrl", name: "passportPhotoUrl" },
               { key: "studentSignatureUrl", name: "studentSignatureUrl" },
@@ -171,7 +177,7 @@ export default function DetailsPage() {
             ] as const;
             type ImageFieldKey = (typeof imageFields)[number]["key"];
             for (const field of imageFields) {
-              const uri = values[field.key as ImageFieldKey];
+              const uri = trimmedValues[field.key as ImageFieldKey];
               if (uri) {
                 const filename = uri.split("/").pop() || "image.jpg";
                 const match = /\.(\w+)$/.exec(filename);
