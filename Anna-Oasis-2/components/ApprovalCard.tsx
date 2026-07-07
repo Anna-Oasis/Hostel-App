@@ -383,9 +383,9 @@ const ApprovalCard = (props: approvalCardProps) => {
                                 numberOfLines={4}
                                 ellipsizeMode="tail"
                               >
-                                {typeof value === "string"
-                                  ? value
-                                  : JSON.stringify(value)}
+                                {typeof value === "boolean" ? (value === true ? "Yes" : "No")
+                                 :
+                                 typeof value === "string" ? value : JSON.stringify(value)}
                               </Text>
                             )}
                           </View>
