@@ -21,8 +21,10 @@ const initialValues = {
 
 const hostelBlocks = [
   { label: "Flora (Boys)", value: "Flora" },
-  { label: "Lavendar (Girls)", value: "Lavendar" },
+  { label: "Lavender (Girls)", value: "Lavender" },
 ];
+
+const hostelBlockValues = hostelBlocks.map((block) => block.value);
 
 const messPreferences = [
   { label: "Veg", value: "Veg" },
@@ -38,6 +40,7 @@ export {
   admissionCategories,
   initialValues,
   hostelBlocks,
+  hostelBlockValues,
   messPreferences,
   previousResidentOptions,
 };

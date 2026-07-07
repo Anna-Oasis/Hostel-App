@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
@@ -9,7 +10,40 @@ import {
   FilePlus2Icon,
 } from "lucide-react-native";
 
+import RefreshableScrollView from "@/components/common/RefreshableScrollView";
+import DeputyWardenDetailsCard from "@/components/deputyWarden/DetailsCard";
+import useUserStore from "@/stores/userStore";
+import { fetchDeputyWardenDetails } from "@/utils/deputyWarden/dwDetails";
+
 export default function DeputyWardenPage() {
+  const setDetails = useUserStore((state) => state.setDetails);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchDetails = async () => {
+    try {
+      setIsRefreshing(true);
+
+      const details = await fetchDeputyWardenDetails();
+
+      if (!details || details.length === 0) {
+        window.alert("Deputy Warden Details\nPlease enter your details first.");
+        setDetails(null);
+        router.push("/DeputyWarden/Details/Edit");
+        return;
+      }
+
+      setDetails(details[0]);
+    } catch (error) {
+      console.error("Error fetching deputy warden details:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDetails();
+  }, []);
+
   const menuItems = [
     {
       title: "Admission Verification",
@@ -53,10 +87,23 @@ export default function DeputyWardenPage() {
       icon: UsersIcon,
       color: "#022B60",
     },
+    {
+      title: "My Details",
+      route: "/DeputyWarden/Details",
+      icon: UsersIcon,
+      color: "#022B60",
+    },
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <RefreshableScrollView
+      className="flex-1 bg-gray-50"
+      contentContainerStyle={{ padding: 16 }}
+      refreshing={isRefreshing}
+      onRefresh={fetchDetails}
+    >
+      <DeputyWardenDetailsCard />
+
       <View className="flex-row flex-wrap justify-between w-full sm:w-[80%] md:w-[50%] self-center">
         {menuItems.map((item, idx) => (
           <Button
@@ -73,6 +120,6 @@ export default function DeputyWardenPage() {
           </Button>
         ))}
       </View>
-    </View>
+    </RefreshableScrollView>
   );
 }
