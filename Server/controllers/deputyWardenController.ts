@@ -4,7 +4,7 @@ import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import { deputyWardenCreateSchema, deputyWardenUpdateSchema } from "../validation/dwSchema";
-import { createDeputyWardenService, updateDeputyWardenService } from "../services/dwServices";
+import { createDeputyWardenService, getDeputyWardenDetails, updateDeputyWardenService } from "../services/dwServices";
 
 export const postDWDetailsController = async (
   req: AuthRequest,
@@ -127,3 +127,33 @@ export const putDWDetailsController = async (
     data: result,
   });
 };
+
+
+
+export async function getDeputyWardenDetailsController(
+  req: AuthRequest,
+  res: Response
+): Promise<void> {
+  if (!req.User?.id) {
+    throw AppError("User ID missing", httpStatus.UNAUTHORIZED);
+  }
+
+  const userId = Number(req.User.id);
+  const details = await getDeputyWardenDetails(userId);
+
+  res.status(httpStatus.OK).json(
+    !details
+      ? {
+          success: true,
+          message: "Deputy Warden details not found",
+          count: 0,
+          data: [],
+        }
+      : {
+          success: true,
+          message: "Deputy Warden details fetched successfully",
+          count: 1,
+          data: [details],
+        }
+  );
+}

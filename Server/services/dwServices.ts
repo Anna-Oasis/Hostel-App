@@ -38,3 +38,14 @@ export const getDeputyWardenBlockByUserId = async (
 
   return deputyWarden.block;
 };
+
+export const getDeputyWardenDetails = async (
+  userId: number
+) => {
+  const [deputyWarden] = await db
+    .select()
+    .from(deputyWardenModel)
+    .where(eq(deputyWardenModel.userId, userId));
+
+  return deputyWarden;
+};

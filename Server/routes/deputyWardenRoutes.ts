@@ -39,7 +39,7 @@ import { getAdmissionSessionsController } from "../controllers/admissionSessionC
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { fetchStudentDetails, getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
-import { postDWDetailsController, putDWDetailsController } from "../controllers/deputyWardenController";
+import { getDeputyWardenDetailsController, postDWDetailsController, putDWDetailsController } from "../controllers/deputyWardenController";
 // import {insertRoomStructureByDeputyWarden} from '../controllers/roomStructureController';
 import { upload } from "../middleware/multer";
 
@@ -64,6 +64,13 @@ deputyWardenRouter.put(
     {name : "passportPhoto", maxCount : 1}
   ]),
   errorWrapper(putDWDetailsController)
+)
+
+deputyWardenRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(getDeputyWardenDetailsController)
 )
 
 // Admission routes
