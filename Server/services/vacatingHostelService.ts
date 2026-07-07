@@ -193,7 +193,7 @@ export const getVacatingFormsWaitingForManager = async () => {
 
 export const getVacatingFormsWaitingForDeputyWarden = async (block : string) => {
   return await db
-    .select({vacatingHostelModel})
+    .select()
     .from(vacatingHostelModel)
     .innerJoin(studentModel, eq(studentModel.rollNo, vacatingHostelModel.roll_number))
     .where(and(

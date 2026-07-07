@@ -36,7 +36,7 @@ export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], host
 
 export const getLeaveFormsToBeApprovedByDeputyWarden = async (block : string) => {
   const leave_form = await db
-    .select({leaveFormModel})
+    .select()
     .from(leaveFormModel)
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
     .where(and(
