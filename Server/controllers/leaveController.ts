@@ -15,6 +15,7 @@ import {
   getLeaveFormsByRollNo,
 } from "../services/leaveServices";
 import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.schema";
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export const createLeaveFormController = async (
   req: AuthRequest,
@@ -133,7 +134,8 @@ export const getLeaveFormWaitingForApprovalController = async (
       rc[0].hostel
     );
   } else if (userRole === "deputyWarden") {
-    result = await getLeaveFormsToBeApprovedByDeputyWarden();
+    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+    result = await getLeaveFormsToBeApprovedByDeputyWarden(block);
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }

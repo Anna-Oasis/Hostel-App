@@ -10,6 +10,7 @@ import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
   fetchStudentDetailsForRC,
   fetchStudents,
+  fetchStudentsByBlock,
   fetchStudentsForManagerVerification,
   findStudentByRollNo,
   findStudentByUserId,
@@ -18,6 +19,7 @@ import {
 } from "../services/detailsService";
 import { AuthRequest } from "../types/roles";
 import { getRCById, getRCByUserId } from "../services/rcServices";
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -259,7 +261,15 @@ export const fetchStudentDetails = async (
     );
   }
 
-  const result = await fetchStudents();
+  let result;
+
+  if(req.User.role === "deputyWarden"){
+    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+    result = await fetchStudentsByBlock(block)
+  }
+  else{
+    result = await fetchStudents();
+  }
   console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({

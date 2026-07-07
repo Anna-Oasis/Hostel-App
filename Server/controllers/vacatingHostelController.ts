@@ -18,6 +18,7 @@ import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
 import { getRollNoFromUserId } from "../services/helper";
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
 
@@ -149,8 +150,8 @@ export async function getVacatingFormsForDeputyWardenController(req: AuthRequest
   {
     throw AppError("User ID is required",httpStatus.UNAUTHORIZED)
   }
-
-  const forms = await getVacatingFormsWaitingForDeputyWarden();
+  const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+  const forms = await getVacatingFormsWaitingForDeputyWarden(block);
 
   res.status(httpStatus.OK).json({
     success: true,

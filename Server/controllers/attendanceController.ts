@@ -75,6 +75,9 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
 }
 
 export async function getAllAttendanceController(req: AuthRequest, res: Response) {
+  if (!req.User?.id){
+    throw AppError("User not authenticated", httpStatus.UNAUTHORIZED);
+  }
   const { date } = req.query;
   let attendanceRecords;
   let message;
@@ -84,7 +87,6 @@ export async function getAllAttendanceController(req: AuthRequest, res: Response
     if (!dateRegex.test(date as string)) {
       throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
     }
-
     attendanceRecords = await fetchAllAttendanceByDate(date as string);
     message = `Attendance records for ${date} retrieved successfully`;
   } else {
