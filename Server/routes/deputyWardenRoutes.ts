@@ -194,7 +194,7 @@ deputyWardenRouter.get(
 deputyWardenRouter.get(
   "/student/details/:rollNo",
   authenticateUser,
-  hasRole(["executiveWarden"]),
+  hasRole(["deputyWarden"]),
   errorWrapper(getStudentDetailsUsingRollNoController)
 );
 
@@ -202,7 +202,7 @@ deputyWardenRouter.get(
 deputyWardenRouter.get(
   "/getdetails",
   authenticateUser,
-  hasRole(['manager']),
+  hasRole(['deputyWarden']),
   errorWrapper(fetchStudentDetails)
 );
 
