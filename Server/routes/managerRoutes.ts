@@ -19,7 +19,7 @@ import {
   getVacatingFormsForManagerController
 } from '../controllers/vacatingHostelController';
 import {getDeclarationForOthersController} from '../controllers/declarationController';
-import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
+import { approveStudentDetailsByManagerController, fetchStudentDetails, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
 import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 
@@ -86,7 +86,7 @@ managerRouter.get(
   "/getdetails",
   authenticateUser,
   hasRole(['manager']),
-  errorWrapper(fetchStudentDetailsForManagerVerificationController)
+  errorWrapper(fetchStudentDetails)
 );
 
 managerRouter.get(
