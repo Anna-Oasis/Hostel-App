@@ -9,6 +9,8 @@ import {
   createAdmissionApproval,
   getAdmissionsToBeApprovedByRcByHostelBlock,
   getRoomByRollNo,
+  getAdmissionsByStatusByBlock,
+  getAdmissionsApprovedByUserByBlock,
 } from "../services/admissionServices";
 import { Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -28,18 +30,19 @@ import {
   updateStudentHostelDetails,
 } from "../services/roomServices";
 import { ROOM_SIZE } from "../constants/values";
-import { getRCById } from "../services/rcServices";
+import { getRCById, getRCByUserId } from "../services/rcServices";
 import { getRCidfromUserId } from "../services/helper";
 import { wardenDecisionSchema } from "../validation/admission.schema";
 import { getLatestDeclaration } from "../services/declarationServices";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import { findStudentByUserId } from "../services/admissionServices"; 
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 // GET – Fetch all admissions waiting for approval based on user role - manager, deputy warden, or executive warden
 export async function fetchAdmissionWaitingForApprovalController(
   req: AuthRequest,
   res: Response
 ) {
-  if (!req.User || !req.User.role) {
+  if (!req.User || !req.User.role || !req.User.id) {
     throw AppError(
       "User information is missing from request",
       httpStatus.UNAUTHORIZED
@@ -58,10 +61,18 @@ export async function fetchAdmissionWaitingForApprovalController(
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
-
-  const admissionsByStatus = await Promise.all(
-    reqStatuses.map((status) => getAdmissionsByStatus(status))
-  );
+  let admissionsByStatus;
+  if(userRole === "deputyWarden"){
+    const block = await getDeputyWardenBlockByUserId(parseInt(req.User.id))
+    admissionsByStatus = await Promise.all(
+      reqStatuses.map((status) => getAdmissionsByStatusByBlock(status, block))
+    );
+  }
+  else{
+    admissionsByStatus = await Promise.all(
+      reqStatuses.map((status) => getAdmissionsByStatus(status))
+    );
+  }
   const submittedAdmissions = admissionsByStatus.flat();
 
   res.status(httpStatus.OK).json({
@@ -414,8 +425,20 @@ export const fetchAdmissionsApprovedByUser = async (
   if (isNaN(userID)) {
     throw AppError("Invalid User ID", httpStatus.BAD_REQUEST);
   }
-  const admission = await getAdmissionsApprovedByUser(userID);
-
+  let admission
+  
+  if(req.User.role === "rc"){
+    const rc = await getRCByUserId(parseInt(req.User.id))
+    const block = rc[0].hostel
+    admission = await getAdmissionsApprovedByUserByBlock(userID, block);
+  }
+  else if(req.User.role === "deputyWarden"){
+    const block = await getDeputyWardenBlockByUserId(parseInt(req.User.id))
+    admission = await getAdmissionsApprovedByUserByBlock(userID, block);
+  }
+  else{
+    admission = await getAdmissionsApprovedByUser(userID)
+  }
   res.status(200).json({
     success: true,
     data: admission || [],

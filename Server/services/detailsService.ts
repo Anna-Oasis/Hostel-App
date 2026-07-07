@@ -43,6 +43,14 @@ export const fetchStudents = async () => {
     .orderBy(studentModel.createdAt);
 }
 
+export const fetchStudentsByBlock = async (block : string) => {
+  return await db
+    .select()
+    .from(studentModel)
+    .where(eq(studentModel.hostelBlock, block))
+    .orderBy(studentModel.createdAt);
+}
+
 
 export const fetchStudentDetailsForRC = async (
   floor: number[],

@@ -39,9 +39,32 @@ import { getAdmissionSessionsController } from "../controllers/admissionSessionC
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { fetchStudentDetails, getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
+import { postDWDetailsController, putDWDetailsController } from "../controllers/deputyWardenController";
 // import {insertRoomStructureByDeputyWarden} from '../controllers/roomStructureController';
+import { upload } from "../middleware/multer";
 
 const deputyWardenRouter = Router();
+
+//DeputyWarden Details Routes
+deputyWardenRouter.post(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  upload.fields([
+    {name : "passportPhoto", maxCount : 1}
+  ]),
+  errorWrapper(postDWDetailsController)
+)
+
+deputyWardenRouter.put(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  upload.fields([
+    {name : "passportPhoto", maxCount : 1}
+  ]),
+  errorWrapper(putDWDetailsController)
+)
 
 // Admission routes
 deputyWardenRouter.get(

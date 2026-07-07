@@ -35,8 +35,9 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
 export const getGrievancesForRC = async (hostelblock: typeof hostelBlock[keyof typeof hostelBlock], floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
   const grievances = await db
-    .select()
+    .select({grievancesModel})
     .from(grievancesModel)
+    .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
     .where(
       and(
         inArray(studentModel.floor, floors),
@@ -91,8 +92,9 @@ export const updateGrievanceStatus = async ({
 
 export const getGrievancesForManager = async () => {
   return await db
-    .select()
+    .select({grievancesModel})
     .from(grievancesModel)
+    .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
     .where(
       eq(grievancesModel.status, grievanceApprovalStatus.RC)
     )
@@ -115,11 +117,15 @@ export const updateGrievanceStatusByManager= async ({
   return grievanceUpdate;
 };*/
 
-export const getGrievancesForDeputyWarden = async ()=>
+export const getGrievancesForDeputyWarden = async (block : string)=>
 {
   return db
-      .select()
+      .select({
+        grievancesModel,
+      })
       .from(grievancesModel)
+      .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
+      .where(eq(studentModel.hostelBlock, block))
       .orderBy(grievancesModel.created_at);
 }
 

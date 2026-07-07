@@ -34,14 +34,15 @@ export const getLeaveFormsToBeApprovedByRcByFloor = async (floor: number[], host
   return leave_form;
 };
 
-export const getLeaveFormsToBeApprovedByDeputyWarden = async () => {
+export const getLeaveFormsToBeApprovedByDeputyWarden = async (block : string) => {
   const leave_form = await db
-    .select()
+    .select({leaveFormModel})
     .from(leaveFormModel)
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
-    .where(
-      eq(leaveFormModel.status, studentLeaveApprovalStatus.RC)
-    )
+    .where(and(
+      eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
+      eq(studentModel.hostelBlock, block)
+    ))
     .orderBy(leaveFormModel.created_at);
   return leave_form;
 };

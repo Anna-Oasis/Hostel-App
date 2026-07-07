@@ -69,7 +69,7 @@ export const approveSummerVacationFormByRC = async (
 };
 
 //get all summer vacation forms waiting for approval from deputy Warden
-export const getSummerVacationFormsForDeputyWarden = async () => {
+export const getSummerVacationFormsForDeputyWarden = async (block : string) => {
   return await db
     .select()
     .from(summerVacationModel)
@@ -77,7 +77,10 @@ export const getSummerVacationFormsForDeputyWarden = async () => {
       studentModel,
       eq(summerVacationModel.roll_number, studentModel.rollNo)
     )
-    .where(eq(summerVacationModel.status, summerVacationApprovalStatus.RC));
+    .where(and(
+      eq(summerVacationModel.status, summerVacationApprovalStatus.RC),
+      eq(studentModel.hostelBlock, block)
+    ));
 };
 
 //approve summer vacation form by Deputy Warden
