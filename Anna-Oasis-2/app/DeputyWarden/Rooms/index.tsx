@@ -112,8 +112,8 @@ const RoomView = () => {
                             .map((room, idx) => (
                               <View
                                 key={room.roomNumber ?? idx}
-                                className={`w-[30%] bg-slate-100 rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm ${
-                                    Array.isArray(room.rollNo)
+                                className={`w-[30%] rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm ${
+                                    room.rollNo && Array.isArray(room.rollNo)
                                       ? room.rollNo.length === 2
                                         ? "bg-green-200"
                                         : room.rollNo.length === 1
