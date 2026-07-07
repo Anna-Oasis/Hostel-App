@@ -25,7 +25,7 @@ import {
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
-import { fetchRoomDetailsByBlockAndAcademicYearController , fetchRoomDetailsByAcademicYearController} from "../controllers/roomController";
+import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
@@ -196,13 +196,6 @@ rcRouter.get(
   errorWrapper(getAdmissionSessionsController)
 );
 
-//get room details
-rcRouter.get(
-  "/rooms/:academicYear",
-  authenticateUser,
-  hasRole(["rc"]),
-  errorWrapper(fetchRoomDetailsByAcademicYearController)
-);
 
 export default rcRouter;
 
