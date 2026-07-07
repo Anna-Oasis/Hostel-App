@@ -1,7 +1,6 @@
 import { View, ActivityIndicator, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { getAdmissionSessions } from "@/utils/manager/managerAdmissionApi";
-import { getRoomsByAcademicYear } from "@/utils/manager/managerRoomApi";
+import { getAdmissionSessions, getAllRooms } from "@/utils/rc/rcAdmissionApi";
 import SelectField from "@/components/form/SelectField";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -45,7 +44,7 @@ const RoomView = () => {
       initialValues={{ academicYear: "" }}
       onSubmit={async (values) => {
         try {
-          const data = await getRoomsByAcademicYear(values.academicYear);
+          const data = await getAllRooms(values.academicYear);
           const grouped: Record<string, Record<string, any[]>> = {};
           data.forEach((room: any) => {
             const block = room.hostelBlock || "Unknown Block";

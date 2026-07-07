@@ -34,6 +34,12 @@ export default function StudentVerificationPage() {
       icon: LogOutIcon,
       color: "#022B60",
     },
+    {
+      title: "Details",
+      route: "/RC/StudentVerification/Details",
+      icon: LogOutIcon,
+      color: "#022B60",
+    },
   ];
 
   return (

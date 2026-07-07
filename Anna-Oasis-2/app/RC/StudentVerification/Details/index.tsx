@@ -1,11 +1,9 @@
 import { View, ScrollView, Alert, TextInput } from "react-native";
 import { useEffect, useState } from "react";
-import {
-    fetchStudentDetails
-} from "@/utils/manager/managerDetailApi";
 import ApprovalCard from "@/components/ApprovalCard";
 import useLoadingStore from "@/stores/loadingStore";
 import EmptyPage from "@/components/EmptyPage";
+import { getAllRCStudents } from "@/utils/rc/RcAttendenceUtils";
 
 const ProfileVerifications = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -14,7 +12,7 @@ const ProfileVerifications = () => {
   const fetchProfiles = async () => {
     setLoading(true);
     try {
-      const data = await fetchStudentDetails();
+      const data = await getAllRCStudents();
       setProfiles(Array.isArray(data) ? data : []);
     } catch (err) {
       setProfiles([]);
