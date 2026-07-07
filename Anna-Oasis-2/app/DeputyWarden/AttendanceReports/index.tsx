@@ -31,12 +31,12 @@ export default function AttendanceReportsPage() {
           </Text>
           <Text className="mb-1">Present: {item.no_present}</Text>
           <Text className="mb-1">Absent: {item.no_absent}</Text>
-          <Text className="mb-1">
+          {/* <Text className="mb-1">
             Absentees:{" "}
             {item.absentee && item.absentee.length > 0
               ? item.absentee.join(", ")
               : "None"}
-          </Text>
+          </Text> */}
         </View>
       ))}
     </ScrollView>
