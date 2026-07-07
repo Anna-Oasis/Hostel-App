@@ -20,6 +20,7 @@ import {
 } from '../controllers/vacatingHostelController';
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
+import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
 
 const managerRouter = Router();
 
@@ -100,4 +101,10 @@ managerRouter.get("/declaration",
   errorWrapper(getDeclarationForOthersController));
 export default managerRouter;
 
-
+//get room details
+managerRouter.get(
+  "/rooms/:academicYear",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(fetchRoomDetailsByAcademicYearController)
+);
