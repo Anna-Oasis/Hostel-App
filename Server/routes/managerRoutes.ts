@@ -80,6 +80,14 @@ managerRouter.get(
   errorWrapper(fetchStudentDetailsForManagerVerificationController)
 );
 
+//Student details  route
+managerRouter.get(
+  "/getdetails",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(fetchStudentDetailsForManagerVerificationController)
+);
+
 managerRouter.get(
   "/details/:rollNo",
   authenticateUser,

@@ -9,6 +9,7 @@ import {
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
   fetchStudentDetailsForRC,
+  fetchStudents,
   fetchStudentsForManagerVerification,
   findStudentByRollNo,
   findStudentByUserId,
@@ -234,6 +235,31 @@ export const fetchStudentDetailsForManagerVerificationController = async (
   }
 
   const result = await fetchStudentsForManagerVerification();
+  console.log("Fetched Students:", result.length);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result || [],
+    count: result ? result.length : 0,
+    message:
+      result && result.length > 0
+        ? "Fetched student details successfully"
+        : "No student records found",
+  });
+};
+
+export const fetchStudentDetails = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const result = await fetchStudents();
   console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({
