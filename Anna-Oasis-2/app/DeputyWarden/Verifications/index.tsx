@@ -28,6 +28,12 @@ export default function VerificationsPage() {
       icon: LogOutIcon,
       color: "#022B60",
     },
+    {
+      title: "Details",
+      route: "/DeputyWarden/Verifications/Details",
+      icon: LogOutIcon,
+      color: "#022B60",
+    },
   ];
 
   return (

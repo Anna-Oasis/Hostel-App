@@ -29,7 +29,7 @@ export default function StudentVerificationPage() {
       color: "#022B60",
     },
     {
-      title: "Rooms",
+      title: "Details",
       route: "/RC/StudentVerification/Details",
       icon: CalendarIcon,
       color: "#022B60",
