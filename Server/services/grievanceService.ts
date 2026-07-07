@@ -35,7 +35,17 @@ export const getGrievancesByRollNumber = async (rollNumber: string) => {
 export const getGrievancesForRC = async (hostelblock: typeof hostelBlock[keyof typeof hostelBlock], floors: number[]) => {
   console.log("Fetching grievances for hostel block:", hostelBlock, "on floors:", floors);
   const grievances = await db
-    .select({grievancesModel})
+    .select({
+      id: grievancesModel.id,
+        roll_number: grievancesModel.roll_number,
+        grievance_type: grievancesModel.grievance_type,
+        subject: grievancesModel.subject,
+        description: grievancesModel.description,
+        status: grievancesModel.status,
+        rc_decision_at: grievancesModel.rc_decision_at,
+        resolved_at: grievancesModel.resolved_at,
+        created_at: grievancesModel.created_at,
+    })
     .from(grievancesModel)
     .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
     .where(
@@ -92,7 +102,17 @@ export const updateGrievanceStatus = async ({
 
 export const getGrievancesForManager = async () => {
   return await db
-    .select({grievancesModel})
+    .select({
+        id: grievancesModel.id,
+        roll_number: grievancesModel.roll_number,
+        grievance_type: grievancesModel.grievance_type,
+        subject: grievancesModel.subject,
+        description: grievancesModel.description,
+        status: grievancesModel.status,
+        rc_decision_at: grievancesModel.rc_decision_at,
+        resolved_at: grievancesModel.resolved_at,
+        created_at: grievancesModel.created_at,
+    })
     .from(grievancesModel)
     .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
     .where(
@@ -121,7 +141,15 @@ export const getGrievancesForDeputyWarden = async (block : string)=>
 {
   return db
       .select({
-        grievancesModel,
+        id: grievancesModel.id,
+        roll_number: grievancesModel.roll_number,
+        grievance_type: grievancesModel.grievance_type,
+        subject: grievancesModel.subject,
+        description: grievancesModel.description,
+        status: grievancesModel.status,
+        rc_decision_at: grievancesModel.rc_decision_at,
+        resolved_at: grievancesModel.resolved_at,
+        created_at: grievancesModel.created_at,
       })
       .from(grievancesModel)
       .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
