@@ -1,0 +1,81 @@
+import { View, ScrollView, Alert, TextInput } from "react-native";
+import { useEffect, useState } from "react";
+import {
+    fetchStudentDetails
+} from "@/utils/manager/managerDetailApi";
+import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import useLoadingStore from "@/stores/loadingStore";
+import EmptyPage from "@/components/EmptyPage";
+import ModalCallable from "@/components/modals/ModalCallable";
+
+const ProfileVerifications = () => {
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const setLoading = useLoadingStore((state) => state.setLoading);
+
+  const fetchProfiles = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchStudentDetails();
+      setProfiles(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setProfiles([]);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProfiles();
+  }, []);
+
+
+
+  const [searchRollNo, setSearchRollNo] = useState("");
+
+  const filteredProfiles = profiles.filter((profile) =>
+      profile.rollNo
+        ?.toString()
+        .toLowerCase()
+        .includes(searchRollNo.toLowerCase())
+    );
+
+  return (
+    <View className="flex-1">
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {profiles.length === 0 ? (
+          <EmptyPage
+            title="No pending verifications"
+            description="All profiles have been reviewed."
+          />
+        ) : (
+          <>
+            <TextInput
+              placeholder="Search by Roll No"
+              value={searchRollNo}
+              onChangeText={setSearchRollNo}
+              className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center"
+            />
+            {filteredProfiles.map((profile) => (
+              <ApprovalCard
+                key={profile.id}
+                title={`${profile.name} (${profile.rollNo})`}
+                subTitle={`Course: ${profile.course}, Branch: ${profile.branch}`}
+                data={profile}
+              />
+            ))}
+          </>
+        )}
+      </ScrollView>
+
+      <ModalCallable
+        show={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="Success"
+        message={successMessage}
+      />
+    </View>
+  );
+};
+
+export default ProfileVerifications;
