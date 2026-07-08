@@ -120,18 +120,7 @@ export const updateGrievanceStatusByManager= async ({
 export const getGrievancesForDeputyWarden = async (block : string)=>
 {
   return db
-      .select({
-        id : grievancesModel.id,
-        roll_number : grievancesModel.roll_number,
-        name : studentModel.name,
-        grievance_tyep : grievancesModel.grievance_type,
-        subject : grievancesModel.subject,
-        description : grievancesModel.description,
-        status : grievancesModel.status,
-        rc_decision_at : grievancesModel.rc_decision_at,
-        resolved_at : grievancesModel.resolved_at,
-        created_at : grievancesModel.created_at
-      })
+      .select()
       .from(grievancesModel)
       .innerJoin(studentModel, eq(grievancesModel.roll_number, studentModel.rollNo))
       .where(eq(studentModel.hostelBlock, block))
