@@ -36,8 +36,8 @@ export default function GrievancesPage() {
             subTitle={`By ${item.student?.rollNo || item.grievances.roll_number}`}
             badge={getGrievanceBadgeStatus(item.grievances.status)}
             data={{
+              Name : item.student.name,
               ...item.grievances,
-              ...(item.student || {}),
             }}
           />
         ))

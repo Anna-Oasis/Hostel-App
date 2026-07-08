@@ -97,6 +97,8 @@ const RCDetailsViewPage = () => {
                       ![
                         "id",
                         "passportPhotoUrl",
+                        "createdAt",
+                        "updatedAt"
                       ].includes(key)
                   )
                   .map(([key, value], idx) => (
