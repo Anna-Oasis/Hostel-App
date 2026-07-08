@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import { Response } from "express";
 import { getRCidfromUserId, getRCsbyHostel } from "../services/helper";
 import { getRCById } from "../services/rcServices";
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export const updateLeaveStatusForRC = async (
   req : AuthRequest,
@@ -59,7 +60,9 @@ export const getRCLeaves = async (
   }
   switch (req.User.role) {
     case "deputyWarden" :
-      const result = await getRCLeaveToBeApprovedByDeputyWarden()
+      const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+      const result = await getRCLeaveToBeApprovedByDeputyWarden(block)
+      
       res.status(httpStatus.OK).json({
         success : true,
         data : result || [],

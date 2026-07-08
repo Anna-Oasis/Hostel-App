@@ -48,20 +48,24 @@ export const createAttendanceByRc = async (attendanceData: NewAttendance) => {
   }
 };
 
-export const fetchAllAttendance = async () => {
+export const fetchAllAttendance = async (block : string) => {
   const result = await db
     .select()
     .from(attendanceModel)
+    .where(eq(attendanceModel.hostel, block))
     .orderBy(desc(attendanceModel.date), attendanceModel.hostel, attendanceModel.floor);
   
   return result;
 };
 
-export const fetchAllAttendanceByDate = async (date:string) => {
+export const fetchAllAttendanceByDate = async (date:string, block : string) => {
   const result = await db
     .select()
     .from(attendanceModel)
-    .where(eq(attendanceModel.date, date))
+    .where(and(
+      eq(attendanceModel.date, date),
+      eq(attendanceModel.hostel, block)
+    ))
     .orderBy(desc(attendanceModel.date), attendanceModel.hostel, attendanceModel.floor);
   
   return result;
