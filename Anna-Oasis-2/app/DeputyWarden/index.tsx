@@ -53,6 +53,12 @@ export default function DeputyWardenPage() {
       icon: UsersIcon,
       color: "#022B60",
     },
+    {
+      title: "My Details",
+      route: "/DeputyWarden/Details",
+      icon: UsersIcon,
+      color: "#022B60",
+    },
   ];
 
   return (
