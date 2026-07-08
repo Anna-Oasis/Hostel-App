@@ -155,13 +155,18 @@ export default function AttendancePage() {
                       const absentCount = students.filter(
                         (s) => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
                       ).length;
+                      const floorAbsentees = students
+                        .filter(
+                          s => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
+                        )
+                        .map(s => s.rollNo);
                       const attendanceObj = {
                         date: new Date().toISOString().slice(0, 10),
                         hostel: hostelBlock,
                         floor: parseInt(floor),
                         no_present: presentCount,
                         no_absent: absentCount,
-                        absentee: absentees,
+                        absentee: floorAbsentees,
                       };
                       handelRCAttendance(attendanceObj);
                     }}
