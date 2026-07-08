@@ -63,8 +63,8 @@ export default function GrievancesPage() {
             badge={getGrievanceBadgeStatus(item.grievances.status)}
             onApprove={() => handleApprove(item.grievances.id)}
             data={{
+              Name : item.student.name,
               ...item.grievances,
-              ...(item.student || {}),
             }}
             ApproveButtonTitle="Mark as Resolved"
           />
