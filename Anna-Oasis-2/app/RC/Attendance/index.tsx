@@ -57,6 +57,23 @@ export default function AttendancePage() {
     });
   };
 
+  useEffect(() => {
+    if (floor === "") return;
+
+    const floorStudents = students
+        .filter(s => s.floor === parseInt(floor))
+        .map(s => s.rollNo);
+
+    setAbsentees(floorStudents);
+  }, [floor]);
+
+  useEffect(() => {
+  if (activeTab !== "submit") {
+    setFloor("");
+    setAbsentees([]);
+  }
+}, [activeTab]);
+
   return (
     <ScrollView>
       <View className="flex-1 justify-center items-center p-2">
@@ -148,7 +165,7 @@ export default function AttendancePage() {
                 ))}
                 <View className="items-center mb-8">
                   <Button
-                    onPress={() => {
+                    onPress={async () => {
                       const presentCount = students.filter(
                         (s) => s.floor === parseInt(floor) && !absentees.includes(s.rollNo)
                       ).length;
@@ -160,6 +177,7 @@ export default function AttendancePage() {
                           s => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
                         )
                         .map(s => s.rollNo);
+                      
                       const attendanceObj = {
                         date: new Date().toISOString().slice(0, 10),
                         hostel: hostelBlock,
@@ -168,7 +186,9 @@ export default function AttendancePage() {
                         no_absent: absentCount,
                         absentee: floorAbsentees,
                       };
-                      handelRCAttendance(attendanceObj);
+                      await handelRCAttendance(attendanceObj);
+                      setFloor("");
+                      setAbsentees([]);
                     }}
                   >
                     <ButtonText>Submit</ButtonText>
