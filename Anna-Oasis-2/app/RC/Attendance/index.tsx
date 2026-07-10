@@ -25,7 +25,7 @@ export default function AttendancePage() {
     getAllRCStudents()
       .then((data) => {
         setStudents(data);
-        setAbsentees(data.map((s: any) => s.rollNo));
+        // setAbsentees(data.map((s: any) => s.rollNo));
         const hostelBlock = data[0]?.hostelBlock;
         const maxFloor = Math.max(...data.map(s => s.floor));
         setMaxfloor(maxFloor + 1)
@@ -72,7 +72,7 @@ export default function AttendancePage() {
         .map(s => s.rollNo);
 
     setAbsentees(floorStudents);
-  }, [floor]);
+  }, [floor, students]);
 
   return (
     <ScrollView>
@@ -110,7 +110,7 @@ export default function AttendancePage() {
               <Text className="text-lg">Select Floor</Text>
               <Select className="w-[150px]" onValueChange={(value) => setFloor(value)}>
                 <SelectTrigger>
-                  <SelectInput placeholder="Select Floor" className="flex-1 my-3 py-2" />
+                  <SelectInput value={floor} placeholder="Select Floor" className="flex-1 my-3 py-2" />
                   <SelectIcon as={ChevronDownIcon} />
                 </SelectTrigger>
                 <SelectPortal>
