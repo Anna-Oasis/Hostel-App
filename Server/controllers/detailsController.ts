@@ -9,6 +9,8 @@ import {
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
   fetchStudentDetailsForRC,
+  fetchStudents,
+  fetchStudentsByBlock,
   fetchStudentsForManagerVerification,
   findStudentByRollNo,
   findStudentByUserId,
@@ -17,6 +19,7 @@ import {
 } from "../services/detailsService";
 import { AuthRequest } from "../types/roles";
 import { getRCById, getRCByUserId } from "../services/rcServices";
+import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 type FileMap = Record<string, Express.Multer.File[]>;
 
@@ -44,7 +47,7 @@ export async function getStudentDetailsUsingRollNoController(
   req: AuthRequest,
   res: Response
 ) {
-const rollNo = req.params.rollNo as string;
+  const { rollNo } = req.params as { rollNo: string };
 
   if (!rollNo) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);
@@ -162,7 +165,7 @@ export async function updateStudentDetailsController(
     );
   }
 
-const rollNo = req.params.roll_number as string;
+  const rollNo = req.params.roll_number as string;
   const { body, files } = req;
 
   if (!rollNo) {
@@ -234,7 +237,40 @@ export const fetchStudentDetailsForManagerVerificationController = async (
   }
 
   const result = await fetchStudentsForManagerVerification();
-  console.log("Fetched Students:", result);
+  console.log("Fetched Students:", result.length);
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result || [],
+    count: result ? result.length : 0,
+    message:
+      result && result.length > 0
+        ? "Fetched student details successfully"
+        : "No student records found",
+  });
+};
+
+export const fetchStudentDetails = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  if (!req.User) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  let result;
+
+  if(req.User.role === "deputyWarden"){
+    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+    result = await fetchStudentsByBlock(block)
+  }
+  else{
+    result = await fetchStudents();
+  }
+  console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -258,7 +294,7 @@ export async function approveStudentDetailsByManagerController(
     );
   }
 
- const rollNo = req.params.rollNo as string;
+  const rollNo = req.params.rollNo as string;
 
   const validatedData = studentDetailsDecisionSchema.parse(req.body);
 

@@ -126,3 +126,19 @@ export const fetchRoomDetailsByAcademicYear = async (
     .where(eq(roomModel.academicYear, academicYear));
   return rooms;
 };
+
+export const fetchRoomDetailsByAcademicYearByBlock = async (
+  academicYear: string,
+  block : string
+) => {
+  const rooms = await db
+    .select()
+    .from(roomModel)
+    .where(
+      and(
+        eq(roomModel.academicYear, academicYear),
+        eq(roomModel.hostelBlock, block)
+      )
+    );
+  return rooms;
+};

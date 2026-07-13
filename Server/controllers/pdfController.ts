@@ -3,6 +3,7 @@ import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
+import { getOrCreateBillId } from "../services/billServices";
 export async function generateFeeReceiptController(
     req : AuthRequest,
     res : Response
@@ -12,12 +13,16 @@ export async function generateFeeReceiptController(
     }
 
     const {data} = req.body;
+
+    const billId = await getOrCreateBillId(data["rollNo"])
+    console.log(billId)
     
     const pdfData = {
         ...data,
         "dateOfGeneration" : new Date().toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
-                            })
+                            }),
+        "billId" : billId
     }
 
     const pdfBuffer = await generatePdf("fee-receipt", pdfData)
