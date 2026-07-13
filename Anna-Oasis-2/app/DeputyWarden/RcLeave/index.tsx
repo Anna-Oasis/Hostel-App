@@ -1,4 +1,4 @@
-import ApprovalCard from "@/components/ApprovalCard";
+import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import { useEffect, useState } from "react";
 import { View, Text, ScrollView, Alert } from "react-native";
 import {
@@ -9,6 +9,7 @@ import { getRCLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 import ModalCallable from "@/components/modals/ModalCallable";
 import DeclineComment from "@/components/modals/DeclineComment";
 import EmptyPage from "@/components/EmptyPage";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function RcLeavePage() {
   type RcLeaveApiItem = {
@@ -36,6 +37,9 @@ export default function RcLeavePage() {
     };
   };
 
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">(
+    "pending"
+  );
   const [leaves, setLeaves] = useState<RcLeaveApiItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{
@@ -48,10 +52,10 @@ export default function RcLeavePage() {
     leaveId?: number;
   }>({ show: false });
 
-  const fetchLeaves = async () => {
+  const fetchLeaves = async (tab: "pending" | "approved" = activeTab) => {
     try {
       setLoading(true);
-      const result = await getRCLeavebyDw();
+      const result = await getRCLeavebyDw(tab);
       if (result.success && Array.isArray(result.data)) {
         setLeaves(result.data);
       }
@@ -66,7 +70,7 @@ export default function RcLeavePage() {
     try {
       const result = await updateRCLeaveStatusByDw(leaveId, "true");
       if (result.success) {
-        await fetchLeaves();
+        await fetchLeaves(activeTab);
         setModal({
           show: true,
           title: "Approved",
@@ -87,11 +91,7 @@ export default function RcLeavePage() {
     try {
       const result = await updateRCLeaveStatusByDw(leaveId, "false", comment);
       if (result.success) {
-        setLeaves((prev) =>
-          prev.map((leave) =>
-            leave.leave.id === leaveId ? { ...leave, approved: "-1" } : leave
-          )
-        );
+        await fetchLeaves(activeTab);
         setModal({
           show: true,
           title: "Rejected",
@@ -106,8 +106,8 @@ export default function RcLeavePage() {
   };
 
   useEffect(() => {
-    fetchLeaves();
-  }, []);
+    fetchLeaves(activeTab);
+  }, [activeTab]);
 
   if (loading) {
     return (
@@ -139,11 +139,27 @@ export default function RcLeavePage() {
         submitLabel="Reject"
         cancelLabel="Cancel"
       />
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "Approved", value: "approved" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {leaves.length === 0 ? (
           <EmptyPage
-            title="No RC Leave requests found."
-            description="There are currently no RC Leave requests to review."
+            title={
+              activeTab === "approved"
+                ? "No approved RC Leave requests found."
+                : "No RC Leave requests found."
+            }
+            description={
+              activeTab === "approved"
+                ? "There are currently no RC Leave requests you have approved."
+                : "There are currently no RC Leave requests to review."
+            }
           />
         ) : (
           leaves.map((item) => (
@@ -163,18 +179,23 @@ export default function RcLeavePage() {
                 Leaving: item.leave.leaving,
                 Arrival: item.leave.arrival,
                 "Created At": new Date(item.leave.created_at).toLocaleString(),
-                Status:
-                  item.leave.approved === "1"
-                    ? "Pending"
-                    : item.leave.approved === "-1"
-                    ? "Rejected"
-                    : item.leave.approved === "2"
-                    ? "Approved"
-                    : "Pending",
+                Status: activeTab === "approved" ? "Approved" : "Pending",
               }}
-              badge={getRCLeaveBadgeStatus(item.leave.approved)}
-              onApprove={() => handleApprove(item.leave.id)}
-              onDecline={() => handleDecline(item.leave.id)}
+              badge={
+                activeTab === "approved"
+                  ? badgeStatus.Approved
+                  : getRCLeaveBadgeStatus(item.leave.approved)
+              }
+              onApprove={
+                activeTab === "pending"
+                  ? () => handleApprove(item.leave.id)
+                  : undefined
+              }
+              onDecline={
+                activeTab === "pending"
+                  ? () => handleDecline(item.leave.id)
+                  : undefined
+              }
             />
           ))
         )}

@@ -1,5 +1,5 @@
 import { rcLeaveApprovalStatus } from "../constants/enum";
-import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull } from "../services/rcLeaveService";
+import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull } from "../services/rcLeaveService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -61,14 +61,19 @@ export const getRCLeaves = async (
   switch (req.User.role) {
     case "deputyWarden" :
       const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-      const result = await getRCLeaveToBeApprovedByDeputyWarden(block)
-      
+      const status = (req.query.status as string) || "pending";
+      const result = status === "approved"
+        ? await getRCLeaveApprovedByDeputyWarden(block)
+        : await getRCLeaveToBeApprovedByDeputyWarden(block)
+
       res.status(httpStatus.OK).json({
         success : true,
         data : result || [],
         count:result ? result.length:0,
         message: result && result.length>0
         ? "RC leaves fetched successfully"
+        : status === "approved"
+        ? "No RC leaves approved by Deputy Warden"
         : "No RC leaves waiting for Deputy Warden approval"
       })
       break;

@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
-import ApprovalCard from "@/components/ApprovalCard";
+import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
 import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
 import useLoadingStore from "@/stores/loadingStore";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function LeaveFormPage() {
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
@@ -17,10 +19,10 @@ export default function LeaveFormPage() {
 
   const setLoading = useLoadingStore((state) => state.setLoading);
 
-  const getLeaveForms = async () => {
+  const getLeaveForms = async (tab: "pending" | "approved" = activeTab) => {
     setLoading(true);
     try {
-      const data = await fetchRCLeaveForms();
+      const data = await fetchRCLeaveForms(tab);
       setLeaveForms(data);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to fetch leave forms");
@@ -30,8 +32,8 @@ export default function LeaveFormPage() {
   };
 
   useEffect(() => {
-    getLeaveForms();
-  }, []);
+    getLeaveForms(activeTab);
+  }, [activeTab]);
 
   const handleDecision = async (leaveFormId: number, approve: boolean, comment?: string) => {
     setLoading(true);
@@ -39,7 +41,7 @@ export default function LeaveFormPage() {
       await updateRCLeaveFormStatus(leaveFormId, approve, comment);
       setModalMsg(approve ? "Leave form approved successfully!" : "Leave form rejected successfully!");
       setModalVisible(true);
-      await getLeaveForms();
+      await getLeaveForms(activeTab);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to update leave form status");
     }
@@ -81,10 +83,26 @@ export default function LeaveFormPage() {
         submitLabel="Submit"
         cancelLabel="Cancel"
       />
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "Approved", value: "approved" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
       {leaveForms.length === 0 ? (
         <EmptyPage
-          title="No leave forms"
-          description="There are currently no leave forms pending approval."
+          title={
+            activeTab === "approved"
+              ? "No approved leave forms"
+              : "No leave forms"
+          }
+          description={
+            activeTab === "approved"
+              ? "There are currently no leave forms you have approved."
+              : "There are currently no leave forms pending approval."
+          }
         />
       ) : (
         <ScrollView>
@@ -96,7 +114,11 @@ export default function LeaveFormPage() {
                 key={leave.id}
                 title={`${student.name} (${leave.roll_number})`}
                 subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={getLeaveBadgeStatus(leave.status)}
+                badge={
+                  activeTab === "approved"
+                    ? badgeStatus.Approved
+                    : getLeaveBadgeStatus(leave.status)
+                }
                 data={{
                   "Student Name": student.name,
                   "Roll Number": leave.roll_number,
@@ -111,12 +133,18 @@ export default function LeaveFormPage() {
                   "Address of Stay": leave.address_of_stay,
                   "Emergency Contact": leave.mobile,
                   "Email": leave.email,
-                  "Status": leave.status === "0"
-                      ? "Pending"
-                      : leave.status 
+                  "Status": activeTab === "approved" ? "Approved" : "Pending"
                 }}
-                onApprove={() => handleDecision(leave.id, true)}
-                onDecline={() => handleDecline(leave.id)}
+                onApprove={
+                  activeTab === "pending"
+                    ? () => handleDecision(leave.id, true)
+                    : undefined
+                }
+                onDecline={
+                  activeTab === "pending"
+                    ? () => handleDecline(leave.id)
+                    : undefined
+                }
               />
             );
           })}
