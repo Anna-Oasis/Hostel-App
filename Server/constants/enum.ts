@@ -1,6 +1,7 @@
 export const hostelBlock = {
-  BOYS: "Flora",
-  GIRLS: "Lavender",
+  FLORA: "Flora",
+  LAVENDER: "Lavender",
+  TULIP : "Tulip"
 };
 
 export const gender = {
