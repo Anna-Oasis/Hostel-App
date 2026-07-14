@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 import SelectField from '@/components/form/SelectField'
-import { messPreferences, previousResidentOptions } from '@/constants/admission'
+import { messPreferences, previousResidentOptions, hostelBlocks } from '@/constants/admission'
 
 
 const AdmissionDetails = () => {
@@ -18,6 +18,12 @@ const AdmissionDetails = () => {
           label="Are you a previous resident of the hostel?"
           value="previousResident"
           options={previousResidentOptions}
+        />
+        <View className="mt-4" />
+        <SelectField
+          label="HostelBlock"
+          value="hostelBlock"
+          options={hostelBlocks}
         />
       </View>
     </View>

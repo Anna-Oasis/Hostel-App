@@ -385,7 +385,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                               >
                                 {typeof value === "boolean" ? (value === true ? "Yes" : "No")
                                  :
-                                 typeof value === "string" ? value : JSON.stringify(value)}
+                                 key.toLowerCase() === "status" ? props.badge : typeof value === "string" ?  value : JSON.stringify(value)}
                               </Text>
                             )}
                           </View>
