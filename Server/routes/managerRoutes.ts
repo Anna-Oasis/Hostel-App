@@ -22,6 +22,7 @@ import {getDeclarationForOthersController} from '../controllers/declarationContr
 import { approveStudentDetailsByManagerController, fetchStudentDetails, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
 import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
+import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
 
 const managerRouter = Router();
 
@@ -108,6 +109,13 @@ managerRouter.get("/declaration",
   authenticateUser,
   hasRole(['manager']),
   errorWrapper(getDeclarationForOthersController));
+
+managerRouter.post(
+  "/attendance/report",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(getManagerAttendanceReportController)
+);
 export default managerRouter;
 
 //get room details
