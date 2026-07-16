@@ -116,7 +116,6 @@ managerRouter.post(
   hasRole(["manager"]),
   errorWrapper(getManagerAttendanceReportController)
 );
-export default managerRouter;
 
 //get room details
 managerRouter.get(
@@ -132,3 +131,6 @@ managerRouter.get(
   hasRole(["manager"]),
   errorWrapper(getAdmissionSessionsController)
 );
+
+export default managerRouter;
+
