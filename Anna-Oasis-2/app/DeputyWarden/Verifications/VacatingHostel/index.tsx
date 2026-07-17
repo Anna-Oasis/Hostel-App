@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
-import ApprovalCard from "@/components/ApprovalCard";
+import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import {
   fetchDWVacatingForms,
   approveDWVacatingForm,
@@ -11,8 +11,10 @@ import ModalCallable from "@/components/modals/ModalCallable";
 import DeclineComment from "@/components/modals/DeclineComment";
 import EmptyPage from "@/components/EmptyPage";
 import { getHostelVacationBadgeStatus } from "@/utils/getBadgeStatus";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function VacatingHostelVerificationPage() {
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
@@ -20,10 +22,10 @@ export default function VacatingHostelVerificationPage() {
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState<any>(null);
 
-  const getApplications = async () => {
+  const getApplications = async (tab: "pending" | "approved" = activeTab) => {
     setLoading(true);
     try {
-      const data = await fetchDWVacatingForms();
+      const data = await fetchDWVacatingForms(tab);
       setApplications(data);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to fetch forms");
@@ -33,8 +35,8 @@ export default function VacatingHostelVerificationPage() {
   };
 
   useEffect(() => {
-    getApplications();
-  }, []);
+    getApplications(activeTab);
+  }, [activeTab]);
 
   // Approve handler
   const handleApprove = async (app: any) => {
@@ -42,7 +44,7 @@ export default function VacatingHostelVerificationPage() {
       await approveDWVacatingForm(app.id);
       setSuccessMsg("Form approved successfully!");
       setSuccessModalVisible(true);
-      getApplications();
+      getApplications(activeTab);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to approve form");
     }
@@ -66,7 +68,7 @@ export default function VacatingHostelVerificationPage() {
       setSuccessModalVisible(true);
       setRejectModalOpen(false);
       setSelectedApp(null);
-      getApplications();
+      getApplications(activeTab);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to reject form");
     }
@@ -91,14 +93,30 @@ export default function VacatingHostelVerificationPage() {
         submitLabel="Submit"
         cancelLabel="Cancel"
       />
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "Approved", value: "approved" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <Spinner size="large" color="#0000ff" />
         </View>
       ) : applications.length === 0 ? (
         <EmptyPage
-          title="No forms pending approval"
-          description="There are currently no hostel vacating forms to verify."
+          title={
+            activeTab === "approved"
+              ? "No approved forms"
+              : "No forms pending approval"
+          }
+          description={
+            activeTab === "approved"
+              ? "There are currently no hostel vacating forms you have approved."
+              : "There are currently no hostel vacating forms to verify."
+          }
         />
       ) : (
         <ScrollView>
@@ -107,9 +125,13 @@ export default function VacatingHostelVerificationPage() {
               <ApprovalCard
                 title={`Vacating Hostel - ${app.roll_number}`}
                 subTitle={`Vacating on ${app.vacating_date} at ${app.vacating_time}`}
-                badge={getHostelVacationBadgeStatus(
-                  typeof app.status === "string" ? parseInt(app.status) : app.status
-                )}
+                badge={
+                  activeTab === "approved"
+                    ? badgeStatus.Approved
+                    : getHostelVacationBadgeStatus(
+                        typeof app.status === "string" ? parseInt(app.status) : app.status
+                      )
+                }
                 data={{
                   "Roll Number": app.roll_number,
                   "Vacating Date": app.vacating_date,
@@ -118,16 +140,15 @@ export default function VacatingHostelVerificationPage() {
                   "Returned Items": Array.isArray(app.returned_items)
                     ? app.returned_items.join(", ")
                     : "None",
-                  "Status":
-                    app.status === "-1"
-                      ? "Rejected"
-                      : app.status === "3"
-                      ? "Approved"
-                      : "Pending",
+                  "Status": activeTab === "approved" ? "Approved" : "Pending",
                   "Submitted At": new Date(app.created_at).toLocaleString(),
                 }}
-                onApprove={() => handleApprove(app)}
-                onDecline={() => handleReject(app)}
+                onApprove={
+                  activeTab === "pending" ? () => handleApprove(app) : undefined
+                }
+                onDecline={
+                  activeTab === "pending" ? () => handleReject(app) : undefined
+                }
               />
             </View>
           ))}
