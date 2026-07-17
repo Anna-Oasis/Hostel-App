@@ -24,28 +24,6 @@ export async function getAllManagerAdmissions() {
   }
 }
 
-export async function getApprovedManagerAdmissions() {
-  try {
-    const token = await getToken();
-    if (!token) {
-      throw new Error("User is not authenticated");
-    }
-    const response = await api.get("/api/manager/admissions/approvals", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data.data;
-  } catch (error: any) {
-    Alert.alert(
-      "Fetch Error",
-      error.response?.data?.message ||
-        "An error occurred while fetching approved admissions"
-    );
-    throw error;
-  }
-}
-
 export async function managerApprove(admissionId: string) {
   try {
     const token = await getToken();

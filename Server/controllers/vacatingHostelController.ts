@@ -18,7 +18,6 @@ import { AppError } from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
 import { cautionDepositSchema } from "../validation/cautionDeposit.schema";
 import { getRollNoFromUserId } from "../services/helper";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export async function createVacatingHostelFormController(req: AuthRequest, res: Response) {
 
@@ -150,8 +149,8 @@ export async function getVacatingFormsForDeputyWardenController(req: AuthRequest
   {
     throw AppError("User ID is required",httpStatus.UNAUTHORIZED)
   }
-  const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-  const forms = await getVacatingFormsWaitingForDeputyWarden(block);
+
+  const forms = await getVacatingFormsWaitingForDeputyWarden();
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -168,7 +167,7 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params as { vacating_hostel_id: string };
+  const { vacating_hostel_id } = req.params;
   const { approve, comment } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {
@@ -200,7 +199,7 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params as { vacating_hostel_id: string };
+  const { vacating_hostel_id } = req.params;
   const { approve, comment, deductions, refund_amount, deduction_details } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {

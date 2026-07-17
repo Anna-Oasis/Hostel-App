@@ -9,52 +9,60 @@ import { insertRoomStructure } from "../utils/roomStructure";
 
 export async function createAdmissionSessionController(req: AuthRequest, res: Response) {
   const parseResult = createAdmissionSessionSchema.safeParse(req.body);
-
   if (!parseResult.success) {
-    throw AppError("Validation failed", httpStatus.BAD_REQUEST);
+    throw AppError(
+      "Validation failed",
+      httpStatus.BAD_REQUEST
+    );
   }
-
   try {
-    const academic_year = parseResult.data.academic_year;
-
-    if (!academic_year || typeof academic_year !== "string") {
-      res.status(httpStatus.BAD_REQUEST).json({
-        success: false,
-        message: "Inconsistent Year Passed",
-      });
-      return;
-    }
-
     const session = await createAdmissionSessionService(parseResult.data);
-
-    const result = await insertRoomStructure(academic_year);
-
-    if (result?.status === httpStatus.BAD_REQUEST) {
-      res.status(httpStatus.BAD_REQUEST).json({
-        success: false,
-        message: result.message,
-        data: session,
-      });
-      return;
-    }
-
     res.status(httpStatus.OK).json({
       success: true,
+      data: session,
       message: "Admission session created successfully",
-      data: {
-        session,
-        roomAllocation: {
-          academicYear: result?.academicYear,
-          count: result?.count,
-        },
-      },
     });
-
-  } catch (error) {
+  } catch (err) {
     throw AppError(
       "Failed to create admission session",
       httpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  try
+  {
+    const academic_year=parseResult.data.academic_year;
+
+    if(!academic_year || typeof academic_year != 'string')
+    { 
+      res.status(httpStatus.BAD_REQUEST).json(
+        {
+          message:"Inconsistent Year Passed"
+        }
+      )
+    }
+
+    const result=await insertRoomStructure(academic_year);
+
+    if(result?.status === httpStatus.BAD_REQUEST)
+    {
+      res.status(result?.status).json(
+        {
+          message:result.message
+        }
+      )
+    }
+
+    res.status(httpStatus.OK).json(
+      {
+        message:`Rooms for the academic Year ${result?.academicYear} with no of Rooms: ${result?.count}`,
+        success:true,
+        data:result?.count
+      }
+    )
+  }catch(error)
+  {
+    throw AppError("Failed to allocate Rooms:",httpStatus.INTERNAL_SERVER_ERROR)
   }
 }
 

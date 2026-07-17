@@ -19,10 +19,7 @@ import {
   getVacatingFormsForManagerController
 } from '../controllers/vacatingHostelController';
 import {getDeclarationForOthersController} from '../controllers/declarationController';
-import { approveStudentDetailsByManagerController, fetchStudentDetails, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
-import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
-import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
-import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
+import { approveStudentDetailsByManagerController, fetchStudentDetailsForManagerVerificationController, getStudentDetailsUsingRollNoController } from '../controllers/detailsController';
 
 const managerRouter = Router();
 
@@ -82,14 +79,6 @@ managerRouter.get(
   errorWrapper(fetchStudentDetailsForManagerVerificationController)
 );
 
-//Student details  route
-managerRouter.get(
-  "/getdetails",
-  authenticateUser,
-  hasRole(['manager']),
-  errorWrapper(fetchStudentDetails)
-);
-
 managerRouter.get(
   "/details/:rollNo",
   authenticateUser,
@@ -109,28 +98,6 @@ managerRouter.get("/declaration",
   authenticateUser,
   hasRole(['manager']),
   errorWrapper(getDeclarationForOthersController));
-
-managerRouter.post(
-  "/attendance/report",
-  authenticateUser,
-  hasRole(["manager"]),
-  errorWrapper(getManagerAttendanceReportController)
-);
-
-//get room details
-managerRouter.get(
-  "/rooms/:academicYear",
-  authenticateUser,
-  hasRole(["manager"]),
-  errorWrapper(fetchRoomDetailsByAcademicYearController)
-);
-//get Academic Sessions
-managerRouter.get(
-  "/admissions/session",
-  authenticateUser,
-  hasRole(["manager"]),
-  errorWrapper(getAdmissionSessionsController)
-);
-
 export default managerRouter;
+
 

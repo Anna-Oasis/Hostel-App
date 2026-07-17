@@ -10,7 +10,6 @@ import {
 } from "../services/attendanceService";
 import { AuthRequest } from "../types/roles";
 import { getRCById, getRCByUserId } from "../services/rcServices";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export async function createAttendanceByRcController(req: AuthRequest, res: Response) {
 
@@ -76,22 +75,20 @@ export async function getAttendanceByRcController(req: AuthRequest, res: Respons
 }
 
 export async function getAllAttendanceController(req: AuthRequest, res: Response) {
-  if (!req.User?.id){
-    throw AppError("User not authenticated", httpStatus.UNAUTHORIZED);
-  }
   const { date } = req.query;
   let attendanceRecords;
   let message;
-  const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+
   if (date) {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(date as string)) {
       throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
     }
-    attendanceRecords = await fetchAllAttendanceByDate(date as string, block);
+
+    attendanceRecords = await fetchAllAttendanceByDate(date as string);
     message = `Attendance records for ${date} retrieved successfully`;
   } else {
-    attendanceRecords = await fetchAllAttendance(block);
+    attendanceRecords = await fetchAllAttendance();
     message = "All attendance records retrieved successfully";
   }
   const errorMessage = date 

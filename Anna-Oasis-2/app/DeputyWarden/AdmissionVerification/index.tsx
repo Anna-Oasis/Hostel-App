@@ -1,7 +1,7 @@
 import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { getAllDWAdmissions, getApprovedDWAdmissions, handleUpdateAdmission } from "@/utils/deputyWarden/dwAdmissionApi";
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import { getAllDWAdmissions, handleUpdateAdmission } from "@/utils/deputyWarden/dwAdmissionApi";
+import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import { Inbox } from "lucide-react-native";
 import DeclineComment from "@/components/modals/DeclineComment";
@@ -11,14 +11,13 @@ import { useRouter } from "expo-router";
 
 export default function AdmissionVerificationPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
-  const [approvedAdmissions, setApprovedAdmissions] = useState<any[]>([]);
   const [declineModal, setDeclineModal] = useState<{
     open: boolean;
     admissionId?: string;
   }>({
     open: false,
   });
-  const [activeTab, setActiveTab] = useState<"room" | "final" | "approved">("room");
+  const [activeTab, setActiveTab] = useState<"room" | "final">("room");
   const router = useRouter();
 
   const fetchAdmissions = async () => {
@@ -31,22 +30,9 @@ export default function AdmissionVerificationPage() {
     }
   };
 
-  const fetchApprovedAdmissions = async () => {
-    try {
-      const data = await getApprovedDWAdmissions();
-      setApprovedAdmissions(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setApprovedAdmissions([]);
-    }
-  };
-
   useEffect(() => {
-    if (activeTab === "approved") {
-      fetchApprovedAdmissions();
-    } else {
-      fetchAdmissions();
-    }
-  }, [activeTab]);
+    fetchAdmissions();
+  }, []);
 
   const handleApprove = async (admissionId: string) => {
     await handleUpdateAdmission(admissionId, {
@@ -85,7 +71,6 @@ export default function AdmissionVerificationPage() {
         tabs={[
           { label: "Room Allocation", value: "room" },
           { label: "Final Approval", value: "final" },
-          { label: "Approved", value: "approved" },
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -116,40 +101,22 @@ export default function AdmissionVerificationPage() {
               />
             ))
           )
-        ) : activeTab === "final" ? (
-          finalApprovalAdmissions.length === 0 ? (
-            <EmptyPage
-              title="No pending admissions"
-              description=""
-              icon={Inbox}
-            />
-          ) : (
-            finalApprovalAdmissions.map((item: any, idx: number) => (
-              <ApprovalCard
-                key={item.admission.id || idx}
-                title={item.admission.roll_number}
-                subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
-                badge={getAdmissionBadgeStatus(item.admission.status)}
-                data={{  ...item.student, ...item.admission }}
-                onApprove={() => handleApprove(String(item.admission.id))}
-                onDecline={() => handleDecline(String(item.admission.id))}
-              />
-            ))
-          )
-        ) : approvedAdmissions.length === 0 ? (
+        ) : finalApprovalAdmissions.length === 0 ? (
           <EmptyPage
-            title="No approved admissions"
-            description="There are currently no admissions you have approved."
+            title="No pending admissions"
+            description=""
             icon={Inbox}
           />
         ) : (
-          approvedAdmissions.map((item: any, idx: number) => (
+          finalApprovalAdmissions.map((item: any, idx: number) => (
             <ApprovalCard
               key={item.admission.id || idx}
               title={item.admission.roll_number}
               subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
-              badge={badgeStatus.Approved}
-              data={{ ...(item.student || {}), ...item.admission }}
+              badge={getAdmissionBadgeStatus(item.admission.status)}
+              data={{  ...item.student, ...item.admission }}
+              onApprove={() => handleApprove(String(item.admission.id))}
+              onDecline={() => handleDecline(String(item.admission.id))}
             />
           ))
         )}

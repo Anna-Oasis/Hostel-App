@@ -2,19 +2,16 @@ import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import {
   getAllManagerAdmissions,
-  getApprovedManagerAdmissions,
   managerApprove,
   managerDecline,
 } from "@/utils/manager/managerAdmissionApi";
-import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
+import ApprovalCard from "@/components/ApprovalCard";
 import { getAdmissionBadgeStatus } from "@/utils/getBadgeStatus";
 import useLoadingStore from "@/stores/loadingStore";
 import EmptyPage from "@/components/EmptyPage";
 import DeclineComment from "@/components/modals/DeclineComment";
-import TabSwitch from "@/components/TabSwitch";
 
 export default function PaymentVerificationsPage() {
-  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [admissions, setAdmissions] = useState<any[]>([]);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [selectedAdmissionId, setSelectedAdmissionId] = useState<string | null>(
@@ -22,11 +19,9 @@ export default function PaymentVerificationsPage() {
   );
   const setLoading = useLoadingStore((state) => state.setLoading);
 
-  const fetchAdmissions = async (tab: "pending" | "approved" = activeTab) => {
+  const fetchAdmissions = async () => {
     try {
-      const data = tab === "approved"
-        ? await getApprovedManagerAdmissions()
-        : await getAllManagerAdmissions();
+      const data = await getAllManagerAdmissions();
       setAdmissions(Array.isArray(data) ? data : []);
     } catch (err) {
       console.log("Error fetching manager admissions:", err);
@@ -34,13 +29,13 @@ export default function PaymentVerificationsPage() {
   };
 
   useEffect(() => {
-    fetchAdmissions(activeTab);
-  }, [activeTab]);
+    fetchAdmissions();
+  }, []);
 
   const handleApprove = async (admissionId: string) => {
     setLoading(true);
     await managerApprove(admissionId);
-    fetchAdmissions(activeTab);
+    fetchAdmissions();
     setLoading(false);
   };
 
@@ -55,32 +50,16 @@ export default function PaymentVerificationsPage() {
     setShowDeclineModal(false);
     setSelectedAdmissionId(null);
     setLoading(false);
-    fetchAdmissions(activeTab);
+    fetchAdmissions();
   };
 
   return (
     <View className="flex-1">
-      <TabSwitch
-        tabs={[
-          { label: "Pending", value: "pending" },
-          { label: "Approved", value: "approved" },
-        ]}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {admissions.length === 0 ? (
           <EmptyPage
-            title={
-              activeTab === "approved"
-                ? "No approved verifications"
-                : "No pending verifications"
-            }
-            description={
-              activeTab === "approved"
-                ? "There are currently no admissions you have approved."
-                : "All admissions have been reviewed."
-            }
+            title="No pending verifications"
+            description="All admissions have been reviewed."
           />
         ) : (
           admissions.map((item) => (
@@ -88,22 +67,10 @@ export default function PaymentVerificationsPage() {
               key={item.admission.id}
               title={`${item.admission.roll_number}`}
               subTitle={`Block: ${item.admission.hostelBlock}, Year: ${item.admission.academicYear}`}
-              badge={
-                activeTab === "approved"
-                  ? badgeStatus.Approved
-                  : getAdmissionBadgeStatus(item.admission.status)
-              }
-              data={{ ...item.admission, ...(item.student || {}) }}
-              onApprove={
-                activeTab === "pending"
-                  ? () => handleApprove(item.admission.id)
-                  : undefined
-              }
-              onDecline={
-                activeTab === "pending"
-                  ? () => handleDecline(item.admission.id)
-                  : undefined
-              }
+              badge={getAdmissionBadgeStatus(item.admission.status)}
+              data={{ ...item.admission, ...item.student }}
+              onApprove={() => handleApprove(item.admission.id)}
+              onDecline={() => handleDecline(item.admission.id)}
             />
           ))
         )}

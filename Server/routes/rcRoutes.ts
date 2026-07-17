@@ -196,6 +196,5 @@ rcRouter.get(
   errorWrapper(getAdmissionSessionsController)
 );
 
-
 export default rcRouter;
 

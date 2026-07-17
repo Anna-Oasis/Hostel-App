@@ -1,17 +1,16 @@
-import { fetchRoomDetailsByBlockAndAcademicYear, fetchRoomDetailsByAcademicYear, fetchRoomDetailsByAcademicYearByBlock } from "../services/roomServices";
+import { fetchRoomDetailsByBlockAndAcademicYear, fetchRoomDetailsByAcademicYear } from "../services/roomServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
 import { getRCByUserId } from "../services/rcServices";
 import { hostelBlock } from "../constants/enum";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  const { academicYear } = req.params as { academicYear: string };
+  const { academicYear } = req.params;
 
   if (!academicYear || !/^\d{4}-\d{4}$/.test(academicYear)) {
     throw AppError("Invalid academic year format. Use YYYY-YYYY.", httpStatus.BAD_REQUEST);
@@ -71,22 +70,13 @@ export const fetchRoomDetailsByAcademicYearController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User) {
-    throw AppError("Unauthorized Access");
-  }
-  const { academicYear } = req.params as { academicYear: string };
+  const { academicYear } = req.params;
 
   if (!academicYear || !/^\d{4}-\d{4}$/.test(academicYear)) {
     throw AppError("Invalid academic year format. Use YYYY-YYYY.", httpStatus.BAD_REQUEST);
   }
-  let roomDetails;
-  if(req.User.role == "deputyWarden"){
-    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-    roomDetails = await fetchRoomDetailsByAcademicYearByBlock(academicYear, block);
-  }
-  else{
-    roomDetails = await fetchRoomDetailsByAcademicYear(academicYear);
-  }
+
+  const roomDetails = await fetchRoomDetailsByAcademicYear(academicYear);
 
   if (!roomDetails?.length) {
     throw AppError("No room data found", httpStatus.NOT_FOUND);

@@ -94,6 +94,35 @@ export const handleSignup = async (
   }
 };
 
+export const redirectByRole = (role: string | null) => {
+  switch (role) {
+    case "student":
+      router.replace("/User/Student");
+      break;
+    case "warden":
+      router.replace("/ExecutiveWarden");
+      break;
+    case "rc":
+      router.replace("/RC");
+      break;
+    case "deputyWarden":
+      router.replace("/DeputyWarden");
+      break;
+    case "executiveWarden":
+      router.replace("/ExecutiveWarden");
+      break;
+    case "manager":
+      router.replace("/Manager");
+      break;
+    default:
+      console.error("Unknown user role:", role);
+      router.replace("/Login");
+      break;
+  }
+};
+
+
+
 export const handleForgotPassword = async (
   email: string,
   onSuccess: () => void
@@ -137,31 +166,3 @@ export const handleResetPassword = async (
     Alert.alert("Reset Failed", error.response?.data?.message || error.message);
   }
 };
-
-export const redirectByRole = (role: string | null) => {
-  switch (role) {
-    case "student":
-      router.replace("/User/Student");
-      break;
-    case "warden":
-      router.replace("/ExecutiveWarden");
-      break;
-    case "rc":
-      router.replace("/RC");
-      break;
-    case "deputyWarden":
-      router.replace("/DeputyWarden");
-      break;
-    case "executiveWarden":
-      router.replace("/ExecutiveWarden");
-      break;
-    case "manager":
-      router.replace("/Manager");
-      break;
-    default:
-      console.error("Unknown user role:", role);
-      router.replace("/Login");
-      break;
-  }
-};
-

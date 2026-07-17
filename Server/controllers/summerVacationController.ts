@@ -13,7 +13,6 @@ import {
 import { AuthRequest } from "../types/roles";
 import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
 import { getRCById } from "../services/rcServices";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export const createSummerVacationFromController = async (
   req: AuthRequest,
@@ -162,8 +161,8 @@ export const getSummerVacationFormsForDeputyWardenController = async (
   {
     throw AppError("User information is missing from request",httpStatus.UNAUTHORIZED);
   }
-  const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-  const result = await getSummerVacationFormsForDeputyWarden(block);
+
+  const result = await getSummerVacationFormsForDeputyWarden();
 
   res.status(httpStatus.OK).json({
     success: true,

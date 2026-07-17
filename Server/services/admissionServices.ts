@@ -123,7 +123,6 @@ export const getRoomByRollNo = async (roll_number: string) => {
 //     .returning();
 // };
 
-//Get Admission waiting for Approval
 export async function getAdmissionsByStatus(status: string) {
   const result = await db
     .select()
@@ -133,21 +132,6 @@ export async function getAdmissionsByStatus(status: string) {
     .orderBy(admissionModel.submission_Date);
   return result;
 }
-
-//Get Admission waiting for Approval based on block (for deputy wardent)
-export async function getAdmissionsByStatusByBlock(status: string, block : string) {
-  const result = await db
-    .select()
-    .from(admissionModel)
-    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
-    .where(and(
-      eq(admissionModel.status, status),
-      eq(admissionModel.hostelBlock, block)
-    ))
-    .orderBy(admissionModel.submission_Date);
-  return result;
-}
-
 
 export async function createAdmissionApproval(approvalData: {
   admission_id: number;
@@ -225,18 +209,5 @@ export const getAdmissionsApprovedByUser = async (userID: number) => {
     .from(admissionApprovalsModel)
     .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
     .where(eq(admissionApprovalsModel.user_id, userID))
-    .orderBy(admissionApprovalsModel.timestamp);
-};
-
-
-export const getAdmissionsApprovedByUserByBlock = async (userID: number, block : string) => {
-  return await db
-    .select()
-    .from(admissionApprovalsModel)
-    .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
-    .where(and(
-      eq(admissionApprovalsModel.user_id, userID),
-      eq(admissionModel.hostelBlock, block)
-    ))
     .orderBy(admissionApprovalsModel.timestamp);
 };

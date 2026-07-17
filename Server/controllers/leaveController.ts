@@ -7,7 +7,6 @@ import {  getRCByUserId } from "../services/rcServices";
 import { getRollNoFromUserId } from "../services/helper";
 import {
   getLeaveFormsToBeApprovedByRcByFloor,
-  getLeaveFormsApprovedByRcByFloor,
   getLeaveFormByLeaveFormId,
   updateLeaveForm,
   createLeaveFormApproval,
@@ -16,7 +15,6 @@ import {
   getLeaveFormsByRollNo,
 } from "../services/leaveServices";
 import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.schema";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export const createLeaveFormController = async (
   req: AuthRequest,
@@ -85,7 +83,7 @@ export const getAllLeaveFormsByRollNoController = async (
     );
   }
 
-  const rollNo = req.params.roll_number as string;
+  const rollNo = req.params.roll_number;
   //const rollNo = await getRollNoFromUserId(Number(req.User.id));
 
   if (!rollNo) {
@@ -116,7 +114,6 @@ export const getLeaveFormWaitingForApprovalController = async (
   }
 
   const userRole = req.User.role;
-  const status = (req.query.status as string) || "pending";
   let result: any;
 
   if (userRole === "rc") {
@@ -131,12 +128,12 @@ export const getLeaveFormWaitingForApprovalController = async (
       throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    result = status === "approved"
-      ? await getLeaveFormsApprovedByRcByFloor(rc[0].floor, rc[0].hostel)
-      : await getLeaveFormsToBeApprovedByRcByFloor(rc[0].floor, rc[0].hostel);
+    result = await getLeaveFormsToBeApprovedByRcByFloor(
+      rc[0].floor,
+      rc[0].hostel
+    );
   } else if (userRole === "deputyWarden") {
-    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-    result = await getLeaveFormsToBeApprovedByDeputyWarden(block);
+    result = await getLeaveFormsToBeApprovedByDeputyWarden();
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
@@ -145,7 +142,7 @@ export const getLeaveFormWaitingForApprovalController = async (
     success: true,
     data: result || [],
     count:result ? result.length : 0,
-    message:result && result.length > 0
+    message:result && result.length > 0 
     ? "All available leave forms are fetched Successfully"
     :  `No Leave Forms waiting for ${userRole} approval`,
   });

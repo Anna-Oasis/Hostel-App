@@ -94,12 +94,3 @@ export const updateRCDetailsService = async (data: RCDetailsUpdate) => {
 export const getAllRCDetailsService = async () => {
   return await db.select().from(rcDetailsModel);
 };
-
-export const getAllRCDetailsServiceByBlock = async (block : string) => {
-  return await db.
-              select()
-              .from(rcDetailsModel)
-              .innerJoin(rcModel, eq(rcDetailsModel.userId, rcModel.userId))
-              .where(eq(rcModel.hostel, block))
-              
-};

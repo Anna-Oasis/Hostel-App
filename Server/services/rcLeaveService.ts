@@ -68,7 +68,7 @@ export async function updateRCLeaveStatus(leaveId : number, status : string) {
     return updatedLeave;
 }
 
-export const getRCLeaveToBeApprovedByDeputyWarden = async (block : string) => {
+export const getRCLeaveToBeApprovedByDeputyWarden = async () => {
   const leave_form = await db
     .select({
       leave: rcLeaveModel,
@@ -81,28 +81,7 @@ export const getRCLeaveToBeApprovedByDeputyWarden = async (block : string) => {
     )
     .where(
       and(
-        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED),
-        eq(rcModel.hostel, block)
-      ))
-    .orderBy(rcLeaveModel.created_at);
-  return leave_form;
-};
-
-export const getRCLeaveApprovedByDeputyWarden = async (block : string) => {
-  const leave_form = await db
-    .select({
-      leave: rcLeaveModel,
-      rc: rcModel,
-    })
-    .from(rcLeaveModel)
-    .innerJoin(
-      rcModel,
-      eq(rcLeaveModel.rc_id, rcModel.id)
-    )
-    .where(
-      and(
-        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.DEPUTYWARDEN),
-        eq(rcModel.hostel, block)
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED)
       ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;

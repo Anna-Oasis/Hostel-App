@@ -12,7 +12,6 @@ import { getRCByUserId } from "../services/rcServices";
 import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRollNoFromUserId } from "../services/helper";
 import { grievanceApprovalStatus} from "../constants/enum";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
@@ -230,15 +229,8 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
 }
 
 export const getGrievancesForDeputyWardenController = async (req:AuthRequest,res:Response)=>
-{   
-    if (!req.User) {
-      throw AppError(
-        "User information is missing from request",
-        httpStatus.UNAUTHORIZED
-      );
-    }
-    const block = await getDeputyWardenBlockByUserId(Number(req.User?.id))
-    const result = await getGrievancesForDeputyWarden(block);
+{
+    const result = await getGrievancesForDeputyWarden();
 
     res.status(httpStatus.OK).json({
       success: true,

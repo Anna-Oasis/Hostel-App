@@ -5,7 +5,6 @@ import {
   deleteRC,
   updateRC,
   getAllRCDetailsService,
-  getAllRCDetailsServiceByBlock,
 } from "../services/rcServices";
 import httpStatus from "http-status";
 import AppError from "../utils/AppError";
@@ -16,7 +15,6 @@ import { createUser, deleteUser, getRCidfromUserId, getRCsbyHostel } from "../se
 import { getRCDetailsByUserIdService, createRCDetailsService, updateRCDetailsService } from "../services/rcServices";
 import { rcDetailsSchema } from "../validation/rcDetails.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
 
 export async function createRCController(req: AuthRequest, res: Response): Promise<void> {
   const validated = rcCreateSchema.parse(req.body);
@@ -48,19 +46,14 @@ export async function createRCController(req: AuthRequest, res: Response): Promi
 }
 
 export async function getRCsController(req: AuthRequest, res: Response): Promise<void> {
-  if(!req.User || !req.User?.role){
-    throw AppError("Unauthorized access")
-  }
   const rcs = await getAllRCs();
-  const block = await getDeputyWardenBlockByUserId(Number(req.User.id));
 
-  const filteredRcs = rcs.filter((rc) => rc.hostel === block)
 
   res.status(httpStatus.OK).json({
     success: true,
-    data: filteredRcs || [],
-    count:filteredRcs?filteredRcs.length:0,
-    message:filteredRcs && filteredRcs.length>0 
+    data: rcs || [],
+    count:rcs?rcs.length:0,
+    message:rcs && rcs.length>0 
     ?"Fetched all RCs successfully"
     : "No RCs found",
   });
@@ -276,17 +269,7 @@ export const getAllRCDetailsController = async (
   req: AuthRequest,
   res: Response
 ): Promise<void> => {
-  if (!req.User?.id) {
-    throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
-  }
-  let rcList;
-  if(req.User.role === "deputyWarden"){
-    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-    rcList = await getAllRCDetailsServiceByBlock(block)
-  }
-  else{
-    rcList = await getAllRCDetailsService();
-  }
+  const rcList = await getAllRCDetailsService();
 
   if (!rcList || rcList.length === 0) {
     throw AppError("No RC Details found", httpStatus.NOT_FOUND);

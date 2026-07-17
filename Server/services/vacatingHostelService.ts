@@ -191,15 +191,11 @@ export const getVacatingFormsWaitingForManager = async () => {
   return cautionDepositData;
 };
 
-export const getVacatingFormsWaitingForDeputyWarden = async (block : string) => {
+export const getVacatingFormsWaitingForDeputyWarden = async () => {
   return await db
     .select()
     .from(vacatingHostelModel)
-    .innerJoin(studentModel, eq(studentModel.rollNo, vacatingHostelModel.roll_number))
-    .where(and(
-      eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER),
-      eq(studentModel.hostelBlock, block)
-    ));
+    .where(eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER));
 };
 
 /*
