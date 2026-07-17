@@ -4,6 +4,7 @@ import { StyleSheet, Dimensions } from "react-native";
 const hostelOptions = [
   { label: "Flora", value: "Flora" },
   { label: "Lavender", value: "Lavender" },
+  { label: "Tulip", value: "Tulip" },
 ];
 
 const initialValues = {

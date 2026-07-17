@@ -22,6 +22,7 @@ const initialValues = {
 const hostelBlocks = [
   { label: "Flora (Boys)", value: "Flora" },
   { label: "Lavender (Girls)", value: "Lavender" },
+  { label : "Tulip", value : "Tulip"}
 ];
 
 const hostelBlockValues = hostelBlocks.map((block) => block.value);

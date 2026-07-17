@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import {
+  fetchApprovedDeputyWardenLeaveForms,
   fetchDeputyWardenLeaveForms,
   updateDeputyWardenLeaveFormStatus,
 } from "@/utils/deputyWarden/dwStudentLeaveFormAPI";
@@ -10,15 +11,19 @@ import ModalCallable from "@/components/modals/ModalCallable";
 import DeclineComment from "@/components/modals/DeclineComment";
 import EmptyPage from "@/components/EmptyPage";
 import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function LeaveFormVerificationPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
+  const [approvedLeaveForms, setApprovedLeaveForms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [declineModal, setDeclineModal] = useState<{ open: boolean; leaveId?: number }>({
     open: false,
   });
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending")
+
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -26,14 +31,30 @@ export default function LeaveFormVerificationPage() {
       const data = await fetchDeputyWardenLeaveForms();
       setLeaveForms(data);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to fetch leave forms");
+      window.alert(["Error", err.message || "Failed to fetch leave forms"].filter(Boolean).join("\n"));
       setLeaveForms([]);
+    }
+    setLoading(false);
+  };
+
+  const getApprovedLeaveForms = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchApprovedDeputyWardenLeaveForms();
+      setApprovedLeaveForms(data);
+    } catch (err: any) {
+      window.alert(["Error", err.message || "Failed to fetch leave forms"].filter(Boolean).join("\n"));
+      setApprovedLeaveForms([]);
     }
     setLoading(false);
   };
 
   useEffect(() => {
     getLeaveForms();
+  }, []);
+
+  useEffect(() => {
+    getApprovedLeaveForms();
   }, []);
 
   const handleDecision = async (leaveFormId: number, approve: boolean, comment?: string) => {
@@ -43,7 +64,7 @@ export default function LeaveFormVerificationPage() {
       setModalVisible(true);
       getLeaveForms();
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to update leave form status");
+      window.alert(["Error", err.message || "Failed to update leave form status"].filter(Boolean).join("\n"));
     }
   };
 
@@ -56,7 +77,7 @@ export default function LeaveFormVerificationPage() {
   const handleDeclineSubmit = (comment: string) => {
     if (!declineModal.leaveId) return;
     if (!comment.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection.");
+      window.alert("Error\nPlease provide a reason for rejection.");
       return;
     }
     handleDecision(
@@ -86,48 +107,102 @@ export default function LeaveFormVerificationPage() {
         submitLabel="Submit"
         cancelLabel="Cancel"
       />
-      {loading ? (
-        <View className="flex-1 items-center justify-center">
-          <Spinner size="large" color="#0000ff" />
-        </View>
-      ) : leaveForms.length === 0 ? (
-        <EmptyPage
-          title="No leave forms pending approval."
-          description="There are currently no leave forms to review."
-        />
-      ) : (
-        <ScrollView>
-          {leaveForms.map((item) => {
-            const leave = item.leave_form;
-            const student = item.student;
-            return (
-              <ApprovalCard
-                key={leave.id}
-                title={`${student.name} (${leave.roll_number})`}
-                subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={getLeaveBadgeStatus(leave.status)}
-                data={{
-                  "Student Name": student.name,
-                  "Roll Number": leave.roll_number,
-                  "Course": student.course,
-                  "Branch": student.branch,
-                  "Semester": student.semester,
-                  "Room Number": student.roomNumber,
-                  "Leave Type": leave.leave_type,
-                  "From": leave.from_date,
-                  "To": leave.to_date,
-                  "Reason": leave.reason,
-                  "Address of Stay": leave.address_of_stay,
-                  "Emergency Contact": leave.mobile,
-                  "Email": leave.email,
-                  "Status": leave.status === "2" ? "Pending" : leave.status,
-                }}
-                onApprove={() => handleDecision(leave.id, true)}
-                onDecline={() => handleDecline(leave.id)}
-              />
-            );
-          })}
-        </ScrollView>
+      <TabSwitch
+        tabs={[
+          {label : "Pending", value : "pending"},
+          {label : "Approved", value : "approved"}
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      {activeTab === "pending" && (
+        loading ? (
+          <View className="flex-1 items-center justify-center">
+            <Spinner size="large" color="#0000ff" />
+          </View>
+        ) : leaveForms.length === 0 ? (
+          <EmptyPage
+            title="No leave forms pending approval."
+            description="There are currently no leave forms to review."
+          />
+        ) : (
+          <ScrollView>
+            {leaveForms.map((item) => {
+              const leave = item.leave_form;
+              const student = item.student;
+              return (
+                <ApprovalCard
+                  key={leave.id}
+                  title={`${student.name} (${leave.roll_number})`}
+                  subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
+                  badge={getLeaveBadgeStatus(leave.status)}
+                  data={{
+                    "Student Name": student.name,
+                    "Roll Number": leave.roll_number,
+                    "Course": student.course,
+                    "Branch": student.branch,
+                    "Semester": student.semester,
+                    "Room Number": student.roomNumber,
+                    "Leave Type": leave.leave_type,
+                    "From": leave.from_date,
+                    "To": leave.to_date,
+                    "Reason": leave.reason,
+                    "Address of Stay": leave.address_of_stay,
+                    "Emergency Contact": leave.mobile,
+                    "Email": leave.email,
+                    "Status": leave.status === "2" ? "Pending" : leave.status,
+                  }}
+                  onApprove={() => handleDecision(leave.id, true)}
+                  onDecline={() => handleDecline(leave.id)}
+                />
+              );
+            })}
+          </ScrollView>
+        )
+      )}
+
+      {activeTab === "approved" && (
+        loading ? (
+          <View className="flex-1 items-center justify-center">
+            <Spinner size="large" color="#0000ff" />
+          </View>
+        ) : approvedLeaveForms.length === 0 ? (
+          <EmptyPage
+            title="No leave forms approved."
+            description="There are currently no approved leave forms."
+          />
+        ) : (
+          <ScrollView>
+            {approvedLeaveForms.map((item) => {
+              const leave = item.leave_form;
+              const student = item.student;
+              return (
+                <ApprovalCard
+                  key={leave.id}
+                  title={`${student.name} (${leave.roll_number})`}
+                  subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
+                  badge={getLeaveBadgeStatus(leave.status)}
+                  data={{
+                    "Student Name": student.name,
+                    "Roll Number": leave.roll_number,
+                    "Course": student.course,
+                    "Branch": student.branch,
+                    "Semester": student.semester,
+                    "Room Number": student.roomNumber,
+                    "Leave Type": leave.leave_type,
+                    "From": leave.from_date,
+                    "To": leave.to_date,
+                    "Reason": leave.reason,
+                    "Address of Stay": leave.address_of_stay,
+                    "Emergency Contact": leave.mobile,
+                    "Email": leave.email,
+                    "Status": leave.status === "2" ? "Pending" : leave.status,
+                  }}
+                />
+              );
+            })}
+          </ScrollView>
+        )
       )}
     </View>
   );

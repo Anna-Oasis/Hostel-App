@@ -16,6 +16,20 @@ export async function fetchDeputyWardenLeaveForms() {
   }
 }
 
+export async function fetchApprovedDeputyWardenLeaveForms() {
+  try {
+    const token = await getToken();
+    if (!token) throw new Error("You are not logged in.");
+    const res = await api.get("/api/deputy_warden/approved_student_leave", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.data?.success) throw new Error(res.data?.message || "Failed to fetch leave forms");
+    return res.data.data;
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to fetch leave forms");
+  }
+}
+
 // Approve or reject a leave form
 export async function updateDeputyWardenLeaveFormStatus(leaveFormId: number, approve: boolean, comment?: string) {
   try {
