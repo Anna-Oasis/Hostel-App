@@ -8,12 +8,10 @@ import {
   createVacatingHostelForm,
   getVacatingHostelFormsOfStudent,
   getVacatingFormsWaitingForDeputyWarden,
-  getVacatingFormsApprovedByDeputyWarden,
   getVacatingFormsWaitingForManager,
 } from "../services/vacatingHostelService";
 import {
   getPendingRCApprovals,
-  getApprovedRCApprovals,
   approveOrDeclineByRC,
 } from "../services/vacatingHostelService";
 import { AppError } from "../utils/AppError";
@@ -94,21 +92,16 @@ export async function getVacatingFormsForRCController(req: AuthRequest, res: Res
   }
 
   const rcId = parseInt(req.User.id);
-  const status = (req.query.status as string) || "pending";
-  const forms = status === "approved"
-    ? await getApprovedRCApprovals(rcId)
-    : await getPendingRCApprovals(rcId);
+  const forms = await getPendingRCApprovals(rcId);
 
-
+  
   res.status(httpStatus.OK).json({
       success: true,
       data: forms.length > 0?forms:[],
-      message: forms.length > 0
-        ? `${status === "approved" ? "Approved" : "Pending"} vacating forms fetched successfully for RC`
-        : `No ${status === "approved" ? "approved" : "pending"} forms found for RC`,
+      message: forms.length > 0?"Pending vacating forms fetched successfully for RC":"No pending forms found for RC",
 
   });
-
+   
 }
 
 export async function approveVacatingFormByRCController(req: AuthRequest, res: Response) {
@@ -158,18 +151,13 @@ export async function getVacatingFormsForDeputyWardenController(req: AuthRequest
     throw AppError("User ID is required",httpStatus.UNAUTHORIZED)
   }
   const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-  const status = (req.query.status as string) || "pending";
-  const forms = status === "approved"
-    ? await getVacatingFormsApprovedByDeputyWarden(block)
-    : await getVacatingFormsWaitingForDeputyWarden(block);
+  const forms = await getVacatingFormsWaitingForDeputyWarden(block);
 
   res.status(httpStatus.OK).json({
     success: true,
     data: forms.length > 0?forms:[],
     count: forms?forms.length:0,
-    message: forms.length>0
-      ? `Vacating forms ${status === "approved" ? "approved by" : "waiting for"} deputy warden approval fetched successfully`
-      : `No vacating forms ${status === "approved" ? "approved by" : "waiting for"} deputy warden approval`,
+    message: forms.length>0 ?"Vacating forms waiting for deputy warden approval fetched successfully":"No vacating forms waiting for deputy warden approval",
   })
 
 }
@@ -180,7 +168,7 @@ export async function approveVacatingFormByDeputyWardenController(req: AuthReque
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params as { vacating_hostel_id: string };
+  const { vacating_hostel_id } = req.params as {vacating_hostel_id : string};
   const { approve, comment } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {
@@ -212,7 +200,7 @@ export async function approveVacatingFormByManagerController(req: AuthRequest, r
     throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
   }
 
-  const { vacating_hostel_id } = req.params as { vacating_hostel_id: string };
+  const { vacating_hostel_id } = req.params as {vacating_hostel_id : string};
   const { approve, comment, deductions, refund_amount, deduction_details } = req.body;
 
   if (!vacating_hostel_id || approve === undefined) {

@@ -47,7 +47,7 @@ export async function getStudentDetailsUsingRollNoController(
   req: AuthRequest,
   res: Response
 ) {
-  const { rollNo } = req.params as { rollNo: string };
+  const { rollNo } = req.params as {rollNo : string};
 
   if (!rollNo) {
     throw AppError("Roll number is required", httpStatus.BAD_REQUEST);

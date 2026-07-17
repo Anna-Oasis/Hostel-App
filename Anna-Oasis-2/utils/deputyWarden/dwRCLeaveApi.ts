@@ -33,11 +33,10 @@ export interface RCLeave {
 }
 
 
-export async function getRCLeavebyDw(status: "pending" | "approved" = "pending"): Promise<RCLeaveResponse> {
+export async function getRCLeavebyDw(): Promise<RCLeaveResponse> {
     const token = await getToken();
     try {
         const response = await api.get("/api/deputy_warden/rc/leave", {
-            params: { status },
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,

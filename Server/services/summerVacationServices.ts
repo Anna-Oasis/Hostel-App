@@ -44,29 +44,6 @@ export const getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor =
       );
   };
 
-export const getApprovedSummerVacationFormsFilterByBlockAndFloor =
-  async (hostelBlock: string, floors: number[]) => {
-    return await db
-      .select()
-      .from(summerVacationModel)
-      .innerJoin(
-        studentModel,
-        eq(summerVacationModel.roll_number, studentModel.rollNo)
-      )
-      .where(
-        and(
-          eq(studentModel.hostelBlock, hostelBlock),
-          eq(summerVacationModel.status, summerVacationApprovalStatus.RC),
-          floors.length === 0
-            ? undefined
-            : or(
-                isNull(studentModel.floor),
-                inArray(studentModel.floor, floors)
-              )
-        )
-      );
-  };
-
 //put the corresponding summer vacation form by RC
 export const approveSummerVacationFormByRC = async (
   summer_vacation_id: number,
@@ -102,21 +79,6 @@ export const getSummerVacationFormsForDeputyWarden = async (block : string) => {
     )
     .where(and(
       eq(summerVacationModel.status, summerVacationApprovalStatus.RC),
-      eq(studentModel.hostelBlock, block)
-    ));
-};
-
-//get all summer vacation forms already approved by deputy Warden
-export const getApprovedSummerVacationFormsForDeputyWarden = async (block : string) => {
-  return await db
-    .select()
-    .from(summerVacationModel)
-    .innerJoin(
-      studentModel,
-      eq(summerVacationModel.roll_number, studentModel.rollNo)
-    )
-    .where(and(
-      eq(summerVacationModel.status, summerVacationApprovalStatus.DEPUTYWARDEN),
       eq(studentModel.hostelBlock, block)
     ));
 };
