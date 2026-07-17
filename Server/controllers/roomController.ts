@@ -6,6 +6,7 @@ import { Response } from "express";
 import { getRCByUserId } from "../services/rcServices";
 import { hostelBlock } from "../constants/enum";
 import { getDeputyWardenBlockByUserId } from "../services/dwServices";
+import { changeRoom } from "../services/roomUpdateService";
 
 export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,
@@ -100,6 +101,48 @@ export const fetchRoomDetailsByAcademicYearController = async (
   });
 };
 
+export const updateStudentRoom = async (
+  req : AuthRequest,
+  res : Response
+) => {
+	if(!req.User){
+		throw AppError("Unauthorized Access")
+	}
+
+	let hostelBlockValue: string | undefined;
+
+	if (req.User.role !== "rc") {
+    	throw AppError("Unauthorized Access")
+	}
+	// ✅ RC should NOT read from body
+	const rc = await getRCByUserId(Number(req.User.id));
+	if (!rc?.[0]?.hostel) {
+		throw AppError("RC's hostel block info not found", httpStatus.NOT_FOUND);
+	}
+	hostelBlockValue = rc[0].hostel;
+	
+	const fromRoomNo = req.body.fromRoomNo;
+	const toRoomNo = req.body.toRoomNo;
+	const rollNo = req.body.rollNo;
+	const academic_year = req.body.academic_year;
+	
+	const result = await changeRoom(
+		hostelBlockValue,
+		academic_year,
+		fromRoomNo,
+		toRoomNo,
+		rollNo
+	);
+
+	if (!result.success) {
+		throw AppError(result.message, httpStatus.NOT_FOUND);
+	}
+
+	res.status(httpStatus.OK).json({
+		success: true,
+		message: "Room updated successfully!",
+	});
+}
 
 /*export const fetchRoomDetailsByBlockAndAcademicYearController = async (
   req: AuthRequest,

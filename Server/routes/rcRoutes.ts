@@ -26,7 +26,7 @@ import {
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
-import { fetchRoomDetailsByBlockAndAcademicYearController } from "../controllers/roomController";
+import { fetchRoomDetailsByBlockAndAcademicYearController, updateStudentRoom } from "../controllers/roomController";
 import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
@@ -66,6 +66,14 @@ rcRouter.get(
   hasRole(['rc']),
   errorWrapper(fetchAdmissionsApprovedByUser)
 );
+
+//room change routes
+rcRouter.post(
+  "/room-change",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(updateStudentRoom)
+)
 
 // Grievance routes
 rcRouter.get(
