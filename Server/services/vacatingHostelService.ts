@@ -86,6 +86,33 @@ export const getPendingRCApprovals = async (rcUserId: number) => {
     );
 };
 
+export const getApprovedRCApprovals = async (rcUserId: number) => {
+  const [rc] = await db
+    .select()
+    .from(rcModel)
+    .where(eq(rcModel.userId, rcUserId));
+
+  if (!rc || !rc.floor) throw AppError("RC not found", httpStatus.FORBIDDEN);
+
+  return await db
+    .select({
+      vacating: vacatingHostelModel,
+      student: studentModel,
+    })
+    .from(vacatingHostelModel)
+    .innerJoin(
+      studentModel,
+      eq(vacatingHostelModel.roll_number, studentModel.rollNo)
+    )
+    .where(
+      and(
+        eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.RC),
+        eq(studentModel.hostelBlock, rc.hostel),
+        inArray(studentModel.floor, rc.floor)
+      )
+    );
+};
+
 export const approveOrDeclineByRC = async (
   vacating_hostel_id: number,
   rcUserId: number,
@@ -198,6 +225,17 @@ export const getVacatingFormsWaitingForDeputyWarden = async (block : string) => 
     .innerJoin(studentModel, eq(studentModel.rollNo, vacatingHostelModel.roll_number))
     .where(and(
       eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.MANAGER),
+      eq(studentModel.hostelBlock, block)
+    ));
+};
+
+export const getVacatingFormsApprovedByDeputyWarden = async (block : string) => {
+  return await db
+    .select()
+    .from(vacatingHostelModel)
+    .innerJoin(studentModel, eq(studentModel.rollNo, vacatingHostelModel.roll_number))
+    .where(and(
+      eq(vacatingHostelModel.status, vacatingHostelApprovalStatus.DEPUTYWARDEN),
       eq(studentModel.hostelBlock, block)
     ));
 };

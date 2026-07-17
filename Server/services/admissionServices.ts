@@ -224,7 +224,10 @@ export const getAdmissionsApprovedByUser = async (userID: number) => {
     .select()
     .from(admissionApprovalsModel)
     .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
-    .where(eq(admissionApprovalsModel.user_id, userID))
+    .where(and(
+      eq(admissionApprovalsModel.user_id, userID),
+      eq(admissionApprovalsModel.approve, true)
+    ))
     .orderBy(admissionApprovalsModel.timestamp);
 };
 
@@ -236,6 +239,7 @@ export const getAdmissionsApprovedByUserByBlock = async (userID: number, block :
     .innerJoin(admissionModel, eq(admissionModel.id, admissionApprovalsModel.admission_id))
     .where(and(
       eq(admissionApprovalsModel.user_id, userID),
+      eq(admissionApprovalsModel.approve, true),
       eq(admissionModel.hostelBlock, block)
     ))
     .orderBy(admissionApprovalsModel.timestamp);

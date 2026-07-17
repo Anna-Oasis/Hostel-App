@@ -7,8 +7,10 @@ import {
   approveSummerVacationFormByRC,
   approveSummerVacationByDeputyWarden,
   getSummerVacationFormsForDeputyWarden,
+  getApprovedSummerVacationFormsForDeputyWarden,
   getAllSummerVacationForms,
   getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor,
+  getApprovedSummerVacationFormsFilterByBlockAndFloor,
 } from "../services/summerVacationServices";
 import { AuthRequest } from "../types/roles";
 import { getRollNoFromUserId, getRCidfromUserId } from "../services/helper";
@@ -163,7 +165,10 @@ export const getSummerVacationFormsForDeputyWardenController = async (
     throw AppError("User information is missing from request",httpStatus.UNAUTHORIZED);
   }
   const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-  const result = await getSummerVacationFormsForDeputyWarden(block);
+  const status = (req.query.status as string) || "pending";
+  const result = status === "approved"
+    ? await getApprovedSummerVacationFormsForDeputyWarden(block)
+    : await getSummerVacationFormsForDeputyWarden(block);
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -200,11 +205,13 @@ export const getSummerVacationFormsForRCController = async (
   const floors = RC.floor ? RC.floor : [];
   const hostelBlock = RC.hostel;
 
-  const result =
-    await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
-      hostelBlock,
-      floors
-    );
+  const status = (req.query.status as string) || "pending";
+  const result = status === "approved"
+    ? await getApprovedSummerVacationFormsFilterByBlockAndFloor(hostelBlock, floors)
+    : await getAllSummerVacationFormsWithStudentDetailsFilterByBlockAndFloor(
+        hostelBlock,
+        floors
+      );
 
   
     res.status(httpStatus.OK).json({

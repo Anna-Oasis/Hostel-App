@@ -62,6 +62,19 @@ export const getLeaveFormsToBeApprovedByDeputyWarden = async (block : string) =>
   return leave_form;
 };
 
+export const getLeaveFormsApprovedByDeputyWarden = async (block : string) => {
+  const leave_form = await db
+    .select()
+    .from(leaveFormModel)
+    .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
+    .where(and(
+      eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
+      eq(studentModel.hostelBlock, block)
+    ))
+    .orderBy(leaveFormModel.created_at);
+  return leave_form;
+};
+
 export const getLeaveFormByLeaveFormId = async (leave_form_id: number) => {
   const leave_form = await db
     .select()

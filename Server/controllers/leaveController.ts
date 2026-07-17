@@ -12,6 +12,7 @@ import {
   updateLeaveForm,
   createLeaveFormApproval,
   getLeaveFormsToBeApprovedByDeputyWarden,
+  getLeaveFormsApprovedByDeputyWarden,
   createLeaveForm,
   getLeaveFormsByRollNo,
 } from "../services/leaveServices";
@@ -136,7 +137,9 @@ export const getLeaveFormWaitingForApprovalController = async (
       : await getLeaveFormsToBeApprovedByRcByFloor(rc[0].floor, rc[0].hostel);
   } else if (userRole === "deputyWarden") {
     const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
-    result = await getLeaveFormsToBeApprovedByDeputyWarden(block);
+    result = status === "approved"
+      ? await getLeaveFormsApprovedByDeputyWarden(block)
+      : await getLeaveFormsToBeApprovedByDeputyWarden(block);
   } else {
     throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
   }
