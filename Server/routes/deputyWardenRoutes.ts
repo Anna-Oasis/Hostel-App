@@ -20,6 +20,7 @@ import {
   getVacatingFormsForDeputyWardenController,
 } from "../controllers/vacatingHostelController";
 import {
+  getApprovedLeaves,
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController,
 } from "../controllers/leaveController";
@@ -127,6 +128,12 @@ deputyWardenRouter.get(
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(getLeaveFormWaitingForApprovalController)
+);
+deputyWardenRouter.get(
+  "/approved_student_leave",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(getApprovedLeaves)
 );
 deputyWardenRouter.put(
   "/student_leave/:leave_form_id",
