@@ -13,6 +13,8 @@ import {
   getLeaveFormsToBeApprovedByDeputyWarden,
   createLeaveForm,
   getLeaveFormsByRollNo,
+  getApprovedLeavesByRc,
+  getApprovedLeavesByDeputyWarden,
 } from "../services/leaveServices";
 import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.schema";
 import { getDeputyWardenBlockByUserId } from "../services/dwServices";
@@ -150,6 +152,52 @@ export const getLeaveFormWaitingForApprovalController = async (
   });
 };
 
+export const getApprovedLeaves = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const userRole = req.User.role;
+  let result: any;
+
+  if (userRole === "rc") {
+    const rc = await getRCByUserId(Number(req.User.id));
+    console.log("RC:", rc);
+
+    if (!rc || rc.length === 0) {
+      throw AppError("RC not found", httpStatus.NOT_FOUND);
+    }
+
+    if (rc[0].hostel == null || rc[0].floor == null) {
+      throw AppError("RC hostel or floor information is missing", httpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    result = await getApprovedLeavesByRc(
+      rc[0].floor,
+      rc[0].hostel
+    );
+  } else if (userRole === "deputyWarden") {
+    const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+    result = await getApprovedLeavesByDeputyWarden(block);
+  } else {
+    throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
+  }
+
+   res.status(httpStatus.OK).json({
+    success: true,
+    data: result || [],
+    count:result ? result.length : 0,
+    message:result && result.length > 0 
+    ? "All available leave forms are fetched Successfully"
+    :  `No Leave Forms approved by ${userRole}`,
+  });
+};
 export const updateLeaveFormApprovalStatusController = async (
   req: AuthRequest,
   res: Response
