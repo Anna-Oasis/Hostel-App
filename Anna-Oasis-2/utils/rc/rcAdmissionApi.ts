@@ -24,6 +24,28 @@ export async function getAllRCAdmissions() {
   }
 }
 
+export async function getApprovedRCAdmissions() {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.get(`/api/resident_counsellor/admissions/approvals`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    Alert.alert(
+      "Fetch Error",
+      error.response?.data?.message ||
+        "An error occurred while fetching approved admissions"
+    );
+    throw error;
+  }
+}
+
 export async function getAdmissionSessions() {
   try {
     const token = await getToken();

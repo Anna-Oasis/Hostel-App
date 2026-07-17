@@ -4,6 +4,7 @@ import errorHandler from "./middleware/errorHandler";
 import routes from "./routes/index";
 import { initDb } from "./config/dbConnection";
 import { initCloudflare } from "./config/cloudflare";
+import { initRedis } from "./services/redisService";
 import { morganLogger ,logger } from "./utils/logger";
 
 const app = express();
@@ -20,6 +21,7 @@ async function startServer() {
   try {
     await initDb()
     await initCloudflare();
+    await initRedis();
 
     app.listen(port, () => {
       logger.config(`✅ Server is running on port ${port}...`);

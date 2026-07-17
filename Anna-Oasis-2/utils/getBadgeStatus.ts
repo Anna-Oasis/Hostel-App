@@ -18,9 +18,9 @@
     return badgeStatus.Pending
   }
 
-  export const getHostelVacationBadgeStatus = (status: number) => {
-      if (status === 3) return badgeStatus.Approved
-      if (status === -1) return badgeStatus.Rejected
+  export const getHostelVacationBadgeStatus = (status: string) => {
+      if (status === "3") return badgeStatus.Approved
+      if (status === "-1") return badgeStatus.Rejected
     return badgeStatus.Pending
   }
 

@@ -14,7 +14,7 @@ export const validationSchema = Yup.object().shape({
       }
     ),
   semesters: Yup.array()
-    .of(Yup.string().matches(/^[1-8]$/))
+    .of(Yup.string().matches(/^10|[1-9]$/))
     .min(1, 'Select at least one semester')
     .required('Required'),
   academic_year: Yup.string()

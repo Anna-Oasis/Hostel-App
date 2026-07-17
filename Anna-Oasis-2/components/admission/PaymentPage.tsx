@@ -13,28 +13,23 @@ import {
 } from "@/components/ui/table";
 
 const HOSTEL_FEES = [
-  { label: "Admission Fee (One Time)", amount: "₹5,000" },
+  { label: "Admission Fee (One Time)", amount: "₹7,000" },
   { label: "Caution Deposit (Refundable, One Time)", amount: "₹15,000" },
   {
-    label: "Room Rent & Maintenance Charges (per semester)",
-    amount: "₹43,500",
+    label: "Room Rent & Maintenance Charges (including cloth washing) (per semester)",
+    amount: "₹65,000",
   },
-  {
-    label: "Clothes Washing & Drying Charges (per semester)",
-    amount: "₹4,500",
-  },
-  { label: "Total Hostel Charges (per semester)", amount: "₹48,000" },
-  { label: "Mess Charges (per semester)", amount: "₹48,300" },
+  { label: "Mess Charges (per semester)", amount: "₹53,000" },
 ];
 
 const HOSTEL_TOTALS = [
   {
-    label: "Total for new admission (One Time + Semester + Mess)",
-    amount: "₹1,16,300",
+    label: "Total for new admission (One Time + Room Rent + Mess)",
+    amount: "₹1,40,000",
   },
   {
-    label: "Total for Every Subsequent Semester (Semester + Mess)",
-    amount: "₹96,300",
+    label: "Total for Every Subsequent Semester (Room Rent + Mess)",
+    amount: "₹1,18,000",
   },
 ];
 
@@ -77,19 +72,78 @@ const PaymentPage = () => {
           </TableFooter>
         </Table>
       </View>
-      <View className="items-center mb-4">
-        <Image
+      <View className="mb-4 bg-gray-100 rounded-lg p-4">
+        {/* <Image
           source={QR_IMAGE}
           style={{ width: 300, height: 400, marginBottom: 8, borderRadius: 12 }}
           resizeMode="contain"
-        />
-        <Text className="mb-2 text-center">
+        /> */}
+        {/* <Text className="mb-2 text-center">
           Please scan the QR code above or use the UPI ID to pay the total
           hostel fees via Google Pay (GPay).
+        </Text> */}
+        <Text className="text-lg font-semibold mb-2 text-center">
+          Mode of Payment
         </Text>
+        <Text className="text-lg text-center">ONLINE TRANSFER ONLY (NEFT/IMPS/UPI)</Text>
+        <Table className="w-full">
+          <TableBody>
+            <TableRow>
+              <TableHead>Account Number</TableHead>
+              <TableHead>31829442846</TableHead>
+            </TableRow>
+          </TableBody>
+          <TableBody>
+            <TableRow>
+              <TableHead>Name of the Bank</TableHead>
+              <TableHead>State Bank of India (SBI)</TableHead>
+            </TableRow>
+          </TableBody>
+          <TableBody>
+            <TableRow>
+              <TableHead>Branch Code</TableHead>
+              <TableHead>06463</TableHead>
+            </TableRow>
+          </TableBody>
+          <TableBody>
+            <TableRow>
+              <TableHead>IFSC Code</TableHead>
+              <TableHead>SBIN0006463</TableHead>
+            </TableRow>
+          </TableBody>
+          <TableBody>
+            <TableRow>
+              <TableHead>MICR Code</TableHead>
+              <TableHead>600002039</TableHead>
+            </TableRow>
+          </TableBody>
+           <TableBody>
+            <TableRow>
+              <TableHead>Bank Address</TableHead>
+              <TableHead>State Bank of India,{'\n'}
+                          Anna University Branch, {'\n'}
+                          Chennai- 25, Tamilnadu, India
+              </TableHead>
+            </TableRow>
+          </TableBody>
+           <TableBody>
+            <TableRow>
+              <TableHead>Account Name & Address</TableHead>
+              <TableHead>The Executive Warden,{'\n'}
+                        International Hostels, Anna University,{'\n'}
+                        Chennai - 25, Tamilnadu, India
+              </TableHead>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </View>
+      <View className="self-center flex gap-2 m-2">
+        <Text className="font-extrabold text-xl">HOSTEL OFFICE CONTACT DETAILS</Text>
+        <Text className="font-semibold text-lg">Landline No.: 044-2235 9826 / 9827</Text>
+        <Text className="font-semibold text-lg">Email Id: annaihhostels@gmail.com</Text>
       </View>
       <View className="mb-4">
-        <Text className="mb-1 font-medium">
+        <Text className="mb-1 font-medium text-center">
           After payment, enter your Transaction ID below to proceed.
         </Text>
         <TextField

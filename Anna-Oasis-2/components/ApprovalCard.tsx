@@ -54,6 +54,10 @@ type approvalCardProps = {
   ApproveButtonTitle?: string;
 
   DeclineButtonTitle?: string;
+
+  //Fee Receipt
+  downloadButton ?: string
+  onDownload ?: (item : any) => void
 };
 
 /**
@@ -379,9 +383,9 @@ const ApprovalCard = (props: approvalCardProps) => {
                                 numberOfLines={4}
                                 ellipsizeMode="tail"
                               >
-                                {typeof value === "string"
-                                  ? value
-                                  : JSON.stringify(value)}
+                                {typeof value === "boolean" ? (value === true ? "Yes" : "No")
+                                 :
+                                  key.toLowerCase() === "status" ? props.badge : typeof value === "string" ?  value : JSON.stringify(value)}
                               </Text>
                             )}
                           </View>
@@ -418,6 +422,19 @@ const ApprovalCard = (props: approvalCardProps) => {
               >
                 <ButtonText className="text-[#022B60] text-center">
                   {props.DeclineButtonTitle || "Decline"}
+                </ButtonText>
+              </Button>
+            )}
+            {props.badge === badgeStatus.Approved && props.downloadButton && (
+               <Button
+                onPress={() => {
+                    setViewDetails(false);
+                    props.onDownload?.(props.data);
+                  }}
+                className="bg-white border-[#022B60] border-2 min-w-[95px] px-3 h-10 justify-center rounded-lg"
+              >
+                <ButtonText className="text-[#022B60] text-center">
+                  {props.downloadButton || "Download"}
                 </ButtonText>
               </Button>
             )}

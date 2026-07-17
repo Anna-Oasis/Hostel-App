@@ -1,4 +1,4 @@
-import ApprovalCard from "@/components/ApprovalCard";
+import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import {
   getStudentVacationsByDw,
   updateVacationStatusByDw,
@@ -11,8 +11,10 @@ import { View, Text, ScrollView, Alert } from "react-native";
 import EmptyPage from "@/components/EmptyPage";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function SummerVacationVericationPage() {
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending");
   const [leaves, setLeaves] = useState<
     { summer_vacation: SummerVacation; student: Student }[]
   >([]);
@@ -25,10 +27,10 @@ export default function SummerVacationVericationPage() {
     message: string;
   }>({ title: "", message: "" });
 
-  const fetchLeaves = async () => {
+  const fetchLeaves = async (tab: "pending" | "approved" = activeTab) => {
     try {
       setLoading(true);
-      const result = await getStudentVacationsByDw();
+      const result = await getStudentVacationsByDw(tab);
       if (result.success) {
         setLeaves(result.data);
       } else {
@@ -46,19 +48,7 @@ export default function SummerVacationVericationPage() {
       const result = await updateVacationStatusByDw(leaveId, true);
 
       if (result.success) {
-        setLeaves((prev) =>
-          prev.map((leave) =>
-            leave.summer_vacation.id === leaveId
-              ? {
-                  ...leave,
-                  summer_vacation: {
-                    ...leave.summer_vacation,
-                    status: "2",
-                  },
-                }
-              : leave
-          )
-        );
+        await fetchLeaves(activeTab);
         setSuccessModalContent({
           title: "Success",
           message: "Vacation request approved successfully",
@@ -99,7 +89,7 @@ export default function SummerVacationVericationPage() {
         comment
       );
       if (result.success) {
-        await fetchLeaves();
+        await fetchLeaves(activeTab);
         setSuccessModalContent({
           title: "Success",
           message: "Vacation request rejected",
@@ -128,8 +118,8 @@ export default function SummerVacationVericationPage() {
   };
 
   useEffect(() => {
-    fetchLeaves();
-  }, []);
+    fetchLeaves(activeTab);
+  }, [activeTab]);
 
   if (loading) {
     return (
@@ -141,30 +131,57 @@ export default function SummerVacationVericationPage() {
     );
   }
 
-  if (leaves.length === 0) {
-    return (
-      <EmptyPage
-        title="No vacation requests found"
-        description="There are currently no summer vacation requests to verify."
-      />
-    );
-  }
-
   return (
     <>
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
-        {leaves.map((leave) => (
-          <ApprovalCard
-            key={leave.summer_vacation.id}
-            title={`${leave.student.name} - ${leave.summer_vacation.roll_number}`}
-            subTitle={`Vacation from: ${new Date(leave.summer_vacation.vacation_from).toLocaleDateString()}`}
-            data={{...leave.summer_vacation, ...leave.student }}
-            badge={getSummerVacationBadgeStatus(leave.summer_vacation.status)}
-            onApprove={() => handleApprove(leave.summer_vacation.id)}
-            onDecline={() => handleRejectClick(leave.summer_vacation.id)}
-          />
-        ))}
-      </ScrollView>
+
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "Approved", value: "approved" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      {leaves.length === 0 ? (
+        <EmptyPage
+          title={
+            activeTab === "approved"
+              ? "No approved vacation requests found"
+              : "No vacation requests found"
+          }
+          description={
+            activeTab === "approved"
+              ? "There are currently no summer vacation requests you have approved."
+              : "There are currently no summer vacation requests to verify."
+          }
+        />
+      ) : (
+        <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
+          {leaves.map((leave) => (
+            <ApprovalCard
+              key={leave.summer_vacation.id}
+              title={`${leave.student.name} - ${leave.summer_vacation.roll_number}`}
+              subTitle={`Vacation from: ${new Date(leave.summer_vacation.vacation_from).toLocaleDateString()}`}
+              data={{ Name: leave.student.name, ...leave.summer_vacation, ...leave.student }}
+              badge={
+                activeTab === "approved"
+                  ? badgeStatus.Approved
+                  : getSummerVacationBadgeStatus(leave.summer_vacation.status)
+              }
+              onApprove={
+                activeTab === "pending"
+                  ? () => handleApprove(leave.summer_vacation.id)
+                  : undefined
+              }
+              onDecline={
+                activeTab === "pending"
+                  ? () => handleRejectClick(leave.summer_vacation.id)
+                  : undefined
+              }
+            />
+          ))}
+        </ScrollView>
+      )}
 
       <DeclineComment
         visible={showRejectModal}

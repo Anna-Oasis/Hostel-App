@@ -38,10 +38,40 @@ import {
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getAllAttendanceController } from "../controllers/attendanceController";
 import {getDeclarationForOthersController} from '../controllers/declarationController';
-import { getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
+import { fetchStudentDetails, getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
+import { getDeputyWardenDetailsController, postDWDetailsController, putDWDetailsController } from "../controllers/deputyWardenController";
 // import {insertRoomStructureByDeputyWarden} from '../controllers/roomStructureController';
+import { upload } from "../middleware/multer";
 
 const deputyWardenRouter = Router();
+
+//DeputyWarden Details Routes
+deputyWardenRouter.post(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  upload.fields([
+    {name : "passportPhoto", maxCount : 1}
+  ]),
+  errorWrapper(postDWDetailsController)
+)
+
+deputyWardenRouter.put(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  upload.fields([
+    {name : "passportPhoto", maxCount : 1}
+  ]),
+  errorWrapper(putDWDetailsController)
+)
+
+deputyWardenRouter.get(
+  "/details",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(getDeputyWardenDetailsController)
+)
 
 // Admission routes
 deputyWardenRouter.get(
@@ -194,9 +224,18 @@ deputyWardenRouter.get(
 deputyWardenRouter.get(
   "/student/details/:rollNo",
   authenticateUser,
-  hasRole(["executiveWarden"]),
+  hasRole(["deputyWarden"]),
   errorWrapper(getStudentDetailsUsingRollNoController)
 );
+
+//Student details  route
+deputyWardenRouter.get(
+  "/getdetails",
+  authenticateUser,
+  hasRole(['deputyWarden']),
+  errorWrapper(fetchStudentDetails)
+);
+
 
 //room structure creation
 // deputyWardenRouter.post(

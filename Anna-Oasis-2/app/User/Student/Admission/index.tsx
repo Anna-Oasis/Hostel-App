@@ -70,10 +70,10 @@ const AdmissionForm = () => {
         setIsSessionChecked(true);
       }
     };
-    fetchAdmissionSession();
-  }, [details]);
+    if(activeTab === "form") fetchAdmissionSession();
+  }, [details, activeTab]);
 
-  if (!isSessionChecked) {
+  if (activeTab === "form" && !isSessionChecked) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <Text>Checking admission session...</Text>
@@ -126,29 +126,29 @@ const AdmissionForm = () => {
           }}
         >
           {({ handleSubmit, values, setFieldValue }) => {
-            useEffect(() => {
-              if (gender === "male" && values.hostelBlock !== "Flora") {
-                setFieldValue("hostelBlock", "Flora");
-              } else if (
-                gender === "female" &&
-                values.hostelBlock !== "Lavender"
-              ) {
-                setFieldValue("hostelBlock", "Lavender");
-              }
-            }, [gender, setFieldValue]);
+            // useEffect(() => {
+            //   if (gender === "male" && values.hostelBlock !== "Flora") {
+            //     setFieldValue("hostelBlock", "Flora");
+            //   } else if (
+            //     gender === "female" &&
+            //     values.hostelBlock !== "Lavender"
+            //   ) {
+            //     setFieldValue("hostelBlock", "Lavender");
+            //   }
+            // }, [gender, setFieldValue]);
 
-            const hostelBlock = values.hostelBlock;
+            // const hostelBlock = values.hostelBlock;
 
             return (
               <ScrollView ref={scrollViewRef}>
                 <View className="m-4 flex gap-3">
-                  {hostelBlock && (
+                  {/* {hostelBlock && (
                     <View>
                       <Text className="mb-2 font-semibold">
                         Admission for hostel block {hostelBlock} for the academic year {academicYear}
                       </Text>
                     </View>
-                  )}
+                  )} */}
                   {renderPage(handleSubmit, values)}
                   <View className="flex-row justify-between">
                     {page < 3 && (

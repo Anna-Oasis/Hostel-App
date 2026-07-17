@@ -69,8 +69,8 @@ export default function GrievancesPage() {
               onApprove={() => handleApprove(item.grievances.id)}
               onDecline={() => handleDecline(item.grievances.id)}
               data={{
+                Name : item.student.name,
                 ...item.grievances,
-                ...item.student,
               }}
             />
           ))

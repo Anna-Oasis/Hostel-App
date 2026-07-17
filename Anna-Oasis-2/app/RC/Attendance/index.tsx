@@ -25,7 +25,7 @@ export default function AttendancePage() {
     getAllRCStudents()
       .then((data) => {
         setStudents(data);
-        setAbsentees(data.map((s: any) => s.rollNo));
+        // setAbsentees(data.map((s: any) => s.rollNo));
         const hostelBlock = data[0]?.hostelBlock;
         const maxFloor = Math.max(...data.map(s => s.floor));
         setMaxfloor(maxFloor + 1)
@@ -56,6 +56,23 @@ export default function AttendancePage() {
       }
     });
   };
+
+  useEffect(() => {
+    if (floor === "") return;
+
+    const floorStudents = students
+        .filter(s => s.floor === parseInt(floor))
+        .map(s => s.rollNo);
+
+    setAbsentees(floorStudents);
+  }, [floor]);
+
+  useEffect(() => {
+  if (activeTab !== "submit") {
+    setFloor("");
+    setAbsentees([]);
+  }
+}, [activeTab, students]);
 
   return (
     <ScrollView>
@@ -88,12 +105,12 @@ export default function AttendancePage() {
         {/* Tab content */}
         {activeTab === "submit" ? (
           <>
-            <Text className="text-2xl m-2 mt-6 font-bold">RC Name Attendance</Text>
+            <Text className="text-2xl m-2 mt-6 font-bold">Attendance</Text>
             <View className="flex flex-row gap-4 items-center mt-6">
               <Text className="text-lg">Select Floor</Text>
               <Select className="w-[150px]" onValueChange={(value) => setFloor(value)}>
                 <SelectTrigger>
-                  <SelectInput placeholder="Select Floor" className="flex-1 my-3 py-2" />
+                  <SelectInput value={floor} placeholder="Select Floor" className="flex-1 my-3 py-2" />
                   <SelectIcon as={ChevronDownIcon} />
                 </SelectTrigger>
                 <SelectPortal>
@@ -148,20 +165,30 @@ export default function AttendancePage() {
                 ))}
                 <View className="items-center mb-8">
                   <Button
-                    onPress={() => {
+                    onPress={async () => {
                       const presentCount = students.filter(
                         (s) => s.floor === parseInt(floor) && !absentees.includes(s.rollNo)
                       ).length;
-                      const absentCount = absentees.length;
+                      const absentCount = students.filter(
+                        (s) => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
+                      ).length;
+                      const floorAbsentees = students
+                        .filter(
+                          s => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
+                        )
+                        .map(s => s.rollNo);
+                      
                       const attendanceObj = {
                         date: new Date().toISOString().slice(0, 10),
                         hostel: hostelBlock,
                         floor: parseInt(floor),
                         no_present: presentCount,
                         no_absent: absentCount,
-                        absentee: absentees,
+                        absentee: floorAbsentees,
                       };
-                      handelRCAttendance(attendanceObj);
+                      await handelRCAttendance(attendanceObj);
+                      setFloor("");
+                      setAbsentees([]);
                     }}
                   >
                     <ButtonText>Submit</ButtonText>

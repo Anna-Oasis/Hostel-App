@@ -90,8 +90,17 @@ async function insertRoomStructure(academicYear:string) {
         rollNo: null,
       });
     }
-    // First Floor: Students Rooms (201-218)
+    // First Floor: Students Rooms (201-218, 219-236)
     for (let num = 201; num <= 218; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Flora",
+        academicYear,
+        floor: 1,
+        rollNo: null,
+      });
+    }
+    for (let num = 219; num <= 236; num++) {
       roomsToInsert.push({
         roomNumber: num,
         hostelBlock: "Flora",
@@ -140,7 +149,49 @@ async function insertRoomStructure(academicYear:string) {
     }
 
     // Tulip Hostel
-    // No student rooms as per your structure (all Guest/Research Scholar)
+    // Ground Floor (101-117)
+    for (let num = 101; num <= 117; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Tulip",
+        academicYear,
+        floor: 0,
+        rollNo: null,
+      });
+    }
+
+    // First Floor (201-218)
+    for (let num = 201; num <= 218; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Tulip",
+        academicYear,
+        floor: 1,
+        rollNo: null,
+      });
+    }
+
+    // Second Floor (301-318)
+    for (let num = 301; num <= 318; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Tulip",
+        academicYear,
+        floor: 2,
+        rollNo: null,
+      });
+    }
+
+    // Third Floor (401-418)
+    for (let num = 401; num <= 418; num++) {
+      roomsToInsert.push({
+        roomNumber: num,
+        hostelBlock: "Tulip",
+        academicYear,
+        floor: 3,
+        rollNo: null,
+      });
+    }
 
     // Lavender Hostel (all rooms are student rooms)
     // Ground Floor (101-118)

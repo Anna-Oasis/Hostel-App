@@ -47,9 +47,21 @@ const LoginCard = () => {
 
           <Button
             size="lg"
+            variant="link"
+            action="secondary"
+            className="self-end -mt-1"
+            onPress={() => router.push("/ForegetPassword")}
+          >
+            <ButtonText className="text-[#022B60]/70 text-sm">
+              Forgot Password?
+            </ButtonText>
+          </Button>
+
+          <Button
+            size="lg"
             variant="solid"
             action="primary"
-            className="mt-6 rounded-lg bg-[#022B60]"
+            className="mt-4 rounded-lg bg-[#022B60]"
             onPress={() => handleSubmit()}
           >
             <ButtonText className="text-white font-semibold"> Login </ButtonText>
@@ -64,6 +76,17 @@ const LoginCard = () => {
           >
             <ButtonText className="text-[#022B60]/80 font-semibold">
               Create Account
+            </ButtonText>
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            action="secondary"
+            className="mt-3 rounded-lg border-2 border-[#022B60]/80"
+            onPress={() => router.push("/ForgotPassword")}
+          >
+            <ButtonText className="text-[#022B60]/80 font-semibold">
+              Forgot Password
             </ButtonText>
           </Button>
           {/* <DebugRouter /> */}

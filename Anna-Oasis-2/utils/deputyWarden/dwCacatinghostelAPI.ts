@@ -2,11 +2,12 @@ import api from "@/api";
 import { getToken } from "@/utils/authUtils";
 
 // Fetch all vacating hostel forms for Deputy Warden approval
-export async function fetchDWVacatingForms() {
+export async function fetchDWVacatingForms(status: "pending" | "approved" = "pending") {
   try {
     const token = await getToken();
     if (!token) throw new Error("You are not logged in.");
     const res = await api.get("/api/deputy_warden/vacating_hostel", {
+      params: { status },
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.data?.success) throw new Error(res.data?.message || "Failed to fetch forms");

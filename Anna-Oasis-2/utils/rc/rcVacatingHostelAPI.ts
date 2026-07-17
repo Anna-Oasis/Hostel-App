@@ -2,11 +2,12 @@ import api from "@/api";
 import { getToken } from "@/utils/authUtils";
 
 // Fetch all vacating hostel applications for RC
-export async function fetchRCVacatingApplications() {
+export async function fetchRCVacatingApplications(status: "pending" | "approved" = "pending") {
   try {
     const token = await getToken();
     if (!token) throw new Error("You are not logged in.");
     const res = await api.get("/api/resident_counsellor/vacating_hostel", {
+      params: { status },
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log("Fetched RC vacating applications:", res.data.data);

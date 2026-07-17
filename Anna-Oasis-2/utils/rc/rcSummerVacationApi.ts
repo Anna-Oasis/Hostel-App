@@ -94,7 +94,7 @@ export interface VacationForm {
     student: Student;
 }
 
-export const getStudentVacations = async (): Promise<VacationFormResponse> => {
+export const getStudentVacations = async (status: "pending" | "approved" = "pending"): Promise<VacationFormResponse> => {
     const token = await getToken();
     console.log("Token:", token);
 
@@ -102,6 +102,7 @@ export const getStudentVacations = async (): Promise<VacationFormResponse> => {
         throw new Error("No authentication token found");
     }
     const response = await api.get("/api/resident_counsellor/summer_vacation", {
+        params: { status },
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
