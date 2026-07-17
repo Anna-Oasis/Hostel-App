@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import ApprovalCard from "@/components/ApprovalCard";
-import { fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
+import { fetchApprovedRCLeaveForms, fetchRCLeaveForms, updateRCLeaveFormStatus } from "@/utils/rc/RCLeaveFormApprovalApi";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
 import { getLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
 import useLoadingStore from "@/stores/loadingStore";
+import TabSwitch from "@/components/TabSwitch";
 
 export default function LeaveFormPage() {
   const [leaveForms, setLeaveForms] = useState<any[]>([]);
+  const [approvedLeaveForms, setApprovedLeaveForms] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [rejectModalVisible, setRejectModalVisible] = useState(false);
   const [selectedLeaveId, setSelectedLeaveId] = useState<number | null>(null);
 
   const setLoading = useLoadingStore((state) => state.setLoading);
+  const [activeTab, setActiveTab] = useState<"pending" | "approved">("pending")
 
   const getLeaveForms = async () => {
     setLoading(true);
@@ -29,9 +32,25 @@ export default function LeaveFormPage() {
     setLoading(false);
   };
 
+  const getApprovedLeaveForms = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchApprovedRCLeaveForms();
+      setApprovedLeaveForms(data);
+    } catch (err: any) {
+      window.alert(["Error", err.message || "Failed to fetch leave forms"].filter(Boolean).join("\n"));
+      setApprovedLeaveForms([]);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     getLeaveForms();
   }, []);
+
+  useEffect(() => {
+    getApprovedLeaveForms()
+  }, [])
 
   const handleDecision = async (leaveFormId: number, approve: boolean, comment?: string) => {
     setLoading(true);
@@ -81,46 +100,98 @@ export default function LeaveFormPage() {
         submitLabel="Submit"
         cancelLabel="Cancel"
       />
-      {leaveForms.length === 0 ? (
-        <EmptyPage
-          title="No leave forms"
-          description="There are currently no leave forms pending approval."
-        />
-      ) : (
-        <ScrollView>
-          {leaveForms.map((item) => {
-            const leave = item.leave_form;
-            const student = item.student;
-            return (
-              <ApprovalCard
-                key={leave.id}
-                title={`${student.name} (${leave.roll_number})`}
-                subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
-                badge={getLeaveBadgeStatus(leave.status)}
-                data={{
-                  "Student Name": student.name,
-                  "Roll Number": leave.roll_number,
-                  "Course": student.course,
-                  "Branch": student.branch,
-                  "Semester": student.semester,
-                  "Room Number": student.roomNumber,
-                  "Leave Type": leave.leave_type,
-                  "From": leave.from_date,
-                  "To": leave.to_date,
-                  "Reason": leave.reason,
-                  "Address of Stay": leave.address_of_stay,
-                  "Emergency Contact": leave.mobile,
-                  "Email": leave.email,
-                  "Status": leave.status === "0"
-                      ? "Pending"
-                      : leave.status 
-                }}
-                onApprove={() => handleDecision(leave.id, true)}
-                onDecline={() => handleDecline(leave.id)}
-              />
-            );
-          })}
-        </ScrollView>
+      <TabSwitch
+        tabs={[
+          {label : "Pending", value : "pending"},
+          {label : "Approved", value : "approved"}
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+      {activeTab === "pending" && (
+        leaveForms.length === 0 ? (
+          <EmptyPage
+            title="No leave forms"
+            description="There are currently no leave forms pending approval."
+          />
+        ) : (
+            <ScrollView>
+              {leaveForms.map((item) => {
+                const leave = item.leave_form;
+                const student = item.student;
+                return (
+                  <ApprovalCard
+                    key={leave.id}
+                    title={`${student.name} (${leave.roll_number})`}
+                    subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
+                    badge={getLeaveBadgeStatus(leave.status)}
+                    data={{
+                      "Student Name": student.name,
+                      "Roll Number": leave.roll_number,
+                      "Course": student.course,
+                      "Branch": student.branch,
+                      "Semester": student.semester,
+                      "Room Number": student.roomNumber,
+                      "Leave Type": leave.leave_type,
+                      "From": leave.from_date,
+                      "To": leave.to_date,
+                      "Reason": leave.reason,
+                      "Address of Stay": leave.address_of_stay,
+                      "Emergency Contact": leave.mobile,
+                      "Email": leave.email,
+                      "Status": leave.status === "0"
+                          ? "Pending"
+                          : leave.status 
+                    }}
+                    onApprove={() => handleDecision(leave.id, true)}
+                    onDecline={() => handleDecline(leave.id)}
+                  />
+                );
+              })}
+            </ScrollView>
+          )
+      )}
+
+      {activeTab === "approved" && (
+        approvedLeaveForms.length === 0 ? (
+          <EmptyPage
+            title="No Approved leave forms"
+            description="There are no approved Leaves by You"
+          />
+        ) : (
+            <ScrollView>
+              {approvedLeaveForms.map((item) => {
+                const leave = item.leave_form;
+                const student = item.student;
+                return (
+                  <ApprovalCard
+                    key={leave.id}
+                    title={`${student.name} (${leave.roll_number})`}
+                    subTitle={`${leave.leave_type} | ${leave.from_date} to ${leave.to_date}`}
+                    badge={getLeaveBadgeStatus(leave.status)}
+                    data={{
+                      "Student Name": student.name,
+                      "Roll Number": leave.roll_number,
+                      "Course": student.course,
+                      "Branch": student.branch,
+                      "Semester": student.semester,
+                      "Room Number": student.roomNumber,
+                      "Leave Type": leave.leave_type,
+                      "From": leave.from_date,
+                      "To": leave.to_date,
+                      "Reason": leave.reason,
+                      "Address of Stay": leave.address_of_stay,
+                      "Emergency Contact": leave.mobile,
+                      "Email": leave.email,
+                      "Status": leave.status === "0"
+                          ? "Pending"
+                          : leave.status 
+                    }}
+                  />
+                );
+              })}
+            </ScrollView>
+          )
       )}
     </View>
   );

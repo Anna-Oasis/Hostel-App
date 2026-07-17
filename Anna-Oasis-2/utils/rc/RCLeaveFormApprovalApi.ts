@@ -16,6 +16,21 @@ export async function fetchRCLeaveForms() {
   }
 }
 
+export async function fetchApprovedRCLeaveForms() {
+  try {
+    const token = await getToken();
+    if (!token) throw new Error("You are not logged in.");
+    const res = await api.get("/api/resident_counsellor/approved_student_leave", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.data?.success) throw new Error(res.data?.message || "Failed to fetch leave forms");
+    // console.log("Fetched leave forms:", res.data.data);
+    return res.data.data;
+  } catch (err: any) {
+    throw new Error(err.message || "Failed to fetch leave forms");
+  }
+}
+
 export async function updateRCLeaveFormStatus(leaveFormId: number, approve: boolean, comment?: string) {
   try {
     const token = await getToken();
