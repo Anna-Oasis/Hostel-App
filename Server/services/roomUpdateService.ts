@@ -1,6 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { roomModel } from "../models/roomModel";
+import { studentModel } from "../models/studentModel";
 
 export const changeRoom = async (
   hostelBlock: string,
@@ -62,6 +63,12 @@ export const changeRoom = async (
           eq(roomModel.roomNumber, toRoomNo)
         )
       );
+    
+      await db
+        .update(studentModel)
+        .set({ roomNumber : toRoomNo })
+        .where(eq(studentModel.rollNo, rollNo))
+        .returning();
 
     return {
       success: true,
