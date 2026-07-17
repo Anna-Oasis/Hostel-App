@@ -22,6 +22,7 @@ import {
   approveVacatingFormByRCController
 } from "../controllers/vacatingHostelController";
 import {
+  getApprovedLeaves,
   getLeaveFormWaitingForApprovalController,
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
@@ -106,6 +107,12 @@ rcRouter.put(
   authenticateUser,
   hasRole(['rc']),
   errorWrapper(updateLeaveFormApprovalStatusController)
+);
+rcRouter.get(
+  "/approved_student_leave",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(getApprovedLeaves)
 );
 
 // Room and student details routes
