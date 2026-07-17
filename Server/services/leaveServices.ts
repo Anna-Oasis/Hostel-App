@@ -42,6 +42,7 @@ export const getApprovedLeavesByRc = async (floor: number[], hostel_block: strin
     .where(
     and(
         inArray(studentModel.floor, floor),
+        eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
         eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
         eq(studentModel.hostelBlock, hostel_block)
     ))
@@ -55,7 +56,7 @@ export const getLeaveFormsToBeApprovedByDeputyWarden = async (block : string) =>
     .from(leaveFormModel)
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
     .where(and(
-      eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
+      eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
       eq(studentModel.hostelBlock, block)
     ))
     .orderBy(leaveFormModel.created_at);
@@ -68,7 +69,7 @@ export const getApprovedLeavesByDeputyWarden = async (block : string) => {
     .from(leaveFormModel)
     .innerJoin(studentModel, eq(leaveFormModel.roll_number, studentModel.rollNo))
     .where(and(
-      eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
+      eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
       eq(studentModel.hostelBlock, block)
     ))
     .orderBy(leaveFormModel.created_at);
