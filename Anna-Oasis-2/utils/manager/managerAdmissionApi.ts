@@ -105,3 +105,24 @@ export async function managerDecline(admissionId: string, comment: string) {
     throw error;
   }
 }
+
+
+
+export async function getAdmissionSessions() {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.get(`/api/manager/admissions/session`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission sessions"].filter(Boolean).join("\n"));
+    throw error;
+  }
+}

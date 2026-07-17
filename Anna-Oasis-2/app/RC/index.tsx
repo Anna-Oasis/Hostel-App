@@ -61,6 +61,12 @@ export default function RCPage() {
       color: "#022B60",
     },
     {
+      title: "Rooms",
+      route: "/RC/Rooms",
+      icon: CalendarCheckIcon,
+      color: "#022B60",
+    },
+    {
       title: "Leave",
       route: "/RC/ApplyForLeave",
       icon: CalendarCheckIcon,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView } from "react-native";
 import ApprovalCard, { badgeStatus } from "@/components/ApprovalCard";
 import {
   fetchDeputyWardenLeaveForms,
@@ -28,7 +28,7 @@ export default function LeaveFormVerificationPage() {
       const data = await fetchDeputyWardenLeaveForms(tab);
       setLeaveForms(data);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to fetch leave forms");
+      window.alert(["Error", err.message || "Failed to fetch leave forms"].filter(Boolean).join("\n"));
       setLeaveForms([]);
     }
     setLoading(false);
@@ -45,7 +45,7 @@ export default function LeaveFormVerificationPage() {
       setModalVisible(true);
       getLeaveForms(activeTab);
     } catch (err: any) {
-      Alert.alert("Error", err.message || "Failed to update leave form status");
+      window.alert(["Error", err.message || "Failed to update leave form status"].filter(Boolean).join("\n"));
     }
   };
 
@@ -58,7 +58,7 @@ export default function LeaveFormVerificationPage() {
   const handleDeclineSubmit = (comment: string) => {
     if (!declineModal.leaveId) return;
     if (!comment.trim()) {
-      Alert.alert("Error", "Please provide a reason for rejection.");
+      window.alert("Error\nPlease provide a reason for rejection.");
       return;
     }
     handleDecision(

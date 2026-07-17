@@ -22,8 +22,20 @@ export default function ManagerPage() {
       color: "#022B60",
     },
     {
+      title: "Student Details",
+      route: "/Manager/Details",
+      icon: FileTextIcon,
+      color: "#022B60",
+    },
+    {
       title: "Grievances",
       route: "/Manager/Grievances",
+      icon: FileTextIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Rooms",
+      route: "/Manager/Rooms",
       icon: FileTextIcon,
       color: "#022B60",
     },

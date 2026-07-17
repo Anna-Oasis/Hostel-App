@@ -1,7 +1,7 @@
 import { View, ActivityIndicator, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { getAdmissionSessions } from "@/utils/executiveWarden/ewAdmissionSessionApi";
-import { getRoomsByAcademicYear } from "@/utils/executiveWarden/ewRoomApi";
+import { getAdmissionSessions } from "@/utils/manager/managerAdmissionApi";
+import { getRoomsByAcademicYear } from "@/utils/manager/managerRoomApi";
 import SelectField from "@/components/form/SelectField";
 import { Formik } from "formik";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -27,7 +27,7 @@ const RoomView = () => {
         setSessionOptions(options);
       })
       .catch((err) => {
-        console.log("Error fetching admission sessions:", err);
+        // console.log("Error fetching admission sessions:", err);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -56,12 +56,12 @@ const RoomView = () => {
           });
           setRoomDetails(grouped);
         } catch (err) {
-          console.log("Error fetching room details:", err);
+          // console.log("Error fetching room details:", err);
         }
       }}
     >
       {({ handleSubmit }) => (
-        <View className="flex-1 bg-white p-4">
+        <View className="flex-1 bg-white p-4 w-full sm:w-[80%] md:w-[50%] self-center">
           <Text className="text-xl font-bold mb-4">RoomView</Text>
           <HelperText>
             This feature is in development, soon you will be able to have
@@ -80,7 +80,7 @@ const RoomView = () => {
             onPress={handleSubmit as any}
             className="mt-3 mb-4"
           >
-            <ButtonText>View room data</ButtonText>
+            <ButtonText>Fetch room data</ButtonText>
           </Button>
           <ScrollView className="flex-1">
             {Object.keys(roomDetails).length === 0 && (
@@ -101,32 +101,39 @@ const RoomView = () => {
                         <Text className="text-base font-semibold mb-2 text-slate-700">
                           Floor {floor}
                         </Text>
-                        <View className="flex-row flex-wrap -mx-2 justify-center">
-                          {rooms.map((room, idx) => (
-                            <View
-                              key={room.roomNumber ?? idx}
-                              className={`w-[30%] rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm ${
-                                    Array.isArray(room.rollNo)
+                        <View className="flex-row flex-wrap justify-center -mx-2">
+                          {[...rooms]
+                            .sort((a, b) => {
+                              // Sort by roomNumber (numeric), fallback to 0 if missing
+                              const numA = Number(a.roomNumber) || 0;
+                              const numB = Number(b.roomNumber) || 0;
+                              return numA - numB;
+                            })
+                            .map((room, idx) => (
+                              <View
+                                key={room.roomNumber ?? idx}
+                                className={`w-[30%] rounded-xl py-3 px-2 mb-3 items-center mx-2 shadow-sm ${
+                                    room.rollNo && Array.isArray(room.rollNo)
                                       ? room.rollNo.length === 2
                                         ? "bg-green-200"
                                         : room.rollNo.length === 1
                                           ? "bg-orange-200"
                                           : "bg-slate-100"
                                       : "bg-slate-100"
-                                }`}
-                            >
-                              <Text className="font-bold text-base text-slate-900 mb-1">
-                                Room {room.roomNumber}
-                              </Text>
-                              <Text className="text-xs text-slate-500 text-center">
-                                {room.rollNo &&
-                                Array.isArray(room.rollNo) &&
-                                room.rollNo.length > 0
-                                  ? room.rollNo.join(", ")
-                                  : "Vacant"}
-                              </Text>
-                            </View>
-                          ))}
+                                  }`}
+                              >
+                                <Text className="font-bold text-base text-slate-900 mb-1">
+                                  Room {room.roomNumber}
+                                </Text>
+                                <Text  className="text-xs text-slate-500 text-center">
+                                  {room.rollNo &&
+                                  Array.isArray(room.rollNo) &&
+                                  room.rollNo.length > 0
+                                    ? room.rollNo.join(", ")
+                                    : "Vacant"}
+                                </Text>
+                              </View>
+                            ))}
                         </View>
                       </View>
                     )

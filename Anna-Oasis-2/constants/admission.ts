@@ -2,10 +2,7 @@ const admissionCategories = [
   { label: "NRI", value: "NRI" },
   { label: "CIWGC", value: "CIWGC" },
   { label: "FN", value: "FN" },
-  { label: "LDC", value: "LDC" },
-  { label: "SIDS", value: "SIDS" },
   { label: "ICCR", value: "ICCR" },
-  { label: "SII", value: "SII" },
   { label: "Other", value: "Other" },
 ];
 
@@ -24,8 +21,12 @@ const initialValues = {
 
 const hostelBlocks = [
   { label: "Flora (Boys)", value: "Flora" },
-  { label: "Lavendar (Girls)", value: "Lavendar" },
+  { label: "Lavender (Girls)", value: "Lavender" },
+  { label : "Tulip", value : "Tulip"}
 ];
+
+const hostelBlockValues = hostelBlocks.map((block) => block.value);
+
 
 const messPreferences = [
   { label: "Veg", value: "Veg" },
@@ -41,6 +42,7 @@ export {
   admissionCategories,
   initialValues,
   hostelBlocks,
+  hostelBlockValues,
   messPreferences,
   previousResidentOptions,
 };

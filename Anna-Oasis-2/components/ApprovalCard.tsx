@@ -383,9 +383,9 @@ const ApprovalCard = (props: approvalCardProps) => {
                                 numberOfLines={4}
                                 ellipsizeMode="tail"
                               >
-                                {typeof value === "string"
-                                  ? value
-                                  : JSON.stringify(value)}
+                                {typeof value === "boolean" ? (value === true ? "Yes" : "No")
+                                 :
+                                  key.toLowerCase() === "status" ? props.badge : typeof value === "string" ?  value : JSON.stringify(value)}
                               </Text>
                             )}
                           </View>
@@ -425,7 +425,7 @@ const ApprovalCard = (props: approvalCardProps) => {
                 </ButtonText>
               </Button>
             )}
-            {props.downloadButton && (
+            {props.badge === badgeStatus.Approved && props.downloadButton && (
                <Button
                 onPress={() => {
                     setViewDetails(false);

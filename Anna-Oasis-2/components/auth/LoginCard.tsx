@@ -78,6 +78,17 @@ const LoginCard = () => {
               Create Account
             </ButtonText>
           </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            action="secondary"
+            className="mt-3 rounded-lg border-2 border-[#022B60]/80"
+            onPress={() => router.push("/ForgotPassword")}
+          >
+            <ButtonText className="text-[#022B60]/80 font-semibold">
+              Forgot Password
+            </ButtonText>
+          </Button>
           {/* <DebugRouter /> */}
         </View>
       )}

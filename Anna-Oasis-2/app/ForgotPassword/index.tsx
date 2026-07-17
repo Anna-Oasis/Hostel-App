@@ -66,8 +66,8 @@ export default function ForgotPasswordPage() {
                         label="Email Address"
                         placeholder="Enter your email"
                         value="email"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
+                        // keyboardType="email-address"
+                        // autoCapitalize="none"
                       />
                       <Button
                         size="lg"
@@ -125,8 +125,8 @@ export default function ForgotPasswordPage() {
                         label="Verification Code"
                         placeholder="Enter 6-digit code"
                         value="otp"
-                        keyboardType="numeric"
-                        maxLength={6}
+                        // keyboardType="numeric"
+                        // maxLength={6}
                       />
                       <Button
                         size="lg"

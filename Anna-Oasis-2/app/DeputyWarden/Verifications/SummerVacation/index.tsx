@@ -133,6 +133,7 @@ export default function SummerVacationVericationPage() {
 
   return (
     <>
+
       <TabSwitch
         tabs={[
           { label: "Pending", value: "pending" },
@@ -161,7 +162,7 @@ export default function SummerVacationVericationPage() {
               key={leave.summer_vacation.id}
               title={`${leave.student.name} - ${leave.summer_vacation.roll_number}`}
               subTitle={`Vacation from: ${new Date(leave.summer_vacation.vacation_from).toLocaleDateString()}`}
-              data={{...leave.summer_vacation, ...leave.student }}
+              data={{ Name: leave.student.name, ...leave.summer_vacation, ...leave.student }}
               badge={
                 activeTab === "approved"
                   ? badgeStatus.Approved
