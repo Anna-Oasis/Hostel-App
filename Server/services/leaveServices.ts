@@ -1,7 +1,7 @@
 import { leaveFormModel, NewLeaveForm } from "../models/leaveForm";
 import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, or } from "drizzle-orm";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import { leaveFormApprovalsModel } from "../models/leaveFormApprovals";
 
@@ -42,8 +42,10 @@ export const getApprovedLeavesByRc = async (floor: number[], hostel_block: strin
     .where(
     and(
         inArray(studentModel.floor, floor),
-        eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
-        eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
+        or(
+          eq(leaveFormModel.status, studentLeaveApprovalStatus.DEPUTYWARDEN),
+          eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
+        ),
         eq(studentModel.hostelBlock, hostel_block)
     ))
     .orderBy(leaveFormModel.created_at);
