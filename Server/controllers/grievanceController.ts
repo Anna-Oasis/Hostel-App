@@ -145,6 +145,13 @@ export const approveOrDeclineGrievancesByRCController = async (
     throw AppError("No Grievance found for this grievance id", httpStatus.BAD_REQUEST);
   }
 
+  if (grievance[0].status !== grievanceApprovalStatus.SUBMITTED) {
+    throw AppError(
+      "This grievance is not awaiting RC action",
+      httpStatus.CONFLICT
+    );
+  }
+
   const student = await findStudentByRollNo(grievance[0].roll_number);
 
   if (student.length === 0) {
@@ -220,6 +227,13 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
 
     if(grievance.length === 0) {
       throw AppError("No Grievance found for the provided id", httpStatus.BAD_REQUEST);
+    }
+
+    if (grievance[0].status !== grievanceApprovalStatus.RC) {
+      throw AppError(
+        "This grievance is not awaiting manager resolution",
+        httpStatus.CONFLICT
+      );
     }
 
     const data = await updateGrievanceStatus({
