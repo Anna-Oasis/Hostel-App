@@ -6,6 +6,7 @@ import { getGrievanceBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
 import TabSwitch from "@/components/TabSwitch";
 import { FileTextIcon, History } from "lucide-react-native";
+import { GRIEVANCE_STATUS } from "@/constants/grievanceStatus";
 
 type GrievanceTab = "pending" | "history";
 
@@ -26,8 +27,14 @@ export default function GrievancesPage() {
     fetchGrievances();
   }, []);
 
-  const pendingGrievances = grievances.filter((item) => item.grievances?.status === "0");
-  const historyGrievances = grievances.filter((item) => item.grievances?.status !== "0");
+  const pendingGrievances = grievances.filter(
+    (item) => item.grievances?.status === GRIEVANCE_STATUS.RC
+  );
+  const historyGrievances = grievances.filter(
+    (item) =>
+      item.grievances?.status === GRIEVANCE_STATUS.MANAGER ||
+      item.grievances?.status === GRIEVANCE_STATUS.DECLINED
+  );
   const visibleGrievances = activeTab === "pending" ? pendingGrievances : historyGrievances;
 
   return (
