@@ -13,6 +13,7 @@ import { createGrievanceSchema } from "../validation/grievance.schema";
 import { getRollNoFromUserId } from "../services/helper";
 import { grievanceApprovalStatus} from "../constants/enum";
 import { getDeputyWardenBlockByUserId } from "../services/dwServices";
+import { findStudentByRollNo } from "../services/detailsService";
 
 
 export const createGrievanceController = async (req: AuthRequest, res: Response) => {
@@ -140,8 +141,28 @@ export const approveOrDeclineGrievancesByRCController = async (
 
   const grievance=await getGrievanceByGrievanceId(grievanceId);
 
-  if(!grievance) {
+  if(grievance.length === 0) {
     throw AppError("No Grievance found for this grievance id", httpStatus.BAD_REQUEST);
+  }
+
+  if (grievance[0].status !== grievanceApprovalStatus.SUBMITTED) {
+    throw AppError(
+      "This grievance is not awaiting RC action",
+      httpStatus.CONFLICT
+    );
+  }
+
+  const student = await findStudentByRollNo(grievance[0].roll_number);
+
+  if (student.length === 0) {
+    throw AppError("Student associated with this grievance was not found", httpStatus.NOT_FOUND);
+  }
+
+  const isSameBlock = student[0].hostelBlock === rc[0].hostel;
+  const isSameFloor = student[0].floor !== null && rc[0].floor.includes(student[0].floor);
+
+  if (!isSameBlock || !isSameFloor) {
+    throw AppError("You are not authorized to act on this grievance", httpStatus.FORBIDDEN);
   }
 
   const validated=rcGrievanceDecisionSchema.parse(req.body);
@@ -158,7 +179,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     updatedBy: req.User.role
   });
 
-  if (!updateResult) {
+  if (updateResult.length === 0) {
     throw AppError("Failed to update grievance status", httpStatus.INTERNAL_SERVER_ERROR);
   }
 
@@ -204,8 +225,15 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
     
     const grievance=await getGrievanceByGrievanceId(grievanceId);
 
-    if(!grievance) {
+    if(grievance.length === 0) {
       throw AppError("No Grievance found for the provided id", httpStatus.BAD_REQUEST);
+    }
+
+    if (grievance[0].status !== grievanceApprovalStatus.RC) {
+      throw AppError(
+        "This grievance is not awaiting manager resolution",
+        httpStatus.CONFLICT
+      );
     }
 
     const data = await updateGrievanceStatus({
@@ -214,7 +242,7 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
       updatedBy: req.User.role
     });
 
-    if (!data) {
+    if (data.length === 0) {
       throw AppError("Failed to update grievance", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
