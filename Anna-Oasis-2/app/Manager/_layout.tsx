@@ -6,6 +6,7 @@ const TITLES: Record<string, string> = {
   PaymentVerifications: "Payment Verifications",
   Grievances: "Grievances",
   CautionDeposit: "Caution Deposit",
+  AttendanceReport: "Attendance Report",
 };
 
 export default function ManagerLayout() {

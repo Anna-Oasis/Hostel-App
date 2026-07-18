@@ -1,8 +1,9 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
   BadgeDollarSignIcon,
+  CalendarCheck,
   FileTextIcon,
   ShieldCheckIcon,
 } from "lucide-react-native";
@@ -45,6 +46,12 @@ export default function ManagerPage() {
       icon: FileTextIcon,
       color: "#022B60",
     },
+    {
+      title: "Attendance Report",
+      route: "/Manager/AttendanceReport",
+      icon: CalendarCheck,
+      color: "#022B60",
+    },
   ];
 
   return (
@@ -58,7 +65,7 @@ export default function ManagerPage() {
             style={{ backgroundColor: item.color }}
             variant="solid"
           >
-            <ButtonIcon as={item.icon} size="xxl" color="white" />
+            <ButtonIcon as={item.icon} size="xl" color="white" />
             <ButtonText className="mt-3 text-lg leading-none font-medium">{item.title}</ButtonText>
           </Button>
         ))}
