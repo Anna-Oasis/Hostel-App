@@ -140,7 +140,7 @@ export const approveOrDeclineGrievancesByRCController = async (
 
   const grievance=await getGrievanceByGrievanceId(grievanceId);
 
-  if(!grievance) {
+  if(grievance.length === 0) {
     throw AppError("No Grievance found for this grievance id", httpStatus.BAD_REQUEST);
   }
 
@@ -158,7 +158,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     updatedBy: req.User.role
   });
 
-  if (!updateResult) {
+  if (updateResult.length === 0) {
     throw AppError("Failed to update grievance status", httpStatus.INTERNAL_SERVER_ERROR);
   }
 
@@ -204,7 +204,7 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
     
     const grievance=await getGrievanceByGrievanceId(grievanceId);
 
-    if(!grievance) {
+    if(grievance.length === 0) {
       throw AppError("No Grievance found for the provided id", httpStatus.BAD_REQUEST);
     }
 
@@ -214,7 +214,7 @@ export const resolveGrievanceByManagerController = async (req: AuthRequest,res:R
       updatedBy: req.User.role
     });
 
-    if (!data) {
+    if (data.length === 0) {
       throw AppError("Failed to update grievance", httpStatus.INTERNAL_SERVER_ERROR);
     }
 
