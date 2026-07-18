@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TextInput, View } from "react-native";
 import { Formik } from "formik";
 import { AlertTriangle, Eye, FileWarning } from "lucide-react-native";
 import DatePickerField from "@/components/form/DatePickerField";
@@ -118,6 +118,36 @@ export default function ManagerAttendanceReportPage() {
   );
   const [selectedStudent, setSelectedStudent] =
     useState<ManagerAttendanceReportStudent | null>(null);
+  
+  const [searchRollNo, setSearchRollNo] = useState<string>("")
+
+  const filteredStudents = useMemo(() => {
+    if (!report) return [];
+
+    const query = searchRollNo.trim().toLowerCase();
+
+    const students = !query
+      ? [...report.students]
+      : report.students.filter(
+          (student) =>
+            student.rollNo.toLowerCase().includes(query) ||
+            student.name.toLowerCase().includes(query)
+        );
+
+    return students.sort((a, b) => {
+      const floorA = Number(a.floor ?? Number.MAX_SAFE_INTEGER);
+      const floorB = Number(b.floor ?? Number.MAX_SAFE_INTEGER);
+
+      if (floorA !== floorB) {
+        return floorA - floorB;
+      }
+
+      const roomA = Number(a.roomNumber ?? Number.MAX_SAFE_INTEGER);
+      const roomB = Number(b.roomNumber ?? Number.MAX_SAFE_INTEGER);
+
+      return roomA - roomB;
+    });
+  }, [report, searchRollNo]);
 
   useEffect(() => {
     getAdmissionSessions()
@@ -221,7 +251,7 @@ export default function ManagerAttendanceReportPage() {
                       isDisabled={reportLoading}
                     >
                       {reportLoading && <Spinner size="small" color="white" />}
-                      <ButtonText className="ml-2">Generate Report</ButtonText>
+                      <ButtonText className="ml-2">Get Report</ButtonText>
                     </Button>
                   </View>
                 )}
@@ -260,6 +290,15 @@ export default function ManagerAttendanceReportPage() {
                     Days: {report.summary.dateCount}
                   </Text>
                 </View>
+
+                <View>
+                   <TextInput
+                    placeholder="Search by Roll No"
+                    value={searchRollNo}
+                    onChangeText={setSearchRollNo}
+                    className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center m-4"
+                  />
+                </View>
               </View>
 
               {report.warnings.length > 0 && (
@@ -286,7 +325,7 @@ export default function ManagerAttendanceReportPage() {
                 />
               ) : (
                 <View>
-                  {report.students.map((student) => {
+                  {filteredStudents.map((student) => {
                     const summary = getStudentSummary(student);
                     return (
                       <View
