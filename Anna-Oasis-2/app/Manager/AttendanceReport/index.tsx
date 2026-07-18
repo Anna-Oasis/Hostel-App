@@ -26,7 +26,9 @@ import {
 import { getAdmissionSessions } from "@/utils/manager/managerAdmissionApi";
 import {
   AttendanceStatus,
+  exportAttendance,
   getManagerAttendanceReport,
+  getStudentSummary,
   ManagerAttendanceReportResponse,
   ManagerAttendanceReportStudent,
   ManagerAttendanceReportWarning,
@@ -37,13 +39,7 @@ type AdmissionSessionOption = {
   value: string;
 };
 
-type StudentAttendanceSummary = {
-  present: number;
-  absent: number;
-  notMarked: number;
-  conflict: number;
-  percentage: string;
-};
+
 
 const statusStyles: Record<AttendanceStatus, string> = {
   PRESENT: "bg-green-100 text-green-800",
@@ -61,20 +57,6 @@ const formatDate = (date: string) =>
     year: "numeric",
   });
 
-const getStudentSummary = (
-  student: ManagerAttendanceReportStudent
-): StudentAttendanceSummary => {
-  const statuses = Object.values(student.attendance);
-  const present = statuses.filter((status) => status === "PRESENT").length;
-  const absent = statuses.filter((status) => status === "ABSENT").length;
-  const notMarked = statuses.filter((status) => status === "NOT_MARKED").length;
-  const conflict = statuses.filter((status) => status === "CONFLICT").length;
-  const markedDays = present + absent;
-  const percentage =
-    markedDays === 0 ? "0.0%" : `${((present / markedDays) * 100).toFixed(1)}%`;
-
-  return { present, absent, notMarked, conflict, percentage };
-};
 
 const getWarningText = (warning: ManagerAttendanceReportWarning) => {
   if (warning.code === "DUPLICATE_ATTENDANCE_RECORDS") {
@@ -298,6 +280,15 @@ export default function ManagerAttendanceReportPage() {
                     onChangeText={setSearchRollNo}
                     className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center m-4"
                   />
+                </View>
+
+                <View>
+                  <Button
+                      className="mt-5"
+                      onPress={() => exportAttendance(filteredStudents, report)}
+                    >
+                      <ButtonText className="ml-2">Download Report</ButtonText>
+                  </Button>
                 </View>
               </View>
 
