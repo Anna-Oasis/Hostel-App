@@ -8,6 +8,8 @@ import { Button, ButtonText } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react-native'
 import RefreshableScrollView from '@/components/common/RefreshableScrollView'
 import { downloadFeeReceipt } from '@/utils/student/studentFeeReceiptApi'
+import ModalCallable from '@/components/modals/ModalCallable'
+import { ActivityIndicator, View } from 'react-native'
 
 const AdmissionHistory = () => {
   const details = useUserStore((state) => state.details)
@@ -15,7 +17,7 @@ const AdmissionHistory = () => {
 
   const [history, setHistory] = useState<any[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
-
+  const [loader, setLoader] = useState(false)
   const fetchHistory = async () => {
     if (!rollNo) return
     try {
@@ -34,43 +36,22 @@ const AdmissionHistory = () => {
   }, [rollNo])
 
   const download = async (item : any) => {
-      const {
-        name,
-        rollNo,
-        course,
-        semester,
-        branch
-      } = details;
-
-      const year = Math.ceil(Number(semester) / 2);
-
-      const txId = item.transaction_id
-      const paymentDate = item.submission_Date
-      const amount = item.previousResident ? "1,18,000" : "1,40,000"
-
-      await downloadFeeReceipt({
-        "name": name,
-        "rollNo": rollNo,
-        "course": course,
-        "year": String(year),
-        "branch": branch,
-        "semester": semester,
-        "dateOfPayment": new Date(paymentDate).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                        }),
-        "amount": amount,
-        "refId" : txId
-      })
-
+      setLoader(true)
+      await downloadFeeReceipt(item.id)
+      setLoader(false)
   }
 
   return (
     <RefreshableScrollView
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ padding: 16, height : '100%' }}
       onRefresh={fetchHistory}
       refreshing={isRefreshing}
     >
-      
+      {loader && (
+        <View className="absolute inset-0 z-50 items-center justify-center bg-black/20">
+          <ActivityIndicator size="large" color="#022B60" />
+        </View>
+      )}
       {!rollNo ? (
         <Text>Roll number not found.</Text>
       ) : history.length === 0 ? (
