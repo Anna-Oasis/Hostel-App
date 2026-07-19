@@ -11,6 +11,7 @@ import {
   getRoomByRollNo,
   getAdmissionsByStatusByBlock,
   getAdmissionsApprovedByUserByBlock,
+  getAdmissionsApprovedByWarden,
 } from "../services/admissionServices";
 import { Response } from "express";
 import { createAdmissionSchema } from "../validation/admission.schema";
@@ -710,3 +711,29 @@ export const updateApprovalStatusByWardenController = async (
       : "Admission declined successfully",
   });
 };
+
+
+export async function fetchApprovedAdmissionsForManager(
+  req: AuthRequest,
+  res: Response
+) {
+  if (!req.User || !req.User.role || !req.User.id) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+
+  const submittedAdmissions = await getAdmissionsApprovedByWarden()
+
+  res.status(httpStatus.OK).json({
+    success: true,
+    user: req.User,
+    data: submittedAdmissions || [],
+    count: submittedAdmissions ? submittedAdmissions.length : 0,
+    message:
+      submittedAdmissions && submittedAdmissions.length > 0
+        ? "Admissions retrieved successfully"
+        : "No Admissions found",
+  });
+}

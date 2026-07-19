@@ -6,7 +6,8 @@ import {
   fetchAdmissionWaitingForApprovalController,
   approveByManagerController,
   fetchAdmissionsApprovedByUser,
-  updateApprovalStatusByManagerController
+  updateApprovalStatusByManagerController,
+  fetchApprovedAdmissionsForManager
 } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import {
@@ -44,6 +45,13 @@ managerRouter.get(
   authenticateUser,
   hasRole(['manager']),
   errorWrapper(fetchAdmissionsApprovedByUser)
+);
+
+managerRouter.get(
+  "/admissions_approved",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(fetchApprovedAdmissionsForManager)
 );
 
 // Vacating hostel approval routes
