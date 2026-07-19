@@ -2,10 +2,9 @@ import api from "@/api";
 import { getToken } from "../authUtils";
 import { Alert, Platform } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
-import * as Sharing from "expo-sharing";
 import { Buffer } from "buffer";
 
-export async function downloadFeeReceipt(data: Object) {
+export async function downloadFeeReceipt(admissionId : string) {
     const token = await getToken();
 
     if (!token) {
@@ -13,9 +12,8 @@ export async function downloadFeeReceipt(data: Object) {
     }
 
     try {
-        const response = await api.post(
-            "/api/student/feeReceipt",
-            { data },
+        const response = await api.get(
+            `/api/student/forms/feeReceipt/${admissionId}`,
             {
                 responseType: "arraybuffer",
                 headers: {

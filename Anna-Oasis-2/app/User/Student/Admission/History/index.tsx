@@ -34,34 +34,7 @@ const AdmissionHistory = () => {
   }, [rollNo])
 
   const download = async (item : any) => {
-      const {
-        name,
-        rollNo,
-        course,
-        semester,
-        branch
-      } = details;
-
-      const year = Math.ceil(Number(semester) / 2);
-
-      const txId = item.transaction_id
-      const paymentDate = item.submission_Date
-      const amount = item.previousResident ? "1,18,000" : "1,40,000"
-
-      await downloadFeeReceipt({
-        "name": name,
-        "rollNo": rollNo,
-        "course": course,
-        "year": String(year),
-        "branch": branch,
-        "semester": semester,
-        "dateOfPayment": new Date(paymentDate).toLocaleString("en-IN", {
-                          timeZone: "Asia/Kolkata",
-                        }),
-        "amount": amount,
-        "refId" : txId
-      })
-
+      await downloadFeeReceipt(item.id)
   }
 
   return (
