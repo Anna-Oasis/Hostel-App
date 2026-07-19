@@ -45,7 +45,7 @@ export default function ApplicationFormPage() {
         Application Form
       </Text>
 
-      <View className="flex-1 overflow-hidden rounded-lg bg-white">
+      {/* <View className="flex-1 overflow-hidden rounded-lg bg-white">
         {source ? (
           <WebView
             source={source}
@@ -57,7 +57,7 @@ export default function ApplicationFormPage() {
             <Text>Loading form...</Text>
           </View>
         )}
-      </View>
+      </View> */}
 
       <Button
         className="mt-4 h-14 rounded-lg"

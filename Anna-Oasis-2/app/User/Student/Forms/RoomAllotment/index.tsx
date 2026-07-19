@@ -1,56 +1,76 @@
-import { View, Alert } from "react-native";
-import { router } from "expo-router";
-import { FileTextIcon, ClipboardIcon, HomeIcon } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { Alert, View } from "react-native";
+import { DownloadIcon } from "lucide-react-native";
+import { WebView } from "react-native-webview";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import {
+  downloadRoomAllotmentForm,
+  getRoomAllotmentFormSource,
+} from "@/utils/student/studentFormsApi";
+import Pdf from "react-native-pdf"
 
-const forms = [
-  {
-    title: "Application Form",
-    route: "/User/Student/Forms/ApplicationForm",
-    icon: FileTextIcon,
-    enabled: true,
-  },
-  {
-    title: "Room Allotment",
-    route: "/User/Student/Forms/RoomAllotment",
-    icon: HomeIcon,
-    enabled: true,
-  },
-  {
-    title: "Re-Admission Form",
-    route: "/User/Student/Forms/ReAdmissionForm",
-    icon: ClipboardIcon,
-    enabled: true,
-  },
-];
+type PdfSource = {
+  uri: string;
+  headers: {
+    Authorization: string;
+  };
+};
 
-export default function FormsPage() {
+export default function RoomAllotmentPage() {
+  const [source, setSource] = useState<PdfSource | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  useEffect(() => {
+    getRoomAllotmentFormSource()
+      .then(setSource)
+      .catch((error) => {
+        Alert.alert("Error", error.message || "Failed to load form.");
+      });
+  }, []);
+
+  const handleDownload = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadRoomAllotmentForm();
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to download form.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
-    <View className="flex-1 p-8">
-      {forms.map((form) => (
-        <Button
-          key={form.title}
-          className="mb-4 h-24 rounded-xl flex-row justify-start px-6"
-          style={[
-            { backgroundColor: "#022B60" },
-            !form.enabled && { opacity: 0.5 },
-          ]}
-          variant="solid"
-          onPress={() => {
-            if (form.enabled && form.route) {
-              router.push(form.route as any);
-              return;
-            }
+    <View className="flex-1 bg-[#f4f4f4] p-4">
+      <Text className="mb-3 text-2xl font-bold text-gray-900">
+        Room Allotment
+      </Text>
 
-            Alert.alert("Coming Soon", `${form.title} is not ready yet.`);
-          }}
-        >
-          <ButtonIcon as={form.icon} size="xl" color="white" />
-          <ButtonText className="ml-4 text-xl font-medium">
-            {form.title}
-          </ButtonText>
-        </Button>
-      ))}
+      {/* <View className="flex-1 overflow-hidden rounded-lg bg-white">
+        {source ? (
+          <WebView
+            source={source}
+            startInLoadingState
+            originWhitelist={["*"]}
+          />
+        ) : (
+          <View className="flex-1 items-center justify-center">
+            <Text>Loading form...</Text>
+          </View>
+        )}
+      </View> */}
+
+      <Button
+        className="mt-4 h-14 rounded-lg"
+        style={{ backgroundColor: "#022B60" }}
+        onPress={handleDownload}
+        disabled={isDownloading}
+      >
+        <ButtonIcon as={DownloadIcon} color="white" />
+        <ButtonText className="text-lg">
+          {isDownloading ? "Downloading..." : "Download"}
+        </ButtonText>
+      </Button>
     </View>
   );
 }
