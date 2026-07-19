@@ -162,6 +162,7 @@ export function buildFeeReceiptData(
     date : addmission.updatedAt.toLocaleDateString("en-GB"),
     amount: addmission.previousResident ? "1,18,000": "1,40,000",
 };
+  console.log(receiptData)
   return receiptData
 }
 

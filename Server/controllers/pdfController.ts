@@ -4,7 +4,7 @@ import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
 import { getOrCreateBillId } from "../services/billServices";
-import { findStudentByUserId } from "../services/detailsService";
+import { findStudentByRollNo, findStudentByUserId } from "../services/detailsService";
 import { getAdmissionByAdmissionId, getAdmissionByRollNumber } from "../services/admissionServices";
 import { fillHtmlTemplate } from "../services/htmlTemplateService";
 import { generatePdfFromHtml } from "../services/htmlPdfGenerationService";
@@ -25,9 +25,9 @@ export async function generateFeeReceiptController(
 
     const addmission_id = req.params.addmissionid;
     const addmission = await getAdmissionByAdmissionId(Number(addmission_id))
-    const student = await findStudentByUserId(Number(addmission[0].roll_number))
+    const student = await findStudentByRollNo(addmission[0].roll_number)
     const billId = await getOrCreateBillId(addmission[0].roll_number)
-    // console.log(billId)
+    // console.log(billId, student,addmission)
     const templateData = buildFeeReceiptData(addmission[0], student[0], billId)
     const html = fillHtmlTemplate("fee-receipt", templateData)
 
