@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode" : 5,
+      "versionCode": 5,
       "package": "edu.annauniv.cirih",
       "compileSdkVersion": 36,
       "targetSdkVersion": 36
@@ -51,7 +51,8 @@
           }
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

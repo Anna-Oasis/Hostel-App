@@ -9,6 +9,10 @@ const TITLES: Record<string, string> = {
   SummerVacation: "Summer Vacation",
   Grievances: "Grievances",
   HostelVacation: "Hostel Vacation",
+  Forms: "Forms",
+  ApplicationForm: "Application Form",
+  RoomAllotment: "Room Allotment",
+  ReAdmissionForm: "Re-Admission Form",
 };
 
 export default function StudentLayout() {
