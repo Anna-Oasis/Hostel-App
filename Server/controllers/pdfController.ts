@@ -5,11 +5,12 @@ import httpStatus from "http-status";
 import { Response } from "express";
 import { getOrCreateBillId } from "../services/billServices";
 import { findStudentByUserId } from "../services/detailsService";
-import { getAdmissionByRollNumber } from "../services/admissionServices";
+import { getAdmissionByAdmissionId, getAdmissionByRollNumber } from "../services/admissionServices";
 import { fillHtmlTemplate } from "../services/htmlTemplateService";
 import { generatePdfFromHtml } from "../services/htmlPdfGenerationService";
 import {
     buildApplicationFormData,
+    buildFeeReceiptData,
     buildReAdmissionFormData,
     buildRoomAllotmentFormData,
 } from "../services/studentFormsService";
@@ -22,20 +23,15 @@ export async function generateFeeReceiptController(
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
 
-    const {data} = req.body;
+    const addmission_id = req.params.addmissionid;
+    const addmission = await getAdmissionByAdmissionId(Number(addmission_id))
+    const student = await findStudentByUserId(Number(req.User.id))
+    const billId = await getOrCreateBillId(addmission[0].roll_number)
+    // console.log(billId)
+    const templateData = buildFeeReceiptData(addmission[0], student[0], billId)
+    const html = fillHtmlTemplate("fee-receipt", templateData)
 
-    const billId = await getOrCreateBillId(data["rollNo"])
-    console.log(billId)
-    
-    const pdfData = {
-        ...data,
-        "dateOfGeneration" : new Date().toLocaleString("en-IN", {
-                                timeZone: "Asia/Kolkata",
-                            }),
-        "billId" : billId
-    }
-
-    const pdfBuffer = await generatePdf("fee-receipt", pdfData)
+    const pdfBuffer = await generatePdfFromHtml(html)
 
     res.setHeader("Content-Type", "application/pdf")
     res.setHeader(

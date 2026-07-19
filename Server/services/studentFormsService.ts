@@ -122,7 +122,7 @@ export function buildApplicationFormData(
     // nonVegetarianMessChecked: yesNo(
     //   isSameValue(messPreference, "Non-Vegetarian")
     // ),
-
+    academicYear : admission?.academicYear
   };
 }
 
@@ -138,6 +138,31 @@ export function buildRoomAllotmentFormData(
     hostelBlock : student.hostelBlock,
     roomNumber: student.roomNumber,
   };
+}
+
+export function buildFeeReceiptData(
+  addmission : Admission,
+  student : Student,
+  billId : string
+) {
+  const receiptData = {
+    receiptNumber: billId,
+    name: student.name,
+    rollNo: student.rollNo,
+    admissionCategory: student.admissionCategory,
+    course: student.course,
+    branch: student.branch,
+    year: calculateYear(student.semester),
+    academicYear: addmission.academicYear,
+    semester: student.semester,
+    hostelBlock: addmission.hostelBlock,
+    roomNumber: student.roomNumber,
+    paymentReferenceId: addmission.transaction_id,
+    // paymentDate: ad,
+    date : addmission.updatedAt.toLocaleDateString("en-GB"),
+    amount: addmission.previousResident ? "1,18,000": "1,40,000",
+};
+  return receiptData
 }
 
 export function buildReAdmissionFormData(
@@ -169,6 +194,7 @@ export function buildReAdmissionFormData(
     ]),
     roomNumber: student.roomNumber,
     hostelBlock : student.hostelBlock,
-    transactionId : admission?.transaction_id
+    transactionId : admission?.transaction_id,
+    academicYear : admission?.academicYear
   };
 }

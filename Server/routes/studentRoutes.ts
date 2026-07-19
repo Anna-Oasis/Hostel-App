@@ -97,8 +97,8 @@ studentRouter.get(
 );
 
 //Fee-Receipt generation 
-studentRouter.post(
-  "/feeReceipt",
+studentRouter.get(
+  "/forms/feeReceipt/:addmissionid",
   authenticateUser,
   hasRole(["student"]),
   errorWrapper(generateFeeReceiptController)
