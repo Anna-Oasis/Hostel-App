@@ -7,6 +7,11 @@ type ApplicationFormAdmission = Pick<
   "hostelBlock" | "messPreference" | "previousResident"
 >;
 
+type FeeReceiptAdmission = Pick<
+  Admission,
+  "previousResident" | "transaction_id" | "submission_Date"
+>;
+
 function valueOrEmpty(value: unknown): string {
   return value === null || value === undefined ? "" : String(value);
 }
@@ -44,6 +49,33 @@ function calculateYear(semester: Student["semester"]): string {
   if (!Number.isFinite(semesterNumber) || semesterNumber <= 0) return "";
 
   return String(Math.ceil(semesterNumber / 2));
+}
+
+function getCourseDurationYears(course: Student["course"]): number {
+  return isSameValue(course, "B.Arch") ? 5 : 4;
+}
+
+/**
+ * Anna University roll numbers lead with the admission year (e.g. "2024115098"),
+ * so the course span can be derived without a separate stored field.
+ */
+function getAcademicYearRange(
+  rollNo: Student["rollNo"],
+  course: Student["course"]
+): string {
+  const admissionYear = Number(valueOrEmpty(rollNo).slice(0, 4));
+  if (!Number.isFinite(admissionYear) || admissionYear <= 0) return "";
+
+  const graduationYear = admissionYear + getCourseDurationYears(course);
+  return `${admissionYear} - ${graduationYear}`;
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
+function formatDateTime(date: Date): string {
+  return date.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
 
 function joinAddressParts(parts: unknown[]): string {
@@ -169,5 +201,30 @@ export function buildReAdmissionFormData(
     roomNumber: student.roomNumber,
     floraHostelChecked: yesNo(isSameValue(hostelBlock, "Flora")),
     lavenderHostelChecked: yesNo(isSameValue(hostelBlock, "Lavender")),
+  };
+}
+
+export function buildFeeReceiptData(
+  student: Student,
+  admission: FeeReceiptAdmission,
+  receiptNo: string
+): HtmlTemplateData {
+  const now = new Date();
+  const amount = admission.previousResident ? "96,300" : "1,16,300";
+
+  return {
+    receiptNo,
+    name: student.name,
+    rollNo: student.rollNo,
+    category: student.admissionCategory,
+    course: student.course,
+    year: calculateYear(student.semester),
+    branch: student.branch,
+    semester: student.semester,
+    academicYear: getAcademicYearRange(student.rollNo, student.course),
+    refId: admission.transaction_id,
+    date: formatDate(now),
+    amount,
+    dateOfGeneration: formatDateTime(now),
   };
 }

@@ -1,43 +1,57 @@
 import api from "@/api";
 import { getToken } from "../authUtils";
-import { Alert } from "react-native";
-import { router } from "expo-router";
 import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import { Buffer } from "buffer";
 
-export async function downloadFeeReceipt(data : Object){
-    const token = await getToken()
-    if (!token) {
-        throw new Error("No authentication token found");
-    }
-    try {
-        const response = await api.post(
-            "/api/student/feeReceipt",
-            {data : data},
-            {
-                responseType: "arraybuffer",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-            }},
-        )
+function feeReceiptPath(admissionId: string | number) {
+  return `/api/student/forms/fee-receipt/${admissionId}`;
+}
 
-        const base64 = Buffer.from(response.data).toString("base64");
+export async function getFeeReceiptSource(admissionId: string | number) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
 
-        const fileUri = FileSystem.cacheDirectory + "fee-receipt.pdf";
+  const baseUrl = api.defaults.baseURL;
+  if (!baseUrl) {
+    throw new Error("API URL is not configured");
+  }
 
-        await FileSystem.writeAsStringAsync(fileUri, base64, {
-            encoding: "base64",
-        });
+  return {
+    uri: `${baseUrl}${feeReceiptPath(admissionId)}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+}
 
-        await Sharing.shareAsync(fileUri, {
-            mimeType: "application/pdf",
-            UTI: "com.adobe.pdf",
-            dialogTitle: "Open Fee Receipt",
-        });
-    } catch (error) {
-        console.error(error);
-        Alert.alert("Error", "Failed to download. Please try again.");
-    }
+export async function downloadFeeReceipt(admissionId: string | number) {
+  const token = await getToken();
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  const response = await api.get(feeReceiptPath(admissionId), {
+    responseType: "arraybuffer",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const base64 = Buffer.from(response.data).toString("base64");
+  const fileUri = `${FileSystem.documentDirectory}fee-receipt.pdf`;
+
+  await FileSystem.writeAsStringAsync(fileUri, base64, {
+    encoding: "base64",
+  });
+
+  await Sharing.shareAsync(fileUri, {
+    mimeType: "application/pdf",
+    UTI: "com.adobe.pdf",
+    dialogTitle: "Open Fee Receipt",
+  });
+
+  return fileUri;
 }

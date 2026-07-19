@@ -1,46 +1,58 @@
-import { generatePdf } from "../services/pdfGenerationService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
 import { getOrCreateBillId } from "../services/billServices";
 import { findStudentByUserId } from "../services/detailsService";
-import { getAdmissionByRollNumber } from "../services/admissionServices";
+import {
+    getAdmissionByAdmissionId,
+    getAdmissionByRollNumber,
+} from "../services/admissionServices";
 import { fillHtmlTemplate } from "../services/htmlTemplateService";
 import { generatePdfFromHtml } from "../services/htmlPdfGenerationService";
 import {
     buildApplicationFormData,
+    buildFeeReceiptData,
     buildReAdmissionFormData,
     buildRoomAllotmentFormData,
 } from "../services/studentFormsService";
 
 export async function generateFeeReceiptController(
-    req : AuthRequest,
-    res : Response
-){
+    req: AuthRequest,
+    res: Response
+) {
     if (!req.User || !req.User.id) {
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
 
-    const {data} = req.body;
-
-    const billId = await getOrCreateBillId(data["rollNo"])
-    console.log(billId)
-    
-    const pdfData = {
-        ...data,
-        "dateOfGeneration" : new Date().toLocaleString("en-IN", {
-                                timeZone: "Asia/Kolkata",
-                            }),
-        "billId" : billId
+    const { admissionId } = req.params;
+    if (!admissionId || isNaN(Number(admissionId))) {
+        throw AppError("Invalid or missing admission ID", httpStatus.BAD_REQUEST);
     }
 
-    const pdfBuffer = await generatePdf("fee-receipt", pdfData)
+    const students = await findStudentByUserId(Number(req.User.id));
+    const student = students[0];
 
-    res.setHeader("Content-Type", "application/pdf")
+    if (!student) {
+        throw AppError("Student details not found", httpStatus.NOT_FOUND);
+    }
+
+    const admissions = await getAdmissionByAdmissionId(Number(admissionId));
+    const admission = admissions[0];
+
+    if (!admission || admission.roll_number !== student.rollNo) {
+        throw AppError("Admission record not found", httpStatus.NOT_FOUND);
+    }
+
+    const billId = await getOrCreateBillId(student.rollNo);
+    const templateData = buildFeeReceiptData(student, admission, billId);
+    const html = fillHtmlTemplate("fee-receipt", templateData);
+    const pdfBuffer = await generatePdfFromHtml(html);
+
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
         "Content-Disposition",
-        'attachment; filename="fee-receipt.pdf"'
+        'inline; filename="fee-receipt.pdf"'
     );
 
     res.end(pdfBuffer);
@@ -75,7 +87,7 @@ export async function generateApplicationFormController(
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
         "Content-Disposition",
-        'attachment; filename="application-form.pdf"'
+        'inline; filename="application-form.pdf"'
     );
 
     res.end(pdfBuffer);
@@ -103,7 +115,7 @@ export async function generateRoomAllotmentFormController(
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
         "Content-Disposition",
-        'attachment; filename="room-allotment-form.pdf"'
+        'inline; filename="room-allotment-form.pdf"'
     );
 
     res.end(pdfBuffer);
@@ -138,7 +150,7 @@ export async function generateReAdmissionFormController(
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
         "Content-Disposition",
-        'attachment; filename="re-admission-form.pdf"'
+        'inline; filename="re-admission-form.pdf"'
     );
 
     res.end(pdfBuffer);

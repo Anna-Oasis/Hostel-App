@@ -96,13 +96,13 @@ studentRouter.get(
   errorWrapper(getLatestAdmissionSessionForSemesterController)
 );
 
-//Fee-Receipt generation 
-studentRouter.post(
-  "/feeReceipt",
+//Fee-Receipt generation
+studentRouter.get(
+  "/forms/fee-receipt/:admissionId",
   authenticateUser,
   hasRole(["student"]),
   errorWrapper(generateFeeReceiptController)
-)
+);
 
 studentRouter.get(
   "/forms/application-form",

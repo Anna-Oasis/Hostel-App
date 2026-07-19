@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-
+<title>Fee Receipt</title>
 <style>
 *{
     margin:0;
@@ -135,47 +135,62 @@ th{
     </div>
 
     <div class="receipt-title">
-        FEE RECEIPT - Office Copy
+        FEE RECEIPT - Student Copy
     </div>
 
-    
-    <div >
+
+    <div>
         <div class="field">
             <span class="label">Receipt No:</span>
-            
+            {{receiptNo}}
         </div>
         <div class="field">
             <span class="label">Name:</span>
-            
+            {{name}}
         </div>
         <div class="field">
             <span class="label">Roll No:</span>
+            {{rollNo}}
+        </div>
+
+        <div class="field">
+            <span class="label">Category:</span>
+            {{category}}
         </div>
 
         <div class="field">
             <span class="label">Course:</span>
-            
+            {{course}}
         </div>
 
         <div class="field">
             <span class="label">Year:</span>
-            
+            {{year}}
         </div>
 
         <div class="field">
             <span class="label">Branch:</span>
-            
+            {{branch}}
         </div>
 
         <div class="field">
             <span class="label">Semester:</span>
-            
+            {{semester}}
         </div>
 
+        <div class="field">
+            <span class="label">Academic Year:</span>
+            {{academicYear}}
+        </div>
 
         <div class="field">
             <span class="label">Reference ID:</span>
-            
+            {{refId}}
+        </div>
+
+        <div class="field">
+            <span class="label">Date:</span>
+            {{date}}
         </div>
 
     </div>
@@ -193,7 +208,7 @@ th{
             <tbody>
                 <tr>
                     <td>Hostel Fee Payment</td>
-                    <td></td>
+                    <td>{{amount}}</td>
                 </tr>
             </tbody>
         </table>
@@ -204,7 +219,7 @@ th{
 
         <div>
             <strong>Generated On:</strong>
-            
+            {{dateOfGeneration}}
         </div>
 
         <div class="signature">
