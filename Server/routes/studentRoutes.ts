@@ -30,7 +30,12 @@ import {
   getVacatingHostelFormsOfaStudentController
 } from "../controllers/vacatingHostelController";
 import { getLatestAdmissionSessionForSemesterController } from "../controllers/admissionSessionController";
-import { generateFeeReceiptController } from "../controllers/pdfController";
+import {
+  generateApplicationFormController,
+  generateFeeReceiptController,
+  generateReAdmissionFormController,
+  generateRoomAllotmentFormController,
+} from "../controllers/pdfController";
 
 const studentRouter = Router();
 
@@ -92,11 +97,32 @@ studentRouter.get(
 );
 
 //Fee-Receipt generation 
-studentRouter.post(
-  "/feeReceipt",
+studentRouter.get(
+  "/forms/feeReceipt/:addmissionid",
   authenticateUser,
   hasRole(["student"]),
   errorWrapper(generateFeeReceiptController)
 )
+
+studentRouter.get(
+  "/forms/application-form",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(generateApplicationFormController)
+);
+
+studentRouter.get(
+  "/forms/room-allotment-form",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(generateRoomAllotmentFormController)
+);
+
+studentRouter.get(
+  "/forms/re-admission-form",
+  authenticateUser,
+  hasRole(["student"]),
+  errorWrapper(generateReAdmissionFormController)
+);
 
 export default studentRouter;

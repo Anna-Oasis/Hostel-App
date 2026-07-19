@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Room Allotment Form</title>
+
+<style>
+@page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #e8e8e8;
+    color: #111;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff;
+}
+
+.slip {
+    position: relative;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 12mm 15mm;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.slip + .slip {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 12mm;
+    page-break-before: always;
+    break-before: page;
+}
+
+@media print {
+    body {
+        margin: 0;
+        background: #fff;
+    }
+
+    .page {
+        margin: 0;
+    }
+
+    .slip {
+        page-break-after: always;
+        break-after: page;
+    }
+
+    .slip:last-child {
+        page-break-after: auto;
+        break-after: auto;
+    }
+}
+
+.copy-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px solid #000;
+    padding: 2px 10px;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 24mm 1fr 24mm;
+    align-items: center;
+    border-bottom: 1px solid #555;
+    padding-bottom: 3mm;
+    margin-bottom: 5mm;
+}
+
+.logo {
+    width: 20mm;
+    height: 20mm;
+    object-fit: contain;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.header-text h2 {
+    margin: 2px 0 0;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.title {
+    margin: 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.hostel-name {
+    margin: 4mm 0 6mm;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5mm;
+    font-size: 15px;
+}
+
+.label {
+    width: 48mm;
+    font-weight: bold;
+}
+
+.value {
+    flex: 1;
+    border-bottom: 1px dotted #555;
+    min-height: 6mm;
+    padding: 0 2mm 1mm;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.received {
+    margin-top: 3mm;
+    font-size: 15px;
+}
+
+.signature-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10mm;
+    margin-top: 18mm;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.note {
+    margin-top: auto;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+@media print {
+
+    body {
+        background: #fff;
+    }
+
+    .page {
+        margin: 0;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<main class="page">
+
+    <!-- ================= BLOCK COPY ================= -->
+
+    <section class="slip">
+
+        <div class="copy-label">BLOCK COPY</div>
+
+        <div class="header">
+            <img class="logo" src="./anna_logo.png" alt="Anna University">
+
+            <div class="header-text">
+                <h1>INTERNATIONAL HOSTELS</h1>
+                <h2>ANNA UNIVERSITY, CHENNAI - 25, INDIA</h2>
+            </div>
+
+            <div></div>
+        </div>
+
+        <h3 class="title">ROOM ALLOTMENT</h3>
+
+        <p class="hostel-name">
+            {{hostelBlock}}
+        </p>
+
+        <div class="field">
+            <div class="label">Name</div>
+            <div class="value">{{name}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Programme / Year</div>
+            <div class="value">{{year}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Branch</div>
+            <div class="value">{{branch}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Admission Category</div>
+            <div class="value">{{admissionCategory}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Room Number</div>
+            <div class="value">{{roomNumber}}</div>
+        </div>
+
+        <p class="received">
+            I hereby acknowledge that I have received the key of the room allotted to me and undertake to comply with all the rules and regulations of the International Hostels, Anna University.
+        </p>
+
+        <div class="signature-row">
+            <div>Signature of Student</div>
+            <div>Residential Counselor</div>
+            <div>Deputy Warden</div>
+        </div>
+
+        <p class="note">
+            <strong>Note:</strong>
+            We request you to strictly follow the rules and regulations of the hostel during your stay.
+        </p>
+
+    </section>
+
+    <!-- ================= STUDENT COPY ================= -->
+
+    <section class="slip">
+
+        <div class="copy-label">STUDENT COPY</div>
+
+        <div class="header">
+            <img class="logo" src="./anna_logo.png" alt="Anna University">
+
+            <div class="header-text">
+                <h1>INTERNATIONAL HOSTELS</h1>
+                <h2>ANNA UNIVERSITY, CHENNAI - 25, INDIA</h2>
+            </div>
+
+            <div></div>
+        </div>
+
+        <h3 class="title">ROOM ALLOTMENT</h3>
+
+        <p class="hostel-name">
+           {{hostelBlock}}
+        </p>
+
+        <div class="field">
+            <div class="label">Name</div>
+            <div class="value">{{name}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Programme / Year</div>
+            <div class="value">{{year}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Branch</div>
+            <div class="value">{{branch}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Admission Category</div>
+            <div class="value">{{admissionCategory}}</div>
+        </div>
+
+        <div class="field">
+            <div class="label">Room Number</div>
+            <div class="value">{{roomNumber}}</div>
+        </div>
+
+        <p class="received">
+            I hereby acknowledge that I have received the key of the room allotted to me and undertake to comply with all the rules and regulations of the International Hostels, Anna University.
+        </p>
+
+        <div class="signature-row">
+            <div>Signature of Student</div>
+            <div>Residential Counselor</div>
+            <div>Deputy Warden</div>
+        </div>
+
+        <p class="note">
+            <strong>Note:</strong>
+            We request you to strictly follow the rules and regulations of the hostel during your stay.
+        </p>
+
+    </section>
+
+</main>
+
+</body>
+</html>

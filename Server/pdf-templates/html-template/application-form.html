@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Application Form Preview</title>
+<style>
+@page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #e8e8e8;
+    color: #111;
+    font-family: Arial, sans-serif;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 18px auto;
+    padding: 18mm 18mm 16mm;
+    background: #fff;
+    page-break-after: always;
+}
+
+.page:last-child {
+    page-break-after: auto;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 28mm 1fr 28mm;
+    align-items: center;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5mm;
+    margin-bottom: 7mm;
+}
+
+.logo {
+    width: 23mm;
+    height: 23mm;
+    object-fit: contain;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0 0 2mm;
+    font-size: 26px;
+    letter-spacing: 0;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.title {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 800;
+    margin: 0 0 6mm;
+}
+
+.sub-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 7mm 0 5mm;
+    text-decoration: underline;
+}
+
+.small-note {
+    text-align: center;
+    font-size: 11px;
+    margin: 3mm 0 0;
+}
+
+
+.hostel-row {
+    display: flex;
+    align-items: center;
+    gap: 9mm;
+    min-height: 12mm;
+    padding-bottom: 2mm;
+    border-bottom: 1px dotted #888;
+    font-size: 15px;
+}
+
+.hostel-row strong {
+    margin-right: 2mm;
+}
+
+.checkbox {
+    display: inline-flex;
+    width: 4.3mm;
+    height: 4.3mm;
+    border: 1px solid #333;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2mm;
+    font-size: 11px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.photo-box {
+    width: 38mm;
+    height: 36mm;
+    border: 1.5px dashed #777;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.section-title {
+    clear: both;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 5mm 0 2mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 2px solid #c5c5c5;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 70mm 1fr;
+    gap: 8mm;
+    min-height: 7.6mm;
+    align-items: end;
+    padding: 1.1mm 0 1mm;
+    border-bottom: 1px dotted #777;
+}
+
+.field-label {
+    font-size: 13.5px;
+    font-weight: 800;
+}
+
+.field-value {
+    font-size: 13.5px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.two-column {
+    display: block;
+}
+
+.choice-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10mm;
+    min-height: 10mm;
+    padding: 2mm 0 1.5mm;
+    border-bottom: 1px dotted #777;
+    font-size: 15px;
+}
+
+.choice-row strong {
+    min-width: 72mm;
+}
+
+.declaration {
+    font-family: Georgia, serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin-top: 5mm;
+}
+
+.declaration p {
+    margin: 0 0 3mm;
+}
+
+.signature-row,
+.approval-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12mm;
+    margin-top: 14mm;
+    font-family: Georgia, serif;
+    font-size: 13.5px;
+    font-style: italic;
+    font-weight: 700;
+}
+
+.approval-row {
+    margin-top: 20mm;
+}
+
+.personal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5mm;
+}
+
+.personal-table th,
+.personal-table td {
+    border: 1px solid #aaa;
+    padding: 3mm 4mm;
+    vertical-align: middle;
+    font-size: 13.2px;
+}
+
+.personal-table th {
+    background: #cfcfcf;
+    text-align: center;
+    font-size: 16px;
+    padding: 3mm;
+}
+
+.personal-table .slno {
+    width: 12mm;
+    text-align: center;
+}
+
+.personal-table .label-cell {
+    width: 66mm;
+    font-family: Georgia, serif;
+    font-weight: 700;
+}
+
+.rules {
+    font-family: Georgia, serif;
+    font-size: 12.2px;
+    line-height: 1.28;
+}
+
+.rules h3 {
+    text-align: center;
+    font-size: 15.5px;
+    margin: 0 0 4mm;
+    text-decoration: underline;
+}
+
+.rules p {
+    margin: 0 0 2mm;
+}
+
+.rules ol {
+    margin: 0;
+    padding-left: 7mm;
+}
+
+.rules li {
+    margin-bottom: 1.8mm;
+}
+
+.rules .sub-list {
+    margin-top: 1.2mm;
+    padding-left: 5mm;
+}
+
+.rules-page .header {
+    padding-bottom: 3mm;
+    margin-bottom: 4mm;
+}
+
+.rules-page .logo {
+    width: 20mm;
+    height: 20mm;
+}
+
+.rules-page .header-text h1 {
+    font-size: 22px;
+}
+
+.rules-page .header-text h2 {
+    font-size: 15px;
+}
+
+.rules-page .rules {
+    font-size: 12.6px;
+    line-height: 1.24;
+}
+
+.rules-page .rules h3 {
+    font-size: 14px;
+    margin-bottom: 3mm;
+}
+
+.rules-page .rules li {
+    margin-bottom: 1.2mm;
+}
+
+.rules-page .rules .sub-list {
+    margin-top: 0.7mm;
+    padding-left: 4mm;
+}
+
+.weekend-declaration-page .rules {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.weekend-declaration-page .rules h3 {
+    font-size: 14px;
+    margin-top: 12mm;
+    margin-bottom: 6mm;
+}
+
+.weekend-declaration-page .signature-row {
+    font-size: 15px;
+    margin-top: 22mm;
+}
+
+.weekend-declaration-page .rules p {
+    margin-bottom: 5mm;
+}
+
+.letter {
+    font-family: Georgia, serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.letter p {
+    margin: 0 0 4mm;
+}
+
+.center {
+    text-align: center;
+}
+
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .page {
+        width: 210mm;
+        height: 297mm;
+        min-height: auto;
+        margin: 0;
+        padding: 12mm 13mm 11mm;
+        overflow: hidden;
+        box-shadow: none;
+    }
+}
+</style>
+</head>
+<body>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="title">APPLICATION FORM - {{academicYear}}</div>
+
+    <div class="top-meta">
+        <div>
+            <!-- <div class="section-title" style="margin-top:0;">Hostel Block</div> -->
+            <!-- <div class="field-row"><div class="field-label">Flora (Boys)</div><div class="field-value">{{floraHostelChecked}}</div></div>
+            <div class="field-row"><div class="field-label">Lavender (Girls)</div><div class="field-value">{{lavenderHostelChecked}}</div></div> -->
+        </div>
+        <div class="photo-box">Affix recent<br>Passport<br>size<br>Photograph</div>
+        <!-- <img src="{{passportPhoto}}" class="photo-box" /> -->
+    </div>
+
+    <div class="section-title">Applicant Details</div>
+    <div class="field-row"><div class="field-label">Hostel Block</div><div class="field-value">{{hostelBlock}}</div></div>
+    <div class="field-row"><div class="field-label">Name</div><div class="field-value">{{name}}</div></div>
+    <div class="field-row"><div class="field-label">Reg. No.</div><div class="field-value">{{rollNo}}</div></div>
+    <div class="field-row"><div class="field-label">Course</div><div class="field-value">{{course}}</div></div>
+    <div class="field-row"><div class="field-label">Branch</div><div class="field-value">{{branch}}</div></div>
+    <div class="field-row"><div class="field-label">Semester</div><div class="field-value">{{semester}}</div></div>
+    <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{mobile}}</div></div>
+    <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{email}}</div></div>
+
+    <div class="section-title">Father Details</div>
+    <div class="field-row"><div class="field-label">Father Name</div><div class="field-value">{{fatherName}}</div></div>
+    <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{fatherMobile}}</div></div>
+    <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{fatherEmail}}</div></div>
+    <div class="field-row"><div class="field-label">Occupation</div><div class="field-value">{{fatherOccupation}}</div></div>
+    <div class="field-row"><div class="field-label">Country of Residence</div><div class="field-value">{{fatherCountry}}</div></div>
+
+    <div class="section-title">Mother Details</div>
+    <div class="field-row"><div class="field-label">Mother Name</div><div class="field-value">{{motherName}}</div></div>
+    <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{motherMobile}}</div></div>
+    <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{motherEmail}}</div></div>
+    <div class="field-row"><div class="field-label">Occupation</div><div class="field-value">{{motherOccupation}}</div></div>
+    <div class="field-row"><div class="field-label">Country of Residence</div><div class="field-value">{{motherCountry}}</div></div>
+</section>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="section-title">Residential Address in India</div>
+    <div class="two-column">
+        <div class="field-row"><div class="field-label">House/Door No.</div><div class="field-value">{{resIndiaHouseNo}}</div></div>
+        <div class="field-row"><div class="field-label">Street</div><div class="field-value">{{resIndiaStreet}}</div></div>
+        <div class="field-row"><div class="field-label">City</div><div class="field-value">{{resIndiaCity}}</div></div>
+        <div class="field-row"><div class="field-label">State</div><div class="field-value">{{resIndiaState}}</div></div>
+        <div class="field-row"><div class="field-label">Country</div><div class="field-value">{{resIndiaCountry}}</div></div>
+        <div class="field-row"><div class="field-label">Postal Code</div><div class="field-value">{{resIndiaPostalCode}}</div></div>
+    </div>
+
+    <div class="section-title">Residential Address in Foreign</div>
+    <div class="two-column">
+        <div class="field-row"><div class="field-label">House/Door No.</div><div class="field-value">{{resForeignHouseNo}}</div></div>
+        <div class="field-row"><div class="field-label">Street</div><div class="field-value">{{resForeignStreet}}</div></div>
+        <div class="field-row"><div class="field-label">City</div><div class="field-value">{{resForeignCity}}</div></div>
+        <!-- <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div> -->
+        <div class="field-row"><div class="field-label">State</div><div class="field-value">{{resForeignState}}</div></div>
+        <div class="field-row"><div class="field-label">Postal Code</div><div class="field-value">{{resForeignPostalCode}}</div></div>
+    </div>
+
+    <div class="section-title">Local Guardian Details</div>
+    <div class="field-row"><div class="field-label">Name of the Local Guardian</div><div class="field-value">{{localGuardianName}}</div></div>
+    <div class="field-row"><div class="field-label">Relationship</div><div class="field-value">{{localGuardianRelationship}}</div></div>
+    <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{localGuardianMobile}}</div></div>
+    <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{localGuardianEmail}}</div></div>
+
+    <div class="two-column">
+        <div class="field-row"><div class="field-label">House/Door No.</div><div class="field-value">{{guardianHouseNo}}</div></div>
+        <div class="field-row"><div class="field-label">Street</div><div class="field-value">{{guardianStreet}}</div></div>
+        <div class="field-row"><div class="field-label">City</div><div class="field-value">{{guardianCity}}</div></div>
+        <!-- <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div> -->
+        <div class="field-row"><div class="field-label">State</div><div class="field-value">{{guardianState}}</div></div>
+        <div class="field-row"><div class="field-label">Postal Code</div><div class="field-value">{{guardianPostalCode}}</div></div>
+    </div>
+
+    <div class="section-title">Hostel Details</div>
+    <div class="field-row"><div class="field-label">Previous resident : </div><div class="field-value">{{previousResidentYes}}</div></div>
+    <!-- <div class="field-row"><div class="field-label">Previous resident - No</div><div class="field-value">{{previousResidentNo}}</div></div> -->
+    <div class="field-row"><div class="field-label">Mess preference : </div><div class="field-value">{{mess}}</div></div>
+    <!-- <div class="field-row"><div class="field-label">Mess preference - Non-Vegetarian</div><div class="field-value">{{nonVegetarianMessChecked}}</div></div> -->
+</section>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="sub-title" style="margin-top: 28mm;">DECLARATION AND UNDERTAKING</div>
+    <div class="declaration">
+        <p>I state that all the above are true to the best of my knowledge and belief.</p>
+        <p>I undertake to abide by the rules of the hostel and I am fully aware that I shall be subjected to disciplinary action for infringement of any of the rules.</p>
+        <p>I assure that my son / daughter will abide by the rules of the hostel.</p>
+    </div>
+
+    <div class="signature-row">
+        <span>Signature of Applicant</span>
+        <span>Signature of Parent/ Guardian</span>
+    </div>
+
+    <p class="center" style="margin-top: 12mm; font-family: Georgia, serif;">The applicant may be admitted / not admitted to the hostel</p>
+
+    <div class="approval-row">
+        <span>Residential Counselor</span>
+        <span>Deputy Warden</span>
+        <span>Executive Warden</span>
+    </div>
+</section>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <table class="personal-table">
+        <thead>
+            <tr>
+                <th colspan="3">PERSONAL DETAILS<br><span style="font-size:13px">(IN CAPITAL LETTERS)</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="slno">1.</td><td class="label-cell">Name of the Student<br>(Full Name)</td><td>{{name}}</td></tr>
+            <tr><td class="slno">2.</td><td class="label-cell">Reg. No.</td><td>{{rollNo}}</td></tr>
+            <tr><td class="slno">3.</td><td class="label-cell">Courses & Branch</td><td>{{course}}, {{branch}}</td></tr>
+            <tr><td class="slno">4.</td><td class="label-cell">Date of Birth with Age<br>(DD/MM/YYYY)</td><td>{{dateOfBirth}} {{age}}</td></tr>
+            <tr><td class="slno">5.</td><td class="label-cell">Hostel Block</td><td>{{hostelBlock}}</td></tr>
+            <tr><td class="slno">6.</td><td class="label-cell">Room Number</td><td>{{roomNumber}}</td></tr>
+            <tr><td class="slno">7.</td><td class="label-cell">Student Contact Number</td><td>{{mobile}}</td></tr>
+            <tr><td class="slno">8.</td><td class="label-cell">E-Mail ID</td><td>{{email}}</td></tr>
+            <tr><td class="slno">9.</td><td class="label-cell">Admissions Category (NRI/CIWGC/FN/LDC/SIDS)</td><td>{{admissionCategory}}</td></tr>
+            <tr><td class="slno">10.</td><td class="label-cell">Passport No./ Govt. ID No.</td><td>{{govtIdType}}, {{govtId}}</td></tr>
+            <tr><td class="slno">11.</td><td class="label-cell">Nationality</td><td>{{nationality}}</td></tr>
+            <tr><td class="slno">12.</td><td class="label-cell">Blood Group</td><td>{{bloodGroup}}</td></tr>
+            <tr><td class="slno">13.</td><td class="label-cell">Medical History in brief</td><td>{{medicalHistory}}</td></tr>
+            <tr><td class="slno">14.</td><td class="label-cell">Emergency Contact</td><td>{{emergencyContact}}</td></tr>
+        </tbody>
+    </table>
+
+    <div class="signature-row" style="justify-content:flex-end; margin-top: 18mm;">
+        <span>Signature of the Student</span>
+    </div>
+</section>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="rules">
+        <h3>TAMIL NADU PROHIBITION OF RAGGING ACT 1997</h3>
+        <p>Any student who commits ragging shall be punished with imprisonment for a term which may extend to two years and shall be liable to a fine which may extend to ten thousand rupees. Further, the convicted student shall be dismissed from the institution and shall not be admitted in any other institution.</p>
+
+        <div class="header" style="border-bottom:none; margin: 15mm 0 8mm; padding:0;">
+            <div></div>
+            <div class="header-text">
+                <h1 style="font-size: 20px;">INTERNATIONAL HOSTELS</h1>
+                <h2 style="font-size: 15px;">ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+            </div>
+            <div></div>
+        </div>
+
+        <h3>UNDERTAKING FORM</h3>
+        <div class="letter">
+            <p>To</p>
+            <p>The Executive Warden,<br>International Hostels,<br>Anna University,<br>Chennai-600 025.</p>
+            <p>Sir,</p>
+            <p>We are aware of the serious consequences of indulgence in ragging and have strictly advised him/her against this pernicious practice. I assure you that my ward will not involve in any of the activities forbidden by the authorities and the government.</p>
+            <p style="margin-top: 16mm;">Yours sincerely,</p>
+            <div class="signature-row">
+                <span>Signature of student</span>
+                <span>Signature of Parent / Guardian</span>
+            </div>
+            <p style="margin-top: 18mm;">Place:</p>
+            <p>Date:</p>
+        </div>
+    </div>
+</section>
+
+<section class="page rules-page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="rules">
+        <h3>RULES AND REGULATIONS</h3>
+        <ol>
+            <li>Attendance: Attendance will be recorded at 09:00 pm (BOYS) and 8:30 pm (GIRLS) every day. Students should be available in the hostel before 8.00 pm and should assemble in the common rooms to enable the RC to take the attendance.</li>
+            <li>Strict silence should be maintained in the hostel premises including rooms, bathrooms, dining halls, corridors, common areas, etc. Every student of the hostel should have the civic responsibility and should maintain cleanliness and should not cause inconvenience or disturbance to others and should maintain discipline and decorum.</li>
+            <li>Hostellers are not permitted to change their rooms.</li>
+            <li>The hostel rooms are subject to inspection by the University/ Hostel authorities to make sure that they are kept neat and tidy.</li>
+            <li>
+                <ol class="sub-list" type="a">
+                    <li>Prohibited items like liquor, drugs and narcotics, lethal weapons, cigarettes etc., are not allowed inside the rooms. Possession and use of these items will lead to expulsion from the hostel/ college and can lead to imprisonment.</li>
+                    <li>Consumption of alcohol, use of drugs and narcotics smoking and even possession of such things are prohibited.</li>
+                    <li>Inmates found intoxicated in the hostel premises due to consumption of alcohol outside the campus will be expelled from the hostels.</li>
+                    <li>Gambling in any form such as playing cards (Even without money at stake) is prohibited.</li>
+                </ol>
+            </li>
+            <li>
+                <ol class="sub-list" type="a">
+                    <li>Day scholars and other hostel students are not allowed inside the hostel. Hostellers should not encourage their entry. If other students are found in the hostel, the inmates concerned will be penalized.</li>
+                    <li>Guests are not permitted inside any of the hostels.</li>
+                    <li>Members of the opposite sex are barred from entering the hostel room.</li>
+                </ol>
+            </li>
+            <li>
+                <ol class="sub-list" type="a">
+                    <li>Celebrating birthday parties and other parties inside the hostel rooms is strictly prohibited.</li>
+                    <li>Collection of donations for any purpose (religious/ otherwise) is also strictly prohibited. Canvassing in any form to promote/ disgrace any religion/caste is strictly prohibited.</li>
+                </ol>
+            </li>
+            <li>Students absent from regular classes will have to get permission from the RC. Staying in the hostel during college hours when they have class work is not permitted except on health grounds.</li>
+            <li>Hostellers coming to the hostel after the gate closing hours without prior permission or without valid reason would be fined. Frequent late comers will be ordered to vacate the hostel.</li>
+            <li>Water and Electricity should be carefully used and not wasted.</li>
+            <li>Wrong entry, improper/lack of entry in exit registers, signing on behalf of another person, tampering with the entries, proxy attendance and misguidance of any nature are punishable. In case of any quarrel between or among roommates, it should be reported to the RC immediately or can be brought to the notice of the Executive warden / The Warden directly for appropriate action.</li>
+            <li>Students are not allowed to keep any power driven two-wheeler vehicles or cars in the hostel. Such students shall not be readmitted under any circumstances.</li>
+            <li>The hostellers are not allowed to keep any electrical equipment like Iron box without written permission. Unauthorized possession will lead to confiscation of the goods.</li>
+            <li>Use of Computers:
+                <ol class="sub-list" type="a">
+                    <li>Installation of computer systems in the hostel rooms should be done only after getting written permission.</li>
+                    <li>The usage of computers should be for academic purposes only.</li>
+                    <li>The University/Hostel authorities will conduct surprise checks periodically and if anyone is found violating the above rule, disciplinary action will be taken against him/her.</li>
+                </ol>
+            </li>
+            <li>
+                <ol class="sub-list" type="a">
+                    <li>Cell phones can be used by the students but not inside the classrooms / examination halls / laboratory / Library / offices and during silence hour in the hostel.</li>
+                    <li>The usage of cell phones is prohibited inside the dining hall/common room/ Hostel office.</li>
+                </ol>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="page rules-page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="rules">
+        <ol start="16">
+            <li>Students can visit the Hostel office only during visiting hours. (10.30 am to 05.30 pm)</li>
+            <li>Students should read the circulars put up in the notice boards and be updated on the functioning of the hostel.</li>
+            <li>Students are instructed to attend the General meetings of the hostel. It is mandatory that members of the student council and mess committee members should be hostellers.</li>
+            <li>Students are not allowed to play skating rollers and other outdoor games (football / cricket, etc) inside the hostel building which can cause breakage / accidents. Sliding along the handrails / rest of stairs and fast running / climbing down should be totally avoided.</li>
+            <li>When leaving the rooms for attending classes or for vacation, etc., electrical gadgets like lights, fan, geyser, AC should be switched off. Glass windows and Doors are to be closed securely.</li>
+            <li>Violation of any of these rules would result in punitive action and serious violations would be referred to the higher authorities.</li>
+            <li>Hostellers should not enter any unnecessary conversation, quarrel or altercation with the hostel staff. If anyone has any complaint against any employee of the hostel, a written complaint against the person is to be lodged with the RC. Use of abusive, vulgar, and unparliamentarily language against the hostel/mess staff is strictly forbidden. Strict action will be taken on any complaint of misbehavior by students from staff/faculty.</li>
+            <li>If any hosteller is found indulging in any form of instigation/intimidation /threat to any other hosteller, he/she will be ordered to vacate the hostel.</li>
+            <li>Rough handling of dining hall furniture, room furniture or any furniture fittings of the hostel is strictly forbidden. Inmates own Furniture's like bed, cupboards, tables, chairs etc are prohibited inside the room. Vandalism is a very serious offence.</li>
+            <li>The cost of damages will be recovered in the following manner:
+                <ol class="sub-list" type="a">
+                    <li>If any individual or group is identified to have caused the damage, double the cost will be recovered from him/her/group.</li>
+                    <li>If damage is found in anyone of the rooms and the person(s) is/ are not identified, then double the cost will be recovered from the room-mates collectively.</li>
+                    <li>If damage is done outside the rooms i.e., in common places like corridors, bathrooms, recreation halls, mess etc., and the person(s) is/ are not identified, then double the cost will be recovered, floor wise or block wise or overall, as the case may be. Repetition of damage to the hostel property will result in expulsion from the hostel.</li>
+                </ol>
+            </li>
+            <li>Hostellers are strongly advised to lock valuables like laptops, watches, ornaments, money, etc; the hostel authorities are not responsible for any loss of property inside the room.</li>
+            <li>Wastage of food in the mess is strictly prohibited and such actions will lead to additional mess charges to the inmate.</li>
+            <li>All movements from and to the hostels should be recorded in the movement register kept with the security guard at the entrance of the hostel and should be properly signed.</li>
+            <li>No hosteller is permitted to stay out of the hostel after 9.00 pm in the case of men's hostel Sunday through Friday and 8.00 pm in the case of ladies' hostel. The security guard has instructions to lock the gate after the stipulated timings as mentioned above. In case of any emergency, contact the Resident Counselor / The Executive Warden/ The Warden.</li>
+            <li>Parents should not encourage students to go on picnics/tours outside Chennai. In such case, the parents should send an email / letter to the Executive warden.</li>
+        </ol>
+    </div>
+</section>
+
+<section class="page weekend-declaration-page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="rules">
+        <p><strong>Weekend Leave:</strong></p>
+        <p>In the case of an overnight stay at the Local Guardian's House, parents should inform the RC regarding this in advance. Students should submit the filled-up LEAVE FORM along with the RC signature and submit to the Security prior to entry of details about their leaving.</p>
+
+        <h3>DECLARATION</h3>
+        <p>I hereby abide by all the rules & regulations furnished above. If I am apprehended at any time of violating any of the rules above and rules-imposed time to time, I will vacate the hostel immediately.</p>
+
+        <div class="signature-row">
+            <span>Signature of the student</span>
+            <span>Signature of the parent</span>
+        </div>
+        <p style="margin-top: 12mm;">Place:</p>
+        <p>Date:</p>
+    </div>
+</section>
+
+<section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="rules">
+        <h3>DECLARATION / UNDERTAKING BY THE STUDENT FOR<br>STAYING IN THE INTERNATIONAL HOSTEL</h3>
+
+        <div class="field-row"><div class="field-label">Name</div><div class="field-value">{{name}}</div></div>
+        <div class="field-row"><div class="field-label">Reg. No.</div><div class="field-value">{{rollNo}}</div></div>
+        <div class="field-row"><div class="field-label">Department</div><div class="field-value">{{branch}}</div></div>
+        <div class="field-row"><div class="field-label">S/o</div><div class="field-value">{{fatherName}}</div></div>
+        <div class="field-row"><div class="field-label">Hostel Name</div><div class="field-value">{{hostelBlock}}</div></div>
+        <div class="field-row"><div class="field-label">Room No.</div><div class="field-value">{{roomNumber}}</div></div>
+        <div class="field-row"><div class="field-label">Phone No.</div><div class="field-value">{{mobile}}</div></div>
+        <p style="margin-top: 6mm;">Date: ____________________</p>
+        <p style="margin-top: 6mm;">I do hereby undertake as under:</p>
+
+        <ol>
+            <li>I hereby declare that the entries made by me in the Application Form are complete and true to the best of my knowledge, belief and information.</li>
+            <li>I hereby promise to abide by the rules and regulations concerning admission, attendance, discipline etc. of International Hostels, Anna University and follow the Code of Conduct prescribed for the Students of International Hostels, Anna University as in force from time to time and subsequent changes/ modifications/ amendment made thereto. I acknowledge that the Anna University has the authority for taking punitive actions against me for violation or non-compliance of the same.</li>
+            <li>I hereby declare that I will neither join in any agitation / strike for the purpose of forcing the authorities of the Institute to resolve any problem, nor I will participate in any activity which has a tendency to disturb the peace and tranquility of academic environment of the Anna University campus and/or its Hostel premises.</li>
+            <li>I hereby declare that I will not claim any fees except caution deposit of Rs.15,000/-</li>
+            <li>I hereby declare that I will stay with the roommate allotted by the Hostel authorities under sharing system only, without any hesitation and without any disturbance.</li>
+        </ol>
+
+        <div class="signature-row" style="margin-top: 18mm;">
+            <span>Signature of the Student</span>
+            <span>Verified by the Resident Counsellor</span>
+        </div>
+        <div class="signature-row" style="margin-top: 17mm;">
+            <span>Manager</span>
+            <span>Deputy Warden</span>
+            <span>Executive Warden</span>
+        </div>
+        <p style="margin-top: 12mm;">Recommended / Not-Recommended</p>
+    </div>
+</section>
+
+<!-- <section class="page">
+    <div class="header">
+        <img class="logo" src="./anna_logo.png" alt="">
+        <div class="header-text">
+            <h1>INTERNATIONAL HOSTELS</h1>
+            <h2>ANNA UNIVERSITY, CHENNAI - 600 025, INDIA.</h2>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="approval-row" style="justify-content:flex-end; margin-top: 180mm;">
+    </div>
+</section> -->
+
+</body>
+</html>

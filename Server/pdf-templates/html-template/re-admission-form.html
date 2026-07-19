@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Re-Admission Form</title>
+<style>
+    @page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #e8e8e8;
+    color: #111;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 18px auto;
+    padding: 12mm 16mm;
+    background: #fff;
+    page-break-after: always;
+}
+
+.page:last-child {
+    page-break-after: auto;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 28mm 1fr 28mm;
+    align-items: center;
+    margin-bottom: 8mm;
+}
+
+.logo {
+    width: 22mm;
+    height: 22mm;
+    object-fit: contain;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.header-text h2 {
+    margin: 2mm 0;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.header-text h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.note {
+    margin: 4mm 0 8mm;
+    text-align: center;
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* ===========================
+   FORM FIELDS
+=========================== */
+
+.field-row {
+    display: flex;
+    align-items: center;
+    gap: 8mm;
+    margin-bottom: 5mm;
+    font-size: 15px;
+}
+
+.label {
+    width: 58mm;
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.value {
+    flex: 1;
+    min-height: 7mm;
+    padding: 1mm 2mm;
+    border-bottom: 1px dotted #555;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+/* ===========================
+   DECLARATION
+=========================== */
+
+.received {
+    margin-top: 8mm;
+    text-align: justify;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ===========================
+   SIGNATURES
+=========================== */
+
+.date-signature-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 12mm 0;
+    font-size: 15px;
+}
+
+.signature {
+    min-width: 55mm;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* ===========================
+   PAYMENT DETAILS
+=========================== */
+
+.section-title {
+    margin: 8mm 0 6mm;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.payment-list {
+    margin: 0 0 8mm 7mm;
+    padding: 0;
+    font-size: 14px;
+}
+
+.payment-list li {
+    margin-bottom: 4mm;
+}
+
+.payment-reference-row {
+    display: grid;
+    grid-template-columns: max-content 45mm max-content 28mm max-content;
+    column-gap: 2mm;
+    align-items: center;
+}
+
+.solid-line {
+    display: inline-block;
+    min-width: 45mm;
+    border-bottom: 1px solid #000;
+}
+
+.solid-line.small {
+    min-width: 28mm;
+}
+
+/* ===========================
+   OFFICE SECTION
+=========================== */
+
+.office-box {
+    border: 1px solid #777;
+    padding: 4mm;
+    margin-top: 6mm;
+    min-height: 42mm;
+}
+
+.office-title {
+    margin-bottom: 5mm;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.office-grid {
+    display: grid;
+    grid-template-columns: 60mm 30mm;
+    row-gap: 3mm;
+    column-gap: 12mm;
+    margin-left: 10mm;
+}
+
+.office-signatures {
+    display: flex;
+    justify-content: center;
+    gap: 70mm;
+    margin-top: 12mm;
+    font-weight: bold;
+}
+
+.room-allotted-row {
+    margin: 8mm 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+.final-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15mm;
+    font-weight: bold;
+}
+
+/* ===========================
+   UNDERTAKING PAGE
+=========================== */
+
+.undertaking-page {
+    padding-top: 20mm;
+}
+
+.undertaking-title {
+    margin: 0 0 8mm;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+.rules {
+    list-style: none;
+    margin: 0;
+    padding-left: 6mm;
+    font-size: 13.4px;
+    line-height: 1.35;
+    text-align: justify;
+}
+
+.rules li {
+    position: relative;
+    margin-bottom: 3mm;
+}
+
+.rules li::before {
+    content: ">";
+    position: absolute;
+    left: -6mm;
+}
+
+.rules strong {
+    font-weight: bold;
+}
+
+.undertaking-signatures {
+    display: flex;
+    justify-content: center;
+    gap: 60mm;
+    margin-top: 10mm;
+    font-weight: bold;
+}
+
+.undertaking-date {
+    margin-top: 5mm;
+    font-size: 14px;
+}
+
+.admit-line {
+    margin-top: 6mm;
+    text-align: center;
+    font-size: 14px;
+}
+
+.warden-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 22mm;
+    font-weight: bold;
+}
+
+@media print {
+
+    body {
+        background: #fff;
+    }
+
+    .page {
+        margin: 0;
+    }
+}
+</style>
+</head>
+<body>
+
+    <!-- ========================= PAGE 1 ========================= -->
+
+    <main class="page">
+
+        <header class="header">
+            <img class="logo" src="./anna_logo.png" alt="Anna University Logo">
+
+            <div class="header-text">
+                <h1>INTERNATIONAL HOSTELS</h1>
+                <h2>ANNA UNIVERSITY, CHENNAI - 600 025</h2>
+                <h3>RE-ADMISSION FORM - {{academicYear}}</h3>
+            </div>
+
+            <div></div>
+        </header>
+
+
+        <div class="field-row">
+            <span class="label">Hostel Block</span>
+            <span class="value">{{hostelBlock}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Student Name</span>
+            <span class="value">{{name}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Register Number</span>
+            <span class="value">{{rollNo}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Course</span>
+            <span class="value">{{course}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Branch</span>
+            <span class="value">{{branch}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Year</span>
+            <span class="value">{{year}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Semester</span>
+            <span class="value">{{semester}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Mobile Number</span>
+            <span class="value">{{mobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Student E-mail</span>
+            <span class="value">{{email}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Father's Mobile Number</span>
+            <span class="value">{{fatherMobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Mother's Mobile Number</span>
+            <span class="value">{{motherMobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Parent's E-mail</span>
+            <span class="value">{{parentEmail}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Local Guardian Name</span>
+            <span class="value">{{localGuardianName}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Guardian Mobile Number</span>
+            <span class="value">{{localGuardianMobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Guardian Address</span>
+            <span class="value">{{localGuardianAddress}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Room Number Allotted</span>
+            <span class="value">{{roomNumber}}</span>
+        </div>
+
+        <p class="received">
+            I hereby acknowledge that I have received the key of the room allotted
+            to me and undertake to abide by all the rules and regulations of the
+            International Hostels, Anna University.
+        </p>
+
+        <div class="date-signature-row">
+            <span>Date : ____________________</span>
+            <span class="signature">
+                Signature of Applicant
+            </span>
+        </div>
+
+        
+    </main>
+
+    <!-- ========================= PAGE 1 ========================= -->
+    <main class="page">
+        
+        <header class="header">
+            <img class="logo" src="./anna_logo.png" alt="Anna University Logo">
+
+            <div class="header-text">
+                <h1>INTERNATIONAL HOSTELS</h1>
+                <h2>ANNA UNIVERSITY, CHENNAI - 600 025</h2>
+                <h3>RE-ADMISSION FORM - {{academicYear}}</h3>
+            </div>
+
+            <div></div>
+        </header>
+        <h2 class="section-title">
+            PAYMENT DETAILS
+        </h2>
+
+        <ul class="payment-list">
+            <li>
+                Whether the Hostel Fees has been paid :
+                <strong>Yes / No</strong>
+            </li>
+
+            <li>
+                <div class="field-row">
+                    <span class="label">Fee Transaction Reference No.</span>
+                    <span class="value">{{transactionId}}</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="field-row">
+                        <span class="label">Date :</span>
+                        <span class="value"></span>
+                </div>
+            </li>
+        </ul>
+
+        <section class="office-box">
+
+            <div class="office-title">
+                Office Use Only
+            </div>
+
+            <div class="office-grid">
+                <span>Payment Verified</span>
+                <span>Yes / No</span>
+
+                <span>Room may be allotted</span>
+                <span>Yes / No</span>
+
+                <span>Re-admission Approved</span>
+                <span>Yes / No</span>
+            </div>
+
+            <div class="office-signatures">
+                <span>Office Staff</span>
+                <span>Manager</span>
+            </div>
+
+        </section>
+
+        <div class="room-allotted-row">
+            Room No. Allotted :
+            <span class="solid-line">{{roomNumber}}</span>
+        </div>
+
+        <div class="final-signatures">
+            <span>Residential Counsellor</span>
+            <span>Deputy Warden</span>
+        </div>
+
+    </main>
+
+
+    <!-- ========================= PAGE 3 ========================= -->
+
+    <main class="page undertaking-page">
+
+        <h2 class="undertaking-title">
+            DECLARATION AND UNDERTAKING
+        </h2>
+
+        <ul class="rules">
+
+            <li>Resident will occupy only the room allotted and shall not change the allotted room without obtaining prior permission from the hostel authorities.</li>
+
+            <li>Every resident shall carry a valid University / Hostel Identity Card at all times.</li>
+
+            <li><strong>Residents shall strictly follow the prescribed dress code.</strong></li>
+
+            <li><strong>Smoking, alcohol and narcotic substances are strictly prohibited inside the hostel premises.</strong></li>
+
+            <li>Entering the hostel under the influence of alcohol or drugs is prohibited.</li>
+
+            <li>Residents shall return to the hostel before the prescribed reporting time and mark attendance daily.</li>
+
+            <li>Violation of attendance rules may result in disciplinary action including expulsion from the hostel.</li>
+
+            <li><strong>Rooms and common areas shall be maintained neat and clean.</strong></li>
+
+            <li>Residents shall keep their rooms locked while leaving and shall not hand over room keys to others.</li>
+
+            <li><strong>Switch off lights, fans, AC and other electrical appliances when not in use.</strong></li>
+
+            <li>Students are responsible for the safety of their personal belongings.</li>
+
+            <li><strong>Ragging in any form is strictly prohibited.</strong></li>
+
+            <li>Birthday celebrations and gatherings inside hostel rooms are not permitted.</li>
+
+            <li>Hostel property shall not be damaged or misused.</li>
+
+            <li>Visitors are not permitted inside hostel rooms without permission.</li>
+
+            <li>Residents shall follow the mess timings and avoid food wastage.</li>
+
+            <li>Residents shall maintain discipline and treat hostel staff and fellow students with respect.</li>
+
+            <li><strong>Use of personal electrical appliances such as iron boxes, heaters and wireless routers is prohibited.</strong></li>
+
+            <li>I declare that the information furnished above is true and correct.</li>
+
+            <li>I undertake to abide by all hostel rules and understand that violation of these rules may lead to cancellation of hostel accommodation.</li>
+
+            <li>I assure that my son / daughter shall abide by all hostel rules and regulations.</li>
+
+        </ul>
+
+        <div class="undertaking-signatures">
+            <span>Signature of Applicant</span>
+            <span>Signature of Parent / Guardian</span>
+        </div>
+
+        <div class="undertaking-date">
+            Date : _______________________
+        </div>
+
+        <p class="admit-line">
+            The applicant may be admitted / not admitted to the hostel.
+        </p>
+
+        <div class="warden-signatures">
+            <span>Residential Counsellor</span>
+            <span>Deputy Warden</span>
+            <span>Executive Warden</span>
+        </div>
+
+    </main>
+
+</body>
+</html>
