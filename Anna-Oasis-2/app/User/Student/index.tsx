@@ -8,6 +8,7 @@ import {
   CalendarIcon,
   FileTextIcon,
   BuildingIcon,
+  FilesIcon,
 } from "lucide-react-native";
 import DetailsCard from "@/components/student/DetailsCard";
 import { useEffect, useState } from "react";
@@ -37,6 +38,12 @@ export default function StudentMain() {
       title: "Leave Form",
       route: "/User/Student/LeaveForm",
       icon: ClipboardIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Forms",
+      route: "/User/Student/Forms",
+      icon: FilesIcon,
       color: "#022B60",
     },
     {

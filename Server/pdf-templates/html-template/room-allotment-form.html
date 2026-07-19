@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Room Allotment Form</title>
+<style>
+@page {
+    size: A4;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #e8e8e8;
+    color: #111;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 18px auto;
+    padding: 10mm 15mm;
+    background: #fff;
+}
+
+.slip {
+    height: 132mm;
+    padding: 0 4mm;
+    display: flex;
+    flex-direction: column;
+}
+
+.slip + .slip {
+    border-top: 1px solid #999;
+    margin-top: 3mm;
+    padding-top: 6mm;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 24mm 1fr 24mm;
+    align-items: center;
+    border-bottom: 1px solid #555;
+    padding-bottom: 3mm;
+    margin-bottom: 5mm;
+}
+
+.logo {
+    width: 20mm;
+    height: 20mm;
+    object-fit: contain;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.header-text h1 {
+    margin: 0 0 1.5mm;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.header-text h2 {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.title {
+    margin: 0 0 3mm;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+.hostel-name {
+    margin: 0 0 6mm;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.line {
+    display: flex;
+    align-items: flex-end;
+    gap: 2mm;
+    min-height: 8mm;
+    margin-bottom: 2mm;
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.value {
+    min-width: 36mm;
+    flex: 1;
+    padding: 0 2mm 0.5mm;
+    border-bottom: 1px dotted #777;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.value.short {
+    flex: 0 0 24mm;
+}
+
+.value.medium {
+    flex: 0 0 44mm;
+}
+
+.received {
+    margin: 6mm 0 0;
+    font-size: 15px;
+}
+
+.signature-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8mm;
+    margin-top: 14mm;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.note {
+    margin-top: auto;
+    padding-top: 3mm;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .page {
+        margin: 0;
+    }
+}
+</style>
+</head>
+<body>
+    <main class="page">
+        <section class="slip">
+            <div class="header">
+                <img class="logo" src="./anna_logo.png" alt="Anna University logo">
+                <div class="header-text">
+                    <h1>INTERNATIONAL HOSTELS</h1>
+                    <h2>ANNA UNIVERSITY, CHENNAI-25, INDIA.</h2>
+                </div>
+                <div></div>
+            </div>
+
+            <h3 class="title">ROOM ALLOTMENT</h3>
+            <p class="hostel-name">Flora (Boys) / Lavender (Girls)</p>
+
+            <div class="line">
+                <span>I</span>
+                <span class="value">{{name}}</span>
+                <span>BE / B.Tech year</span>
+                <span class="value short">{{year}}</span>
+            </div>
+            <div class="line">
+                <span class="value medium">{{branch}}</span>
+                <span>Branch in CEG / ACT / SAP. Under</span>
+                <span class="value short">{{admissionCategory}}</span>
+            </div>
+            <div class="line">
+                <span>CIWGC. Allotted Room No.</span>
+                <span class="value medium">{{roomNumber}}</span>
+            </div>
+
+            <p class="received">Received the key.</p>
+
+            <div class="signature-row">
+                <span>Signature of Student</span>
+                <span>Residential Counselor</span>
+                <span>Deputy Warden</span>
+            </div>
+
+            <p class="note">
+                <strong>Note:</strong> We request you to strictly follow the rules and regulations of the hostel during the stay.
+            </p>
+        </section>
+
+        <section class="slip">
+            <div class="header">
+                <img class="logo" src="./anna_logo.png" alt="Anna University logo">
+                <div class="header-text">
+                    <h1>INTERNATIONAL HOSTELS</h1>
+                    <h2>ANNA UNIVERSITY, CHENNAI-25, INDIA.</h2>
+                </div>
+                <div></div>
+            </div>
+
+            <h3 class="title">ROOM ALLOTMENT</h3>
+            <p class="hostel-name">Flora (Boys) / Lavender (Girls)</p>
+
+            <div class="line">
+                <span>I</span>
+                <span class="value">{{name}}</span>
+                <span>BE / B.Tech year</span>
+                <span class="value short">{{year}}</span>
+            </div>
+            <div class="line">
+                <span class="value medium">{{branch}}</span>
+                <span>Branch in CEG / ACT / SAP. Under</span>
+                <span class="value short">{{admissionCategory}}</span>
+            </div>
+            <div class="line">
+                <span>CIWGC. Allotted Room No.</span>
+                <span class="value medium">{{roomNumber}}</span>
+            </div>
+
+            <p class="received">Received the key.</p>
+
+            <div class="signature-row">
+                <span>Signature of Student</span>
+                <span>Residential Counselor</span>
+                <span>Deputy Warden</span>
+            </div>
+
+            <p class="note">
+                <strong>Note:</strong> We request you to strictly follow the rules and regulations of the hostel during the stay.
+            </p>
+        </section>
+    </main>
+</body>
+</html>
