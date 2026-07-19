@@ -84,13 +84,6 @@ body {
     margin: 3mm 0 0;
 }
 
-.top-meta {
-    display: grid;
-    grid-template-columns: 1fr 38mm;
-    column-gap: 10mm;
-    align-items: start;
-    margin-bottom: 5mm;
-}
 
 .hostel-row {
     display: flex;
@@ -121,7 +114,7 @@ body {
 
 .photo-box {
     width: 38mm;
-    height: 46mm;
+    height: 36mm;
     border: 1.5px dashed #777;
     display: flex;
     align-items: center;
@@ -310,18 +303,18 @@ body {
 }
 
 .weekend-declaration-page .rules {
-    font-size: 22px;
+    font-size: 14px;
     line-height: 1.45;
 }
 
 .weekend-declaration-page .rules h3 {
-    font-size: 30px;
+    font-size: 14px;
     margin-top: 12mm;
     margin-bottom: 6mm;
 }
 
 .weekend-declaration-page .signature-row {
-    font-size: 25px;
+    font-size: 15px;
     margin-top: 22mm;
 }
 
@@ -376,16 +369,17 @@ body {
 
     <div class="top-meta">
         <div>
-            <div class="section-title" style="margin-top:0;">Hostel Block</div>
-            <div class="field-row"><div class="field-label">Flora (Boys)</div><div class="field-value">{{floraHostelChecked}}</div></div>
-            <div class="field-row"><div class="field-label">Lavender (Girls)</div><div class="field-value">{{lavenderHostelChecked}}</div></div>
-            <div class="small-note">(Name should be filled in CAPITAL LETTERS as in Passport/ID Proof)</div>
+            <!-- <div class="section-title" style="margin-top:0;">Hostel Block</div> -->
+            <!-- <div class="field-row"><div class="field-label">Flora (Boys)</div><div class="field-value">{{floraHostelChecked}}</div></div>
+            <div class="field-row"><div class="field-label">Lavender (Girls)</div><div class="field-value">{{lavenderHostelChecked}}</div></div> -->
         </div>
         <div class="photo-box">Affix recent<br>Passport<br>size<br>Photograph</div>
+        <!-- <img src="{{passportPhoto}}" class="photo-box" /> -->
     </div>
 
     <div class="section-title">Applicant Details</div>
-    <div class="field-row"><div class="field-label">Name of the Applicant</div><div class="field-value">{{name}}</div></div>
+    <div class="field-row"><div class="field-label">Hostel Block</div><div class="field-value">{{hostelBlock}}</div></div>
+    <div class="field-row"><div class="field-label">Name</div><div class="field-value">{{name}}</div></div>
     <div class="field-row"><div class="field-label">Reg. No.</div><div class="field-value">{{rollNo}}</div></div>
     <div class="field-row"><div class="field-label">Course</div><div class="field-value">{{course}}</div></div>
     <div class="field-row"><div class="field-label">Branch</div><div class="field-value">{{branch}}</div></div>
@@ -394,14 +388,14 @@ body {
     <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{email}}</div></div>
 
     <div class="section-title">Father Details</div>
-    <div class="field-row"><div class="field-label">Name of the Father</div><div class="field-value">{{fatherName}}</div></div>
+    <div class="field-row"><div class="field-label">Father Name</div><div class="field-value">{{fatherName}}</div></div>
     <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{fatherMobile}}</div></div>
     <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{fatherEmail}}</div></div>
     <div class="field-row"><div class="field-label">Occupation</div><div class="field-value">{{fatherOccupation}}</div></div>
     <div class="field-row"><div class="field-label">Country of Residence</div><div class="field-value">{{fatherCountry}}</div></div>
 
     <div class="section-title">Mother Details</div>
-    <div class="field-row"><div class="field-label">Name of the Mother</div><div class="field-value">{{motherName}}</div></div>
+    <div class="field-row"><div class="field-label">Mother Name</div><div class="field-value">{{motherName}}</div></div>
     <div class="field-row"><div class="field-label">Mobile No.</div><div class="field-value">{{motherMobile}}</div></div>
     <div class="field-row"><div class="field-label">E-mail</div><div class="field-value">{{motherEmail}}</div></div>
     <div class="field-row"><div class="field-label">Occupation</div><div class="field-value">{{motherOccupation}}</div></div>
@@ -433,7 +427,7 @@ body {
         <div class="field-row"><div class="field-label">House/Door No.</div><div class="field-value">{{resForeignHouseNo}}</div></div>
         <div class="field-row"><div class="field-label">Street</div><div class="field-value">{{resForeignStreet}}</div></div>
         <div class="field-row"><div class="field-label">City</div><div class="field-value">{{resForeignCity}}</div></div>
-        <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div>
+        <!-- <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div> -->
         <div class="field-row"><div class="field-label">State</div><div class="field-value">{{resForeignState}}</div></div>
         <div class="field-row"><div class="field-label">Postal Code</div><div class="field-value">{{resForeignPostalCode}}</div></div>
     </div>
@@ -448,16 +442,16 @@ body {
         <div class="field-row"><div class="field-label">House/Door No.</div><div class="field-value">{{guardianHouseNo}}</div></div>
         <div class="field-row"><div class="field-label">Street</div><div class="field-value">{{guardianStreet}}</div></div>
         <div class="field-row"><div class="field-label">City</div><div class="field-value">{{guardianCity}}</div></div>
-        <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div>
+        <!-- <div class="field-row"><div class="field-label">District</div><div class="field-value"></div></div> -->
         <div class="field-row"><div class="field-label">State</div><div class="field-value">{{guardianState}}</div></div>
         <div class="field-row"><div class="field-label">Postal Code</div><div class="field-value">{{guardianPostalCode}}</div></div>
     </div>
 
     <div class="section-title">Hostel Details</div>
-    <div class="field-row"><div class="field-label">Previous resident - Yes</div><div class="field-value">{{previousResidentYes}}</div></div>
-    <div class="field-row"><div class="field-label">Previous resident - No</div><div class="field-value">{{previousResidentNo}}</div></div>
-    <div class="field-row"><div class="field-label">Mess preference - Vegetarian</div><div class="field-value">{{vegetarianMessChecked}}</div></div>
-    <div class="field-row"><div class="field-label">Mess preference - Non-Vegetarian</div><div class="field-value">{{nonVegetarianMessChecked}}</div></div>
+    <div class="field-row"><div class="field-label">Previous resident : </div><div class="field-value">{{previousResidentYes}}</div></div>
+    <!-- <div class="field-row"><div class="field-label">Previous resident - No</div><div class="field-value">{{previousResidentNo}}</div></div> -->
+    <div class="field-row"><div class="field-label">Mess preference : </div><div class="field-value">{{mess}}</div></div>
+    <!-- <div class="field-row"><div class="field-label">Mess preference - Non-Vegetarian</div><div class="field-value">{{nonVegetarianMessChecked}}</div></div> -->
 </section>
 
 <section class="page">
@@ -732,12 +726,13 @@ body {
         <div class="signature-row" style="margin-top: 17mm;">
             <span>Manager</span>
             <span>Deputy Warden</span>
+            <span>Executive Warden</span>
         </div>
         <p style="margin-top: 12mm;">Recommended / Not-Recommended</p>
     </div>
 </section>
 
-<section class="page">
+<!-- <section class="page">
     <div class="header">
         <img class="logo" src="./anna_logo.png" alt="">
         <div class="header-text">
@@ -748,9 +743,8 @@ body {
     </div>
 
     <div class="approval-row" style="justify-content:flex-end; margin-top: 180mm;">
-        <span>Executive Warden</span>
     </div>
-</section>
+</section> -->
 
 </body>
 </html>

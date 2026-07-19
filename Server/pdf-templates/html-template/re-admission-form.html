@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Re-Admission Form</title>
 <style>
-@page {
+    @page {
     size: A4;
     margin: 0;
 }
@@ -24,7 +24,7 @@ body {
     width: 210mm;
     min-height: 297mm;
     margin: 18px auto;
-    padding: 11mm 17mm 9mm;
+    padding: 12mm 16mm;
     background: #fff;
     page-break-after: always;
 }
@@ -37,7 +37,7 @@ body {
     display: grid;
     grid-template-columns: 28mm 1fr 28mm;
     align-items: center;
-    margin-bottom: 6mm;
+    margin-bottom: 8mm;
 }
 
 .logo {
@@ -51,225 +51,198 @@ body {
 }
 
 .header-text h1 {
-    margin: 0 0 2mm;
-    font-size: 23px;
+    margin: 0;
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: 0;
 }
 
 .header-text h2 {
-    margin: 0 0 3mm;
+    margin: 2mm 0;
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .header-text h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
 }
 
-.hostel-row {
-    display: flex;
-    align-items: center;
-    gap: 7mm;
-    margin: 6mm 0 1.5mm;
-    font-size: 15px;
-}
-
-.checkbox {
-    display: inline-flex;
-    width: 6mm;
-    height: 5mm;
-    border: 1px solid #333;
-    align-items: center;
-    justify-content: center;
-    margin-right: 2mm;
-    font-size: 12px;
-    line-height: 1;
-}
-
 .note {
-    margin: 0 0 8mm;
+    margin: 4mm 0 8mm;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
+    font-style: italic;
 }
+
+/* ===========================
+   FORM FIELDS
+=========================== */
 
 .field-row {
     display: flex;
-    align-items: flex-end;
-    gap: 1.7mm;
-    min-height: 7.6mm;
-    margin-bottom: 1.5mm;
+    align-items: center;
+    gap: 8mm;
+    margin-bottom: 5mm;
     font-size: 15px;
-    line-height: 1.25;
 }
 
-.field-row.numbered {
-    padding-left: 0;
-}
-
-.field-number {
-    width: 6mm;
-    flex: 0 0 6mm;
+.label {
+    width: 58mm;
+    flex-shrink: 0;
+    font-weight: bold;
 }
 
 .value {
     flex: 1;
-    min-width: 20mm;
-    padding: 0 2mm 0.6mm;
-    border-bottom: 1px dotted #777;
+    min-height: 7mm;
+    padding: 1mm 2mm;
+    border-bottom: 1px dotted #555;
     font-family: Arial, sans-serif;
-    font-size: 12.5px;
-    line-height: 1.25;
-    text-align: center;
+    font-size: 13px;
     word-break: break-word;
 }
 
-.value.short {
-    flex: 0 0 17mm;
+/* ===========================
+   DECLARATION
+=========================== */
+
+.received {
+    margin-top: 8mm;
+    text-align: justify;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.value.medium {
-    flex: 0 0 38mm;
-}
-
-.value.branch {
-    flex: 0 0 45mm;
-}
-
-.value.long {
-    flex: 1 1 auto;
-}
-
-.allotted {
-    margin: 7mm 0 7mm;
-    text-align: center;
-    font-size: 15px;
-    font-weight: 800;
-}
+/* ===========================
+   SIGNATURES
+=========================== */
 
 .date-signature-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin: 6mm 0 8mm;
+    margin: 12mm 0;
     font-size: 15px;
 }
 
 .signature {
-    min-width: 48mm;
+    min-width: 55mm;
     text-align: center;
-    font-style: italic;
+    font-weight: bold;
 }
 
+/* ===========================
+   PAYMENT DETAILS
+=========================== */
+
 .section-title {
-    margin: 0 0 6mm;
+    margin: 8mm 0 6mm;
     text-align: center;
     font-size: 19px;
     font-weight: 800;
 }
 
 .payment-list {
-    margin: 0 0 10mm 7mm;
+    margin: 0 0 8mm 7mm;
     padding: 0;
     font-size: 14px;
 }
 
 .payment-list li {
     margin-bottom: 4mm;
-    padding-left: 3mm;
 }
 
 .payment-reference-row {
     display: grid;
-    grid-template-columns: max-content 43mm max-content 24mm max-content;
-    align-items: end;
-    column-gap: 1mm;
-}
-
-.payment-reference-row strong {
-    white-space: nowrap;
+    grid-template-columns: max-content 45mm max-content 28mm max-content;
+    column-gap: 2mm;
+    align-items: center;
 }
 
 .solid-line {
     display: inline-block;
-    min-width: 48mm;
-    border-bottom: 1px solid #111;
-    vertical-align: bottom;
+    min-width: 45mm;
+    border-bottom: 1px solid #000;
 }
 
 .solid-line.small {
-    min-width: 26mm;
+    min-width: 28mm;
 }
 
+/* ===========================
+   OFFICE SECTION
+=========================== */
+
 .office-box {
-    border: 1px solid #999;
+    border: 1px solid #777;
+    padding: 4mm;
+    margin-top: 6mm;
     min-height: 42mm;
-    padding: 3mm 4mm;
-    margin: 0 2mm 8mm;
-    font-size: 14px;
 }
 
 .office-title {
-    margin-bottom: 6mm;
-    font-weight: 800;
+    margin-bottom: 5mm;
+    font-weight: bold;
     text-decoration: underline;
 }
 
 .office-grid {
     display: grid;
-    grid-template-columns: 48mm 24mm;
+    grid-template-columns: 60mm 30mm;
+    row-gap: 3mm;
     column-gap: 12mm;
-    row-gap: 1mm;
-    margin-left: 15mm;
+    margin-left: 10mm;
 }
 
 .office-signatures {
     display: flex;
     justify-content: center;
-    gap: 58mm;
-    margin-top: 14mm;
-    font-weight: 800;
+    gap: 70mm;
+    margin-top: 12mm;
+    font-weight: bold;
 }
 
 .room-allotted-row {
-    margin: 5mm 0 11mm;
+    margin: 8mm 0;
     text-align: center;
-    font-weight: 800;
+    font-weight: bold;
 }
 
 .final-signatures {
     display: flex;
     justify-content: space-between;
-    margin: 0 3mm;
-    font-weight: 800;
+    margin-top: 15mm;
+    font-weight: bold;
 }
 
+/* ===========================
+   UNDERTAKING PAGE
+=========================== */
+
 .undertaking-page {
-    padding-top: 30mm;
+    padding-top: 20mm;
 }
 
 .undertaking-title {
-    margin: 0 0 7mm;
+    margin: 0 0 8mm;
     text-align: center;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 800;
     text-decoration: underline;
 }
 
 .rules {
-    margin: 0;
-    padding: 0 0 0 6mm;
     list-style: none;
+    margin: 0;
+    padding-left: 6mm;
     font-size: 13.4px;
-    line-height: 1.18;
+    line-height: 1.35;
     text-align: justify;
 }
 
 .rules li {
     position: relative;
-    margin-bottom: 2.2mm;
+    margin-bottom: 3mm;
 }
 
 .rules li::before {
@@ -279,25 +252,24 @@ body {
 }
 
 .rules strong {
-    font-weight: 800;
+    font-weight: bold;
 }
 
 .undertaking-signatures {
     display: flex;
     justify-content: center;
-    gap: 52mm;
-    margin-top: 7mm;
-    font-style: italic;
-    font-weight: 800;
+    gap: 60mm;
+    margin-top: 10mm;
+    font-weight: bold;
 }
 
 .undertaking-date {
-    margin-top: 4mm;
+    margin-top: 5mm;
     font-size: 14px;
 }
 
 .admit-line {
-    margin-top: 5mm;
+    margin-top: 6mm;
     text-align: center;
     font-size: 14px;
 }
@@ -306,10 +278,11 @@ body {
     display: flex;
     justify-content: space-between;
     margin-top: 22mm;
-    font-weight: 800;
+    font-weight: bold;
 }
 
 @media print {
+
     body {
         background: #fff;
     }
@@ -321,160 +294,270 @@ body {
 </style>
 </head>
 <body>
+
+    <!-- ========================= PAGE 1 ========================= -->
+
     <main class="page">
+
         <header class="header">
-            <img class="logo" src="./anna_logo.png" alt="Anna University logo">
+            <img class="logo" src="./anna_logo.png" alt="Anna University Logo">
+
             <div class="header-text">
                 <h1>INTERNATIONAL HOSTELS</h1>
-                <h2>ANNA UNIVERSITY, CHENNAI - 600<br>025.</h2>
+                <h2>ANNA UNIVERSITY, CHENNAI - 600 025</h2>
                 <h3>RE-ADMISSION FORM - 2026</h3>
             </div>
+
             <div></div>
         </header>
 
-        <div class="hostel-row">
-            <span>Hostel Block:</span>
-            <span><span class="checkbox">{{floraHostelChecked}}</span>Flora (Boys)</span>
-            <span><span class="checkbox">{{lavenderHostelChecked}}</span>Lavender (Girls)</span>
-        </div>
-        <p class="note">(Name and address details should be filled in CAPITAL LETTERS)</p>
 
-        <div class="field-row numbered">
-            <span class="field-number">1.</span>
-            <span>Name:</span>
+        <div class="field-row">
+            <span class="label">Hostel Block</span>
+            <span class="value">{{hostelBlock}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Student Name</span>
             <span class="value">{{name}}</span>
-            <span>Reg. No.</span>
-            <span class="value medium">{{rollNo}}</span>
         </div>
-        <div class="field-row numbered">
-            <span class="field-number">2.</span>
-            <span>Course:</span>
-            <span class="value short">{{course}}</span>
-            <span>Branch</span>
-            <span class="value branch">{{branch}}</span>
-            <span>Year</span>
-            <span class="value short">{{year}}</span>
-            <span>Semester</span>
-            <span class="value short">{{semester}}</span>
+
+        <div class="field-row">
+            <span class="label">Register Number</span>
+            <span class="value">{{rollNo}}</span>
         </div>
-        <div class="field-row numbered">
-            <span class="field-number">3.</span>
-            <span>Mobile No.</span>
-            <span class="value medium">{{mobile}}</span>
-            <span>E-mail:</span>
+
+        <div class="field-row">
+            <span class="label">Course</span>
+            <span class="value">{{course}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Branch</span>
+            <span class="value">{{branch}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Year</span>
+            <span class="value">{{year}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Semester</span>
+            <span class="value">{{semester}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Mobile Number</span>
+            <span class="value">{{mobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Student E-mail</span>
             <span class="value">{{email}}</span>
         </div>
-        <div class="field-row numbered">
-            <span class="field-number">4.</span>
-            <span>Parents Contact: Mobile No.:</span>
-            <span class="value medium">{{fatherMobile}}</span>
-            <span>Mob. No.</span>
-            <span class="value medium">{{motherMobile}}</span>
-        </div>
+
         <div class="field-row">
-            <span class="field-number"></span>
-            <span>E-mail:</span>
-            <span class="value long">{{parentEmail}}</span>
-        </div>
-        <div class="field-row numbered">
-            <span class="field-number">5.</span>
-            <span>Local Guardian Name</span>
-            <span class="value">{{localGuardianName}}</span>
-            <span>Mobile No.:</span>
-            <span class="value medium">{{localGuardianMobile}}</span>
-        </div>
-        <div class="field-row numbered">
-            <span class="field-number">6.</span>
-            <span>Address</span>
-            <span class="value long">{{localGuardianAddress}}</span>
+            <span class="label">Father's Mobile Number</span>
+            <span class="value">{{fatherMobile}}</span>
         </div>
 
-        <p class="allotted">
-            I have been allotted Room No.<span class="solid-line small">{{roomNumber}}</span> and received the room key.
+        <div class="field-row">
+            <span class="label">Mother's Mobile Number</span>
+            <span class="value">{{motherMobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Parent's E-mail</span>
+            <span class="value">{{parentEmail}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Local Guardian Name</span>
+            <span class="value">{{localGuardianName}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Guardian Mobile Number</span>
+            <span class="value">{{localGuardianMobile}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Guardian Address</span>
+            <span class="value">{{localGuardianAddress}}</span>
+        </div>
+
+        <div class="field-row">
+            <span class="label">Room Number Allotted</span>
+            <span class="value">{{roomNumber}}</span>
+        </div>
+
+        <p class="received">
+            I hereby acknowledge that I have received the key of the room allotted
+            to me and undertake to abide by all the rules and regulations of the
+            International Hostels, Anna University.
         </p>
 
         <div class="date-signature-row">
-            <span>Date:</span>
-            <span class="signature">Signature of Applicant</span>
+            <span>Date : ____________________</span>
+            <span class="signature">
+                Signature of Applicant
+            </span>
         </div>
 
-        <h3 class="section-title">Payment Details</h3>
+        
+    </main>
+
+    <!-- ========================= PAGE 1 ========================= -->
+    <main class="page">
+        
+        <header class="header">
+            <img class="logo" src="./anna_logo.png" alt="Anna University Logo">
+
+            <div class="header-text">
+                <h1>INTERNATIONAL HOSTELS</h1>
+                <h2>ANNA UNIVERSITY, CHENNAI - 600 025</h2>
+                <h3>RE-ADMISSION FORM - 2026</h3>
+            </div>
+
+            <div></div>
+        </header>
+        <h2 class="section-title">
+            PAYMENT DETAILS
+        </h2>
+
         <ul class="payment-list">
             <li>
-                <strong>Whether the Hostel fees has already been paid</strong>
-                <span style="margin-left: 17mm;">Yes / No</span>
+                Whether the Hostel Fees has been paid :
+                <strong>Yes / No</strong>
             </li>
+
             <li>
-                <div class="payment-reference-row">
-                    <strong>Fee Transaction Reference No.</strong><span class="solid-line"></span>
-                    <strong>Dated</strong><span class="solid-line small"></span>
-                    <strong>Amount Rs. 1,18,000/-</strong>
+                <div class="field-row">
+                    <span class="label">Fee Transaction Reference No.</span>
+                    <span class="value">{{transactionId}}</span>
+                </div>
+            </li>
+
+            <li>
+                <div class="field-row">
+                        <span class="label">Date :</span>
+                        <span class="value"></span>
                 </div>
             </li>
         </ul>
 
         <section class="office-box">
-            <div class="office-title">Office:</div>
-            <div class="office-grid">
-                <span>Payment of Fees:</span><span>Yes / No</span>
-                <span>Room may be allotted</span><span>Yes / No</span>
-                <span>Re-admission:</span><span>Yes / No</span>
+
+            <div class="office-title">
+                Office Use Only
             </div>
+
+            <div class="office-grid">
+                <span>Payment Verified</span>
+                <span>Yes / No</span>
+
+                <span>Room may be allotted</span>
+                <span>Yes / No</span>
+
+                <span>Re-admission Approved</span>
+                <span>Yes / No</span>
+            </div>
+
             <div class="office-signatures">
                 <span>Office Staff</span>
                 <span>Manager</span>
             </div>
+
         </section>
 
         <div class="room-allotted-row">
-            Room No. Allotted: <span class="solid-line">{{roomNumber}}</span>
+            Room No. Allotted :
+            <span class="solid-line">{{roomNumber}}</span>
         </div>
 
         <div class="final-signatures">
             <span>Residential Counsellor</span>
             <span>Deputy Warden</span>
         </div>
+
     </main>
 
+
+    <!-- ========================= PAGE 3 ========================= -->
+
     <main class="page undertaking-page">
-        <h2 class="undertaking-title">DECLARATION AND UNDERTAKING</h2>
+
+        <h2 class="undertaking-title">
+            DECLARATION AND UNDERTAKING
+        </h2>
 
         <ul class="rules">
-            <li>Resident will occupy the allotted room only and will not change the allotted room for any reason without the permission of the hostel authorities.</li>
-            <li>All residents are required to carry their valid <strong>ID card</strong> issued to them by the University/hostel.</li>
-            <li><strong>Residents must follow the proper dress code (outside the hostel area: - mess)</strong></li>
-            <li><strong>Smoking and consumption of alcoholic drink / or narcotic drugs</strong> in the hostel premises is strictly prohibited.</li>
-            <li><strong>Students shall not enter the hostel premises in intoxicated state and should not possess such materials.</strong></li>
-            <li>Residents are requested to be back to the <strong>hostel by 09.00 pm (Boys)/ 08.30 pm. (Girls) on weekdays and 09.30 pm (Boys)/ 09.00 pm. (Girls) on weekends</strong> sharp and get their attendance recorded every day. It is the responsibility of every resident who is present in the premises to get his/her presence marked.</li>
-            <li>Severe action will be taken if any resident is found to be late, resulting in expulsion from Hostel and rustication from the University.</li>
-            <li><strong>The rooms, common areas and surroundings should be kept clean and hygienic. Notices shall not be pasted on walls and walls shall not be scribbled on.</strong></li>
-            <li>Residents <strong>should not leave the room open</strong> at any time in their absence. Do not hand over the keys of your room to any other persons. The hostel management is not responsible for any consequences.</li>
-            <li><strong>Switch off the AC/Heater/Lights and fans when not in use.</strong> The residents of a room are responsible for any damage to the property in the room.</li>
-            <li>Keep your valuables (money /laptops/phones, etc.,) locked and secured all the time.</li>
-            <li><strong>Ragging of students in hostel or University is strictly prohibited.</strong> Any violation of this by the students will be dealt very severely.</li>
-            <li>Student's birthday celebrations are strictly prohibited inside the hostels at late nights and inside rooms.</li>
-            <li>Students are not permitted to break open their room lock or cupboard and cause any damage to the hostel property or common items.</li>
-            <li>Visitors to the hostel including the parents/guardians/friend/day scholars/general hostel students are not permitted entered into the hostel. I will forego my right to stay in the hostel if I entertain guest(s).</li>
-            <li>Residents must <strong>follow the mess timings strictly</strong> and should not waste food.</li>
-            <li>The residents must behave properly with the all the staff and fellow residents.</li>
-            <li><strong>I will not use personal electric iron box, electric heating rods, wireless routers,etc.</strong> inside my room.</li>
-            <li>I state that all the above are true to the best of my knowledge and belief.</li>
-            <li>I undertake to abide by the rules of the hostel and I am fully aware that I shall be subjected to disciplinary action for infringement of any of the rules. If I violate the above hostel rules, I will forego my right to stay in the hostel.</li>
-            <li>I assure that my son / daughter will abide by the rules of the hostel.</li>
+
+            <li>Resident will occupy only the room allotted and shall not change the allotted room without obtaining prior permission from the hostel authorities.</li>
+
+            <li>Every resident shall carry a valid University / Hostel Identity Card at all times.</li>
+
+            <li><strong>Residents shall strictly follow the prescribed dress code.</strong></li>
+
+            <li><strong>Smoking, alcohol and narcotic substances are strictly prohibited inside the hostel premises.</strong></li>
+
+            <li>Entering the hostel under the influence of alcohol or drugs is prohibited.</li>
+
+            <li>Residents shall return to the hostel before the prescribed reporting time and mark attendance daily.</li>
+
+            <li>Violation of attendance rules may result in disciplinary action including expulsion from the hostel.</li>
+
+            <li><strong>Rooms and common areas shall be maintained neat and clean.</strong></li>
+
+            <li>Residents shall keep their rooms locked while leaving and shall not hand over room keys to others.</li>
+
+            <li><strong>Switch off lights, fans, AC and other electrical appliances when not in use.</strong></li>
+
+            <li>Students are responsible for the safety of their personal belongings.</li>
+
+            <li><strong>Ragging in any form is strictly prohibited.</strong></li>
+
+            <li>Birthday celebrations and gatherings inside hostel rooms are not permitted.</li>
+
+            <li>Hostel property shall not be damaged or misused.</li>
+
+            <li>Visitors are not permitted inside hostel rooms without permission.</li>
+
+            <li>Residents shall follow the mess timings and avoid food wastage.</li>
+
+            <li>Residents shall maintain discipline and treat hostel staff and fellow students with respect.</li>
+
+            <li><strong>Use of personal electrical appliances such as iron boxes, heaters and wireless routers is prohibited.</strong></li>
+
+            <li>I declare that the information furnished above is true and correct.</li>
+
+            <li>I undertake to abide by all hostel rules and understand that violation of these rules may lead to cancellation of hostel accommodation.</li>
+
+            <li>I assure that my son / daughter shall abide by all hostel rules and regulations.</li>
+
         </ul>
 
         <div class="undertaking-signatures">
             <span>Signature of Applicant</span>
             <span>Signature of Parent / Guardian</span>
         </div>
-        <div class="undertaking-date">Date :</div>
-        <p class="admit-line">The applicant may be admitted / not admitted to the hostel</p>
+
+        <div class="undertaking-date">
+            Date : _______________________
+        </div>
+
+        <p class="admit-line">
+            The applicant may be admitted / not admitted to the hostel.
+        </p>
 
         <div class="warden-signatures">
-            <span>Resident Counselor</span>
+            <span>Residential Counsellor</span>
             <span>Deputy Warden</span>
             <span>Executive Warden</span>
         </div>
+
     </main>
+
 </body>
 </html>

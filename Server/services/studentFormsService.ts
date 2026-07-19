@@ -2,10 +2,7 @@ import { Admission } from "../models/admissionModel";
 import { Student } from "../models/studentModel";
 import { HtmlTemplateData } from "./htmlTemplateService";
 
-type ApplicationFormAdmission = Pick<
-  Admission,
-  "hostelBlock" | "messPreference" | "previousResident"
->;
+type ApplicationFormAdmission = Admission
 
 function valueOrEmpty(value: unknown): string {
   return value === null || value === undefined ? "" : String(value);
@@ -67,6 +64,8 @@ export function buildApplicationFormData(
     mobile: student.mobile,
     email: student.email,
 
+    // passportPhoto : student.passportPhotoUrl,
+
     fatherName: student.fatherName,
     fatherMobile: student.fatherMobile,
     fatherEmail: student.fatherEmail,
@@ -103,7 +102,7 @@ export function buildApplicationFormData(
     guardianState: student.guardianState,
     guardianPostalCode: student.guardianPostalCode,
 
-    hostelBlock,
+    hostelBlock : hostelBlock,
     roomNumber: student.roomNumber,
     dateOfBirth: student.dateOfBirth,
     age: calculateAge(student.dateOfBirth),
@@ -115,14 +114,14 @@ export function buildApplicationFormData(
     medicalHistory: student.medicalHistory,
     emergencyContact: student.emergencyContact,
 
-    floraHostelChecked: yesNo(isSameValue(hostelBlock, "Flora")),
-    lavenderHostelChecked: yesNo(isSameValue(hostelBlock, "Lavender")),
+    // floraHostelChecked: yesNo(isSameValue(hostelBlock, "Flora")),
+    // lavenderHostelChecked: yesNo(isSameValue(hostelBlock, "Lavender")),
     previousResidentYes: yesNo(previousResident === true),
-    previousResidentNo: yesNo(previousResident === false),
-    vegetarianMessChecked: yesNo(isSameValue(messPreference, "Vegetarian")),
-    nonVegetarianMessChecked: yesNo(
-      isSameValue(messPreference, "Non-Vegetarian")
-    ),
+    // previousResidentNo: yesNo(previousResident === false),
+    mess: messPreference,
+    // nonVegetarianMessChecked: yesNo(
+    //   isSameValue(messPreference, "Non-Vegetarian")
+    // ),
 
   };
 }
@@ -130,11 +129,13 @@ export function buildApplicationFormData(
 export function buildRoomAllotmentFormData(
   student: Student
 ): HtmlTemplateData {
+  console.log(student.admissionCategory)
   return {
     name: student.name,
     year: calculateYear(student.semester),
     branch: student.branch,
     admissionCategory: student.admissionCategory,
+    hostelBlock : student.hostelBlock,
     roomNumber: student.roomNumber,
   };
 }
@@ -167,7 +168,7 @@ export function buildReAdmissionFormData(
       student.guardianPostalCode,
     ]),
     roomNumber: student.roomNumber,
-    floraHostelChecked: yesNo(isSameValue(hostelBlock, "Flora")),
-    lavenderHostelChecked: yesNo(isSameValue(hostelBlock, "Lavender")),
+    hostelBlock : student.hostelBlock,
+    transactionId : admission?.transaction_id
   };
 }

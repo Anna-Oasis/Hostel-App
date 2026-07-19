@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import puppeteer from "puppeteer";
+import { getBrowser } from "./puppeteer";
 
 function resolveTemplateDir(): string {
   const currentDir = typeof __dirname === "string" ? __dirname : process.cwd();
@@ -20,13 +21,9 @@ function resolveTemplateDir(): string {
 }
 
 export async function generatePdfFromHtml(html: string): Promise<Buffer> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-
+  const browser = await getBrowser()
+  const page = await browser.newPage();
   try {
-    const page = await browser.newPage();
     const templateDir = resolveTemplateDir();
     const logoPath = path.resolve(templateDir, "anna_logo.png");
     const logoBase64 = fs.readFileSync(logoPath).toString("base64");
@@ -49,6 +46,6 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
 
     return Buffer.from(pdf);
   } finally {
-    await browser.close();
+    await page.close();
   }
 }
