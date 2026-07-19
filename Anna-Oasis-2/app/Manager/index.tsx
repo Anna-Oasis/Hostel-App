@@ -23,6 +23,12 @@ export default function ManagerPage() {
       color: "#022B60",
     },
     {
+      title: "Admissions",
+      route: "/Manager/Admissions",
+      icon: BadgeDollarSignIcon,
+      color: "#022B60",
+    },
+    {
       title: "Student Details",
       route: "/Manager/Details",
       icon: FileTextIcon,
