@@ -3,6 +3,7 @@ const admissionCategories = [
   { label: "CIWGC", value: "CIWGC" },
   { label: "FN(LDC/SIDS)", value: "FN(LDC/SIDS)" },
   { label: "ICCR", value: "ICCR" },
+  { label : "OTHERS", value : "OTHERS"}
 ];
 
 const initialValues = {
