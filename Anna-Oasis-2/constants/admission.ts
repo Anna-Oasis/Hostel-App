@@ -1,9 +1,9 @@
 const admissionCategories = [
   { label: "NRI", value: "NRI" },
   { label: "CIWGC", value: "CIWGC" },
-  { label: "FN", value: "FN" },
+  { label: "FN(LDC/SIDS)", value: "FN(LDC/SIDS)" },
   { label: "ICCR", value: "ICCR" },
-  { label: "Other", value: "Other" },
+  { label : "Other", value : "Other"}
 ];
 
 const initialValues = {
