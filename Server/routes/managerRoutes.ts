@@ -24,6 +24,7 @@ import { approveStudentDetailsByManagerController, fetchStudentDetails, fetchStu
 import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
+import { generateFeeReceiptController } from '../controllers/pdfController';
 
 const managerRouter = Router();
 
@@ -46,6 +47,13 @@ managerRouter.get(
   hasRole(['manager']),
   errorWrapper(fetchAdmissionsApprovedByUser)
 );
+
+managerRouter.get(
+  "/forms/feeReceipt/:addmissionid",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(generateFeeReceiptController)
+)
 
 managerRouter.get(
   "/admissions_approved",
