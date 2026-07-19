@@ -25,7 +25,7 @@ export async function generateFeeReceiptController(
 
     const addmission_id = req.params.addmissionid;
     const addmission = await getAdmissionByAdmissionId(Number(addmission_id))
-    const student = await findStudentByUserId(Number(req.User.id))
+    const student = await findStudentByUserId(Number(addmission[0].roll_number))
     const billId = await getOrCreateBillId(addmission[0].roll_number)
     // console.log(billId)
     const templateData = buildFeeReceiptData(addmission[0], student[0], billId)
