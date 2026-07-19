@@ -134,6 +134,16 @@ export async function getAdmissionsByStatus(status: string) {
   return result;
 }
 
+export async function getAdmissionsApprovedByWarden() {
+  const result = await db
+    .select()
+    .from(admissionModel)
+    .innerJoin(studentModel, eq(admissionModel.roll_number, studentModel.rollNo))
+    .where(eq(admissionModel.status, admissionApprovalStatus.WARDEN))
+    .orderBy(admissionModel.submission_Date);
+  return result;
+}
+
 //Get Admission waiting for Approval based on block (for deputy wardent)
 export async function getAdmissionsByStatusByBlock(status: string, block : string) {
   const result = await db
