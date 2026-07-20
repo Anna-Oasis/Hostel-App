@@ -64,7 +64,7 @@ export function buildApplicationFormData(
     mobile: student.mobile,
     email: student.email,
 
-    // passportPhoto : student.passportPhotoUrl,
+    passportPhoto : student.passportPhotoUrl,
 
     fatherName: student.fatherName,
     fatherMobile: student.fatherMobile,
