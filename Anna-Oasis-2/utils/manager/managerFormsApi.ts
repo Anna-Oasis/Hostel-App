@@ -6,75 +6,87 @@ const roomAllotmentFormPath = "/api/manager/forms/room-allotment-form";
 const reAdmissionFormPath = "/api/manager/forms/re-admission-form";
 
 async function getFormSource(path: string) {
-  const token = await getToken();
+  try {
+    const token = await getToken();
 
-  if (!token) throw new Error("No authentication token found");
+    if (!token) throw new Error("No authentication token found");
 
-  const response = await api.get(path, {
-    responseType: "blob",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    const response = await api.get(path, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  const blobUrl = URL.createObjectURL(response.data);
-
-  return {
-    uri: blobUrl,
-  };
+    return {
+      uri: URL.createObjectURL(response.data),
+    };
+  } catch (error: any) {
+    // console.error(error);
+    window.alert(error?.response?.data?.message || error?.message || "Failed to load form.");
+    throw error;
+  }
 }
 
-async function downloadForm(path: string, fileName: string, studentId : string) {
-  const token = await getToken();
+async function downloadForm(
+  path: string,
+  fileName: string,
+  studentId: string
+) {
+  try {
+    const token = await getToken();
 
-  if (!token) {
-    throw new Error("No authentication token found");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await api.get(`${path}/${studentId}`, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const url = window.URL.createObjectURL(response.data);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+  } catch (error: any) {
+    // console.error(error);
+    window.alert(error?.response?.data?.message || error?.message || "Failed to download form.");
+    throw error;
   }
-
-  const response = await api.get(`${path}/${studentId}`, {
-    responseType: "blob",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const blob = response.data;
-
-  const url = window.URL.createObjectURL(blob);
-
-  // Download
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  window.URL.revokeObjectURL(url);
 }
 
 async function openForm(path: string) {
-  const token = await getToken();
+  try {
+    const token = await getToken();
 
-  if (!token) {
-    throw new Error("No authentication token found");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await api.get(path, {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const url = window.URL.createObjectURL(response.data);
+
+    window.open(url, "_blank");
+
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+    }, 5000);
+  } catch (error: any) {
+    // console.error(error);
+    window.alert(error?.response?.data?.message || error?.message || "Failed to open form.");
+    throw error;
   }
-
-  const response = await api.get(path, {
-    responseType: "blob",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const url = window.URL.createObjectURL(response.data);
-
-  window.open(url, "_blank");
-
-  // Cleanup later so browser has time to load it
-  setTimeout(() => {
-    window.URL.revokeObjectURL(url);
-  }, 5000);
 }
 
 export function getApplicationFormSource() {
