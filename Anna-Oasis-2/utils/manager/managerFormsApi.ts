@@ -84,7 +84,7 @@ async function openForm(path: string) {
     }, 5000);
   } catch (error: any) {
     // console.error(error);
-    window.alert(error?.response?.data?.message || error?.message || "Failed to open form.");
+    window.alert(error?.message || "Failed to open form.");
     throw error;
   }
 }
