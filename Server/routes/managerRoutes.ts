@@ -24,7 +24,7 @@ import { approveStudentDetailsByManagerController, fetchStudentDetails, fetchStu
 import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomController';
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
-import { generateFeeReceiptController } from '../controllers/pdfController';
+import { generateApplicationFormController, generateFeeReceiptController, generateReAdmissionFormController, generateRoomAllotmentFormController } from '../controllers/pdfController';
 
 const managerRouter = Router();
 
@@ -54,6 +54,27 @@ managerRouter.get(
   hasRole(["manager"]),
   errorWrapper(generateFeeReceiptController)
 )
+
+managerRouter.get(
+  "/forms/application-form/:studentId",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(generateApplicationFormController)
+)
+
+managerRouter.get(
+  "/forms/room-allotment-form/:studentId",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(generateRoomAllotmentFormController)
+);
+
+managerRouter.get(
+  "/forms/re-admission-form/:studentId",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(generateReAdmissionFormController)
+);
 
 managerRouter.get(
   "/admissions_approved",

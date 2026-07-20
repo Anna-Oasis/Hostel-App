@@ -49,8 +49,17 @@ export async function generateApplicationFormController(
     if (!req.User || !req.User.id) {
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
-
-    const students = await findStudentByUserId(Number(req.User.id));
+    let id;
+    if(req.User.role === "manager"){
+        console.log("Manager Requested Application Form")
+        id = req.params.studentId;
+        console.log(id)
+    }
+    else{
+        console.log("Student Requested Application Form")
+        id = req.User.id
+    }
+    const students = await findStudentByUserId(Number(id));
     const student = students[0];
 
     if (!student) {
@@ -63,6 +72,10 @@ export async function generateApplicationFormController(
             new Date(second.submission_Date).getTime() -
             new Date(first.submission_Date).getTime()
     )[0];
+
+    if(latestAdmission.previousResident){
+        throw AppError("Application form is for new Students Only", httpStatus.FORBIDDEN);
+    }
 
     const templateData = buildApplicationFormData(student, latestAdmission);
     const html = fillHtmlTemplate("application-form", templateData);
@@ -85,7 +98,18 @@ export async function generateRoomAllotmentFormController(
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
 
-    const students = await findStudentByUserId(Number(req.User.id));
+    let id;
+    if(req.User.role === "manager"){
+        console.log("Manager Requested Application Form")
+        id = req.params.studentId;
+        console.log(id)
+    }
+    else{
+        console.log("Student Requested Application Form")
+        id = req.User.id
+    }
+
+    const students = await findStudentByUserId(Number(id));
     const student = students[0];
 
     if (!student) {
@@ -113,7 +137,18 @@ export async function generateReAdmissionFormController(
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
 
-    const students = await findStudentByUserId(Number(req.User.id));
+    let id;
+    if(req.User.role === "manager"){
+        console.log("Manager Requested Application Form")
+        id = req.params.studentId;
+        console.log(id)
+    }
+    else{
+        console.log("Student Requested Application Form")
+        id = req.User.id
+    }
+
+    const students = await findStudentByUserId(Number(id));
     const student = students[0];
 
     if (!student) {
@@ -126,6 +161,10 @@ export async function generateReAdmissionFormController(
             new Date(second.submission_Date).getTime() -
             new Date(first.submission_Date).getTime()
     )[0];
+
+    if(!latestAdmission.previousResident){
+        throw AppError("Readmission form is for only new admissions", httpStatus.FORBIDDEN);
+    }
 
     const templateData = buildReAdmissionFormData(student, latestAdmission);
     const html = fillHtmlTemplate("re-admission-form", templateData);

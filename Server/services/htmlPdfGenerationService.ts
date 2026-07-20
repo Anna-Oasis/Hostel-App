@@ -42,6 +42,13 @@ export async function generatePdfFromHtml(html: string): Promise<Buffer> {
       format: "A4",
       preferCSSPageSize: true,
       printBackground: true,
+      displayHeaderFooter: true,
+      footerTemplate: `
+        <div style="width:100%;text-align:center;font-size:10px;">
+          Page <span class="pageNumber"></span> of
+          <span class="totalPages"></span>
+        </div>
+      `,
     });
 
     return Buffer.from(pdf);
