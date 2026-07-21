@@ -23,7 +23,7 @@ async function getFormSource(path: string) {
     };
   } catch (error: any) {
     // console.error(error);
-    window.alert(error?.response?.data?.message || error?.message || "Failed to load form.");
+    window.alert("Failed to load form.");
     throw error;
   }
 }
@@ -57,7 +57,7 @@ async function downloadForm(
     window.URL.revokeObjectURL(url);
   } catch (error: any) {
     // console.error(error);
-    window.alert(error?.response?.data?.message || error?.message || "Failed to download form.");
+    window.alert("Failed to download form.");
     throw error;
   }
 }
@@ -84,7 +84,7 @@ async function openForm(path: string) {
     }, 5000);
   } catch (error: any) {
     // console.error(error);
-    window.alert(error?.message || "Failed to open form.");
+    window.alert("Failed to open form.");
     throw error;
   }
 }
@@ -100,6 +100,7 @@ export function getReAdmissionFormSource() {
 export function getRoomAllotmentFormSource() {
   return getFormSource(roomAllotmentFormPath);
 }
+
 
 export function openApplicationForm() {
   return openForm(applicationFormPath);
