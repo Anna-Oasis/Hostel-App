@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anna-Oasis",
     "slug": "anna-oasis-2",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "myapp",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 9,
+      "versionCode": 10,
       "package": "edu.annauniv.cirih",
       "compileSdkVersion": 36,
       "targetSdkVersion": 36
