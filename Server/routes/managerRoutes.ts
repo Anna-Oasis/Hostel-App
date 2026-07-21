@@ -25,6 +25,7 @@ import { fetchRoomDetailsByAcademicYearController } from '../controllers/roomCon
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
 import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
 import { generateApplicationFormController, generateFeeReceiptController, generateReAdmissionFormController, generateRoomAllotmentFormController } from '../controllers/pdfController';
+import { deleteStudentAdmissionController, deleteStudentProfileController } from '../controllers/managerController';
 
 const managerRouter = Router();
 
@@ -169,5 +170,19 @@ managerRouter.get(
   errorWrapper(getAdmissionSessionsController)
 );
 
+//Data Deletion
+managerRouter.delete(
+  "/delete/profile/:rollNumber",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(deleteStudentProfileController)
+);
+
+managerRouter.delete(
+  "/delete/admission/:rollNumber",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(deleteStudentAdmissionController)
+);
 export default managerRouter;
 
