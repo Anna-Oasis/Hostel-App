@@ -1,6 +1,6 @@
 import RcLeaveForm from "@/components/rc/RcLeaveForm";
 import { useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import RcLeaveHistory from "@/components/rc/RcLeaveHistory";
 import { Button, ButtonText } from "@/components/ui/button";
 import { completeRCLeave } from "@/utils/rc/rcLeaveApi";
@@ -16,62 +16,64 @@ export default function ApplyForLeavePage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ModalCallable
-        show={successModalVisible}
-        onClose={() => setSuccessModalVisible(false)}
-        title="Success"
-        message={modalMsg}
-      />
-      <ModalCallable
-        show={errorModalVisible}
-        onClose={() => setErrorModalVisible(false)}
-        title="Error"
-        message={modalMsg}
-      />
-      <TabSwitch
-        tabs={[
-          { label: "Leave Form", value: "form" },
-          { label: "History", value: "history" },
-          { label: "Relieve the Alter RC", value: "Close Leave" },
-        ]}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        icons={{
-          form: FilePlus2,
-          history: History,
-          "Close Leave": UserCheck2,
-        }}
-        className="mt-4 mb-2"
-      />
-      {activeTab === "form" && (
-        <View style={{ flex: 1 }}>
-          <RcLeaveForm />
-        </View>
-      )}
-      {activeTab === "history" && (
-        <View style={{ flex: 1 }}>
-          <RcLeaveHistory />
-        </View>
-      )}
-      {activeTab === "Close Leave" && (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Button
-            onPress={async () => {
-              const result = await completeRCLeave();
-              if (result.success) {
-                setModalMsg("Great! Relieved the Alternate RC from the Your attendance Duty");
-                setSuccessModalVisible(true);
-              } else {
-                setModalMsg("Failed to close leave");
-                setErrorModalVisible(true);
-              }
-            }}
-            size="xl"
-          >
-            <ButtonText className="text-white text-lg font-semibold">Close Leave</ButtonText>
-          </Button>
-        </View>
-      )}
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+          <ModalCallable
+          show={successModalVisible}
+          onClose={() => setSuccessModalVisible(false)}
+          title="Success"
+          message={modalMsg}
+        />
+        <ModalCallable
+          show={errorModalVisible}
+          onClose={() => setErrorModalVisible(false)}
+          title="Error"
+          message={modalMsg}
+        />
+        <TabSwitch
+          tabs={[
+            { label: "Leave Form", value: "form" },
+            { label: "History", value: "history" },
+            { label: "Relieve the Alter RC", value: "Close Leave" },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          icons={{
+            form: FilePlus2,
+            history: History,
+            "Close Leave": UserCheck2,
+          }}
+          className="mt-4 mb-2"
+        />
+        {activeTab === "form" && (
+          <View style={{ flex: 1 }}>
+            <RcLeaveForm />
+          </View>
+        )}
+        {activeTab === "history" && (
+          <View style={{ flex: 1 }}>
+            <RcLeaveHistory />
+          </View>
+        )}
+        {activeTab === "Close Leave" && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Button
+              onPress={async () => {
+                const result = await completeRCLeave();
+                if (result.success) {
+                  setModalMsg("Great! Relieved the Alternate RC from the Your attendance Duty");
+                  setSuccessModalVisible(true);
+                } else {
+                  setModalMsg("Failed to close leave");
+                  setErrorModalVisible(true);
+                }
+              }}
+              size="xl"
+            >
+              <ButtonText className="text-white text-lg font-semibold">Close Leave</ButtonText>
+            </Button>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
