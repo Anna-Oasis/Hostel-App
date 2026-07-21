@@ -64,6 +64,12 @@
         "projectId": "7f7b6ca3-8497-477d-9169-2bfde0006512"
       }
     },
-    "owner": "anna_oasis"
+    "owner": "anna_oasis",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7f7b6ca3-8497-477d-9169-2bfde0006512"
+    }
   }
 }
