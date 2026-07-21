@@ -2,7 +2,7 @@
   "expo": {
     "name": "Anna-Oasis",
     "slug": "anna-oasis-2",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "myapp",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 9,
+      "versionCode": 10,
       "package": "edu.annauniv.cirih",
       "compileSdkVersion": 36,
       "targetSdkVersion": 36
@@ -64,6 +64,12 @@
         "projectId": "7f7b6ca3-8497-477d-9169-2bfde0006512"
       }
     },
-    "owner": "anna_oasis"
+    "owner": "anna_oasis",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7f7b6ca3-8497-477d-9169-2bfde0006512"
+    }
   }
 }

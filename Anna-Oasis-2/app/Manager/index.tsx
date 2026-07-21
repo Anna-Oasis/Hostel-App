@@ -3,7 +3,9 @@ import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { router } from "expo-router";
 import {
   BadgeDollarSignIcon,
+  Delete,
   FileTextIcon,
+  House,
   ShieldCheckIcon,
 } from "lucide-react-native";
 
@@ -36,13 +38,19 @@ export default function ManagerPage() {
     {
       title: "Rooms",
       route: "/Manager/Rooms",
-      icon: FileTextIcon,
+      icon: House,
       color: "#022B60",
     },
     {
       title: "Caution Deposit",
       route: "/Manager/CautionDeposit",
       icon: ShieldCheckIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Data Deletions",
+      route: "/Manager/Delete",
+      icon: Delete,
       color: "#022B60",
     },
   ];
