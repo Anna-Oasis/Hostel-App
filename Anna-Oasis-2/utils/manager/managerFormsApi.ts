@@ -101,6 +101,7 @@ export function getRoomAllotmentFormSource() {
   return getFormSource(roomAllotmentFormPath);
 }
 
+
 export function openApplicationForm() {
   return openForm(applicationFormPath);
 }
