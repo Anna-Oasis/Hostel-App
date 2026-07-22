@@ -36,15 +36,15 @@ export default function ManagerPage() {
       color: "#022B60",
     },
     {
-      title: "Rooms",
-      route: "/Manager/Rooms",
-      icon: House,
-      color: "#022B60",
-    },
-    {
       title: "Caution Deposit",
       route: "/Manager/CautionDeposit",
       icon: ShieldCheckIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Rooms",
+      route: "/Manager/Rooms",
+      icon: House,
       color: "#022B60",
     },
     {
