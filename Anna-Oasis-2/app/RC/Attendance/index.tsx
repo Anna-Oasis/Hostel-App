@@ -25,7 +25,7 @@ export default function AttendancePage() {
     getAllRCStudents()
       .then((data) => {
         setStudents(data);
-        // setAbsentees(data.map((s: any) => s.rollNo));
+        setAbsentees(data.map((s: any) => s.rollNo));
         const hostelBlock = data[0]?.hostelBlock;
         const maxFloor = Math.max(...data.map(s => s.floor));
         setMaxfloor(maxFloor + 1)
@@ -60,19 +60,9 @@ export default function AttendancePage() {
   useEffect(() => {
     if (activeTab !== "submit") {
       setFloor("");
-      setAbsentees([]);
+      setAbsentees(students.map((s) => s.rollNo));
     }
   }, [activeTab]);
-
-  useEffect(() => {
-    if (floor === "") return;
-
-    const floorStudents = students
-        .filter(s => s.floor === parseInt(floor))
-        .map(s => s.rollNo);
-
-    setAbsentees(floorStudents);
-  }, [floor, students]);
 
   return (
     <ScrollView>
@@ -185,9 +175,10 @@ export default function AttendancePage() {
                         no_absent: absentCount,
                         absentee: floorAbsentees,
                       };
+                      // console.log(attendanceObj)
                       await handelRCAttendance(attendanceObj);
                       setFloor("");
-                      setAbsentees([]);
+                      setAbsentees(students.map((s) => s.rollNo));
                     }}
                   >
                     <ButtonText>Submit</ButtonText>
