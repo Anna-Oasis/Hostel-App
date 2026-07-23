@@ -31,6 +31,26 @@ export const changeRoom = async (
         };
     }
 
+      const [destinationRoom] = await tx
+        .select({
+          floor: roomModel.floor,
+        })
+        .from(roomModel)
+        .where(
+          and(
+            eq(roomModel.hostelBlock, hostelBlock as any),
+            eq(roomModel.academicYear, academicYear),
+            eq(roomModel.roomNumber, toRoomNo)
+          )
+        );
+
+      if (!destinationRoom) {
+        return {
+          success: false,
+          message: "Destination room not found",
+        };
+      }
+
     // Remove the student from the old room
     await tx
       .update(roomModel)
@@ -66,7 +86,7 @@ export const changeRoom = async (
     
       await db
         .update(studentModel)
-        .set({ roomNumber : toRoomNo })
+        .set({ roomNumber : toRoomNo , floor : destinationRoom.floor})
         .where(eq(studentModel.rollNo, rollNo))
         .returning();
 
