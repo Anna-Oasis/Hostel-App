@@ -25,7 +25,7 @@ export default function AttendancePage() {
     getAllRCStudents()
       .then((data) => {
         setStudents(data);
-        // setAbsentees(data.map((s: any) => s.rollNo));
+        setAbsentees(data.map((s: any) => s.rollNo));
         const hostelBlock = data[0]?.hostelBlock;
         const maxFloor = Math.max(...data.map(s => s.floor));
         setMaxfloor(maxFloor + 1)
@@ -57,20 +57,11 @@ export default function AttendancePage() {
     });
   };
 
-  useEffect(() => {
-    if (floor === "") return;
-
-    const floorStudents = students
-        .filter(s => s.floor === parseInt(floor))
-        .map(s => s.rollNo);
-
-    setAbsentees(floorStudents);
-  }, [floor]);
 
   useEffect(() => {
   if (activeTab !== "submit") {
     setFloor("");
-    setAbsentees([]);
+    setAbsentees(students.map((s: any) => s.rollNo));
   }
 }, [activeTab, students]);
 
@@ -188,7 +179,7 @@ export default function AttendancePage() {
                       };
                       await handelRCAttendance(attendanceObj);
                       setFloor("");
-                      setAbsentees([]);
+                      setAbsentees(students.map((s: any) => s.rollNo));
                     }}
                   >
                     <ButtonText>Submit</ButtonText>
@@ -197,7 +188,7 @@ export default function AttendancePage() {
               </ScrollView>
             ) : (
               <View className="mt-52">
-                <Text className="text-3xl">Select floor for attendance</Text>
+                <Text className="text-2xl">Select floor for attendance</Text>
               </View>
             )}
           </>
