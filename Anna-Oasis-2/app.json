@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 10,
+      "versionCode": 11,
       "package": "edu.annauniv.cirih",
       "compileSdkVersion": 36,
       "targetSdkVersion": 36
