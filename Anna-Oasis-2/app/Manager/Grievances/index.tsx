@@ -9,10 +9,16 @@ import { getGrievanceBadgeStatus } from "@/utils/getBadgeStatus";
 import { Text } from "@/components/ui/text";
 import useLoadingStore from "@/stores/loadingStore";
 import EmptyPage from "@/components/EmptyPage";
+import TabSwitch from "@/components/TabSwitch";
+import { FileTextIcon, History } from "lucide-react-native";
+import { GRIEVANCE_STATUS } from "@/constants/grievanceStatus";
+
+type GrievanceTab = "pending" | "history";
 
 export default function GrievancesPage() {
   const [grievances, setGrievances] = useState<any[]>([]);
   const setLoading = useLoadingStore((state) => state.setLoading);
+  const [activeTab, setActiveTab] = useState<GrievanceTab>("pending");
 
   const fetchGrievances = () => {
     setLoading(true);
@@ -20,8 +26,8 @@ export default function GrievancesPage() {
       .then((data) => {
         setGrievances(data || []);
       })
-      .catch((error) => {
-        console.log("Error fetching Manager grievances:", error);
+      .catch(() => {
+        setGrievances([]);
       })
       .finally(() => {
         setLoading(false);
@@ -32,13 +38,21 @@ export default function GrievancesPage() {
     fetchGrievances();
   }, []);
 
+  const pendingGrievances = grievances.filter(
+    (item) => item.grievances?.status === GRIEVANCE_STATUS.RC
+  );
+  const historyGrievances = grievances.filter(
+    (item) => item.grievances?.status === GRIEVANCE_STATUS.MANAGER
+  );
+  const visibleGrievances = activeTab === "pending" ? pendingGrievances : historyGrievances;
+
   const handleApprove = async (id: number) => {
     try {
       setLoading(true);
       await updateManagerGrievanceState(id);
       fetchGrievances();
-    } catch (error) {
-      console.log("Error approving grievance:", error);
+    } catch {
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -46,24 +60,36 @@ export default function GrievancesPage() {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
-      <Text size="md" className="mb-4 text-typography-400">
-        Please approve the grievances once they are resolved.
-      </Text>
-      {grievances.length === 0 ? (
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        icons={{ pending: FileTextIcon, history: History }}
+        className="mb-4"
+      />
+      {activeTab === "pending" && (
+        <Text size="md" className="mb-4 text-typography-400 text-center">
+          Please approve the grievances once they are resolved.
+        </Text>
+      )}
+      {visibleGrievances.length === 0 ? (
         <EmptyPage
-          title="No pending grievances"
-          description="All grievances have been reviewed."
+          title={activeTab === "pending" ? "No pending grievances" : "No grievance history"}
+          description={activeTab === "pending" ? "All grievances have been reviewed." : "No reviewed grievances are available yet."}
         />
       ) : (
-        grievances.map((item, idx) => (
+        visibleGrievances.map((item, idx) => (
           <ApprovalCard
             key={item.grievances.id || idx}
             title={item.grievances.subject}
             subTitle={`By ${item.student?.rollNo || item.grievances.roll_number}`}
             badge={getGrievanceBadgeStatus(item.grievances.status)}
-            onApprove={() => handleApprove(item.grievances.id)}
+            onApprove={activeTab === "pending" ? () => handleApprove(item.grievances.id) : undefined}
             data={{
-              Name : item.student.name,
+              Name: item.student?.name || "Student",
               ...item.grievances,
             }}
             ApproveButtonTitle="Mark as Resolved"
