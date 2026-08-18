@@ -12,6 +12,7 @@ import TabSwitch from "@/components/TabSwitch";
 import { roomValidationSchema } from "@/constants/validations/roomChangeValidation";
 import TextField from "@/components/form/TextField";
 import { updateStudentRoom } from "@/utils/rc/roomChangeApi";
+import { hostelBlockValues, hostelBlocks} from "@/constants/admission";
 
 const RoomView = () => {
   const [sessionOptions, setSessionOptions] = useState<
@@ -168,6 +169,7 @@ const RoomView = () => {
             fromRoomNo: "",
             toRoomNo: "",
             rollNo: "",
+            toHostel : ""
           }}
           validationSchema={roomValidationSchema}
           onSubmit={async (values) => {
@@ -194,7 +196,11 @@ const RoomView = () => {
                 value="academic_year"
                 options={sessionOptions}
               />
-
+              <SelectField
+                label="To Hostel"
+                value="toHostel"
+                options={hostelBlocks}
+              />
               <TextField
                 label="From Room Number"
                 value="fromRoomNo"
