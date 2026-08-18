@@ -109,7 +109,6 @@ export const updateStudentRoom = async (
 		throw AppError("Unauthorized Access")
 	}
 
-	let hostelBlockValue: string | undefined;
 
 	if (req.User.role !== "rc") {
     	throw AppError("Unauthorized Access")
@@ -119,15 +118,17 @@ export const updateStudentRoom = async (
 	if (!rc?.[0]?.hostel) {
 		throw AppError("RC's hostel block info not found", httpStatus.NOT_FOUND);
 	}
-	hostelBlockValue = rc[0].hostel;
-	
+
+  const fromHostel : string = rc[0].hostel;
+  const toHostel = req.body.toHostel;
 	const fromRoomNo = req.body.fromRoomNo;
 	const toRoomNo = req.body.toRoomNo;
 	const rollNo = req.body.rollNo;
 	const academic_year = req.body.academic_year;
 	
 	const result = await changeRoom(
-		hostelBlockValue,
+    fromHostel,
+    toHostel,
 		academic_year,
 		fromRoomNo,
 		toRoomNo,
