@@ -504,6 +504,311 @@ const ugBranches = {
   "B.Arch": barchDepartments,
 };
 
+const phdCourses = [
+  { label: "PhD", value: "PhD" },
+];
+
+const phdBranches = [
+  ...beDepartments,
+  ...btechDepartments,
+  ...barchDepartments,  
+  // ...[
+  //   {
+  //     label: "Structural Engineering",
+  //     value: "Structural Engineering",
+  //   },
+  //   {
+  //     label: "Construction Engg and Management",
+  //     value: "Construction Engg and Management",
+  //   },
+  //   {
+  //     label: "Irrigation Water Management",
+  //     value: "Irrigation Water Management",
+  //   },
+  //   {
+  //     label: "Hydrology and Water Resources Engg",
+  //     value: "Hydrology and Water Resources Engg",
+  //   },
+  //   {
+  //     label: "Environmental Engineering",
+  //     value: "Environmental Engineering",
+  //   },
+  //   {
+  //     label: "Transportation Engineering",
+  //     value: "Transportation Engineering",
+  //   },
+  //   {
+  //     label: "Soil Mechanics and Foundation Engg",
+  //     value: "Soil Mechanics and Foundation Engg",
+  //   },
+  //   {
+  //     label: "Environmental Management",
+  //     value: "Environmental Management",
+  //   },
+  //   {
+  //     label: "Remote Sensing and Geomatics",
+  //     value: "Remote Sensing and Geomatics",
+  //   },
+  //   {
+  //     label: "Internal Combustion Engg",
+  //     value: "Internal Combustion Engg",
+  //   },
+  //   { label: "Energy Engineering", value: "Energy Engineering" },
+  //   {
+  //     label: "Computer Integrated Manufacturing",
+  //     value: "Computer Integrated Manufacturing",
+  //   },
+  //   {
+  //     label:
+  //       "Thermal Engg (with specialization in Refrigeration and Air Conditioning)",
+  //     value:
+  //       "Thermal Engg (with specialization in Refrigeration and Air Conditioning)",
+  //   },
+  //   { label: "Engineering Design", value: "Engineering Design" },
+  //   {
+  //     label: "Aeronautical Engineering",
+  //     value: "Aeronautical Engineering",
+  //   },
+  //   {
+  //     label: "Automobile Engineering",
+  //     value: "Automobile Engineering",
+  //   },
+  //   {
+  //     label: "Industrial Engineering",
+  //     value: "Industrial Engineering",
+  //   },
+  //   {
+  //     label: "Manufacturing Engineering",
+  //     value: "Manufacturing Engineering",
+  //   },
+  //   { label: "Mechatronics", value: "Mechatronics" },
+  //   {
+  //     label: "Manufacturing Systems and Management",
+  //     value: "Manufacturing Systems and Management",
+  //   },
+  //   {
+  //     label: "Quality Engineering and Management",
+  //     value: "Quality Engineering and Management",
+  //   },
+  //   {
+  //     label: "Printing and Packaging Technology",
+  //     value: "Printing and Packaging Technology",
+  //   },
+  //   { label: "Aerospace Technology", value: "Aerospace Technology" },
+  //   { label: "Solar Energy", value: "Solar Energy" },
+  //   {
+  //     label: "Product Design and Development",
+  //     value: "Product Design and Development",
+  //   },
+  //   { label: "Mobility Engineering", value: "Mobility Engineering" },
+  //   {
+  //     label: "Power Systems Engineering",
+  //     value: "Power Systems Engineering",
+  //   },
+  //   {
+  //     label: "Power Electronics and Drives",
+  //     value: "Power Electronics and Drives",
+  //   },
+  //   {
+  //     label: "Embedded System Technologies",
+  //     value: "Embedded System Technologies",
+  //   },
+  //   {
+  //     label: "High Voltage Engineering",
+  //     value: "High Voltage Engineering",
+  //   },
+  //   {
+  //     label: "Control and Instrumentation Engg",
+  //     value: "Control and Instrumentation Engg",
+  //   },
+  //   {
+  //     label:
+  //       "Instrumentation Engineering (Specialization in Industrial Automation)",
+  //     value:
+  //       "Instrumentation Engineering (Specialization in Industrial Automation)",
+  //   },
+  //   {
+  //     label: "Power Engineering and Management",
+  //     value: "Power Engineering and Management",
+  //   },
+  //   {
+  //     label: "Computer Science and Engg",
+  //     value: "Computer Science and Engg",
+  //   },
+  //   { label: "Software Engineering", value: "Software Engineering" },
+  //   {
+  //     label:
+  //       "Computer Science and Engineering (Specialization in Operations Research)",
+  //     value:
+  //       "Computer Science and Engineering (Specialization in Operations Research)",
+  //   },
+  //   {
+  //     label:
+  //       "Computer Science and Engg (Specialization in Big Data Analytics)",
+  //     value:
+  //       "Computer Science and Engg (Specialization in Big Data Analytics)",
+  //   },
+  //   {
+  //     label: "Communication Systems",
+  //     value: "Communication Systems",
+  //   },
+  //   { label: "VLSI Design", value: "VLSI Design" },
+  //   { label: "Medical Electronics", value: "Medical Electronics" },
+  //   {
+  //     label: "Bio Medical Engineering",
+  //     value: "Bio Medical Engineering",
+  //   },
+  //   {
+  //     label: "Communication and Networking",
+  //     value: "Communication and Networking",
+  //   },
+  //   { label: "Avionics", value: "Avionics" },
+  //   { label: "Applied Electronics", value: "Applied Electronics" },
+  //   {
+  //     label: "Wireless Technologies",
+  //     value: "Wireless Technologies",
+  //   },
+  //   {
+  //     label: "VLSI Design and Embedded Systems",
+  //     value: "VLSI Design and Embedded Systems",
+  //   },
+  // ],
+  // ...[
+  //   { label: "Ocean Technology", value: "Ocean Technology" },
+  //   {
+  //     label:
+  //       "Information Technology (Specialization in Artificial Intelligence and Data Science)",
+  //     value:
+  //       "Information Technology (Specialization in Artificial Intelligence and Data Science)",
+  //   },
+  //   {
+  //     label: "Information Technology",
+  //     value: "Information Technology",
+  //   },
+  //   {
+  //     label: "Laser and Electro Optical Engg",
+  //     value: "Laser and Electro Optical Engg",
+  //   },
+  //   {
+  //     label: "Chemical Engineering",
+  //     value: "Chemical Engineering",
+  //   },
+  //   {
+  //     label: "Textile Technology",
+  //     value: "Textile Technology",
+  //   },
+  //   {
+  //     label: "Ceramic Technology",
+  //     value: "Ceramic Technology",
+  //   },
+  //   {
+  //     label: "Petroleum Refining and Petro-Chemicals",
+  //     value: "Petroleum Refining and Petro-Chemicals",
+  //   },
+  //   {
+  //     label: "Polymer Science and Engg",
+  //     value: "Polymer Science and Engg",
+  //   },
+  //   {
+  //     label: "Environmental Science and Technology",
+  //     value: "Environmental Science and Technology",
+  //   },
+  //   { label: "Biotechnology", value: "Biotechnology" },
+  //   {
+  //     label: "Bio Pharmaceutical Technology",
+  //     value: "Bio Pharmaceutical Technology",
+  //   },
+  //   { label: "Rubber Technology", value: "Rubber Technology" },
+  //   {
+  //     label: "Leather Technology",
+  //     value: "Leather Technology",
+  //   },
+  //   {
+  //     label: "Footwear Engineering and Management",
+  //     value: "Footwear Engineering and Management",
+  //   },
+  //   {
+  //     label: "Nano Science and Technology",
+  //     value: "Nano Science and Technology",
+  //   },
+  //   { label: "Food Technology", value: "Food Technology" },
+  //   {
+  //     label: "Industrial Safety and Hazards & Management",
+  //     value: "Industrial Safety and Hazards & Management",
+  //   },
+  //   {
+  //     label: "Computational Biology",
+  //     value: "Computational Biology",
+  //   },
+  // ],
+  // ...[
+  //   { label: "M.Arch.", value: "M.Arch." },
+  //   {
+  //     label: "Landscape Architecture",
+  //     value: "Landscape Architecture",
+  //   },
+  //   { label: "M.Plan.", value: "M.Plan." },
+  // ],
+  // ...[
+  //   {
+  //     label: "Mathematics",
+  //     value: "Mathematics",
+  //   },
+  //   {
+  //     label: "Medical Physics",
+  //     value: "Medical Physics",
+  //   },
+  //   {
+  //     label: "Applied Chemistry",
+  //     value: "Applied Chemistry",
+  //   },
+  //   {
+  //     label: "Applied Geology",
+  //     value: "Applied Geology",
+  //   },
+  //   {
+  //     label: "Materials Science",
+  //     value: "Materials Science",
+  //   },
+  //   {
+  //     label: "Electronic Media",
+  //     value: "Electronic Media",
+  //   },
+  //   {
+  //     label:
+  //       "Multimedia (specialization in VISUAL COMMUNICATION)",
+  //     value:
+  //       "Multimedia (specialization in VISUAL COMMUNICATION)",
+  //   },
+  //   {
+  //     label: "Computer Science",
+  //     value: "Computer Science",
+  //   },
+  //   {
+  //     label: "Information Technology",
+  //     value: "Information Technology",
+  //   },
+  //   {
+  //     label: "Electronic Media",
+  //     value: "Electronic Media",
+  //   },
+  // ],
+  // ...[
+  //   {
+  //     label: "Master of Business Administration (MBA)",
+  //     value: "Master of Business Administration (MBA)",
+  //   },
+  //   { label: "Tourism Management", value: "Tourism Management" },
+  // ],
+  // ...[
+  //   {
+  //     label: "Master of Computer Applications (M.C.A.)",
+  //     value: "Master of Computer Applications (M.C.A.)",
+  //   },
+  // ],
+];
+
+
 const semesters = [
   { label: "Semester 1", value: "1" },
   { label: "Semester 2", value: "2" },
@@ -635,4 +940,6 @@ export {
   ugBranches,
   govtIdTypes,
   pgBranches,
+  phdCourses,
+  phdBranches
 };

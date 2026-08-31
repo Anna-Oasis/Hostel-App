@@ -177,7 +177,7 @@ const ApprovePage = () => {
         </View>
         {selectedFloor !== null && rooms.length > 0 && rooms[selectedFloor] && (
           <View className="flex flex-row flex-wrap gap-3">
-            {rooms[selectedFloor].map((room, idx) => {
+            {[...rooms[selectedFloor]].sort((a, b) => a.roomNumber - b.roomNumber).map((room, idx) => {
               const isSelected =
                 selectedRoom?.roomNumber === room.roomNumber &&
                 selectedRoom?.floor === selectedFloor;
