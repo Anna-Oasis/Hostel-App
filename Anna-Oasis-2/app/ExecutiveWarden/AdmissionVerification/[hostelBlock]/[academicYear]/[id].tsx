@@ -146,7 +146,7 @@ export default function RoomAllocation() {
         </View>
         {selectedFloor !== null && roomsByFloor[selectedFloor] && (
           <View className="flex flex-row flex-wrap gap-3">
-            {roomsByFloor[selectedFloor].map((room: Room) => {
+            {[...rooms[selectedFloor]].sort((a, b) => a.roomNumber - b.roomNumber).map((room, idx) => {
               const isSelected =
                 selectedRoom?.roomNumber === room.roomNumber &&
                 selectedRoom?.floor === selectedFloor;
