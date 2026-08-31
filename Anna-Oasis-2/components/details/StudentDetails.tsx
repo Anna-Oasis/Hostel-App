@@ -12,6 +12,8 @@ import {
   pgCourses,
   ugBranches,
   pgBranches,
+  phdCourses,
+  phdBranches,
 } from "@/constants/details";
 import nationalities from "@/constants/nationalities";
 import HelperText from "@/components/HelperText";
@@ -50,6 +52,7 @@ const StudentDetails = () => {
   const getAvailableCourses = () => {
     if (values.courseType === "UG") return ugCourses;
     if (values.courseType === "PG") return pgCourses;
+    if (values.courseType === "PhD") return phdCourses;
     return [];
   };
 
@@ -60,6 +63,9 @@ const StudentDetails = () => {
     }
     if (values.courseType === "PG" && values.course) {
       return pgBranches[values.course as keyof typeof pgBranches] || [];
+    }
+    if (values.courseType === "PhD" && values.course) {
+      return phdBranches|| [];
     }
     return [];
   };
@@ -99,6 +105,7 @@ const StudentDetails = () => {
           options={[
             { label: "Undergraduate (UG)", value: "UG" },
             { label: "Postgraduate (PG)", value: "PG" },
+            { label: "Doctor of Philosophy (PhD)", value: "PhD" },
           ]}
         />
         {values.courseType && (
