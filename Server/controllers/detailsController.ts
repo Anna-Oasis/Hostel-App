@@ -237,7 +237,7 @@ export const fetchStudentDetailsForManagerVerificationController = async (
   }
 
   const result = await fetchStudentsForManagerVerification();
-  console.log("Fetched Students:", result.length);
+  // console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -270,7 +270,7 @@ export const fetchStudentDetails = async (
   else{
     result = await fetchStudents();
   }
-  console.log("Fetched Students:", result.length);
+  // console.log("Fetched Students:", result.length);
 
   res.status(httpStatus.OK).json({
     success: true,
@@ -350,7 +350,7 @@ export const fetchStudentDetailsForRcController = async (
     );
   }
   const rc = await getRCByUserId(Number(req.User.id));
-  console.log("RC Details:", rc);
+  // console.log("RC Details:", rc);
 
   if (!rc || rc.length === 0) {
     throw AppError("RC not found", httpStatus.NOT_FOUND);
@@ -364,7 +364,7 @@ export const fetchStudentDetailsForRcController = async (
   }
 
   const result = await fetchStudentDetailsForRC(rc[0].floor, rc[0].hostel);
-  console.log("Fetched Students for RC:", result);
+  // console.log("Fetched Students for RC:", result);
   if (rc[0].alternatingToRCId != null) {
     const alternateRc = await getRCById(rc[0].alternatingToRCId);
     if (alternateRc && alternateRc.length > 0) {
@@ -376,7 +376,7 @@ export const fetchStudentDetailsForRcController = async (
       );
     }
   }
-  console.log(result);
+  // console.log(result);
   res.status(httpStatus.OK).json({
     success: true,
     data: result || [],

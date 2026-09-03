@@ -121,7 +121,7 @@ export const getLeaveFormWaitingForApprovalController = async (
 
   if (userRole === "rc") {
     const rc = await getRCByUserId(Number(req.User.id));
-    console.log("RC:", rc);
+    // console.log("RC:", rc);
 
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);
@@ -168,7 +168,7 @@ export const getApprovedLeaves = async (
 
   if (userRole === "rc") {
     const rc = await getRCByUserId(Number(req.User.id));
-    console.log("RC:", rc);
+    // console.log("RC:", rc);
 
     if (!rc || rc.length === 0) {
       throw AppError("RC not found", httpStatus.NOT_FOUND);

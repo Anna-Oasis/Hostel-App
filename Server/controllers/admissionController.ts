@@ -205,7 +205,7 @@ export async function createAdmissionController(req: AuthRequest, res: Response)
 
   // Get student details using authenticated user's ID
   const studentData = await findStudentByUserId(Number(userId));
-  console.log("Student Data:", studentData);
+  // console.log("Student Data:", studentData);
   if (!studentData) {
     throw AppError("Student record not found", httpStatus.NOT_FOUND);
   }
@@ -363,7 +363,7 @@ export async function updateApprovalStatusByManagerController(
   const user_id = req.User?.id;
   const parsedData = managerAdmissionDecisionSchema.parse({user_id,...req.body});
 
-  console.log(parsedData)
+  // console.log(parsedData)
 
   // If status is false, comment is required
   if (
