@@ -15,7 +15,7 @@ export const postDWDetailsController = async (
     throw AppError("User information is missing", httpStatus.UNAUTHORIZED);
   }
   const userId = req.User.id;
-  console.log(userId)
+  // console.log(userId)
 
   let passportPhotoFile: Express.Multer.File | undefined;
 
@@ -36,7 +36,7 @@ export const postDWDetailsController = async (
     ...req.body,
     passportPhotoUrl,
   };
-  console.log(rawPayload)
+  // console.log(rawPayload)
 
   const validated = deputyWardenCreateSchema.safeParse(rawPayload);
   if (!validated.success) {
@@ -109,7 +109,7 @@ export const putDWDetailsController = async (
     userId : userId,
     ...parsed.data,
   };
-  console.log(updatePayload)
+  // console.log(updatePayload)
 
   const result = await updateDeputyWardenService(updatePayload);
 

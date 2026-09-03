@@ -66,7 +66,7 @@ export const getGrievancesByUserController = async (
   if (!rollNumber) {
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }
-  console.log("Roll Number:", rollNumber);
+  // console.log("Roll Number:", rollNumber);
 
   const result = await getGrievancesByRollNumber(rollNumber);
 
@@ -128,7 +128,7 @@ export const approveOrDeclineGrievancesByRCController = async (
     throw AppError("RC not found", httpStatus.NOT_FOUND);
   }
 
-  console.log("RC Details:", rc);
+  // console.log("RC Details:", rc);
 
   const { grievance_id } = req.params;
 
