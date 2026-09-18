@@ -7,9 +7,10 @@ import { completeRCLeave } from "@/utils/rc/rcLeaveApi";
 import TabSwitch from "@/components/TabSwitch";
 import { FilePlus2, History, UserCheck2 } from "lucide-react-native";
 import ModalCallable from "@/components/modals/ModalCallable";
+import AlterRcLeavePage from "@/components/rc/AlterRC";
 
 export default function ApplyForLeavePage() {
-  const [activeTab, setActiveTab] = useState<"form" | "history" | "Close Leave">("form");
+  const [activeTab, setActiveTab] = useState<"form" | "history" | "Alter RC" |"Close Leave">("form");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
@@ -33,6 +34,7 @@ export default function ApplyForLeavePage() {
           tabs={[
             { label: "Leave Form", value: "form" },
             { label: "History", value: "history" },
+            { label: "Alter RC", value: "Alter RC" },
             { label: "Relieve the Alter RC", value: "Close Leave" },
           ]}
           activeTab={activeTab}
@@ -52,6 +54,11 @@ export default function ApplyForLeavePage() {
         {activeTab === "history" && (
           <View style={{ flex: 1 }}>
             <RcLeaveHistory />
+          </View>
+        )}
+        {activeTab === "Alter RC" && (
+          <View style={{ flex: 1 }}>
+            <AlterRcLeavePage />
           </View>
         )}
         {activeTab === "Close Leave" && (
