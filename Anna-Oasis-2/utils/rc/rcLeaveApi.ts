@@ -28,6 +28,14 @@ export interface RCLeaveFormPayload {
     reason: string;
     alternate: number; // Alternate RC ID
 }
+export interface RCLeaveEditFormPayload {
+    leave_id: number;
+    rc_id: number;
+    arrival: string;   // ISO date string (e.g., "2025-01-03")
+    leaving: string;   // ISO date string
+    reason: string;
+    alternate: number; // Alternate RC ID
+}
 
 export interface CreateRCLeaveResponse {
     success: boolean;
@@ -86,6 +94,32 @@ export const submitRCLeaveForm = async (payload: RCLeaveFormPayload) => {
         router.replace("/RC");
     } else {
         console.error('Failed to submit RC Leave Form:', data.message);
+    }
+    return data;
+}
+
+export const EditRCLeaveForm = async (payload: RCLeaveEditFormPayload) => {
+    const token = await getToken();
+    // console.log("Token:", token);
+
+    if (!token) {
+        throw new Error("No authentication token found");
+    }
+    console.log(payload)
+    const response = await api.put("/api/resident_counsellor/leave", payload, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    
+    const data = response.data;
+    if (data.success) {
+        // console.log('RC Leave Form submitted successfully:', data);
+        window.alert("Success\nRC Leave Form Updated successfully");
+        router.replace("/RC");
+    } else {
+        console.error('Failed to update RC Leave Form:', data.message);
     }
     return data;
 }
