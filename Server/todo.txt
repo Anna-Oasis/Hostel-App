@@ -1,0 +1,9 @@
+Goal : 
+    Create a table called fee-payment/readmission clone of the admission table foreign-key in admission_id 
+    
+1. StudentSide : In create_admission_controller add logic for readmission 
+2. ManagerSide : add routes similar to admission for readmission and direct approval
+3. ManagerSide and studentSide : Fee receipt generation route logic modification (req body : readmission-id)
+4. BillId logic for readmission
+
+

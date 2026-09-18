@@ -35,8 +35,9 @@ export const admissionApprovalStatus = {
 
 export const rcLeaveApprovalStatus = {
   SUBMITTED: "0",
-  DEPUTYWARDEN: "1",
-  EXECUTIVEWARDEN: "2",
+  RC:"1",
+  DEPUTYWARDEN: "2",
+  EXECUTIVEWARDEN: "3",
   DECLINED: "-1",
 };
 

@@ -26,6 +26,7 @@ export const rcLeaveModel = pgTable("rc_leave", {
   reason: text("reason").notNull(),
 
   approved: rcLeave_status_pgEnum("approved").default(rcLeaveApprovalStatus.SUBMITTED).notNull(),
+  comment : text("comment").default(""),
    //Timestamps
   created_at: timestamp("created_at").defaultNow().notNull(),
   dw_approved_at: timestamp("approved_at").defaultNow(),

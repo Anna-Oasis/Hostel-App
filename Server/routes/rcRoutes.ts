@@ -33,7 +33,7 @@ import {
   getAttendanceByRcController
 } from "../controllers/attendanceController";
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
-import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController } from "../controllers/rcLeaveController";
+import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController, getRCLeaves, updateLeaveStatusForRC, updateRCLeaveFormFromController } from "../controllers/rcLeaveController";
 
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 
@@ -166,8 +166,13 @@ rcRouter.post(
 );
 
 rcRouter.post("/leave", authenticateUser, hasRole(['rc']), errorWrapper(createRCLeaveFormFromController));
+rcRouter.put("/leave", authenticateUser, hasRole(['rc']), errorWrapper(updateRCLeaveFormFromController));
 rcRouter.get("/leave", authenticateUser, hasRole(['rc']), errorWrapper(getRCLeaveController));
 rcRouter.post("/leave/complete", authenticateUser, hasRole(['rc']), errorWrapper(updateCompleteLeave))
+
+//Alternate-Rc requests
+rcRouter.get("/leave/alter_rc", authenticateUser, hasRole(["rc"]), errorWrapper(getRCLeaves));
+rcRouter.put("/leave/alter_rc/:leave_id", authenticateUser, hasRole(["rc"]), errorWrapper(updateLeaveStatusForRC));
 
 // Fetch the all the RCs as same as the RC's own hostel
 rcRouter.get("/list", authenticateUser, hasRole(['rc']), errorWrapper(fetchRCbyHostelController))
