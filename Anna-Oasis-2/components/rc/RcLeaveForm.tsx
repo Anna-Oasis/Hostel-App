@@ -8,13 +8,16 @@ import DatePickerField from "@/components/form/DatePickerField";
 import MultiLineText from "@/components/form/MultiLineText";
 import SelectField from "@/components/form/SelectField";
 import { Button, ButtonText } from "@/components/ui/button";
-import { RCLeaveFormPayload, submitRCLeaveForm } from "@/utils/rc/rcLeaveApi";
+import { EditRCLeaveForm, RCLeaveFormPayload, submitRCLeaveForm } from "@/utils/rc/rcLeaveApi";
 import { getRCList, RCListResponse } from "@/utils/rc/rcApi";
 
-const RcLeaveForm = () => {
+type RcLeaveFormProps = {
+  editLeaveValues ?: any
+}
+const RcLeaveForm = (props: RcLeaveFormProps) => {
+  
   const details = useUserStore((state) => state.details);
   const [alterrc, setAlterrc] = useState<RCListResponse | null>(null);
-
   useEffect(() => {
     const fetchRCList = async () => {
       try {
@@ -36,9 +39,9 @@ const RcLeaveForm = () => {
     <View>
       <Formik
         initialValues={{
-          arrival: "",
-          leaving: "",
-          reason: "",
+          arrival: props.editLeaveValues?.arrival ?? "",
+          leaving: props.editLeaveValues?.leaving ?? "",
+          reason: props.editLeaveValues?.reason ?? "",
           alternate: "",
         }}
         validationSchema={rcLeaveValidationSchema}
@@ -50,7 +53,11 @@ const RcLeaveForm = () => {
             reason: values.reason,
             alternate: Number(values.alternate),
           };
-          submitRCLeaveForm(payload);
+          if (props.editLeaveValues) {
+            EditRCLeaveForm({...payload, leave_id : props.editLeaveValues.Id})
+          }
+          else
+            submitRCLeaveForm(payload);
         }}
       >
         {({ handleSubmit }) => (

@@ -15,6 +15,13 @@ export default function ApplyForLeavePage() {
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
+  const [editLeave, setEditleave] = useState<any>(null)
+  
+  const handleEditLeave = (leave: any) => {
+    setEditleave(leave)
+    setActiveTab("form")
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
@@ -48,12 +55,14 @@ export default function ApplyForLeavePage() {
         />
         {activeTab === "form" && (
           <View style={{ flex: 1 }}>
-            <RcLeaveForm />
+            <RcLeaveForm editLeaveValues={editLeave}/>
           </View>
         )}
         {activeTab === "history" && (
           <View style={{ flex: 1 }}>
-            <RcLeaveHistory />
+            <RcLeaveHistory
+              handleEditLeave={handleEditLeave}
+            />
           </View>
         )}
         {activeTab === "Alter RC" && (
