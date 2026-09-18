@@ -1,5 +1,5 @@
 import { rcLeaveApprovalStatus } from "../constants/enum";
-import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull } from "../services/rcLeaveService";
+import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull, getRCLeaveToBeApprovedByAlternateRC, updateRCLeave } from "../services/rcLeaveService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -19,7 +19,7 @@ export const updateLeaveStatusForRC = async (
   if (!req.User) {
     throw AppError("Invalid User");
   }
-  const {status} = req.body;
+  const {status, comment} = req.body;
   if (!status) {
     throw AppError("Invalid Status");
   }
@@ -29,24 +29,38 @@ export const updateLeaveStatusForRC = async (
     if (status == "true") {
       result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DEPUTYWARDEN)
     } else if (status == "false") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED, comment)
     }
     res.status(httpStatus.OK).json({
-      success : true,
-      data : result,
-      message : "Leave Approved"
+      success: true,
+      data: result,
+      message: "Leave Approved"
     })
-  } else if(req.User.role == "executiveWarden") {
+  }
+  else if (req.User.role == "executiveWarden") {
     var result;
     if (status == "true") {
       result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.EXECUTIVEWARDEN)
     } else if (status == "false") {
-      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED)
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED, comment)
     }
     res.status(httpStatus.OK).json({
-      success : true,
-      data : result,
-      message : "Leave Approved"
+      success: true,
+      data: result,
+      message: "Leave Approved"
+    })
+  }
+  else if (req.User.role == "rc") {
+    var result;
+    if (status == "true") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.RC)
+    } else if (status == "false") {
+      result = await updateRCLeaveStatus(Number(leave_id), rcLeaveApprovalStatus.DECLINED, comment)
+    }
+    res.status(httpStatus.OK).json({
+      success: true,
+      data: result,
+      message: "Leave Approved"
     })
   }
 }
@@ -85,6 +99,18 @@ export const getRCLeaves = async (
         : "No RC leaves waiting for Deputy Warden approval"
       })
       break;
+
+    case "rc":
+      const rc_result = await getRCLeaveToBeApprovedByAlternateRC()
+
+      res.status(httpStatus.OK).json({
+        success : true,
+        data : rc_result || [],
+        count:rc_result ? rc_result.length:0,
+        message: rc_result && rc_result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves waiting for approval"
+      })
       
     default:
       throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
@@ -127,6 +153,52 @@ export const createRCLeaveFormFromController = async (req: AuthRequest, res: Res
     });
   } catch (error) {
     console.error("Error in createRCLeaveFormFromController:", error);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An unexpected error occurred",
+    });
+  }
+};
+
+
+export const updateRCLeaveFormFromController = async (req: AuthRequest, res: Response) => {
+  try {
+    const data = req.body;
+
+    if (!data || Object.keys(data).length === 0) {
+      throw AppError("Leave form data is missing", httpStatus.BAD_REQUEST);
+    }
+
+    if (!req.User || !req.User.id || !req.User.role) {
+      throw AppError("Unauthorized user", httpStatus.UNAUTHORIZED);
+    }
+
+    const userId = Number(req.User.id);
+    const rcId = await getRCidfromUserId(userId);
+
+    if (!rcId) {
+      throw AppError("RC ID not found for user", httpStatus.NOT_FOUND);
+    }
+
+    data.rc_id = rcId;
+    const result = await updateRCLeave(data.leave_id, data);
+
+    // const alternateRCId = await getRCidfromUserId(Number(data.alternate));
+    const rc = await getRCById(Number(data.alternate));
+    let updatedRC;
+
+    if (data.alternate) {
+      updatedRC = await updateAlternateRCtoId(Number(data.rc_id), Number(data.alternate));
+    }
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Leave Form updated",
+      data: result,
+      updatedRc: updatedRC,
+    });
+  } catch (error) {
+    console.error("Error in updateRCLeaveFormFromController:", error);
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "An unexpected error occurred",

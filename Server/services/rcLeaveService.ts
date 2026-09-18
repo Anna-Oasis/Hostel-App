@@ -14,6 +14,7 @@ export const getRCLeaveApprovals = async (rcId: number) => {
             arrival: rcLeaveModel.arrival,
             reason: rcLeaveModel.reason,
             approved: rcLeaveModel.approved,
+            comment : rcLeaveModel.comment,
             createdAt: rcLeaveModel.created_at,
             dwApprovedAt: rcLeaveModel.dw_approved_at,
             ewUpdatedAt: rcLeaveModel.ew_updated_at,
@@ -27,6 +28,29 @@ export const createRcLeaveForm = async( data:NewRCLeave)=> {
     return await db.insert(rcLeaveModel).values(data).returning();
 }
 
+export async function updateRCLeave(
+  leaveId: number,
+  data: {
+    arrival?: string;
+    reason?: string;
+  }
+) {
+  const [updatedLeave] = await db
+    .update(rcLeaveModel)
+    .set({
+      ...data,
+      approved : rcLeaveApprovalStatus.SUBMITTED,
+      ew_updated_at: new Date(),
+    })
+    .where(eq(rcLeaveModel.id, leaveId))
+    .returning();
+
+  if (!updatedLeave) {
+    throw new Error("RC leave not found");
+  }
+
+  return updatedLeave;
+}
 /**
  * 
  * @param rcId Id of the RC who is going on Leave
@@ -58,10 +82,11 @@ export async function updateAlternateRCtoNull(rcId : number) {
   return updatedRC;
 }
 
-export async function updateRCLeaveStatus(leaveId : number, status : string) {
+export async function updateRCLeaveStatus(leaveId : number, status : string, comment ?: string) {
     const updatedLeave = await db.update(rcLeaveModel)
         .set({
-            approved : status
+          approved: status,
+          comment : comment ?? ""
         })
         .where(eq(rcLeaveModel.id, leaveId))
         .returning();
@@ -81,7 +106,7 @@ export const getRCLeaveToBeApprovedByDeputyWarden = async (block : string) => {
     )
     .where(
       and(
-        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED),
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.RC),
         eq(rcModel.hostel, block)
       ))
     .orderBy(rcLeaveModel.created_at);
@@ -102,6 +127,25 @@ export const getRCLeaveToBeApprovedByExecutiveWarden = async () => {
     .where(
       and(
         eq(rcLeaveModel.approved, rcLeaveApprovalStatus.DEPUTYWARDEN)
+      ))
+    .orderBy(rcLeaveModel.created_at);
+  return leave_form;
+};
+
+export const getRCLeaveToBeApprovedByAlternateRC = async () => {
+  const leave_form = await db
+    .select({
+      leave: rcLeaveModel,
+      rc: rcModel,
+    })
+    .from(rcLeaveModel)
+    .innerJoin(
+      rcModel,
+      eq(rcLeaveModel.rc_id, rcModel.id)
+    )
+    .where(
+      and(
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED)
       ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;
