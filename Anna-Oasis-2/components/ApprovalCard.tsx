@@ -57,7 +57,10 @@ type approvalCardProps = {
 
   //Fee Receipt
   downloadButton ?: string
-  onDownload ?: (item : any) => void
+  onDownload?: (item: any) => void
+
+  //Edit optional
+  onEdit ?: (item : any) => void
 };
 
 /**
@@ -435,6 +438,19 @@ const ApprovalCard = (props: approvalCardProps) => {
               >
                 <ButtonText className="text-[#022B60] text-center">
                   {props.downloadButton || "Download"}
+                </ButtonText>
+              </Button>
+            )}
+            {props.onEdit && (
+              <Button
+                onPress={() => {
+                  setViewDetails(false);
+                  props.onEdit?.(props.data);
+                }}
+                className="bg-[#022B60] min-w-[95px] px-3 h-10 justify-center rounded-lg"
+              >
+                <ButtonText className="text-white text-center">
+                  Edit
                 </ButtonText>
               </Button>
             )}

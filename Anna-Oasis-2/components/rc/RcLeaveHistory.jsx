@@ -7,7 +7,12 @@ import { getRCLeaves } from "@/utils/rc/rcLeaveApi";
 import EmptyPage from "@/components/EmptyPage";
 import { getRCLeaveBadgeStatus } from "@/utils/getBadgeStatus";
 
-const RcLeaveHistory = () => {
+type RcLeaveHistoryProps = {
+  handleEditLeave ?: (item : any) => void
+};
+
+const RcLeaveHistory = (props: RcLeaveHistoryProps) => {
+  
   const [leaveHistory, setLeaveHistory] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,7 +52,7 @@ const RcLeaveHistory = () => {
                 Leaving: leave.leaving,
                 Arrival: leave.arrival,
                 "Created At": new Date(leave.createdAt).toLocaleString(),
-
+                Comment : leave.comment ?? "No Comments yet",
                 Status:
                   leave.approved === "1"
                     ? "Pending"
@@ -57,6 +62,11 @@ const RcLeaveHistory = () => {
                     ? "Approved"
                     : "Pending",
               }}
+              onEdit={
+                leave.approved !== "2"
+                  ? () => props.handleEditLeave?.(leave)
+                  : undefined
+              }
             />
           </Box>
         ))
