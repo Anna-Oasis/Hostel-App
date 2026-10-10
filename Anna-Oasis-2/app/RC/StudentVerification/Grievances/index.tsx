@@ -5,19 +5,25 @@ import ApprovalCard from "@/components/ApprovalCard";
 import { getGrievanceBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
 import ModalCallable from "@/components/modals/ModalCallable";
+import TabSwitch from "@/components/TabSwitch";
+import { FileTextIcon, History } from "lucide-react-native";
+import { GRIEVANCE_STATUS } from "@/constants/grievanceStatus";
+
+type GrievanceTab = "pending" | "history";
 
 export default function GrievancesPage() {
   const [grievances, setGrievances] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
+  const [activeTab, setActiveTab] = useState<GrievanceTab>("pending");
 
   const fetchGrievances = () => {
     getAllRCGrievances()
       .then((data) => {
         setGrievances(data || []);
       })
-      .catch((error) => {
-        console.log("Error fetching RC grievances:", error);
+      .catch(() => {
+        setGrievances([]);
       });
   };
 
@@ -25,14 +31,25 @@ export default function GrievancesPage() {
     fetchGrievances();
   }, []);
 
+  const pendingGrievances = grievances.filter(
+    (item) => item.grievances?.status === GRIEVANCE_STATUS.SUBMITTED
+  );
+  const historyGrievances = grievances.filter(
+    (item) =>
+      item.grievances?.status === GRIEVANCE_STATUS.RC ||
+      item.grievances?.status === GRIEVANCE_STATUS.DECLINED
+  );
+  const visibleGrievances = activeTab === "pending" ? pendingGrievances : historyGrievances;
+
   const handleApprove = async (id: number) => {
     try {
       await updateGrievanceStatus(id, true);
       setModalMsg("Grievance approved successfully!");
       setModalVisible(true);
       fetchGrievances();
-    } catch (error) {
-      console.log("Error approving grievance:", error);
+    } catch {
+      setModalMsg("Unable to update grievance status.");
+      setModalVisible(true);
     }
   };
 
@@ -40,8 +57,9 @@ export default function GrievancesPage() {
     try {
       await updateGrievanceStatus(id, false);
       fetchGrievances();
-    } catch (error) {
-      console.log("Error declining grievance:", error);
+    } catch {
+      setModalMsg("Unable to update grievance status.");
+      setModalVisible(true);
     }
   };
 
@@ -54,22 +72,32 @@ export default function GrievancesPage() {
         message={modalMsg}
       />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
-        {grievances.length === 0 ? (
+        <TabSwitch
+          tabs={[
+            { label: "Pending", value: "pending" },
+            { label: "History", value: "history" },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          icons={{ pending: FileTextIcon, history: History }}
+          className="mb-4"
+        />
+        {visibleGrievances.length === 0 ? (
           <EmptyPage
-            title="No pending grievances"
-            description="All grievances have been reviewed."
+            title={activeTab === "pending" ? "No pending grievances" : "No grievance history"}
+            description={activeTab === "pending" ? "All grievances have been reviewed." : "No reviewed grievances are available yet."}
           />
         ) : (
-          grievances.map((item, idx) => (
+          visibleGrievances.map((item, idx) => (
             <ApprovalCard
               key={item.grievances.id || idx}
               title={item.grievances.subject}
-              subTitle={`By ${item.student.name} (${item.student.rollNo})`}
+              subTitle={`By ${item.student?.name || "Student"} (${item.student?.rollNo || item.grievances?.roll_number || "N/A"})`}
               badge={getGrievanceBadgeStatus(item.grievances.status)}
-              onApprove={() => handleApprove(item.grievances.id)}
-              onDecline={() => handleDecline(item.grievances.id)}
+              onApprove={activeTab === "pending" ? () => handleApprove(item.grievances.id) : undefined}
+              onDecline={activeTab === "pending" ? () => handleDecline(item.grievances.id) : undefined}
               data={{
-                Name : item.student.name,
+                Name: item.student?.name || "Student",
                 ...item.grievances,
               }}
             />

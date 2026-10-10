@@ -4,9 +4,15 @@ import { getDeputyWardenGrievances } from "@/utils/deputyWarden/dwGrievanceUtils
 import ApprovalCard from "@/components/ApprovalCard";
 import { getGrievanceBadgeStatus } from "@/utils/getBadgeStatus";
 import EmptyPage from "@/components/EmptyPage";
+import TabSwitch from "@/components/TabSwitch";
+import { FileTextIcon, History } from "lucide-react-native";
+import { GRIEVANCE_STATUS } from "@/constants/grievanceStatus";
+
+type GrievanceTab = "pending" | "history";
 
 export default function GrievancesPage() {
   const [grievances, setGrievances] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<GrievanceTab>("history");
 
   const fetchGrievances = async () => {
     try {
@@ -21,22 +27,42 @@ export default function GrievancesPage() {
     fetchGrievances();
   }, []);
 
+  const pendingGrievances = grievances.filter(
+    (item) => item.grievances?.status === GRIEVANCE_STATUS.RC
+  );
+  const historyGrievances = grievances.filter(
+    (item) =>
+      item.grievances?.status === GRIEVANCE_STATUS.MANAGER ||
+      item.grievances?.status === GRIEVANCE_STATUS.DECLINED
+  );
+  const visibleGrievances = activeTab === "pending" ? pendingGrievances : historyGrievances;
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-4">
-      {grievances.length === 0 ? (
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        icons={{ pending: FileTextIcon, history: History }}
+        className="mb-4"
+      />
+      {visibleGrievances.length === 0 ? (
         <EmptyPage
-          title="No pending grievances"
-          description="All grievances have been reviewed."
+          title={activeTab === "pending" ? "No pending grievances" : "No grievance history"}
+          description={activeTab === "pending" ? "All grievances have been reviewed." : "No reviewed grievances are available yet."}
         />
       ) : (
-        grievances.map((item, idx) => (
+        visibleGrievances.map((item, idx) => (
           <ApprovalCard
             key={item.grievances.id || idx}
             title={item.grievances.subject}
             subTitle={`By ${item.student?.rollNo || item.grievances.roll_number}`}
             badge={getGrievanceBadgeStatus(item.grievances.status)}
             data={{
-              Name : item.student.name,
+              Name: item.student?.name || "Student",
               ...item.grievances,
             }}
           />
