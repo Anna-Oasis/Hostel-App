@@ -17,21 +17,58 @@ const DetailsCard = () => {
         <View className="w-full mb-4 min-h-[100px] bg-white rounded-xl shadow p-4 gap-4 flex-col items-center">
             <Text className='text-2xl underline font-semibold'>Hostel ID Card</Text>
             {details?.passportPhotoUrl && (
-                <Image
-                    source={{ uri: details.passportPhotoUrl }}
-                    style={{ width: 200, height: 250, borderRadius : 10, borderWidth : 2 }}
-                />
-            )}
-            <View className="flex-1 flex-col">
-                <View className="mt-2">
-                    <Text className="font-semibold text-xl text-gray-700">Name: {details.name || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Roll No: {details.rollNo || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Course: {details.course || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Branch: {details.branch || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Hostel Block: {details.hostelBlock || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Floor: {details.floor || '-'}</Text>
-                    <Text className="font-semibold text-xl text-gray-700">Room Number: {details.roomNumber || '-'}</Text>
+                <View className="w-full flex-row justify-center items-start gap-4 mt-4">
+                    <Image
+                        source={{ uri: details.passportPhotoUrl }}
+                        className="flex-1 max-w-[250px] aspect-[4/5] rounded-xl border-2 border-gray-300"
+                        resizeMode="cover"
+                    />
 
+                    {/* <Image
+                        source={{ uri: details.passportPhotoUrl }}
+                        className="flex-1 max-w-[250px] aspect-[4/5] rounded-xl border-2 border-gray-300"
+                        resizeMode="cover"
+                    /> */}
+                </View>
+            )}
+            <View className="flex-col">
+                <View className="mt-2 gap-y-2">
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Name: </Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.name || '-'}</Text>
+                    </Text>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Roll No: </Text>
+                        <Text className="text-lg font-bold text-primary-800">{details.rollNo || '-'}</Text>
+                    </Text>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Course: </Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.course || '-'}</Text>
+                    </Text>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Branch: </Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.branch || '-'}</Text>
+                    </Text>
+
+                    <View className='w-full h-px bg-[#022B60]'/>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Hostel Block: </Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.hostelBlock || '-'}</Text>
+                    </Text>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Floor: </Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.floor || '-'}</Text>
+                    </Text>
+
+                    <Text className="text-gray-700">
+                        <Text className="text-lg font-bold text-[#022B60]">Room Number: </Text>
+                        <Text className="text-lg font-bold text-primary-800">{details.roomNumber || '-'}</Text>
+                    </Text>
                 </View>
             </View>
         </View>
