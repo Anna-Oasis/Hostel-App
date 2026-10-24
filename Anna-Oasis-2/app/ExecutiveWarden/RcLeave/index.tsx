@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import {
   getRCLeavebyEw,
+  getRCLeaveHistorybyEw,
   updateRCLeaveStatusByEw,
 } from "@/utils/executiveWarden/ewRCLeaveApi";
 import { getRCLeaveBadgeStatus } from "@/utils/getBadgeStatus";
@@ -15,6 +16,7 @@ import EmptyPage from "@/components/EmptyPage";
 import { Inbox } from "lucide-react-native";
 import DeclineComment from "@/components/modals/DeclineComment";
 import ModalCallable from "@/components/modals/ModalCallable";
+import TabSwitch from "@/components/TabSwitch";
 
 // Update the type for the new API response
 type RcLeaveApiItem = {
@@ -48,6 +50,9 @@ export default function RcLeavePage() {
   const [declineModal, setDeclineModal] = useState<{ open: boolean; leaveId?: number }>({ open: false });
   const [successModal, setSuccessModal] = useState<{ show: boolean; title?: string; message?: string }>({ show: false });
 
+  const [activeTab, setActiveTab] = useState<"pending" | "history">("pending")
+  const [leaveHistory, setLeaveHistory] = useState<RcLeaveApiItem[]>([]);
+
   const fetchLeaves = async () => {
     try {
       setLoading(true);
@@ -61,6 +66,20 @@ export default function RcLeavePage() {
       setLoading(false);
     }
   };
+
+    const fetchLeaveHistory = async () => {
+      try {
+        setLoading(true);
+        const result = await getRCLeaveHistorybyEw();
+        if (result.success && Array.isArray(result.data)) {
+          setLeaveHistory(result.data);
+        }
+      } catch (err: any) {
+        window.alert(err?.message || "Error fetching RC leave History");
+      } finally {
+        setLoading(false);
+      }
+    }
 
   const handleApprove = async (leaveId: number) => {
     try {
@@ -100,8 +119,11 @@ export default function RcLeavePage() {
   };
 
   useEffect(() => {
-    fetchLeaves();
-  }, []);
+    if (activeTab === "pending")
+      fetchLeaves();
+    else
+      fetchLeaveHistory()
+  }, [activeTab]);
 
   if (loading) {
     return (
@@ -112,44 +134,88 @@ export default function RcLeavePage() {
   }
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <TabSwitch
+        tabs={[
+          { label: "Pending", value: "pending" },
+          { label: "History", value: "history" },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="mt-4 mb-2"
+      />
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        {leaves.length === 0 ? (
-          <EmptyPage
-            title="No RC Leave requests found."
-            description=""
-            icon={Inbox}
-          />
-        ) : (
-          leaves.map((item) => (
-            <ApprovalCard
-              key={item.leave.id}
-              title={`${item.rc.name} (${item.rc.hostel})`}
-              subTitle={`Leave: ${item.leave.leaving} → ${item.leave.arrival}`}
-              data={{
-                "RC Name": item.rc.name,
-                "Hostel": item.rc.hostel,
-                "Floors": Array.isArray(item.rc.floor)
-                  ? item.rc.floor.map((f) => ["GF", "FF", "SF", "TF"][f] ?? f).join(", ")
-                  : "",
-                "Reason": item.leave.reason,
-                "Leaving": item.leave.leaving,
-                "Arrival": item.leave.arrival,
-                "Created At": new Date(item.leave.created_at).toLocaleString(),
-                "Status":
-                  item.leave.approved === "1"
-                    ? "Pending"
-                    : item.leave.approved === "-1"
-                    ? "Rejected"
-                    : item.leave.approved === "2"
-                    ? "Approved"
-                    : "Pending",
-              }}
-              badge={getRCLeaveBadgeStatus(item.leave.approved)}
-              onApprove={() => handleApprove(item.leave.id)}
-              onDecline={() => handleDecline(item.leave.id)}
-            />
-          ))
-        )}
+        {activeTab === "pending" ? 
+            leaves.length === 0 ? (
+              <EmptyPage
+                title="No RC Leave requests found."
+                description=""
+                icon={Inbox}
+              />
+            ) : 
+            leaves.map((item) => (
+              <ApprovalCard
+                key={item.leave.id}
+                title={`${item.rc.name} (${item.rc.hostel})`}
+                subTitle={`Leave: ${item.leave.leaving} → ${item.leave.arrival}`}
+                data={{
+                  "RC Name": item.rc.name,
+                  "Hostel": item.rc.hostel,
+                  "Floors": Array.isArray(item.rc.floor)
+                    ? item.rc.floor.map((f) => ["GF", "FF", "SF", "TF"][f] ?? f).join(", ")
+                    : "",
+                  "Reason": item.leave.reason,
+                  "Leaving": item.leave.leaving,
+                  "Arrival": item.leave.arrival,
+                  "Created At": new Date(item.leave.created_at).toLocaleString(),
+                  "Status":
+                    item.leave.approved === "1"
+                      ? "Pending"
+                      : item.leave.approved === "-1"
+                      ? "Rejected"
+                      : item.leave.approved === "2"
+                      ? "Deputy Warden Approved"
+                      : "Pending",
+                }}
+                badge={getRCLeaveBadgeStatus(item.leave.approved)}
+                onApprove={() => handleApprove(item.leave.id)}
+                onDecline={() => handleDecline(item.leave.id)}
+              />
+            ))
+          :
+            leaveHistory.length === 0 ? (
+              <EmptyPage
+                title="No RC Leave requests found."
+                description=""
+                icon={Inbox}
+              />
+            ) : 
+            leaveHistory.map((item) => (
+              <ApprovalCard
+                key={item.leave.id}
+                title={`${item.rc.name} (${item.rc.hostel})`}
+                subTitle={`Leave: ${item.leave.leaving} → ${item.leave.arrival}`}
+                data={{
+                  "RC Name": item.rc.name,
+                  "Hostel": item.rc.hostel,
+                  "Floors": Array.isArray(item.rc.floor)
+                    ? item.rc.floor.map((f) => ["GF", "FF", "SF", "TF"][f] ?? f).join(", ")
+                    : "",
+                  "Reason": item.leave.reason,
+                  "Leaving": item.leave.leaving,
+                  "Arrival": item.leave.arrival,
+                  "Created At": new Date(item.leave.created_at).toLocaleString(),
+                  "Status":
+                    item.leave.approved === "1"
+                      ? "Pending"
+                      : item.leave.approved === "-1"
+                      ? "Rejected"
+                      : item.leave.approved === "2"
+                      ? "DeputyApproved"
+                      : "Pending",
+                }}
+              />
+            ))
+        }
       </ScrollView>
       <DeclineComment
         visible={declineModal.open}

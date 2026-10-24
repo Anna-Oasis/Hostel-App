@@ -48,6 +48,23 @@ export async function getRCLeavebyEw(): Promise<RCLeaveResponse> {
         throw new Error("Failed to fetch RC leaves");
     }
 }
+
+export async function getRCLeaveHistorybyEw(): Promise<RCLeaveResponse> {
+    const token = await getToken();
+    try {
+        const response = await api.get("/api/executive_warden/rc/leave_history", {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        })
+        const data = response.data;
+        return data as RCLeaveResponse;
+    } catch (error) {
+        console.error("Error fetching RC leaves:", error);
+        throw new Error("Failed to fetch RC leaves");
+    }
+}
 export async function updateRCLeaveStatusByEw(id: number, status: string, comment?: string): Promise<{ success: boolean; message: string }> {
     const token = await getToken();
     try {
