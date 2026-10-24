@@ -1,6 +1,8 @@
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, or, sql, lte, gte } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { studentModel } from "../models/studentModel";
+import { leaveFormModel } from "../models/leaveForm";
+import { studentLeaveApprovalStatus } from "../constants/enum";
 
 export const findStudentByRollNo = async (rollNo: string) => {
   return await db
@@ -76,6 +78,60 @@ export const fetchStudentDetailsForRC = async (
         eq(studentModel.hostelBlock, hostelBlock),
         inArray(studentModel.floor, floor)
       )
+    )
+    .orderBy(studentModel.roomNumber);
+
+  return students;
+};
+
+
+export const fetchStudentDetailsForAttendanceByRC = async (
+  floor: number[],
+  hostelBlock: string,
+  date: string, // Format: YYYY-MM-DD
+) => {
+  const students = await db
+    .select({
+      rollNo: studentModel.rollNo,
+      name: studentModel.name,
+      roomNumber: studentModel.roomNumber,
+      course: studentModel.course,
+      branch: studentModel.branch,
+      semester: studentModel.semester,
+      mobile: studentModel.mobile,
+      email: studentModel.email,
+      emergencycontact: studentModel.emergencyContact,
+      floor: studentModel.floor,
+      hostelBlock: studentModel.hostelBlock,
+
+      hasLeave: sql<number>`
+        CASE
+          WHEN ${leaveFormModel.id} IS NOT NULL THEN 1
+          ELSE 0
+        END
+      `,
+    })
+    .from(studentModel)
+    .leftJoin(
+      leaveFormModel,
+      and(
+        eq(studentModel.rollNo, leaveFormModel.roll_number),
+        or(
+          eq(leaveFormModel.status, studentLeaveApprovalStatus.RC),
+          eq(
+            leaveFormModel.status,
+            studentLeaveApprovalStatus.DEPUTYWARDEN,
+          ),
+        ),
+        lte(leaveFormModel.from_date, date),
+        gte(leaveFormModel.to_date, date),
+      ),
+    )
+    .where(
+      and(
+        eq(studentModel.hostelBlock, hostelBlock),
+        inArray(studentModel.floor, floor),
+      ),
     )
     .orderBy(studentModel.roomNumber);
 

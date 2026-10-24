@@ -1,5 +1,5 @@
 import { rcLeaveApprovalStatus } from "../constants/enum";
-import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull, getRCLeaveToBeApprovedByAlternateRC, updateRCLeave } from "../services/rcLeaveService";
+import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull, getRCLeaveToBeApprovedByAlternateRC, updateRCLeave, getRCLeaveHistoryByDeputyWarden, getRCLeaveHistoryByExecutiveWarden, getRCLeaveHistoryByAlternateRC } from "../services/rcLeaveService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -111,6 +111,46 @@ export const getRCLeaves = async (
         ? "RC leaves fetched successfully"
         : "No RC leaves waiting for approval"
       })
+      
+    default:
+      throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
+  }
+}
+
+export const getRCLeaveHistory = async (
+  req : AuthRequest,
+  res : Response
+) => {
+  if (!req.User) {
+    throw AppError("Invalid User or User missing");
+  }
+  switch (req.User.role) {
+    case "deputyWarden" :
+      const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+      const result = await getRCLeaveHistoryByDeputyWarden(block)
+      
+      res.status(httpStatus.OK).json({
+        success : true,
+        data : result || [],
+        count:result ? result.length:0,
+        message: result && result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leave history"
+      })
+      break;
+      
+    case "executiveWarden" :
+      const e_result = await getRCLeaveHistoryByExecutiveWarden()
+      
+      res.status(httpStatus.OK).json({
+        success : true,
+        data : e_result || [],
+        count:e_result ? e_result.length:0,
+        message: e_result && e_result.length>0
+        ? "RC leaves fetched successfully"
+        : "No RC leaves approved by Deputy Warden"
+      })
+      break;
       
     default:
       throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
