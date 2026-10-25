@@ -97,7 +97,7 @@ const renderStudent = (
             Name : {student.name ?? "N/A"}
           </Text>
           <Text className="flex-1 text-md font-bold text-slate-900">
-              Roll Number : {student.roomNumber ?? "N/A"}
+              Roll Number : {student.rollNo ?? "N/A"}
           </Text>
           <Text className="flex-1 text-md font-bold text-slate-900">
               Room Number : {student.roomNumber ?? "N/A"}
