@@ -44,7 +44,7 @@ const RcLeaveHistory = (props: RcLeaveHistoryProps) => {
             className="mb-4 p-4 bg-white rounded-lg "
           >
             <ApprovalCard
-              title={`Leave #${leave.reason}`}
+              title={`${leave.reason}`}
               subTitle={`${leave.leaving} → ${leave.arrival}`}
               badge={getRCLeaveBadgeStatus(leave.approved)}
               data={{

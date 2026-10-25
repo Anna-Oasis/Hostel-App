@@ -58,6 +58,25 @@ export async function getAllRCStudents() {
   }
 }
 
+export async function getAllRCStudentsForAttendance() {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.get(`/api/resident_counsellor/students/attendance`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.data;
+  } catch (error: any) {
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching students"].filter(Boolean).join("\n"));
+    throw error;
+  }
+}
+
 export async function getAttendanceHistory() {
   try {
     const token = await getToken();
