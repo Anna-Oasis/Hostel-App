@@ -23,6 +23,19 @@ const AttendanceHistory = () => {
       });
   }, []);
 
+  const floorNumtoName = (num : number) => {
+    switch(num){
+      case 0:
+        return "Ground Floor"
+      case 1:
+        return "First Floor"
+      case 2:
+        return "Second Floor"
+      case 3:
+        return "Third Floor"
+    }
+  }
+
   if (!history.length) {
     return (
       <View className="flex-1 items-center justify-center mt-10">
@@ -43,39 +56,25 @@ const AttendanceHistory = () => {
           >
             {/* Attendance Header */}
             <Text
-              className="text-lg font-bold mb-1 text-[#022B60]"
+              className="text-lg font-bold mb-1 text-black underline"
             >
-              {item.date} - {item.hostel} - Floor {item.floor}
+                {item.hostel} Hostel - {floorNumtoName(item.floor)} - ({new Date(item.date).toLocaleDateString("en-GB")})
             </Text>
 
             {/* Attendance Summary */}
-            <View className="flex-row justify-between mt-4 mb-5">
-              <View className="items-center flex-1">
-                <Text className="text-[#022B60] font-bold text-2xl">
-                  {item.no_present}
-                </Text>
-                <Text className="text-gray-600 text-sm mt-1">
-                  Present
-                </Text>
-              </View>
-
-              <View className="items-center flex-1">
-                <Text className="text-[#022B60] font-bold text-2xl">
-                  {item.no_absent}
-                </Text>
-                <Text className="text-gray-600 text-sm mt-1">
-                  Absent
-                </Text>
-              </View>
-
-              <View className="items-center flex-1">
-                <Text className="font-bold text-2xl text-[#022B60]">
-                  {item.no_leave ?? 0}
-                </Text>
-                <Text className="text-gray-600 text-sm mt-1">
-                  Leave
-                </Text>
-              </View>
+            <View className="flex-col  mt-4 mb-5">
+              <Text className="text-[#022B60] font-bold text-lg">
+                Total no of Students : {item.no_present + item.no_absent + item.no_leave}
+              </Text>
+              <Text className="text-[#022B60] font-bold text-lg">
+                Present : {item.no_present}
+              </Text>
+              <Text className="text-[#022B60] font-bold text-lg">
+                Absent : {item.no_absent}
+              </Text>
+              <Text className="text-[#022B60] font-bold text-lg">
+                Students on Leave : {item.no_leave}
+              </Text>
             </View>
 
             {/* View Details Button */}
@@ -104,8 +103,7 @@ const AttendanceHistory = () => {
             <Text className="text-2xl font-bold mb-2 text-black flex-col flex">Attendance Details
               {selectedAttendance && (
                 <Text className="text-[#022B60] mb-5 font-bold text-xl">
-                  {selectedAttendance.date} · {selectedAttendance.hostel} ·
-                  Floor {selectedAttendance.floor}
+                  ({new Date(selectedAttendance.date).toLocaleDateString("en-GB")}) - {floorNumtoName(selectedAttendance.floor)}
                 </Text>
               )}
               </Text>
@@ -131,7 +129,7 @@ const AttendanceHistory = () => {
                       </View>
 
                       {/* Students on Leave */}
-                      <Text className="text-base font-bold text-[#022B60] mb-2">
+                      {/* <Text className="text-base font-bold text-[#022B60] mb-2">
                         Students on Leave ({selectedAttendance.no_leave ?? 0})
                       </Text>
 
@@ -141,7 +139,7 @@ const AttendanceHistory = () => {
                             ? selectedAttendance.onleave.join("\n ")
                             : "No students on leave"}
                         </Text>
-                      </View>
+                      </View> */}
                     </ScrollView>
                 )}
           </ModalBody>
