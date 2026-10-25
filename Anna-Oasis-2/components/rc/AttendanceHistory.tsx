@@ -1,7 +1,9 @@
-import { View, Text, ScrollView , Modal, Pressable} from 'react-native'
+import { View, Text, ScrollView , Pressable, Dimensions} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { getAttendanceHistory } from "@/utils/rc/RcAttendenceUtils";
 import { Button, ButtonText } from "../ui/button";
+import { Modal, ModalBackdrop, ModalCloseButton, ModalContent, ModalHeader, ModalBody } from "@/components/ui/modal";
+import { Icon, CloseIcon } from "@/components/ui/icon";
 
 const PRIMARY_COLOR = "#022B60";
 
@@ -89,70 +91,59 @@ const AttendanceHistory = () => {
 
       {/* Attendance Details Modal */}
       <Modal
-        visible={selectedAttendance !== null}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setSelectedAttendance(null)}
+        isOpen={selectedAttendance}
+        onClose={() => setSelectedAttendance(null)}
       >
-        <View className="flex-1 bg-black/50 justify-center items-center px-5">
-          <View className="bg-white w-full max-w-4xl rounded-2xl p-5">
-            {selectedAttendance && (
-              <>
-                {/* Modal Header */}
-                <Text
-                  className="text-xl font-bold mb-2"
-                 
-                >
-                  Attendance Details
-                </Text>
-
+        <ModalBackdrop/>
+        <ModalContent
+          style={{ maxHeight: Dimensions.get("window").height * 0.9, maxWidth: Dimensions.get("window").height * 1 }}
+        >
+          <ModalHeader className="border-b-2">
+            <Text className="text-xl font-bold mb-2 text-black flex-col flex">Attendance Details {'\n'}
+              {selectedAttendance && (
                 <Text className="text-[#022B60] mb-5 font-bold text-xl">
-                  {selectedAttendance.date} · {selectedAttendance.hostel} ·
-                  Floor {selectedAttendance.floor}
-                </Text>
+                  {selectedAttendance.date} {'\n'}{selectedAttendance.hostel} {'\n'}
+                  Floor {selectedAttendance.floor}                  
+              </Text>
+              )}
+            </Text>
+            <ModalCloseButton>
+              <Icon as={CloseIcon} className="mb-2" size="xl" />
+            </ModalCloseButton>
+          </ModalHeader>
 
-                <ScrollView className="max-h-80">
-                  {/* Absentees */}
-                  <Text className="text-base font-bold text-[#022B60] mb-2">
-                    Absentees ({selectedAttendance.no_absent})
-                  </Text>
+          <ModalBody className="mt-6">
+                {selectedAttendance && (
+                    <ScrollView className="max-h-80">
+                      {/* Absentees */}
+                      <Text className="text-base font-bold text-[#022B60] mb-2">
+                        Absentees ({selectedAttendance.no_absent})
+                      </Text>
 
-                  <View className="bg-red-50 rounded-lg p-3 mb-5">
-                    <Text className="text-gray-700">
-                      {selectedAttendance.absentee?.length > 0
-                        ? selectedAttendance.absentee.join(", ")
-                        : "No absentees"}
-                    </Text>
-                  </View>
+                      <View className="bg-red-50 rounded-lg p-3 mb-5">
+                        <Text className="text-gray-700">
+                          {selectedAttendance.absentee?.length > 0
+                            ? selectedAttendance.absentee.join(", ")
+                            : "No absentees"}
+                        </Text>
+                      </View>
 
-                  {/* Students on Leave */}
-                  <Text className="text-base font-bold text-[#022B60] mb-2">
-                    Students on Leave ({selectedAttendance.no_leave ?? 0})
-                  </Text>
+                      {/* Students on Leave */}
+                      <Text className="text-base font-bold text-[#022B60] mb-2">
+                        Students on Leave ({selectedAttendance.no_leave ?? 0})
+                      </Text>
 
-                  <View className="bg-orange-50 rounded-lg p-3">
-                    <Text className="text-gray-700">
-                      {selectedAttendance.onleave?.length > 0
-                        ? selectedAttendance.onleave.join("\n ")
-                        : "No students on leave"}
-                    </Text>
-                  </View>
-                  
-
-                </ScrollView>
-
-                {/* Close Button */}
-                <Button
-                  onPress={() => setSelectedAttendance(null)}
-                >
-                  <ButtonText className="text-white font-semibold">
-                    Close
-                  </ButtonText>
-                </Button>
-              </>
-            )}
-          </View>
-</View>
+                      <View className="bg-orange-50 rounded-lg p-3">
+                        <Text className="text-gray-700">
+                          {selectedAttendance.onleave?.length > 0
+                            ? selectedAttendance.onleave.join("\n ")
+                            : "No students on leave"}
+                        </Text>
+                      </View>
+                    </ScrollView>
+                )}
+          </ModalBody>
+        </ModalContent>
       </Modal>
     </>
 );
