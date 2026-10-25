@@ -72,6 +72,40 @@ export default function AttendancePage() {
     });
   };
 
+  const floorStudents = students.filter(
+    (s) => s.floor === parseInt(floor)
+  );
+
+  const eligibleFloorStudents = floorStudents.filter(
+    (s) => !studentsOnLeave.includes(s.rollNo)
+  );
+
+  const allSelected =
+    eligibleFloorStudents.length > 0 &&
+    eligibleFloorStudents.every(
+      (s) => !absentees.includes(s.rollNo)
+    );
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      // Deselect all: mark all eligible students absent
+      setAbsentees((prev) => [
+        ...new Set([
+          ...prev,
+          ...eligibleFloorStudents.map((s) => s.rollNo),
+        ]),
+      ]);
+    } else {
+      // Select all: mark all eligible students present
+      setAbsentees((prev) =>
+        prev.filter(
+          (rollNo) =>
+            !eligibleFloorStudents.some((s) => s.rollNo === rollNo)
+        )
+      );
+    }
+};
+
   useEffect(() => {
     if (activeTab !== "submit") {
       setFloor("");
@@ -178,58 +212,81 @@ export default function AttendancePage() {
               </Select>
             </View>
             {floor.trim() !== "" ? (
+              
               <ScrollView className="w-full mt-8">
-                {Object.entries(studentsByRoom).map(([roomNumber, studentsInRoom]) => (
-                  <View
-                    key={roomNumber}
-                    className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
-                  >
-                    <Text className="text-xl font-semibold mb-2">
-                      Room {roomNumber}
-                    </Text>
-                    {studentsInRoom.map((student) => {
-                      const isOnLeave = studentsOnLeave.includes(student.rollNo);
+                  <View className="w-full flex flex-col items-center">
+                    <View className="w-full sm:w-[80%] md:w-[50%] px-4 mb-4">
+                      <View className="flex-row items-center justify-between bg-white rounded-xl border border-gray-300 p-4">
+                        <Text className="text-lg font-semibold">
+                          Select All Students
+                        </Text>
 
-                      return (
-                        <View
-                          key={student.rollNo}
-                          className="flex flex-row items-center justify-between mb-2"
+                        <Checkbox
+                          value="select-all"
+                          size="md"
+                          isInvalid={false}
+                          isDisabled={eligibleFloorStudents.length === 0}
+                          isChecked={allSelected}
+                          onChange={handleSelectAll}
                         >
-                          <View className="flex flex-row items-center">
-                            {!isOnLeave && (
-                              <Checkbox
-                                value={student.rollNo}
-                                size="md"
-                                isInvalid={false}
-                                isDisabled={false}
-                                onChange={() => handleCheckboxChange(student.rollNo)}
-                                isChecked={!absentees.includes(student.rollNo)}
-                                className="mr-3"
-                              >
-                                <CheckboxIndicator>
-                                  <CheckboxIcon as={CheckIcon} />
-                                </CheckboxIndicator>
-                              </Checkbox>
-                            )}
+                          <CheckboxIndicator>
+                            <CheckboxIcon as={CheckIcon} />
+                          </CheckboxIndicator>
+                        </Checkbox>
+                      </View>
+                    </View>
+                    {Object.entries(studentsByRoom).map(([roomNumber, studentsInRoom]) => (
+                      <View
+                        key={roomNumber}
+                        className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
+                      >
+                        <Text className="text-xl font-semibold mb-2">
+                          Room {roomNumber}
+                        </Text>
+                        {studentsInRoom.map((student) => {
+                          const isOnLeave = studentsOnLeave.includes(student.rollNo);
 
-                            <Text className="text-base font-medium">
-                              {student.rollNo} - {student.name}
-                              {isOnLeave ? " (On Leave)" : ""}
-                            </Text>
-                          </View>
-                        </View>
-                      );
-                    })}
+                          return (
+                            <View
+                              key={student.rollNo}
+                              className="flex flex-row items-center justify-between mb-2"
+                            >
+                              <View className="flex flex-row items-center">
+                                {!isOnLeave && (
+                                  <Checkbox
+                                    value={student.rollNo}
+                                    size="md"
+                                    isInvalid={false}
+                                    isDisabled={false}
+                                    onChange={() => handleCheckboxChange(student.rollNo)}
+                                    isChecked={!absentees.includes(student.rollNo)}
+                                    className="mr-3"
+                                  >
+                                    <CheckboxIndicator>
+                                      <CheckboxIcon as={CheckIcon} />
+                                    </CheckboxIndicator>
+                                  </Checkbox>
+                                )}
+
+                                <Text className="text-base font-medium">
+                                  {student.rollNo} - {student.name}
+                                  {isOnLeave ? " (On Leave)" : ""}
+                                </Text>
+                              </View>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    ))}
+                    <View className="items-center mb-8">
+                      <Button
+                        onPress={submitFloorAttendance}
+                      >
+                        <ButtonText>Submit</ButtonText>
+                      </Button>
+                    </View>
                   </View>
-                ))}
-                <View className="items-center mb-8">
-                  <Button
-                    onPress={submitFloorAttendance}
-                  >
-                    <ButtonText>Submit</ButtonText>
-                  </Button>
-                </View>
-              </ScrollView>
+                </ScrollView>
             ) : (
               <View className="mt-52">
                 <Text className="text-3xl">Select floor for attendance</Text>
