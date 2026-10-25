@@ -79,16 +79,18 @@ export async function getAllAttendanceController(req: AuthRequest, res: Response
   if (!req.User?.id){
     throw AppError("User not authenticated", httpStatus.UNAUTHORIZED);
   }
-  const { date } = req.query;
+  const { date, hostel_block, floor } = req.query;
   let attendanceRecords;
   let message;
-  const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
+  const block: string = hostel_block != null ? String(hostel_block) : await getDeputyWardenBlockByUserId(Number(req.User.id));  
+  
   if (date) {
+
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(date as string)) {
       throw AppError("Date must be in YYYY-MM-DD format", httpStatus.BAD_REQUEST);
     }
-    attendanceRecords = await fetchAllAttendanceByDate(date as string, block);
+    attendanceRecords = await fetchAllAttendanceByDate(date as string, block, Number(floor));
     message = `Attendance records for ${date} retrieved successfully`;
   } else {
     attendanceRecords = await fetchAllAttendance(block);
