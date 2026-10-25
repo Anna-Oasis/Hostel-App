@@ -27,7 +27,18 @@ export const createAttendanceSchema = z.object({
     .max(20, "Roll number must not exceed 20 characters")
     .regex(/^[A-Za-z0-9]+$/, "Roll number must contain only alphanumeric characters")
   )
-    .default([])
+    .default([]),
+  
+  onleave: z.array(z.string()
+    .min(1, "Roll number cannot be empty")
+    .max(20, "Roll number must not exceed 20 characters")
+    .regex(/^[A-Za-z0-9]+$/, "Roll number must contain only alphanumeric characters")
+    ).default([]),
+
+    no_leave: z.number()
+    .int("Number of students on leave must be an integer")
+    .min(0, "Number of students on leave cannot be negative")
+    .default(0),
 });
 // .refine((data) => {
 //   // Validate that absentee count matches no_absent

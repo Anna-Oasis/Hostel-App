@@ -19,6 +19,7 @@ import {
   getLatestDeclarationFromController,
 } from "../controllers/declarationController";
 import {
+  getRCLeaveHistory,
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
@@ -98,6 +99,14 @@ executiveWardenRouter.get(
   hasRole(["executiveWarden"]),
   errorWrapper(getRCLeaves)
 );
+
+executiveWardenRouter.get(
+  "/rc/leave_history",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(getRCLeaveHistory)
+)
+
 executiveWardenRouter.put(
   "/rc/leave/:leave_id",
   authenticateUser,

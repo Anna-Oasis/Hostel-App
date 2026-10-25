@@ -8,6 +8,7 @@ import {
 } from "../validation/details.schema";
 import { handleFileUpload } from "../services/cloudflare/fileUpload";
 import {
+  fetchStudentDetailsForAttendanceByRC,
   fetchStudentDetailsForRC,
   fetchStudents,
   fetchStudentsByBlock,
@@ -384,6 +385,56 @@ export const fetchStudentDetailsForRcController = async (
     message:
       result && result.length > 0
         ? "Fetched student details successfully"
+        : "No student records found",
+  });
+};
+
+
+export const fetchStudentDetailsForAttendanceByRcController = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  if (!req.User) {
+    throw AppError(
+      "User information is missing from request",
+      httpStatus.UNAUTHORIZED
+    );
+  }
+  const rc = await getRCByUserId(Number(req.User.id));
+  // console.log("RC Details:", rc);
+
+  if (!rc || rc.length === 0) {
+    throw AppError("RC not found", httpStatus.NOT_FOUND);
+  }
+
+  if (rc[0].hostel == null || rc[0].floor == null) {
+    throw AppError(
+      "RC hostel or floor information is missing",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
+  const result = await fetchStudentDetailsForAttendanceByRC(rc[0].floor, rc[0].hostel);
+  // console.log("Fetched Students for RC:", result);
+  if (rc[0].alternatingToRCId != null) {
+    const alternateRc = await getRCById(rc[0].alternatingToRCId);
+    if (alternateRc && alternateRc.length > 0) {
+      result.push(
+        ...(await fetchStudentDetailsForAttendanceByRC(
+          alternateRc[0].floor,
+          alternateRc[0].hostel
+        ))
+      );
+    }
+  }
+  // console.log(result);
+  res.status(httpStatus.OK).json({
+    success: true,
+    data: result || [],
+    count: result ? result.length : 0,
+    message:
+      result && result.length > 0
+        ? "Fetched student details for attendance successfully"
         : "No student records found",
   });
 };

@@ -33,6 +33,7 @@ import {
 } from "../controllers/rcController";
 import { fetchRoomDetailsByAcademicYearController } from "../controllers/roomController";
 import {
+  getRCLeaveHistory,
   getRCLeaves,
   updateLeaveStatusForRC,
 } from "../controllers/rcLeaveController";
@@ -196,6 +197,14 @@ deputyWardenRouter.get(
   hasRole(["deputyWarden"]),
   errorWrapper(getRCLeaves)
 );
+
+deputyWardenRouter.get(
+  "/rc/leave_history",
+  authenticateUser,
+  hasRole(["deputyWarden"]),
+  errorWrapper(getRCLeaveHistory)
+)
+
 deputyWardenRouter.put(
   "/rc/leave/:leave_id",
   authenticateUser,

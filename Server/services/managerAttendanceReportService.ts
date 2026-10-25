@@ -9,7 +9,7 @@ import { studentModel } from "../models/studentModel";
 import AppError from "../utils/AppError";
 import { ManagerAttendanceReportInput } from "../validation/managerAttendanceReport.schema";
 
-export type AttendanceStatus = "PRESENT" | "ABSENT" | "NOT_MARKED" | "CONFLICT";
+export type AttendanceStatus = "PRESENT" | "ABSENT" | "NOT_MARKED" | "CONFLICT" | "LEAVE";
 
 type AttendanceWarning =
   | {
@@ -54,6 +54,7 @@ type AttendanceRecord = {
   hostel: string;
   floor: number;
   absentee: string[];
+  onleave : string[]
 };
 
 type ReportStudent = Omit<EligibleStudent, "admissionId"> & {
@@ -143,6 +144,7 @@ const fetchAttendanceRecords = async (
       hostel: attendanceModel.hostel,
       floor: attendanceModel.floor,
       absentee: attendanceModel.absentee,
+      onleave : attendanceModel.onleave
     })
     .from(attendanceModel)
     .where(
@@ -310,8 +312,9 @@ export const generateManagerAttendanceReport = async (
           return accumulator;
         }
 
-        accumulator[date] = record.absentee.includes(student.rollNo)
-          ? "ABSENT"
+        accumulator[date] =
+            record.onleave.includes(student.rollNo) ? "LEAVE" : 
+            record.absentee.includes(student.rollNo)? "ABSENT"
           : "PRESENT";
         return accumulator;
       },

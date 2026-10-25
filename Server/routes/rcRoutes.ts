@@ -27,13 +27,13 @@ import {
   updateLeaveFormApprovalStatusController
 } from "../controllers/leaveController";
 import { fetchRoomDetailsByBlockAndAcademicYearController, updateStudentRoom } from "../controllers/roomController";
-import { fetchStudentDetailsForRcController } from "../controllers/detailsController";
+import { fetchStudentDetailsForAttendanceByRcController, fetchStudentDetailsForRcController } from "../controllers/detailsController";
 import {
   createAttendanceByRcController,
   getAttendanceByRcController
 } from "../controllers/attendanceController";
 import { getAdmissionSessionsController } from "../controllers/admissionSessionController";
-import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController, getRCLeaves, updateLeaveStatusForRC, updateRCLeaveFormFromController } from "../controllers/rcLeaveController";
+import { createRCLeaveFormFromController, getRCLeaveController, updateCompleteLeave, fetchRCbyHostelController, getRCLeaves, updateLeaveStatusForRC, updateRCLeaveFormFromController, getRCLeaveHistory } from "../controllers/rcLeaveController";
 
 import {getDeclarationForOthersController} from '../controllers/declarationController';
 
@@ -157,6 +157,12 @@ rcRouter.get(
   authenticateUser,
   hasRole(['rc']),
   errorWrapper(getAttendanceByRcController)
+);
+rcRouter.get(
+  "/students/attendance",
+  authenticateUser,
+  hasRole(['rc']),
+  errorWrapper(fetchStudentDetailsForAttendanceByRcController)
 );
 rcRouter.post(
   "/attendance",
