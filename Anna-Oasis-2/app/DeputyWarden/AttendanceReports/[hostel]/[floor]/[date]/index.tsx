@@ -32,7 +32,7 @@ type AttendanceRecord = {
 const PRIMARY_COLOR = "#022B60";
 
 export default function AttendanceReportsByDate() {
-  const { date } = useLocalSearchParams<{ date: string }>();
+  const { date, hostel, floor } = useLocalSearchParams<{ date: string, hostel : string, floor : string }>();
 
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ export default function AttendanceReportsByDate() {
 
     setLoading(true);
 
-    getAllAttendanceRecordsByDate(date)
+    getAllAttendanceRecordsByDate(date, hostel, floor)
       .then((response) => setRecords(response))
       .catch((error) => {
         // console.error("Failed to fetch attendance:", error);
@@ -67,7 +67,18 @@ export default function AttendanceReportsByDate() {
     (a, b) => a.floor - b.floor
   );
 
-
+  const floorNumtoName = (num : number) => {
+    switch(num){
+      case 0:
+        return "Ground Floor"
+      case 1:
+        return "First Floor"
+      case 2:
+        return "Second Floor"
+      case 3:
+        return "Third Floor"
+    }
+  }
 
 
 const renderStudent = (
@@ -80,15 +91,21 @@ const renderStudent = (
     className="mb-3 rounded-xl border border-slate-200 bg-white p-3"
   >
     {/* Roll Number - Name */}
-    <Text className="flex-1 text-md font-bold text-slate-900">
-        Room Number : {student.roomNumber ?? "N/A"}
-    </Text>
-    <View className="flex-row items-center justify-between gap-2">
-        
-        <Text className="flex-1 text-md font-bold text-slate-900">
-            {student.rollNo ?? "N/A"} - {student.name ?? "Name unavailable"}
-        </Text>
-
+    <View className="flex-row items-center justify-between gap-2">  
+        <View>
+          <Text className="flex-1 text-md font-bold text-slate-900">
+            Name : {student.name ?? "N/A"}
+          </Text>
+          <Text className="flex-1 text-md font-bold text-slate-900">
+              Roll Number : {student.roomNumber ?? "N/A"}
+          </Text>
+          <Text className="flex-1 text-md font-bold text-slate-900">
+              Room Number : {student.roomNumber ?? "N/A"}
+          </Text>
+          <Text className="flex-1 text-md font-bold text-slate-900">
+              Mobile : {student.mobile ?? "N/A"}
+          </Text>
+        </View>
         <View
             className={`rounded-md px-2 py-1 ${
             type === "absent" ? "bg-red-100" : "bg-amber-100"
@@ -103,9 +120,6 @@ const renderStudent = (
             </Text>
         </View>
     </View>
-    <Text className="flex-1 text-md font-bold text-slate-900">
-     {student.mobile ?? "Mobile"}
-    </Text>
   </View>
 );
 
@@ -125,14 +139,6 @@ const renderStudent = (
       className="flex-1 bg-slate-50"
       contentContainerStyle={{ padding: 16, paddingBottom: 36 }}
     >
-      {/* Report Header */}
-      <View
-        className="mb-5 rounded-2xl p-5"
-      >
-        <Text className="text-2xl font-extrabold text-[#022B60]">
-          Attendance Report - {date}
-        </Text>
-      </View>
 
       {/* Floor-wise Reports */}
       {sortedRecords.length === 0 ? (
@@ -163,22 +169,22 @@ const renderStudent = (
                     className="text-xl font-extrabold"
                     style={{ color: PRIMARY_COLOR }}
                   >
-                    {record.hostel} Hostel - Floor {record.floor}
+                    {record.hostel} Hostel - {floorNumtoName(record.floor)} - ({new Date(record.date).toLocaleDateString("en-GB")})
                   </Text>
                 </View>
 
-                <View className="items-center px-4 py-2">
+                {/* <View className="items-center px-4 py-2">
                   <Text className="text-xl font-extrabold text-[#022B60]">
                     {record.no_present + record.no_absent + record.no_leave}
                   </Text>
                   <Text className="text-[11px] text-[#022B60]">
                     Students
                   </Text>
-                </View>
+                </View> */}
               </View>
 
               {/* Floor Summary */}
-              <View className="flex-row border-b border-slate-200 p-4">
+              {/* <View className="flex-row border-b border-slate-200 p-4">
                 <FloorCount
                   label="Present"
                   count={record.no_present}
@@ -194,16 +200,16 @@ const renderStudent = (
                   count={record.no_leave}
                   textColor="text-amber-700"
                 />
-              </View>
+              </View> */}
 
               {/* Absentees */}
               <View className="p-4">
-                <View className="mb-3 flex-row items-center justify-between">
+                <View className="mb-3 flex-row items-center gap-4">
                   <Text className="text-base font-bold text-slate-900">
                     Absentees
                   </Text>
                   <View className="rounded-lg bg-red-100 px-3 py-1">
-                    <Text className="text-xs font-extrabold text-red-700">
+                    <Text className="text-sm font-extrabold text-red-700">
                       {record.no_absent}
                     </Text>
                   </View>
@@ -221,7 +227,7 @@ const renderStudent = (
               </View>
 
               {/* Students On Leave */}
-              <View className="border-t border-slate-100 p-4">
+              {/* <View className="border-t border-slate-100 p-4">
                 <View className="mb-3 flex-row items-center justify-between">
                   <Text className="text-base font-bold text-slate-900">
                     Students on Leave
@@ -242,7 +248,7 @@ const renderStudent = (
                     renderStudent(student, index, "leave")
                   )
                 )}
-              </View>
+              </View> */}
             </View>
           );
         })
