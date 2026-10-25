@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Dimensions } from "react-native";
+import { View, Text, ScrollView, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getAllAttendanceRecords, getAllAttendanceRecordsByDate } from "@/utils/deputyWarden/dwAttendanceApi";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -10,21 +10,19 @@ const PRIMARY_COLOR = "#022B60";
 
 export default function AttendanceReportsPage() {
   const [records, setRecords] = useState<any[]>([]);
-  const [selectedAttendance, setSelectedAttendance] = useState<any | null>(
-      null
-    );
+  const [loading, setLoading] = useState<boolean>(true)
   
-  const [activeTab, setActiveTab] = useState<"flora" | "lavender" | "tulip">("flora")
+  const [activeTab, setActiveTab] = useState<"Flora" | "Lavender" | "Tulip">("Flora")
 
   useEffect(() => {
-    getAllAttendanceRecords()
+    setLoading(true)
+    getAllAttendanceRecords(activeTab)
       .then((data) => setRecords(data))
-      .catch(() => setRecords([]));
-  }, []);
+      .catch(() => setRecords([]))
+      .finally(() => setLoading(false))
+  }, [activeTab]);
 
-    const filteredRecords = records.filter(
-      (item) => item.hostel.toLowerCase() === activeTab
-    );
+
 
   const floorNumtoName = (num : number) => {
     switch(num){
@@ -38,25 +36,36 @@ export default function AttendanceReportsPage() {
         return "Third Floor"
     }
   }
+
+  if (loading) {
+      return (
+        <View className="flex-1 items-center justify-center bg-slate-50">
+          <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+          <Text className="mt-3 text-sm text-slate-500">
+            Loading attendance report...
+          </Text>
+        </View>
+      );
+    }
   return (
     <>
       <TabSwitch
         tabs={[
-          {label : "Flora", value : "flora"},
-          {label : "Lavender", value : "lavender"},
-          {label : "Tulip", value : "tulip"}
+          {label : "Flora", value : "Flora"},
+          {label : "Lavender", value : "Lavender"},
+          {label : "Tulip", value : "Tulip"}
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         className="mt-4 mb-2"
       />
       <ScrollView className="w-full mt-4">
-        {!filteredRecords.length ? 
+        {!records.length ? 
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text>No attendance records found.</Text>
               </View>
         :
-        filteredRecords.map((item) => (
+        records.map((item) => (
           <View
               key={item.id}
               className="bg-white rounded-2xl border border-gray-200 mb-5 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
