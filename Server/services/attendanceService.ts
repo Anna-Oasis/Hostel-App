@@ -1,6 +1,7 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, inArray } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { attendanceModel, NewAttendance } from "../models/attendance";
+import { studentModel } from "../models/studentModel";
 
 export const getAttendanceByRc = async (rc_id: number) => {
   const result = await db
@@ -61,7 +62,7 @@ export const fetchAllAttendance = async (block : string) => {
 };
 
 export const fetchAllAttendanceByDate = async (date:string, block : string) => {
-  const result = await db
+  const attendance = await db
     .select()
     .from(attendanceModel)
     .where(and(
@@ -70,5 +71,44 @@ export const fetchAllAttendanceByDate = async (date:string, block : string) => {
     ))
     .orderBy(desc(attendanceModel.date), attendanceModel.hostel, attendanceModel.floor);
   
-  return result;
+  const rollNumbers =[...new Set(
+      attendance.flatMap((record) => [
+        ...record.absentee,
+        ...record.onleave
+      ])
+    )
+  ]
+  if (rollNumbers.length === 0){
+    return attendance.map((record) => ({
+      ...record,
+      absentee_details: [],
+      onleave_details: [],
+    }));
+  }
+
+  const students = await db
+    .select({
+      rollNo: studentModel.rollNo,
+      name: studentModel.name,
+      roomNumber: studentModel.roomNumber,
+      mobile: studentModel.mobile,
+    })
+    .from(studentModel)
+    .where(inArray(studentModel.rollNo, rollNumbers));
+
+  const studentMap = new Map(
+    students.map((student) => [student.rollNo, student])
+  );
+  
+  return attendance.map((record) => ({
+    ...record,
+
+    absentee_details: record.absentee
+      .map((rollNo) => studentMap.get(rollNo))
+      .filter((student) => student !== undefined),
+
+    onleave_details: record.onleave
+      .map((rollNo) => studentMap.get(rollNo))
+      .filter((student) => student !== undefined),
+  }));
 };
