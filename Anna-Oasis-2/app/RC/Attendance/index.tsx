@@ -2,7 +2,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Checkbox, CheckboxIcon, CheckboxIndicator } from "@/components/ui/checkbox";
 import { CheckIcon } from "@/components/ui/icon";
 import { View, Text, ScrollView } from "react-native";
-import { handelRCAttendance, getAllRCStudents } from "@/utils/rc/RcAttendenceUtils";
+import { handelRCAttendance, getAllRCStudents, getAllRCStudentsForAttendance } from "@/utils/rc/RcAttendenceUtils";
 import { Select, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectIcon, SelectInput, SelectItem, SelectPortal, SelectTrigger } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { useState, useEffect } from "react";
@@ -20,20 +20,35 @@ export default function AttendancePage() {
   const [absentees, setAbsentees] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"submit" | "history">("submit");
   const [hostelBlock, setHostelBlock] = useState("")
+  const [studentsOnLeave, setStudentsOnLeave] = useState<string[]>([]);
 
   useEffect(() => {
-    getAllRCStudents()
+    getAllRCStudentsForAttendance()
       .then((data) => {
         setStudents(data);
-        setAbsentees(data.map((s: any) => s.rollNo));
+
+        const onLeave = data
+          .filter((s: any) => Number(s.hasLeave) === 1)
+          .map((s: any) => s.rollNo);
+
+        setStudentsOnLeave(onLeave);
+
+        setAbsentees(
+          data
+            .filter((s: any) => Number(s.hasLeave) !== 1)
+            .map((s: any) => s.rollNo)
+        );
+
         const hostelBlock = data[0]?.hostelBlock;
-        const maxFloor = Math.max(...data.map(s => s.floor));
-        setMaxfloor(maxFloor + 1)
-        setHostelBlock(hostelBlock)
+        const maxFloor = Math.max(0, ...data.map((s: any) => s.floor ?? 0));
+
+        setMaxfloor(maxFloor + 1);
+        setHostelBlock(hostelBlock ?? "");
       })
       .catch(() => {
         setStudents([]);
         setAbsentees([]);
+        setStudentsOnLeave([]);
       });
   }, []);
 
@@ -63,6 +78,52 @@ export default function AttendancePage() {
       setAbsentees(students.map((s) => s.rollNo));
     }
   }, [activeTab]);
+
+  const submitFloorAttendance = async () => {
+      const floorStudents = students.filter(
+        (s) => s.floor === parseInt(floor)
+      );
+
+      const leaveStudents = floorStudents.filter(
+        (s) => studentsOnLeave.includes(s.rollNo)
+      );
+
+
+      const eligibleStudents = floorStudents.filter(
+        (s) => !studentsOnLeave.includes(s.rollNo)
+      );
+
+      const presentCount = eligibleStudents.filter(
+        (s) => !absentees.includes(s.rollNo)
+      ).length;
+
+      const floorAbsentees = eligibleStudents
+        .filter((s) => absentees.includes(s.rollNo))
+        .map((s) => s.rollNo);
+
+      const absentCount = floorAbsentees.length;
+
+      const attendanceObj = {
+        date: new Date().toISOString().slice(0, 10),
+        hostel: hostelBlock,
+        floor: parseInt(floor),
+        no_present: presentCount,
+        no_absent: absentCount,
+        absentee: floorAbsentees,
+        onleave: leaveStudents.map((s) => s.rollNo),
+        no_leave: leaveStudents.length,
+      };
+      console.log(attendanceObj)
+      await handelRCAttendance(attendanceObj);
+
+      setFloor("");
+
+      setAbsentees(
+        students
+          .filter((s) => Number(s.hasLeave) !== 1)
+          .map((s) => s.rollNo)
+      );
+    }
 
   return (
     <ScrollView>
@@ -126,60 +187,44 @@ export default function AttendancePage() {
                     <Text className="text-xl font-semibold mb-2">
                       Room {roomNumber}
                     </Text>
-                    {studentsInRoom.map((student, idx) => (
-                      <View
-                        key={student.rollNo}
-                        className="flex flex-row items-center justify-between mb-2"
-                      >
-                        <View className="flex flex-row items-center">
-                          <Checkbox
-                            value=""
-                            size="md"
-                            isInvalid={false}
-                            isDisabled={false}
-                            onChange={() => handleCheckboxChange(student.rollNo)}
-                            isChecked={!absentees.includes(student.rollNo)}
-                            className="mr-3"
-                          >
-                            <CheckboxIndicator>
-                              <CheckboxIcon as={CheckIcon} />
-                            </CheckboxIndicator>
-                          </Checkbox>
-                          <Text className="text-base font-medium">
-                            {student.rollNo} - {student.name}
-                          </Text>
+                    {studentsInRoom.map((student) => {
+                      const isOnLeave = studentsOnLeave.includes(student.rollNo);
+
+                      return (
+                        <View
+                          key={student.rollNo}
+                          className="flex flex-row items-center justify-between mb-2"
+                        >
+                          <View className="flex flex-row items-center">
+                            {!isOnLeave && (
+                              <Checkbox
+                                value={student.rollNo}
+                                size="md"
+                                isInvalid={false}
+                                isDisabled={false}
+                                onChange={() => handleCheckboxChange(student.rollNo)}
+                                isChecked={!absentees.includes(student.rollNo)}
+                                className="mr-3"
+                              >
+                                <CheckboxIndicator>
+                                  <CheckboxIcon as={CheckIcon} />
+                                </CheckboxIndicator>
+                              </Checkbox>
+                            )}
+
+                            <Text className="text-base font-medium">
+                              {student.rollNo} - {student.name}
+                              {isOnLeave ? " (On Leave)" : ""}
+                            </Text>
+                          </View>
                         </View>
-                      </View>
-                    ))}
+                      );
+                    })}
                   </View>
                 ))}
                 <View className="items-center mb-8">
                   <Button
-                    onPress={async () => {
-                      const presentCount = students.filter(
-                        (s) => s.floor === parseInt(floor) && !absentees.includes(s.rollNo)
-                      ).length;
-                      const absentCount = students.filter(
-                        (s) => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
-                      ).length;
-                      const floorAbsentees = students
-                        .filter(
-                          s => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
-                        )
-                        .map(s => s.rollNo);
-                      const attendanceObj = {
-                        date: new Date().toISOString().slice(0, 10),
-                        hostel: hostelBlock,
-                        floor: parseInt(floor),
-                        no_present: presentCount,
-                        no_absent: absentCount,
-                        absentee: floorAbsentees,
-                      };
-                      // console.log(attendanceObj)
-                      await handelRCAttendance(attendanceObj);
-                      setFloor("");
-                      setAbsentees(students.map((s) => s.rollNo));
-                    }}
+                    onPress={submitFloorAttendance}
                   >
                     <ButtonText>Submit</ButtonText>
                   </Button>

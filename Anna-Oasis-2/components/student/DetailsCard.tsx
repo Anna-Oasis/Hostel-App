@@ -15,7 +15,7 @@ const DetailsCard = () => {
 
     return (
         <View className="w-full mb-4 min-h-[100px] bg-white rounded-xl shadow p-4 gap-4 flex-col items-center">
-            <Text className='text-2xl underline font-semibold'>Hostel ID Card</Text>
+            <Text className='text-2xl underline font-semibold'>INTERNATIONAL HOSTELS ID Card</Text>
             {details?.passportPhotoUrl && (
                 <View className="w-full flex-row justify-center items-start gap-4 mt-4">
                     <Image
@@ -62,7 +62,7 @@ const DetailsCard = () => {
 
                     <Text className="text-gray-700">
                         <Text className="text-lg font-bold text-[#022B60]">Floor: </Text>
-                        <Text className="text-lg font-semibold text-primary-800">{details.floor || '-'}</Text>
+                        <Text className="text-lg font-semibold text-primary-800">{details.floor}</Text>
                     </Text>
 
                     <Text className="text-gray-700">

@@ -42,10 +42,11 @@ type AdmissionSessionOption = {
 
 
 const statusStyles: Record<AttendanceStatus, string> = {
-  PRESENT: "bg-green-100 text-green-800",
-  ABSENT: "bg-red-100 text-red-800",
-  NOT_MARKED: "bg-gray-100 text-gray-700",
-  CONFLICT: "bg-amber-100 text-amber-800",
+  PRESENT: "bg-[#022B60]/20 text-[#022B60] ",
+  ABSENT: "bg-[#022B60]/20 text-[#022B60] ",
+  LEAVE: "bg-[#022B60]/20 text-[#022B60] ",
+  NOT_MARKED: "bg-[#022B60]/20 text-[#022B60] ",
+  CONFLICT: "bg-[#022B60]/20 text-[#022B60] ",
 };
 
 const missingStatusStyle = "bg-gray-100 text-gray-700";
@@ -346,21 +347,29 @@ export default function ManagerAttendanceReportPage() {
                           </Button>
                         </View>
                         <View className="flex-row flex-wrap gap-2 mt-4">
-                          <Text className="bg-green-100 text-green-800 px-3 py-2 rounded-lg">
+                          <Text className="bg-[#022B60]/20 text-[#022B60] px-3 py-2 rounded-lg">
                             Present: {summary.present}
                           </Text>
-                          <Text className="bg-red-100 text-red-800 px-3 py-2 rounded-lg">
+
+                          <Text className="bg-[#022B60]/20 text-[#022B60] px-3 py-2 rounded-lg">
                             Absent: {summary.absent}
                           </Text>
-                          <Text className="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg">
+
+                          <Text className="bg-[#022B60]/20 text-[#022B60] px-3 py-2 rounded-lg">
+                            On Leave: {summary.onLeave}
+                          </Text>
+
+                          <Text className="bg-[#022B60]/20 text-[#022B60] px-3 py-2 rounded-lg">
                             Not Marked: {summary.notMarked}
                           </Text>
-                          <Text className="bg-amber-100 text-amber-800 px-3 py-2 rounded-lg">
+
+                          <Text className="bg-[#022B60]/20 text-[#022B60] px-3 py-2 rounded-lg">
                             Conflict: {summary.conflict}
                           </Text>
-                          <Text className="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg">
+
+                          {/* <Text className="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg">
                             Attendance: {summary.percentage}
-                          </Text>
+                          </Text> */}
                         </View>
                       </View>
                     );
@@ -406,6 +415,7 @@ export default function ManagerAttendanceReportPage() {
                 <View className="flex-row flex-wrap gap-2 mb-3">
                   <StatusPill status="PRESENT" />
                   <StatusPill status="ABSENT" />
+                  <StatusPill status="LEAVE" />
                   <StatusPill status="NOT_MARKED" />
                   <StatusPill status="CONFLICT" />
                 </View>
