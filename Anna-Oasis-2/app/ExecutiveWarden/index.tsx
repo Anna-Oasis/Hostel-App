@@ -23,18 +23,18 @@ export default function ExecutiveWardenPage() {
       icon: ClipboardCheckIcon,
       color: "#022B60",
     },
-    {
-      title: "RC Management",
-      route: "/ExecutiveWarden/RCManagement",
-      icon: Users2Icon,
-      color: "#022B60",
-    },
-    {
-      title: "RC Leave Approvals",
-      route: "/ExecutiveWarden/RcLeave",
-      icon: FileCheck2Icon,
-      color: "#022B60",
-    },
+    // {
+    //   title: "RC Management",
+    //   route: "/ExecutiveWarden/RCManagement",
+    //   icon: Users2Icon,
+    //   color: "#022B60",
+    // },
+    // {
+    //   title: "RC Leave Approvals",
+    //   route: "/ExecutiveWarden/RcLeave",
+    //   icon: FileCheck2Icon,
+    //   color: "#022B60",
+    // },
     // {
     //   title: "Edit Declaration",
     //   route: "/ExecutiveWarden/Declaration",

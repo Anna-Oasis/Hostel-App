@@ -2,7 +2,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Checkbox, CheckboxIcon, CheckboxIndicator } from "@/components/ui/checkbox";
 import { CheckIcon } from "@/components/ui/icon";
 import { View, Text, ScrollView } from "react-native";
-import { handelRCAttendance, getAllRCStudents } from "@/utils/rc/RcAttendenceUtils";
+import { handelRCAttendance, getAllRCStudents, getAllRCStudentsForAttendance } from "@/utils/rc/RcAttendenceUtils";
 import { Select, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectIcon, SelectInput, SelectItem, SelectPortal, SelectTrigger } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { useState, useEffect } from "react";
@@ -20,20 +20,34 @@ export default function AttendancePage() {
   const [absentees, setAbsentees] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"submit" | "history">("submit");
   const [hostelBlock, setHostelBlock] = useState("")
+  const [studentsOnLeave, setStudentsOnLeave] = useState<string[]>([]);
 
   useEffect(() => {
-    getAllRCStudents()
+    getAllRCStudentsForAttendance()
       .then((data) => {
         setStudents(data);
-        setAbsentees(data.map((s: any) => s.rollNo));
+        const onLeave = data
+          .filter((s: any) => Number(s.hasLeave) === 1)
+          .map((s: any) => s.rollNo);
+
+        setStudentsOnLeave(onLeave);
+
+        setAbsentees(
+          data
+            .filter((s: any) => Number(s.hasLeave) !== 1)
+            .map((s: any) => s.rollNo)
+        );
+
         const hostelBlock = data[0]?.hostelBlock;
-        const maxFloor = Math.max(...data.map(s => s.floor));
-        setMaxfloor(maxFloor + 1)
-        setHostelBlock(hostelBlock)
+        const maxFloor = Math.max(0, ...data.map((s: any) => s.floor ?? 0));
+
+        setMaxfloor(maxFloor + 1);
+        setHostelBlock(hostelBlock ?? "");
       })
       .catch(() => {
         setStudents([]);
         setAbsentees([]);
+        setStudentsOnLeave([]);
       });
   }, []);
 
@@ -58,6 +72,40 @@ export default function AttendancePage() {
   };
 
 
+    const floorStudents = students.filter(
+      (s) => s.floor === parseInt(floor)
+    );
+
+    const eligibleFloorStudents = floorStudents.filter(
+      (s) => !studentsOnLeave.includes(s.rollNo)
+    );
+
+    const allSelected =
+      eligibleFloorStudents.length > 0 &&
+      eligibleFloorStudents.every(
+        (s) => !absentees.includes(s.rollNo)
+      );
+
+    const handleSelectAll = () => {
+      if (allSelected) {
+        // Deselect all: mark all eligible students absent
+        setAbsentees((prev) => [
+          ...new Set([
+            ...prev,
+            ...eligibleFloorStudents.map((s) => s.rollNo),
+          ]),
+        ]);
+      } else {
+        // Select all: mark all eligible students present
+        setAbsentees((prev) =>
+          prev.filter(
+            (rollNo) =>
+              !eligibleFloorStudents.some((s) => s.rollNo === rollNo)
+          )
+        );
+      }
+  };
+
   useEffect(() => {
   if (activeTab !== "submit") {
     setFloor("");
@@ -65,6 +113,53 @@ export default function AttendancePage() {
   }
 }, [activeTab, students]);
 
+  const submitFloorAttendance = async () => {
+      const floorStudents = students.filter(
+        (s) => s.floor === parseInt(floor)
+      );
+
+      const leaveStudents = floorStudents.filter(
+        (s) => studentsOnLeave.includes(s.rollNo)
+      );
+
+
+      const eligibleStudents = floorStudents.filter(
+        (s) => !studentsOnLeave.includes(s.rollNo)
+      );
+
+      const presentCount = eligibleStudents.filter(
+        (s) => !absentees.includes(s.rollNo)
+      ).length;
+
+      const floorAbsentees = eligibleStudents
+        .filter((s) => absentees.includes(s.rollNo))
+        .map((s) => s.rollNo);
+
+      const absentCount = floorAbsentees.length;
+
+      const attendanceObj = {
+        date: new Date().toISOString().slice(0, 10),
+        hostel: hostelBlock,
+        floor: parseInt(floor),
+        no_present: presentCount,
+        no_absent: absentCount,
+        absentee: floorAbsentees,
+        onleave: leaveStudents.map((s) => s.rollNo),
+        no_leave: leaveStudents.length,
+      };
+      console.log(attendanceObj)
+      await handelRCAttendance(attendanceObj);
+
+      setFloor("");
+
+      setAbsentees(
+        students
+          .filter((s) => Number(s.hasLeave) !== 1)
+          .map((s) => s.rollNo)
+      );
+    }
+
+    
   return (
     <ScrollView>
       <View className="flex-1 justify-center items-center p-2">
@@ -119,73 +214,79 @@ export default function AttendancePage() {
             </View>
             {floor.trim() !== "" ? (
               <ScrollView className="w-full mt-8">
-                {Object.entries(studentsByRoom).map(([roomNumber, studentsInRoom]) => (
-                  <View
-                    key={roomNumber}
-                    className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4"
-                  >
-                    <Text className="text-xl font-semibold mb-2">
-                      Room {roomNumber}
-                    </Text>
-                    {studentsInRoom.map((student, idx) => (
+                  <View className="w-full flex flex-col items-center">
+                    <View className="w-full sm:w-[80%] md:w-[50%] px-4 mb-4">
+                      <View className="flex-row items-center justify-between bg-white rounded-xl border border-gray-300 p-4">
+                        <Text className="text-lg font-semibold">
+                          Select All Students
+                        </Text>
+
+                        <Checkbox
+                          value="select-all"
+                          size="md"
+                          isInvalid={false}
+                          isDisabled={eligibleFloorStudents.length === 0}
+                          isChecked={allSelected}
+                          onChange={handleSelectAll}
+                        >
+                          <CheckboxIndicator>
+                            <CheckboxIcon as={CheckIcon} />
+                          </CheckboxIndicator>
+                        </Checkbox>
+                      </View>
+                    </View>
+                    {Object.entries(studentsByRoom).map(([roomNumber, studentsInRoom]) => (
                       <View
-                        key={student.rollNo}
-                        className="flex flex-row items-center justify-between mb-2"
+                        key={roomNumber}
+                        className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
                       >
-                        <View className="flex flex-row items-center">
-                          <Checkbox
-                            value=""
-                            size="md"
-                            isInvalid={false}
-                            isDisabled={false}
-                            onChange={() => handleCheckboxChange(student.rollNo)}
-                            isChecked={!absentees.includes(student.rollNo)}
-                            className="mr-3"
-                          >
-                            <CheckboxIndicator>
-                              <CheckboxIcon as={CheckIcon} />
-                            </CheckboxIndicator>
-                          </Checkbox>
-                          <Text className="text-base font-medium">
-                            {student.rollNo} - {student.name}
-                          </Text>
-                        </View>
+                        <Text className="text-xl font-semibold mb-2">
+                          Room {roomNumber}
+                        </Text>
+                        {studentsInRoom.map((student) => {
+                          const isOnLeave = studentsOnLeave.includes(student.rollNo);
+
+                          return (
+                            <View
+                              key={student.rollNo}
+                              className="flex flex-row items-center justify-between mb-2"
+                            >
+                              <View className="flex flex-row items-center">
+                                {!isOnLeave && (
+                                  <Checkbox
+                                    value={student.rollNo}
+                                    size="md"
+                                    isInvalid={false}
+                                    isDisabled={false}
+                                    onChange={() => handleCheckboxChange(student.rollNo)}
+                                    isChecked={!absentees.includes(student.rollNo)}
+                                    className="mr-3"
+                                  >
+                                    <CheckboxIndicator>
+                                      <CheckboxIcon as={CheckIcon} />
+                                    </CheckboxIndicator>
+                                  </Checkbox>
+                                )}
+
+                                <Text className="text-base font-medium">
+                                  {student.rollNo} - {student.name}
+                                  {isOnLeave ? " (On Leave)" : ""}
+                                </Text>
+                              </View>
+                            </View>
+                          );
+                        })}
                       </View>
                     ))}
+                    <View className="items-center mb-8">
+                      <Button
+                        onPress={submitFloorAttendance}
+                      >
+                        <ButtonText>Submit</ButtonText>
+                      </Button>
+                    </View>
                   </View>
-                ))}
-                <View className="items-center mb-8">
-                  <Button
-                    onPress={async () => {
-                      const presentCount = students.filter(
-                        (s) => s.floor === parseInt(floor) && !absentees.includes(s.rollNo)
-                      ).length;
-                      const absentCount = students.filter(
-                        (s) => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
-                      ).length;
-                      const floorAbsentees = students
-                        .filter(
-                          s => s.floor === parseInt(floor) && absentees.includes(s.rollNo)
-                        )
-                        .map(s => s.rollNo);
-                      
-                      const attendanceObj = {
-                        date: new Date().toISOString().slice(0, 10),
-                        hostel: hostelBlock,
-                        floor: parseInt(floor),
-                        no_present: presentCount,
-                        no_absent: absentCount,
-                        absentee: floorAbsentees,
-                      };
-                      await handelRCAttendance(attendanceObj);
-                      setFloor("");
-                      setAbsentees(students.map((s: any) => s.rollNo));
-                    }}
-                  >
-                    <ButtonText>Submit</ButtonText>
-                  </Button>
-                </View>
-              </ScrollView>
+                </ScrollView>               
             ) : (
               <View className="mt-52">
                 <Text className="text-2xl">Select floor for attendance</Text>

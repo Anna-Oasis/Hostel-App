@@ -1,44 +1,113 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getAllAttendanceRecords } from "@/utils/deputyWarden/dwAttendanceApi";
+import { getAllAttendanceRecords, getAllAttendanceRecordsByDate } from "@/utils/deputyWarden/dwAttendanceApi";
+import { Button, ButtonText } from "@/components/ui/button";
+import { router } from "expo-router";
+import TabSwitch from "@/components/TabSwitch";
+
+
+const PRIMARY_COLOR = "#022B60";
 
 export default function AttendanceReportsPage() {
   const [records, setRecords] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true)
+  
+  const [activeTab, setActiveTab] = useState<"Flora" | "Lavender" | "Tulip">("Flora")
 
   useEffect(() => {
-    getAllAttendanceRecords()
+    setLoading(true)
+    getAllAttendanceRecords(activeTab)
       .then((data) => setRecords(data))
-      .catch(() => setRecords([]));
-  }, []);
+      .catch(() => setRecords([]))
+      .finally(() => setLoading(false))
+  }, [activeTab]);
 
-  if (!records.length) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>No attendance records found.</Text>
-      </View>
-    );
+
+
+  const floorNumtoName = (num : number) => {
+    switch(num){
+      case 0:
+        return "Ground Floor"
+      case 1:
+        return "First Floor"
+      case 2:
+        return "Second Floor"
+      case 3:
+        return "Third Floor"
+    }
   }
 
-  return (
-    <ScrollView className="w-full mt-4">
-      {records.map((item) => (
-        <View
-          key={item.id}
-          className="bg-white rounded-2xl border border-gray-300 shadow-md mb-6 px-4 py-4 mx-4"
-        >
-          <Text className="text-lg font-bold mb-1">
-            {item.date} - {item.hostel} - Floor {item.floor}
+  if (loading) {
+      return (
+        <View className="flex-1 items-center justify-center bg-slate-50">
+          <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+          <Text className="mt-3 text-sm text-slate-500">
+            Loading attendance report...
           </Text>
-          <Text className="mb-1">Present: {item.no_present}</Text>
-          <Text className="mb-1">Absent: {item.no_absent}</Text>
-          {/* <Text className="mb-1">
-            Absentees:{" "}
-            {item.absentee && item.absentee.length > 0
-              ? item.absentee.join(", ")
-              : "None"}
-          </Text> */}
         </View>
-      ))}
-    </ScrollView>
+      );
+    }
+  return (
+    <>
+      <TabSwitch
+        tabs={[
+          {label : "Flora", value : "Flora"},
+          {label : "Lavender", value : "Lavender"},
+          {label : "Tulip", value : "Tulip"}
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="mt-4 mb-2"
+      />
+      <ScrollView className="w-full mt-4">
+        {!records.length ? 
+              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text>No attendance records found.</Text>
+              </View>
+        :
+        records.map((item) => (
+          <View
+              key={item.id}
+              className="bg-white rounded-2xl border border-gray-200 mb-5 px-4 py-4 mx-4 w-full sm:w-[80%] md:w-[50%] self-center"
+            >
+              {/* Attendance Header */}
+              <Text
+                className="text-lg font-bold mb-1 text-black underline"
+              >
+                  {item.hostel} Hostel - {floorNumtoName(item.floor)} - ({new Date(item.date).toLocaleDateString("en-GB")})
+              </Text>
+
+              {/* Attendance Summary */}
+              <View className="flex-col  mt-4 mb-5">
+                <Text className="text-[#022B60] font-bold text-lg">
+                  Total no of Students : {item.no_present + item.no_absent + item.no_leave}
+                </Text>
+                <Text className="text-[#022B60] font-bold text-lg">
+                  Present : {item.no_present}
+                </Text>
+                <Text className="text-[#022B60] font-bold text-lg">
+                  Absent : {item.no_absent}
+                </Text>
+                <Text className="text-[#022B60] font-bold text-lg">
+                  Students on Leave : {item.no_leave}
+                </Text>
+              </View>
+
+              {/* View Details Button */}
+              <Button
+                onPress={() => {
+                  router.push(`/DeputyWarden/AttendanceReports/${item.hostel}/${item.floor}/${item.date}`)
+                }}
+                style={{ backgroundColor: PRIMARY_COLOR }}
+              >
+                <ButtonText className="text-white font-semibold">
+                  View Details
+                </ButtonText>
+              </Button>
+          </View>
+        ))}
+      </ScrollView>
+      
+    </>
   );
 }
