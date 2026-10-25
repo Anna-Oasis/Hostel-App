@@ -61,13 +61,14 @@ export const fetchAllAttendance = async (block : string) => {
   return result;
 };
 
-export const fetchAllAttendanceByDate = async (date:string, block : string) => {
+export const fetchAllAttendanceByDate = async (date:string, block : string, floor : number) => {
   const attendance = await db
     .select()
     .from(attendanceModel)
     .where(and(
       eq(attendanceModel.date, date),
-      eq(attendanceModel.hostel, block)
+      eq(attendanceModel.hostel, block),
+      eq(attendanceModel.floor, floor)
     ))
     .orderBy(desc(attendanceModel.date), attendanceModel.hostel, attendanceModel.floor);
   
