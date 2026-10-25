@@ -24,7 +24,7 @@ export const createAttendanceByRc = async (attendanceData: NewAttendance) => {
         eq(attendanceModel.floor, attendanceData.floor)
       )
     );
-
+    console.log("Att ser ", attendanceData)
   if (existingAttendance.length > 0) {
     const result = await db
       .update(attendanceModel)
@@ -32,6 +32,8 @@ export const createAttendanceByRc = async (attendanceData: NewAttendance) => {
         no_present: attendanceData.no_present,
         no_absent: attendanceData.no_absent,
         absentee: attendanceData.absentee,
+        no_leave : attendanceData.no_leave,
+        onleave : attendanceData.onleave,
         updated_at: new Date(),
       })
       .where(eq(attendanceModel.id, existingAttendance[0].id))

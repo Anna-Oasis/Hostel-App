@@ -5,9 +5,10 @@ import {
   integer,
   varchar,
   text,
-  timestamp,
+  timestamp
 } from "drizzle-orm/pg-core";
 import { rcModel } from "./rcModel";
+import { sql } from "drizzle-orm";
 
 export const attendanceModel = pgTable("attendance", {
   id: serial("id").primaryKey(),
@@ -29,6 +30,15 @@ export const attendanceModel = pgTable("attendance", {
 
   // Array of roll numbers as text array (stored as JSON-like string or comma-separated values)
   absentee: varchar("absentee", { length: 20 }).array().notNull(),
+
+  onleave: varchar("onleave", { length: 20 })
+    .array()
+    .notNull()
+    .default(sql`'{}'::varchar[]`),
+
+  no_leave: integer("no_leave")
+    .notNull()
+    .default(0),
 
   // Timestamp
   created_at: timestamp("created_at").defaultNow().notNull(),

@@ -88,7 +88,6 @@ export const fetchStudentDetailsForRC = async (
 export const fetchStudentDetailsForAttendanceByRC = async (
   floor: number[],
   hostelBlock: string,
-  date: string, // Format: YYYY-MM-DD
 ) => {
   const students = await db
     .select({
@@ -123,8 +122,8 @@ export const fetchStudentDetailsForAttendanceByRC = async (
             studentLeaveApprovalStatus.DEPUTYWARDEN,
           ),
         ),
-        lte(leaveFormModel.from_date, date),
-        gte(leaveFormModel.to_date, date),
+        lte(leaveFormModel.from_date, sql`CURRENT_DATE`),
+        gte(leaveFormModel.to_date, sql`CURRENT_DATE`),
       ),
     )
     .where(
