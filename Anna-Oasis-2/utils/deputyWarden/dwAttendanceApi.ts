@@ -23,7 +23,7 @@ export async function getAllAttendanceRecords() {
 }
 
 
-export async function getAllAttendanceRecordsByDate(date : string) {
+export async function getAllAttendanceRecordsByDate(date : string, hostel : string, floor : string) {
   try {
     const token = await getToken();
     if (!token) {
@@ -31,7 +31,7 @@ export async function getAllAttendanceRecordsByDate(date : string) {
     }
     const response = await api.get(`/api/deputy_warden/attendance`, {
       params : {
-        date : date
+        date : date, hostel : hostel, floor : Number(floor)
       },
       headers: {
         Authorization: `Bearer ${token}`,
