@@ -61,6 +61,12 @@ export default function RCPage() {
       color: "#022B60",
     },
     {
+      title: "Attendance For Dean",
+      route: "/RC/AttendanceForDean",
+      icon: ClipboardListIcon,
+      color: "#022B60",
+    },
+    {
       title: "Room Details",
       route: "/RC/Rooms",
       icon: User,
