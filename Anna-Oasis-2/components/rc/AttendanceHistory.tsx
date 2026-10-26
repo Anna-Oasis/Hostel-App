@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, Dimensions } from "react-native";
+import { View, Text, ScrollView, Pressable, Dimensions, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getAttendanceHistory } from "@/utils/rc/RcAttendenceUtils";
 import { Button, ButtonText } from "../ui/button";
@@ -12,6 +12,7 @@ const AttendanceHistory = () => {
   const [selectedAttendance, setSelectedAttendance] = useState<any | null>(
     null
   );
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getAttendanceHistory()
@@ -20,7 +21,8 @@ const AttendanceHistory = () => {
       })
       .catch(() => {
         setHistory([]);
-      });
+      })
+      .finally(() => setLoading(false))
   }, []);
 
   const floorNumtoName = (num : number) => {
@@ -34,6 +36,17 @@ const AttendanceHistory = () => {
       case 3:
         return "Third Floor"
     }
+  }
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color={PRIMARY_COLOR} />
+        <Text className="mt-3 text-sm text-slate-500">
+          Loading attendance report...
+        </Text>
+      </View>
+    );
   }
 
   if (!history.length) {
