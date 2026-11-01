@@ -50,7 +50,7 @@ managerRouter.get(
 );
 
 managerRouter.get(
-  "/forms/feeReceipt/:addmissionid",
+  "/forms/feeReceipt/:admissionId",
   authenticateUser,
   hasRole(["manager"]),
   errorWrapper(generateFeeReceiptController)

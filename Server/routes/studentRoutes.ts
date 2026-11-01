@@ -109,7 +109,7 @@ studentRouter.get(
 
 //Fee-Receipt generation 
 studentRouter.get(
-  "/forms/feeReceipt/:addmissionid",
+  "/forms/feeReceipt/:admissionId",
   authenticateUser,
   hasRole(["student"]),
   errorWrapper(generateFeeReceiptController)

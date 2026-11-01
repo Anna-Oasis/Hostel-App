@@ -3,7 +3,7 @@ import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
 import { Response } from "express";
-import { getOrCreateBillId } from "../services/billServices";
+import { getOrCreateBillId, getOrCreateBillIdByAdmissionId, getOrCreateBillIdByFeePaymentId } from "../services/billServices";
 import { findStudentByRollNo, findStudentByUserId } from "../services/detailsService";
 import { getAdmissionByAdmissionId, getAdmissionByRollNumber } from "../services/admissionServices";
 import { fillHtmlTemplate } from "../services/htmlTemplateService";
@@ -14,6 +14,7 @@ import {
     buildReAdmissionFormData,
     buildRoomAllotmentFormData,
 } from "../services/studentFormsService";
+import { getAdmissionSessionIdByAcademicYear } from "../services/admissionSessionServices";
 
 export async function generateFeeReceiptController(
     req : AuthRequest,
@@ -23,14 +24,24 @@ export async function generateFeeReceiptController(
         throw AppError("User ID is required", httpStatus.UNAUTHORIZED);
     }
 
-    const addmission_id = req.params.addmissionid;
-    const addmission = await getAdmissionByAdmissionId(Number(addmission_id))
-    const student = await findStudentByRollNo(addmission[0].roll_number)
-    const billId = await getOrCreateBillId(addmission[0].roll_number)
-    // console.log(billId, student,addmission)
-    const templateData = buildFeeReceiptData(addmission[0], student[0], billId)
-    const html = fillHtmlTemplate("fee-receipt", templateData)
+    const feePayment_id = Number(req.query.feePayment_id);
+    const admission_id = Number(req.params.admissionId);
 
+    const admission = await getAdmissionByAdmissionId(Number(admission_id))
+    const student = await findStudentByRollNo(admission[0].roll_number)
+    const session = await getAdmissionSessionIdByAcademicYear(admission[0].academicYear)
+    let billId;
+    if(feePayment_id){
+        billId = await getOrCreateBillIdByFeePaymentId(admission[0].roll_number, session[0].id, feePayment_id)
+    }
+    else{
+        billId = await getOrCreateBillIdByAdmissionId(admission[0].roll_number, session[0].id, admission_id)
+    }
+
+    // console.log(billId, student,addmission)
+    const templateData = buildFeeReceiptData(admission[0], student[0], billId)
+    const html = fillHtmlTemplate("fee-receipt", templateData)
+    
     const pdfBuffer = await generatePdfFromHtml(html)
 
     res.setHeader("Content-Type", "application/pdf")
@@ -38,7 +49,7 @@ export async function generateFeeReceiptController(
         "Content-Disposition",
         'attachment; filename="fee-receipt.pdf"'
     );
-
+    
     res.end(pdfBuffer);
 }
 
