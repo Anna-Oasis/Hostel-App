@@ -33,6 +33,12 @@ export const admissionApprovalStatus = {
   DECLINED: "-1",
 };
 
+export const feePaymentStatus = {
+  SUBMITTED: "0",
+  MANAGER: "1",
+  DECLINED: "-1",
+};
+
 export const rcLeaveApprovalStatus = {
   SUBMITTED: "0",
   RC:"1",
