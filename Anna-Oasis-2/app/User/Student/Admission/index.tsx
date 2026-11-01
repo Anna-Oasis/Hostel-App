@@ -16,11 +16,12 @@ import TabSwitch from "@/components/TabSwitch";
 import { FilePlus2, History as HistoryIcon } from "lucide-react-native";
 import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 import PaymentPage from "@/components/admission/PaymentPage";
+import { checkFeePaymentEligible, submitStudentFeePayment } from "@/utils/student/studentFeePaymentApi";
 
 const AdmissionForm = () => {
   const [page, setPage] = useState(0);
   const [academicYear, setAcademicYear] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<"form" | "history">("history");
+  const [activeTab, setActiveTab] = useState<"form" | "history" | "feepayment">("history");
   const [isSessionChecked, setIsSessionChecked] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const details = useUserStore((state) => state.details);
@@ -69,13 +70,33 @@ const AdmissionForm = () => {
         setIsSessionChecked(true);
       }
     };
+
+    const checkFeePaymentService = async () => {
+      try{
+        const result = await checkFeePaymentEligible(details.semester, details.roll_number)
+        console.log(result.isOpen)
+        if(!result.data || !result.isOpen){
+            router.replace("/User/Student/Admission/FeePaymentClosed");
+          }
+        else {
+            setIsSessionChecked(true);
+            setAcademicYear(result.data.academic_year);
+          }
+      }
+      catch (error) {
+        // console.error("Failed to fetch admission session:", error);
+        setIsSessionChecked(true);
+      }
+    }
      if(activeTab === "form") fetchAdmissionSession();
+
+     if(activeTab === "feepayment") checkFeePaymentService()
   }, [details, activeTab]);
 
-  if (activeTab === "form" && !isSessionChecked) {
+  if ((activeTab === "form" || activeTab === "feepayment") && !isSessionChecked) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
-        <Text>Checking admission session...</Text>
+        <Text>Checking {activeTab === "form" ? "admission session" : "Fee Payment Eligibility"} ...</Text>
       </View>
     );
   }
@@ -86,6 +107,7 @@ const AdmissionForm = () => {
         tabs={[
           { label: "History", value: "history" },
           { label: "Admission Form", value: "form" },
+          { label : "Fee Payment", value : "feepayment"}
         ]}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -96,7 +118,7 @@ const AdmissionForm = () => {
         className="mt-4 mb-2"
       />
 
-      {activeTab === "form" ? (
+      {(activeTab === "form" || activeTab === "feepayment") ? (
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchemas[page]}
@@ -119,7 +141,10 @@ const AdmissionForm = () => {
               };
               // console.log(requestBody)
               setLoading(true);
-              await submitStudentAdmission(requestBody);
+              if (activeTab === "form")
+                await submitStudentAdmission(requestBody);
+              else if(activeTab === "feepayment")
+                await submitStudentFeePayment(requestBody)
               setLoading(false);
               setActiveTab("history");
             }
@@ -149,7 +174,14 @@ const AdmissionForm = () => {
                       </Text>
                     </View>
                   )} */}
+                  <Text
+                    className="text-center text-2xl font-bold text-[#022B60] underline"
+                  >
+                    {activeTab === "form" ? "Admission Form" : "Fee Payment"} {academicYear}
+                  </Text>
+                  
                   {renderPage(handleSubmit, values)}
+
                   <View className="flex-row justify-between">
                     {page < 3 && (
                       <>
