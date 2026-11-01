@@ -7,7 +7,7 @@ import { Button, ButtonText } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react-native'
 import RefreshableScrollView from '@/components/common/RefreshableScrollView'
 import { downloadFeeReceipt } from '@/utils/student/studentFeeReceiptApi'
-import { Text, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 
 const AdmissionHistory = () => {
   const details = useUserStore((state) => state.details)
@@ -16,6 +16,8 @@ const AdmissionHistory = () => {
   const [history, setHistory] = useState<any[]>([])
   const [feepayment, setFeepayment] = useState<Record<number, any[]>>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const [loading, setLoading] = useState(false)
 
   const fetchHistory = async () => {
     if (!rollNo) return
@@ -54,9 +56,20 @@ const AdmissionHistory = () => {
   }, [rollNo])
 
   const download = async (admission_id : string, feePayment_id ?: string) => {
+      setLoading(true)
       await downloadFeeReceipt(admission_id, feePayment_id)
+      setLoading(false)
   }
-
+  if (loading) {
+        return (
+          <View className="flex-1 items-center justify-center bg-slate-50">
+            <ActivityIndicator size="large" color="#022B60" />
+            <Text className="mt-3 text-sm text-slate-500">
+              Downloading...
+            </Text>
+          </View>
+        );
+      }
   return (
     <RefreshableScrollView
       contentContainerStyle={{ padding: 16 }}
@@ -91,7 +104,7 @@ const AdmissionHistory = () => {
                 badge={getFeePaymentBadgeStatus(fee.status)}
                 data={fee}
                 downloadButton='Fee Receipt'
-                onDownload={() => download(fee.id, fee.admissionId)}
+                onDownload={() => download(fee.admissionId, fee.id)}
               />
             ))}
           </View>
