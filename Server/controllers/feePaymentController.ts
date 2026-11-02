@@ -1,4 +1,4 @@
-import { createFeePaymentService, findStudentByUserId, getLatestAdmissionByRollNumber, getLatestAdmissionForAcademicYear } from "../services/feePaymentServices";
+import { createFeePaymentService, findStudentByUserId, getFeePaymentsSubmittedService, getLatestAdmissionByRollNumber, getLatestAdmissionForAcademicYear, updateFeePaymentService } from "../services/feePaymentServices";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -71,6 +71,62 @@ export async function createFeePaymentController(req: AuthRequest, res: Response
   });
 }
 
+export async function fetchFeePaymentsWaitingForApproval(req : AuthRequest, res : Response) {
+  try {
+    if (!req.User || !req.User.role || !req.User.id) {
+        throw AppError(
+          "User information is missing from request",
+          httpStatus.UNAUTHORIZED
+        );
+    }
+
+    const payments = await getFeePaymentsSubmittedService()
+
+    res.status(200).json({
+      success: true,
+      data: payments || [],
+      message:
+        payments && payments.length > 0
+          ? "Fee Payments retrieved successfully"
+          : "No Admissions found",
+    })
+  } catch (err) {
+    console.error("Error fetching Fee Payments", err);
+    throw AppError(
+      "Failed to fetch fee payments",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+
+export async function updateFeePaymentApprovalByManager(req : AuthRequest, res : Response) {
+  try {
+    if (!req.User || !req.User.role || !req.User.id) {
+        throw AppError(
+          "User information is missing from request",
+          httpStatus.UNAUTHORIZED
+        );
+    }
+
+    const feePaymentId = Number(req.params.feePaymentId);
+    const approve : boolean = req.body.approve
+
+    await updateFeePaymentService(feePaymentId, approve)
+
+    res.status(200).json({
+      success : true,
+      messsage : "Fee payment updated successfully."
+    })
+
+  } catch (error) {
+    console.log("Error while approving fee payment", error)
+    throw AppError(
+      "Failed to approve payments",
+      httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
 
 export async function checkFeePaymentEligibilityForSemesterController(req: AuthRequest, res: Response) {
   const semester = Number(req.params.semester);

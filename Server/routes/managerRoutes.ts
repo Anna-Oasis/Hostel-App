@@ -26,6 +26,7 @@ import { getAdmissionSessionsController } from "../controllers/admissionSessionC
 import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
 import { generateApplicationFormController, generateFeeReceiptController, generateReAdmissionFormController, generateRoomAllotmentFormController } from '../controllers/pdfController';
 import { deleteStudentAdmissionController, deleteStudentProfileController } from '../controllers/managerController';
+import { fetchFeePaymentsWaitingForApproval, updateFeePaymentApprovalByManager } from '../controllers/feePaymentController';
 
 const managerRouter = Router();
 
@@ -48,6 +49,20 @@ managerRouter.get(
   hasRole(['manager']),
   errorWrapper(fetchAdmissionsApprovedByUser)
 );
+
+managerRouter.get(
+  "/feePayments",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(fetchFeePaymentsWaitingForApproval)
+)
+
+managerRouter.put(
+  "/feePayments/:feePaymentId",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(updateFeePaymentApprovalByManager)
+)
 
 managerRouter.get(
   "/forms/feeReceipt/:admissionId",

@@ -3,6 +3,7 @@ import { db } from "../config/dbConnection";
 import { studentModel } from "../models/studentModel";
 import { feePayment, NewFeePayment } from "../models/feePaymentModel";
 import { admissionModel } from "../models/admissionModel";
+import { feePaymentStatus } from "../constants/enum";
 
 
 export async function findStudentByUserId(userId: number) {
@@ -49,4 +50,25 @@ export async function getLatestAdmissionForAcademicYear(roll_number:string, acad
         .limit(1);
 
     return result[0];
+}
+
+export async function getFeePaymentsSubmittedService() {
+  const result = await db
+                        .select()
+                        .from(feePayment)
+                        .innerJoin(studentModel, eq(studentModel.rollNo, feePayment.roll_number))
+                        .where(
+                          eq(feePayment.status, feePaymentStatus.SUBMITTED)
+                        )
+  return result
+}
+
+export async function updateFeePaymentService(feePaymentId : number, approve : boolean) {
+	await db
+		.update(feePayment)
+		.set({
+		status : approve ? feePaymentStatus.MANAGER : feePaymentStatus.DECLINED
+		})
+		.where(eq(feePayment.id, feePaymentId))
+    
 }
