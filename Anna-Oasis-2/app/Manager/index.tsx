@@ -30,12 +30,12 @@ export default function ManagerPage() {
       icon: BadgeDollarSignIcon,
       color: "#022B60",
     },
-    {
-      title: "Admissions",
-      route: "/Manager/Admissions",
-      icon: BadgeDollarSignIcon,
-      color: "#022B60",
-    },
+    // {
+    //   title: "Admissions",
+    //   route: "/Manager/Admissions",
+    //   icon: BadgeDollarSignIcon,
+    //   color: "#022B60",
+    // },
     {
       title: "Student Details",
       route: "/Manager/Details",

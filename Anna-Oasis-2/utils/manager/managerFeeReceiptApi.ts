@@ -4,7 +4,7 @@ import { Alert, Platform } from "react-native";
 import * as FileSystem from "expo-file-system/legacy";
 import { Buffer } from "buffer";
 
-export async function downloadFeeReceipt(admissionId : string, roll_number : string) {
+export async function downloadFeeReceipt(admissionId : string, roll_number : string, feePayment_id ?: string) {
     const token = await getToken();
 
     if (!token) {
@@ -15,6 +15,9 @@ export async function downloadFeeReceipt(admissionId : string, roll_number : str
         const response = await api.get(
             `/api/manager/forms/feeReceipt/${admissionId}`,
             {
+                params : {
+                    feePayment_id : feePayment_id
+                },
                 responseType: "arraybuffer",
                 headers: {
                     "Content-Type": "application/json",
