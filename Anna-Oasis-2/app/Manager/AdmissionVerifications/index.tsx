@@ -11,7 +11,7 @@ import useLoadingStore from "@/stores/loadingStore";
 import EmptyPage from "@/components/EmptyPage";
 import DeclineComment from "@/components/modals/DeclineComment";
 
-export default function PaymentVerificationsPage() {
+export default function AdmissionVerificationsPage() {
   const [admissions, setAdmissions] = useState<any[]>([]);
   const [showDeclineModal, setShowDeclineModal] = useState(false);
   const [selectedAdmissionId, setSelectedAdmissionId] = useState<string | null>(

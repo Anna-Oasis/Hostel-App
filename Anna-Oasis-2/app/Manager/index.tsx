@@ -13,8 +13,8 @@ import {
 export default function ManagerPage() {
   const menuItems = [
     {
-      title: "Payment Verifications",
-      route: "/Manager/PaymentVerifications",
+      title: "Admission Verifications",
+      route: "/Manager/AdmissionVerifications",
       icon: BadgeDollarSignIcon,
       color: "#022B60",
     },
@@ -22,6 +22,12 @@ export default function ManagerPage() {
       title: "Profile Verifications",
       route: "/Manager/ProfileVerifications",
       icon: FileTextIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Fee Payment Verifications",
+      route: "/Manager/FeePaymentVerifications",
+      icon: BadgeDollarSignIcon,
       color: "#022B60",
     },
     {
