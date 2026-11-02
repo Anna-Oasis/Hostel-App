@@ -174,7 +174,7 @@ export async function generateReAdmissionFormController(
     )[0];
 
     if(!latestAdmission.previousResident){
-        throw AppError("Readmission form is for only new admissions", httpStatus.FORBIDDEN);
+        throw AppError("Readmission form is not for new admissions", httpStatus.FORBIDDEN);
     }
 
     const templateData = buildReAdmissionFormData(student, latestAdmission);

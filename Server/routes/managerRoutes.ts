@@ -7,7 +7,8 @@ import {
   approveByManagerController,
   fetchAdmissionsApprovedByUser,
   updateApprovalStatusByManagerController,
-  fetchApprovedAdmissionsForManager
+  fetchApprovedAdmissionsForManager,
+  getAdmissionByRollNumberController
 } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import {
@@ -156,6 +157,13 @@ managerRouter.put(
   hasRole(['manager']),
   errorWrapper(approveStudentDetailsByManagerController)
 );
+
+managerRouter.get(
+  "/student/admission_history/:roll_number",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(getAdmissionByRollNumberController)
+)
 
 //get all types of Latest Declarations  
 managerRouter.get("/declaration",

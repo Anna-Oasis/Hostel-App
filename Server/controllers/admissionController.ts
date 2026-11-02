@@ -262,6 +262,7 @@ export async function createAdmissionController(req: AuthRequest, res: Response)
 
 
 // student/admissions: GET – \roll_number as path param and fetch the admission details and status of a particular student
+// manager/admissions - for student payment history
 export async function getAdmissionByRollNumberController(
   req: AuthRequest,
   res: Response
