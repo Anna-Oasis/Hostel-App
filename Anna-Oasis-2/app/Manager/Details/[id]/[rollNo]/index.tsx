@@ -19,7 +19,7 @@ export default function FormsDownload() {
   const { id, rollNo } = useLocalSearchParams();
 
   const [history, setHistory] = useState<any[]>([]);
-  const [feepayment, setFeepayment] = useState<Record<number, any[]>>({});
+  // const [feepayment, setFeepayment] = useState<Record<number, any[]>>({});
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
@@ -27,24 +27,12 @@ export default function FormsDownload() {
     try {
       const res = await getStudentAdmissionStatus(rollNo);
 
-      setHistory(res.data.map((item: any) => item.admission));
+      setHistory(res.data);
 
-      const feeMap = res.data.reduce((acc: any, item: any) => {
-        const payment = item.fee_payment;
-        if (!payment) return acc;
-
-        const admissionId = payment.admissionId;
-        if (!acc[admissionId]) acc[admissionId] = [];
-
-        acc[admissionId].push(payment);
-        return acc;
-      }, {});
-
-      setFeepayment(feeMap);
     } catch (error) {
       console.error(error);
       setHistory([]);
-      setFeepayment({});
+      // setFeepayment({});
     } finally {
       setFetching(false);
     }
@@ -171,32 +159,29 @@ export default function FormsDownload() {
               </View>
             ) : (
               history.map((item) => (
-                <View key={item.id} className="w-full mb-5">
-                  <ApprovalCard
-                    title={`Admission ${item.academicYear}`}
-                    subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
-                    badge={getAdmissionBadgeStatus(item.status)}
-                    data={item}
-                    downloadButton="Fee Receipt"
-                    onDownload={() => download(item.id, item.roll_number)}
-                  />
+                  <View key={item.admission.id}>
+                    <ApprovalCard
+                      title={`Admission ${item.admission.academicYear}`}
+                      subTitle={`Block: ${item.admission.hostelBlock}, Mess: ${item.admission.messPreference}`}
+                      badge={getAdmissionBadgeStatus(item.admission.status)}
+                      data={item.admission}
+                      downloadButton="Fee Receipt"
+                      onDownload={() => download(item.admission.id,item.roll_number)}
+                    />
 
-                  {(feepayment[item.id] ?? []).map((fee) => (
-                    <View key={fee.id} className="ml-4 mt-2">
+                    {item.fee_payment.map((fee: any) => (
                       <ApprovalCard
+                        key={fee.id}
                         title={`Fee Payment ${fee.academicYear}`}
                         subTitle={`Block: ${fee.hostelBlock}, Mess: ${fee.messPreference}`}
                         badge={getFeePaymentBadgeStatus(fee.status)}
                         data={fee}
                         downloadButton="Fee Receipt"
-                        onDownload={() =>
-                          download(fee.admissionId, item.roll_number, fee.id)
-                        }
+                        onDownload={() => download(fee.admissionId, item.roll_number, fee.id)}
                       />
-                    </View>
-                  ))}
-                </View>
-              ))
+                    ))}
+                  </View>
+                ))
             )}
           </View>
         </ScrollView>
