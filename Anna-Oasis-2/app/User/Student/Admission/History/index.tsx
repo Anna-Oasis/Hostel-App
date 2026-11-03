@@ -17,6 +17,8 @@ const AdmissionHistory = () => {
   const [feepayment, setFeepayment] = useState<Record<number, any[]>>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [loader, setLoader] = useState(false)
+  const [loading, setLoading] = useState(false)
+
   const fetchHistory = async () => {
     if (!rollNo) return
     try {
@@ -55,9 +57,21 @@ const AdmissionHistory = () => {
   }, [rollNo])
 
   const download = async (admission_id : string, feePayment_id ?: string) => {
+      setLoading(true)
       await downloadFeeReceipt(admission_id, feePayment_id)
+      setLoading(false)
   }
 
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-slate-50">
+        <ActivityIndicator size="large" color="#022B60" />
+        <Text className="mt-3 text-sm text-slate-500">
+          Downloading...
+        </Text>
+      </View>
+    );
+  }
   return (
     <RefreshableScrollView
       contentContainerStyle={{ padding: 16, height : '100%' }}
@@ -95,8 +109,8 @@ const AdmissionHistory = () => {
                   badge={getFeePaymentBadgeStatus(fee.status)}
                   data={fee}
                   downloadButton='Fee Receipt'
-                  onDownload={() => download(fee.id, fee.admissionId)}
-                />
+                onDownload={() => download(fee.admissionId, fee.id)}
+              />
               ))}
             </View>
           ))}
