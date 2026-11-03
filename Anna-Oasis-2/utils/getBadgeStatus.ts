@@ -6,7 +6,13 @@
     return badgeStatus.Pending
   }
 
-   export const getGrievanceBadgeStatus = (status: string) => {
+  export const getFeePaymentBadgeStatus = (status: string) => {
+      if (status === "1") return badgeStatus.Approved
+      if (status === "-1") return badgeStatus.Rejected
+    return badgeStatus.Pending
+  }
+
+  export const getGrievanceBadgeStatus = (status: string) => {
       if (status === "1") return badgeStatus.Approved
       if (status === "-1") return badgeStatus.Rejected
     return badgeStatus.Pending

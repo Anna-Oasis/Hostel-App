@@ -6,7 +6,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import { Buffer } from "buffer";
 
-export async function downloadFeeReceipt(admissionId : string){
+export async function downloadFeeReceipt(admissionId : string, feePayment_id ?: string) {
     const token = await getToken()
     if (!token) {
         throw new Error("No authentication token found");
@@ -15,6 +15,9 @@ export async function downloadFeeReceipt(admissionId : string){
         const response = await api.get(
             `/api/student/forms/feeReceipt/${admissionId}`,
             {
+                params : {
+                    feePayment_id : feePayment_id
+                },
                 responseType: "arraybuffer",
                 headers: {
                     "Content-Type": "application/json",

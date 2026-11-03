@@ -40,7 +40,7 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
         type: `image/${fileType === "jpg" ? "jpeg" : fileType}`,
       } as any);
     }
-    console.log(data)
+    // console.log(data)
     const response = await api.post("/api/student/admission", formData, {
       headers: {
         Authorization: `Bearer ${token}`,
