@@ -7,52 +7,39 @@ import { Button, ButtonText } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react-native'
 import RefreshableScrollView from '@/components/common/RefreshableScrollView'
 import { downloadFeeReceipt } from '@/utils/student/studentFeeReceiptApi'
-import { ActivityIndicator, Text, View } from 'react-native'
+import { ActivityIndicator, View, Text } from 'react-native'
 
 const AdmissionHistory = () => {
   const details = useUserStore((state) => state.details)
   const rollNo = details?.rollNo
 
   const [history, setHistory] = useState<any[]>([])
-  const [feepayment, setFeepayment] = useState<Record<number, any[]>>([])
+  // const [feepayment, setFeepayment] = useState<Record<number, any[]>>({})
   const [isRefreshing, setIsRefreshing] = useState(false)
-
+  const [loader, setLoader] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const fetchHistory = async () => {
-    if (!rollNo) return
+    if (!rollNo) return;
+
     try {
-      setIsRefreshing(true)
-      const res = await getStudentAdmissionStatus(rollNo)
-      setHistory(res.data.map((item: any) => item.admission));
-      // setFeepayment(res.data.map((item: any) => item.fee_payment));
-      let feepayments = []
-      feepayments = res.data.map((item : any) => item.fee_payment)
+      setIsRefreshing(true);
 
-      const feeMap = feepayments.reduce((acc: any, payment: any) => {
-        const admissionId = payment.admissionId;
+      const res = await getStudentAdmissionStatus(rollNo);
 
-        if (!acc[admissionId]) {
-          acc[admissionId] = [];
-        }
+      setHistory(res.data);
 
-        acc[admissionId].push(payment);
-
-        return acc;
-      }, {});
-
-      setFeepayment(feeMap)
-
-      
     } catch (e) {
-      setHistory([])
+      console.error("Error fetching admission history:", e);
+      setHistory([]);
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchHistory()
+    console.log("Admission History");
   }, [rollNo])
 
   const download = async (admission_id : string, feePayment_id ?: string) => {
@@ -60,55 +47,58 @@ const AdmissionHistory = () => {
       await downloadFeeReceipt(admission_id, feePayment_id)
       setLoading(false)
   }
+
   if (loading) {
-        return (
-          <View className="flex-1 items-center justify-center bg-slate-50">
-            <ActivityIndicator size="large" color="#022B60" />
-            <Text className="mt-3 text-sm text-slate-500">
-              Downloading...
-            </Text>
-          </View>
-        );
-      }
+    return (
+      <View className="flex-1 items-center justify-center bg-slate-50">
+        <ActivityIndicator size="large" color="#022B60" />
+        <Text className="mt-3 text-sm text-slate-500">
+          Downloading...
+        </Text>
+      </View>
+    );
+  }
   return (
     <RefreshableScrollView
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ padding: 16, height : '100%' }}
       onRefresh={fetchHistory}
       refreshing={isRefreshing}
-      className='w-full sm:w-[80%] md:w-[80%] self-center'
     >
-      
+      {loader && (
+        <View className="absolute inset-0 z-50 items-center justify-center bg-black/20">
+          <ActivityIndicator size="large" color="#022B60" />
+        </View>
+      )}
       {!rollNo ? (
         <Text>Roll number not found.</Text>
       ) : history.length === 0 ? (
         <Text>No admission history found.</Text>
       ) : (
         <>
-        {history.map((item) => (
-          <View key={item.id}>
-            <ApprovalCard
-              key={item.id}
-              title={`Admission ${item.academicYear}`}
-              subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
-              badge={getAdmissionBadgeStatus(item.status)}
-              data={item}
-              downloadButton='Fee Receipt'
-              onDownload={() => download(item.id)}
-            />
-
-            {feepayment[item.id].map((fee) => (
+         {history.map((item) => (
+            <View key={item.admission.id}>
               <ApprovalCard
-                key={fee.id}
-                title={`Fee Payment ${fee.academicYear}`}
-                subTitle={`Block: ${fee.hostelBlock}, Mess: ${fee.messPreference}`}
-                badge={getFeePaymentBadgeStatus(fee.status)}
-                data={fee}
-                downloadButton='Fee Receipt'
-                onDownload={() => download(fee.admissionId, fee.id)}
+                title={`Admission ${item.admission.academicYear}`}
+                subTitle={`Block: ${item.admission.hostelBlock}, Mess: ${item.admission.messPreference}`}
+                badge={getAdmissionBadgeStatus(item.admission.status)}
+                data={item.admission}
+                downloadButton="Fee Receipt"
+                onDownload={() => download(item.admission.id)}
               />
-            ))}
-          </View>
-        ))}
+
+              {item.fee_payment.map((fee: any) => (
+                <ApprovalCard
+                  key={fee.id}
+                  title={`Fee Payment ${fee.academicYear}`}
+                  subTitle={`Block: ${fee.hostelBlock}, Mess: ${fee.messPreference}`}
+                  badge={getFeePaymentBadgeStatus(fee.status)}
+                  data={fee}
+                  downloadButton="Fee Receipt"
+                  onDownload={() => download(fee.admissionId, fee.id)}
+                />
+              ))}
+            </View>
+          ))}
 
         </>
       )}

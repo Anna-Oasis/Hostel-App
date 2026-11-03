@@ -13,7 +13,7 @@ import { submitStudentAdmission } from "@/utils/student/studentAdmissionApi";
 import useLoadingStore from "@/stores/loadingStore";
 import AdmissionHistory from "./History/index"; 
 import TabSwitch from "@/components/TabSwitch";
-import { FilePlus2, History as HistoryIcon } from "lucide-react-native";
+import { FilePlus, FilePlus2, History as HistoryIcon } from "lucide-react-native";
 import { getAdmissionSession } from "@/utils/student/studentAdmissionApi";
 import PaymentPage from "@/components/admission/PaymentPage";
 import { checkFeePaymentEligible, submitStudentFeePayment } from "@/utils/student/studentFeePaymentApi";
@@ -114,6 +114,7 @@ const AdmissionForm = () => {
         icons={{
           form: FilePlus2,
           history: HistoryIcon,
+          feepayment: FilePlus,
         }}
         className="mt-4 mb-2"
       />

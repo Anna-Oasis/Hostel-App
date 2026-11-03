@@ -73,7 +73,7 @@ function TabSwitch<T extends string>({
               />
             )}
             <Text
-              className={`text-lg font-semibold ${
+              className={`text-md font-semibold ${
                 activeTab === tab.value ? "text-[#022B60]" : "text-gray-500"
               }`}
             >
