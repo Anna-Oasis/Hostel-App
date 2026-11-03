@@ -66,7 +66,30 @@ export async function getAdmissionByRollNumber(rollNumber: string) {
     )
     .where(eq(admissionModel.roll_number, rollNumber));
 
-  return result;
+  const history = result.reduce((acc: any[], row) => {
+    const admissionId = row.admission.id
+
+    let admission = acc.find(
+      (item) => item.admission.id === admissionId
+    );
+
+    if (!admission) {
+      admission = {
+        admission: row.admission,
+        fee_payment: [],
+      };
+
+      acc.push(admission);
+    }
+
+    if (row.fee_payment) {
+      admission.fee_payment.push(row.fee_payment);
+    }
+
+    return acc;
+  }, []);
+
+  return history;
 }
 
 export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: string, academicYear: string) {

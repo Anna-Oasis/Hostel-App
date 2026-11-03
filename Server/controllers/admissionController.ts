@@ -273,6 +273,7 @@ export async function getAdmissionByRollNumberController(
   }
 
   const admission = await getAdmissionByRollNumber(roll_number);
+  // console.log(admission)
 
   res.status(200).json({
     success: true,
