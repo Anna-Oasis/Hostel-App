@@ -14,46 +14,32 @@ const AdmissionHistory = () => {
   const rollNo = details?.rollNo
 
   const [history, setHistory] = useState<any[]>([])
-  const [feepayment, setFeepayment] = useState<Record<number, any[]>>([])
+  // const [feepayment, setFeepayment] = useState<Record<number, any[]>>({})
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [loader, setLoader] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const fetchHistory = async () => {
-    if (!rollNo) return
+    if (!rollNo) return;
+
     try {
-      setIsRefreshing(true)
-      const res = await getStudentAdmissionStatus(rollNo)
-      
-      setHistory(res.data.map((item: any) => item.admission));
-      // setFeepayment(res.data.map((item: any) => item.fee_payment));
-      let feepayments = []
-      feepayments = res.data.map((item : any) => item.fee_payment)
+      setIsRefreshing(true);
 
-      const feeMap = feepayments.reduce((acc: any, payment: any) => {
-        const admissionId = payment.admissionId;
+      const res = await getStudentAdmissionStatus(rollNo);
 
-        if (!acc[admissionId]) {
-          acc[admissionId] = [];
-        }
+      setHistory(res.data);
 
-        acc[admissionId].push(payment);
-
-        return acc;
-      }, {});
-
-      setFeepayment(feeMap)
-
-      
     } catch (e) {
-      setHistory([])
+      console.error("Error fetching admission history:", e);
+      setHistory([]);
     } finally {
-      setIsRefreshing(false)
+      setIsRefreshing(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchHistory()
+    console.log("Admission History");
   }, [rollNo])
 
   const download = async (admission_id : string, feePayment_id ?: string) => {
@@ -89,28 +75,27 @@ const AdmissionHistory = () => {
         <Text>No admission history found.</Text>
       ) : (
         <>
-          {history.map((item) => (
-            <View key={item.id}>
+         {history.map((item) => (
+            <View key={item.admission.id}>
               <ApprovalCard
-                key={item.id}
-                title={`Admission ${item.academicYear}`}
-                subTitle={`Block: ${item.hostelBlock}, Mess: ${item.messPreference}`}
-                badge={getAdmissionBadgeStatus(item.status)}
-                data={item}
-                downloadButton='Fee Receipt'
-                onDownload={() => download(item.id)}
+                title={`Admission ${item.admission.academicYear}`}
+                subTitle={`Block: ${item.admission.hostelBlock}, Mess: ${item.admission.messPreference}`}
+                badge={getAdmissionBadgeStatus(item.admission.status)}
+                data={item.admission}
+                downloadButton="Fee Receipt"
+                onDownload={() => download(item.admission.id)}
               />
 
-              {feepayment[item.id].map((fee) => (
+              {item.fee_payment.map((fee: any) => (
                 <ApprovalCard
                   key={fee.id}
                   title={`Fee Payment ${fee.academicYear}`}
                   subTitle={`Block: ${fee.hostelBlock}, Mess: ${fee.messPreference}`}
                   badge={getFeePaymentBadgeStatus(fee.status)}
                   data={fee}
-                  downloadButton='Fee Receipt'
-                onDownload={() => download(fee.admissionId, fee.id)}
-              />
+                  downloadButton="Fee Receipt"
+                  onDownload={() => download(fee.admissionId, fee.id)}
+                />
               ))}
             </View>
           ))}

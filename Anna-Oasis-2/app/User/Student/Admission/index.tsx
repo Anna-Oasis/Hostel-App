@@ -116,6 +116,7 @@ const AdmissionForm = () => {
         icons={{
           form: FilePlus2,
           history: HistoryIcon,
+          feepayment : HistoryIcon
         }}
         className="mt-4 mb-2"
       />
