@@ -54,3 +54,14 @@ export async function getLatestAdmissionSessionForSemesterService(semester: numb
 
   return sessions.length > 0 ? sessions[0] : null;
 }
+
+
+export async function getAdmissionSessionIdByAcademicYear(academic_year : string) {
+  const res = await db.select()
+                      .from(admissionSessionModel)
+                      .where(
+                        eq(admissionSessionModel.academic_year, academic_year)
+                      )
+                      .limit(1)
+  return res
+}

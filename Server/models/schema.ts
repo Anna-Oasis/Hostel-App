@@ -22,3 +22,4 @@ export * from './rcDetails';
 export * from './billCounter'
 export * from './billModal'
 export * from './deputyWarden'
+export * from './feePaymentModel'

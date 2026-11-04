@@ -36,6 +36,7 @@ import {
   generateReAdmissionFormController,
   generateRoomAllotmentFormController,
 } from "../controllers/pdfController";
+import { checkFeePaymentEligibilityForSemesterController, createFeePaymentController } from "../controllers/feePaymentController";
 
 const studentRouter = Router();
 
@@ -66,6 +67,16 @@ const fileFields = upload.fields([
   { name: "admissionSlipUrl", maxCount: 1 },
 ]);
 
+//Fee payment
+studentRouter.post(
+  "/feePayment",
+  authenticateUser,
+  hasRole(["student"]),
+  upload.single("transactionPhotoUrl"),
+  errorWrapper(createFeePaymentController)
+)
+
+studentRouter.get("/feePayment/eligible/:semester", authenticateUser, hasRole(["student"]), errorWrapper(checkFeePaymentEligibilityForSemesterController))
 
 // student Details
 studentRouter.get("/details", authenticateUser, hasRole(['student']),errorWrapper(getStudentDetailsUsingUserIdController));
@@ -98,7 +109,7 @@ studentRouter.get(
 
 //Fee-Receipt generation 
 studentRouter.get(
-  "/forms/feeReceipt/:addmissionid",
+  "/forms/feeReceipt/:admissionId",
   authenticateUser,
   hasRole(["student"]),
   errorWrapper(generateFeeReceiptController)

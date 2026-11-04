@@ -7,7 +7,8 @@ import {
   approveByManagerController,
   fetchAdmissionsApprovedByUser,
   updateApprovalStatusByManagerController,
-  fetchApprovedAdmissionsForManager
+  fetchApprovedAdmissionsForManager,
+  getAdmissionByRollNumberController
 } from '../controllers/admissionController';
 import errorWrapper from "../middleware/errorWrapper";
 import {
@@ -26,6 +27,7 @@ import { getAdmissionSessionsController } from "../controllers/admissionSessionC
 import { getManagerAttendanceReportController } from "../controllers/managerAttendanceReportController";
 import { generateApplicationFormController, generateFeeReceiptController, generateReAdmissionFormController, generateRoomAllotmentFormController } from '../controllers/pdfController';
 import { deleteStudentAdmissionController, deleteStudentProfileController } from '../controllers/managerController';
+import { fetchFeePaymentsWaitingForApproval, updateFeePaymentApprovalByManager } from '../controllers/feePaymentController';
 
 const managerRouter = Router();
 
@@ -50,7 +52,21 @@ managerRouter.get(
 );
 
 managerRouter.get(
-  "/forms/feeReceipt/:addmissionid",
+  "/feePayments",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(fetchFeePaymentsWaitingForApproval)
+)
+
+managerRouter.put(
+  "/feePayments/:feePaymentId",
+  authenticateUser,
+  hasRole(["manager"]),
+  errorWrapper(updateFeePaymentApprovalByManager)
+)
+
+managerRouter.get(
+  "/forms/feeReceipt/:admissionId",
   authenticateUser,
   hasRole(["manager"]),
   errorWrapper(generateFeeReceiptController)
@@ -141,6 +157,13 @@ managerRouter.put(
   hasRole(['manager']),
   errorWrapper(approveStudentDetailsByManagerController)
 );
+
+managerRouter.get(
+  "/student/admission_history/:roll_number",
+  authenticateUser,
+  hasRole(['manager']),
+  errorWrapper(getAdmissionByRollNumberController)
+)
 
 //get all types of Latest Declarations  
 managerRouter.get("/declaration",

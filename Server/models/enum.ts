@@ -10,13 +10,19 @@ import {
   studentLeaveApprovalStatus,
   vacatingHostelApprovalStatus,
   endeavour,
-  declaration
+  declaration,
+  feePaymentStatus
 } from "../constants/enum";
 
 export const admission_approval_status_pgEnum = pgEnum(
   "approval_status",
   Object.values(admissionApprovalStatus) as [string, ...string[]]
 );
+
+export const feePayment_approval_status_pgEnum = pgEnum(
+  "feePayment_status",
+  Object.values(feePaymentStatus) as [string, ...string[]]
+)
 
 export const summer_vacation_status_pgEnum = pgEnum(
   "summer_vacation_status",

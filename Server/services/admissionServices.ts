@@ -5,6 +5,7 @@ import { studentModel } from "../models/studentModel";
 import { db } from "../config/dbConnection";
 import { eq, and } from "drizzle-orm";
 import { admissionApprovalStatus } from "../constants/enum";
+import { feePayment } from "../models/feePaymentModel";
 // import { eq, and } from "drizzle-orm";
 
 interface NewAdmissionApproval {
@@ -59,8 +60,36 @@ export async function getAdmissionByRollNumber(rollNumber: string) {
   const result = await db
     .select()
     .from(admissionModel)
+    .leftJoin(
+      feePayment,
+      eq(feePayment.admissionId, admissionModel.id)
+    )
     .where(eq(admissionModel.roll_number, rollNumber));
-  return result;
+
+  const history = result.reduce((acc: any[], row) => {
+    const admissionId = row.admission.id
+
+    let admission = acc.find(
+      (item) => item.admission.id === admissionId
+    );
+
+    if (!admission) {
+      admission = {
+        admission: row.admission,
+        fee_payment: [],
+      };
+
+      acc.push(admission);
+    }
+
+    if (row.fee_payment) {
+      admission.fee_payment.push(row.fee_payment);
+    }
+
+    return acc;
+  }, []);
+
+  return history;
 }
 
 export async function checkForAdmissionByRollNumberAndAcademicYear(rollNumber: string, academicYear: string) {
