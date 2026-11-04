@@ -46,3 +46,25 @@ export async function updateStudentProfileApproval(approve: boolean, rollNo: str
     throw new Error(err.message || "Failed to update profile approval");
   }
 }
+
+export async function getStudentAdmissionStatus(roll_no : any) {
+  try {
+    const token = await getToken();
+    if (!token) {
+      throw new Error("User is not authenticated");
+    }
+    const response = await api.get(
+      `/api/manager/student/admission_history/${roll_no}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    window.alert(["Fetch Error", error.response?.data?.message ||
+        "An error occurred while fetching admission status"].filter(Boolean).join("\n"));
+    throw error;
+  }
+}

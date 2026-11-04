@@ -155,7 +155,7 @@ const ApprovalCard = (props: approvalCardProps) => {
         }}
       >
         <View className="flex flex-row items-start">
-          <Text className="text-black font-semibold text-2xl mb-2 w-[75%]">
+          <Text className="text-black font-semibold text-lg mb-2 w-[75%]">
             {props.title}
           </Text>
 
