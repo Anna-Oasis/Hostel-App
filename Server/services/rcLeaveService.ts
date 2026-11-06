@@ -171,7 +171,7 @@ export const getRCLeaveHistoryByExecutiveWarden = async () => {
   return leave_form;
 };
 
-export const getRCLeaveToBeApprovedByAlternateRC = async () => {
+export const getRCLeaveToBeApprovedByAlternateRC = async (rcId : number) => {
   const leave_form = await db
     .select({
       leave: rcLeaveModel,
@@ -184,7 +184,8 @@ export const getRCLeaveToBeApprovedByAlternateRC = async () => {
     )
     .where(
       and(
-        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED)
+        eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED),
+        eq(rcModel.alternatingToRCId, rcId)
       ))
     .orderBy(rcLeaveModel.created_at);
   return leave_form;
