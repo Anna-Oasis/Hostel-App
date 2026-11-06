@@ -111,6 +111,7 @@ export const getRCLeaves = async (
         ? "RC leaves fetched successfully"
         : "No RC leaves waiting for approval"
       })
+      break;
       
     default:
       throw AppError("Unauthorized user role", httpStatus.UNAUTHORIZED);
