@@ -1,5 +1,5 @@
 import { rcLeaveApprovalStatus } from "../constants/enum";
-import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull, getRCLeaveToBeApprovedByAlternateRC, updateRCLeave, getRCLeaveHistoryByDeputyWarden, getRCLeaveHistoryByExecutiveWarden, getRCLeaveHistoryByAlternateRC } from "../services/rcLeaveService";
+import { updateRCLeaveStatus, getRCLeaveToBeApprovedByDeputyWarden, getRCLeaveToBeApprovedByExecutiveWarden, createRcLeaveForm, getRCLeaveApprovals, updateAlternateRCtoId, updateAlternateRCtoNull, getRCLeaveToBeApprovedByAlternateRC,req.User.id updateRCLeave, getRCLeaveHistoryByDeputyWarden, getRCLeaveHistoryByExecutiveWarden, getRCLeaveHistoryByAlternateRC } from "../services/rcLeaveService";
 import { AuthRequest } from "../types/roles";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
@@ -101,7 +101,7 @@ export const getRCLeaves = async (
       break;
 
     case "rc":
-      const rc_result = await getRCLeaveToBeApprovedByAlternateRC()
+      const rc_result = await getRCLeaveToBeApprovedByAlternateRC(req.User.id)
 
       res.status(httpStatus.OK).json({
         success : true,
