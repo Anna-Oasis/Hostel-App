@@ -1,3 +1,4 @@
+import DatePickerField from "@/components/form/DatePickerField";
 import { getAllAttendanceRecordsByDate } from "@/utils/deputyWarden/dwAttendanceApi";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -227,7 +228,7 @@ const renderStudent = (
               </View>
 
               {/* Students On Leave */}
-              {/* <View className="border-t border-slate-100 p-4">
+              <View className="border-t border-slate-100 p-4">
                 <View className="mb-3 flex-row items-center justify-between">
                   <Text className="text-base font-bold text-slate-900">
                     Students on Leave
@@ -248,7 +249,7 @@ const renderStudent = (
                     renderStudent(student, index, "leave")
                   )
                 )}
-              </View> */}
+              </View>
             </View>
           );
         })
