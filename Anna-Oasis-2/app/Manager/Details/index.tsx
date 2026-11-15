@@ -6,6 +6,8 @@ import {
 import ApprovalCard from "@/components/ApprovalCard";
 import useLoadingStore from "@/stores/loadingStore";
 import EmptyPage from "@/components/EmptyPage";
+import { Button, ButtonText } from "@/components/ui/button";
+import { router } from "expo-router";
 
 const ProfileVerifications = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -54,12 +56,20 @@ const ProfileVerifications = () => {
               className="border border-gray-300 rounded-lg px-4 py-3 mb-4 bg-white w-full sm:w-[80%] md:w-[50%] self-center"
             />
             {filteredProfiles.map((profile) => (
-              <ApprovalCard
-                key={profile.id}
+              <View className="flex flex-col justify-center items-center">
+                <ApprovalCard
+                key={profile.user_id}
                 title={`${profile.name} (${profile.rollNo})`}
                 subTitle={`Course: ${profile.course}, Branch: ${profile.branch}`}
                 data={profile}
-              />
+                />
+                <Button
+                    onPress={() => router.push(`/Manager/Details/${profile.user_id}/${profile.rollNo}`)}
+                    className="w-40"
+                >
+                    <ButtonText>Forms</ButtonText>
+                </Button>
+              </View>
             ))}
           </>
         )}

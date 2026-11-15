@@ -13,8 +13,8 @@ import {
 export default function ManagerPage() {
   const menuItems = [
     {
-      title: "Payment Verifications",
-      route: "/Manager/PaymentVerifications",
+      title: "Admission Verifications",
+      route: "/Manager/AdmissionVerifications",
       icon: BadgeDollarSignIcon,
       color: "#022B60",
     },
@@ -25,11 +25,17 @@ export default function ManagerPage() {
       color: "#022B60",
     },
     {
-      title: "Admissions",
-      route: "/Manager/Admissions",
+      title: "Fee Payment Verifications",
+      route: "/Manager/FeePaymentVerifications",
       icon: BadgeDollarSignIcon,
       color: "#022B60",
     },
+    // {
+    //   title: "Admissions",
+    //   route: "/Manager/Admissions",
+    //   icon: BadgeDollarSignIcon,
+    //   color: "#022B60",
+    // },
     {
       title: "Student Details",
       route: "/Manager/Details",
