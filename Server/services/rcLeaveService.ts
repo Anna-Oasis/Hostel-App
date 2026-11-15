@@ -171,7 +171,23 @@ export const getRCLeaveHistoryByExecutiveWarden = async () => {
   return leave_form;
 };
 
-export const getRCLeaveToBeApprovedByAlternateRC = async (rcId : number) => {
+export const getRCLeaveToBeApprovedByAlternateRC = async (
+  userId: number
+) => {
+  // Get RC ID using user ID
+  const result = await db
+    .select({ rcId: rcModel.id })
+    .from(rcModel)
+    .where(eq(rcModel.userId, userId))
+    .limit(1);
+
+  const rcId = result[0]?.rcId;
+
+  if (!rcId) {
+    return [];
+  }
+
+  // Fetch leaves assigned to this RC as an alternate
   const leave_form = await db
     .select({
       leave: rcLeaveModel,
@@ -186,8 +202,10 @@ export const getRCLeaveToBeApprovedByAlternateRC = async (rcId : number) => {
       and(
         eq(rcLeaveModel.approved, rcLeaveApprovalStatus.SUBMITTED),
         eq(rcModel.alternatingToRCId, rcId)
-      ))
+      )
+    )
     .orderBy(rcLeaveModel.created_at);
+
   return leave_form;
 };
 
