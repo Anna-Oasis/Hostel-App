@@ -31,6 +31,7 @@ import {
 } from "../controllers/admissionSessionController";
 import { getAllRCDetailsController } from "../controllers/rcController";
 import { getStudentDetailsUsingRollNoController } from "../controllers/detailsController";
+import { getAllAttendanceController } from "../controllers/attendanceController";
 
 const executiveWardenRouter = Router();
 
@@ -84,6 +85,15 @@ executiveWardenRouter.put(
   hasRole(["executiveWarden"]),
   errorWrapper(updateAdmissionSessionController)
 );
+
+// Attendance route
+executiveWardenRouter.get(
+  "/attendance",
+  authenticateUser,
+  hasRole(["executiveWarden"]),
+  errorWrapper(getAllAttendanceController)
+);
+
 
 // Room details route
 executiveWardenRouter.get(

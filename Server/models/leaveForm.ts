@@ -23,7 +23,7 @@ export const leaveFormModel = pgTable("leave_form", {
   from_date: date("from_date").notNull(),
   to_date: date("to_date").notNull(),
   reason: text("reason").notNull(),
-  address_of_stay: varchar("address_of_stay", { length: 100 }).notNull(),
+  address_of_stay: varchar("address_of_stay", { length: 500 }).notNull(),
   
   //Contact details
   mobile: varchar("mobile", { length: 15 }).notNull(), //whatsapp number
