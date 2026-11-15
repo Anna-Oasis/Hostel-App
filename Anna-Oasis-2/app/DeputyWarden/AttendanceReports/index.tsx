@@ -81,7 +81,6 @@ export default function AttendanceReportsPage() {
               values.selectedDate
             );
           })
-          .sort((a, b) => a.floor - b.floor);
 
         return (
           <>
