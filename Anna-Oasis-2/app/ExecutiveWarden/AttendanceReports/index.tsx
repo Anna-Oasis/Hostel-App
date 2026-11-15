@@ -178,7 +178,7 @@ export default function AttendanceReportsPage() {
                     <Button
                       onPress={() => {
                         router.push(
-                          `/DeputyWarden/AttendanceReports/${item.hostel}/${item.floor}/${item.date}`
+                          `/ExecutiveWarden/AttendanceReports/${item.hostel}/${item.floor}/${item.date}`
                         );
                       }}
                       style={{
