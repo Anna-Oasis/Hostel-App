@@ -214,7 +214,7 @@ deputyWardenRouter.put(
 
 // Attendance route
 deputyWardenRouter.get(
-  "/attendance/",
+  "/attendance",
   authenticateUser,
   hasRole(["deputyWarden"]),
   errorWrapper(getAllAttendanceController)
