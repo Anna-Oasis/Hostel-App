@@ -6,6 +6,7 @@ import {
   FileCheck2Icon,
   PlayCircleIcon,
   FileEditIcon,
+  BarChart2Icon,
 } from "lucide-react-native";
 import { router } from "expo-router";
 
@@ -21,6 +22,12 @@ export default function ExecutiveWardenPage() {
       title: "Admission Verification",
       route: "/ExecutiveWarden/AdmissionVerification",
       icon: ClipboardCheckIcon,
+      color: "#022B60",
+    },
+    {
+      title: "Attendance Reports",
+      route: "/ExecutiveWarden/AttendanceReports",
+      icon: BarChart2Icon,
       color: "#022B60",
     },
     // {

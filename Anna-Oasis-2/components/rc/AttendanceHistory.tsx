@@ -142,7 +142,7 @@ const AttendanceHistory = () => {
                       </View>
 
                       {/* Students on Leave */}
-                      {/* <Text className="text-base font-bold text-[#022B60] mb-2">
+                      <Text className="text-base font-bold text-[#022B60] mb-2">
                         Students on Leave ({selectedAttendance.no_leave ?? 0})
                       </Text>
 
@@ -152,7 +152,7 @@ const AttendanceHistory = () => {
                             ? selectedAttendance.onleave.join("\n ")
                             : "No students on leave"}
                         </Text>
-                      </View> */}
+                      </View>
                     </ScrollView>
                 )}
           </ModalBody>
