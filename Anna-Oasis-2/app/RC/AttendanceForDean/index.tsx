@@ -109,7 +109,11 @@ const AttendanceHistoryForDean = () => {
                 </Text>
 
                 <Text className="text-[#022B60] font-bold text-lg mb-2">
-                  Absent: {attendance.totalAbsent + attendance.totalLeave}
+                  Absent: {attendance.totalAbsent}
+                </Text>
+
+                <Text className="text-[#022B60] font-bold text-lg mb-2">
+                  On Leave: {attendance.totalLeave}
                 </Text>
 
               </View>
