@@ -485,7 +485,7 @@ const ApprovalCard = (props: approvalCardProps) => {
             height: Dimensions.get("window").height,
           }}
           resizeMode="contain"
-          onLoad={() => /* console.log("Image loaded successfully") */}
+          // onLoad={() => /* console.log("Image loaded successfully") */}
           onError={(error) => {
             /* console.log("Image load error:", error); */
             setImageError(true);
