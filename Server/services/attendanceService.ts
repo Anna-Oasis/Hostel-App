@@ -4,13 +4,56 @@ import { attendanceModel, NewAttendance } from "../models/attendance";
 import { studentModel } from "../models/studentModel";
 
 export const getAttendanceByRc = async (rc_id: number) => {
-  const result = await db
+  const attendance = await db
     .select()
     .from(attendanceModel)
     .where(eq(attendanceModel.rc_id, rc_id))
     .orderBy(desc(attendanceModel.date));
-  
-  return result;
+
+  // Collect all roll numbers from absentee and onleave arrays across records
+  const rollNumbers = [...new Set(
+    attendance.flatMap((record) => [
+      ...record.absentee,
+      ...record.onleave,
+    ])
+  )];
+
+  if (rollNumbers.length === 0) {
+    return attendance.map((record) => ({
+      ...record,
+      absentee_details: [],
+      onleave_details: [],
+    }));
+  }
+
+  // Fetch student details for the collected roll numbers
+  const students = await db
+    .select({
+      rollNo: studentModel.rollNo,
+      name: studentModel.name,
+      roomNumber: studentModel.roomNumber,
+      floor: studentModel.floor,
+      mobile: studentModel.mobile,
+    })
+    .from(studentModel)
+    .where(inArray(studentModel.rollNo, rollNumbers));
+
+  // Map roll number -> student details for O(1) lookup
+  const studentMap = new Map(
+    students.map((student) => [student.rollNo, student])
+  );
+
+  // Enrich each attendance record with student details for absentees and onleave
+  return attendance.map((record) => ({
+    ...record,
+    absentee_details: record.absentee
+      .map((rollNo) => studentMap.get(rollNo))
+      .filter((student) => student !== undefined),
+
+    onleave_details: record.onleave
+      .map((rollNo) => studentMap.get(rollNo))
+      .filter((student) => student !== undefined),
+  }));
 };
 
 export const createAttendanceByRc = async (attendanceData: NewAttendance) => {
