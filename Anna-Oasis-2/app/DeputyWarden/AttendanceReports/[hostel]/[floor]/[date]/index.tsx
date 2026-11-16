@@ -92,7 +92,16 @@ const renderStudent = (
     className="mb-3 rounded-xl border border-slate-200 bg-white p-3"
   >
     {/* Roll Number - Name */}
-    <View className="flex-row items-center justify-between gap-2">  
+    <View className="">  
+      <View>
+          <Text
+          className={`rounded-md px-2 py-1 text-[10px] font-extrabold ${
+              type === "absent" ? "text-red-700 bg-red-100" : "text-amber-800 bg-amber-100"
+          }`}
+          >
+          {type === "absent" ? "ABSENT" : "ON LEAVE"}
+          </Text>
+      </View> 
         <View>
           <Text className="flex-1 text-md font-bold text-slate-900">
             Name : {student.name ?? "N/A"}
@@ -107,22 +116,10 @@ const renderStudent = (
               Mobile : {student.mobile ?? "N/A"}
           </Text>
         </View>
-        <View
-            className={`rounded-md px-2 py-1 ${
-            type === "absent" ? "bg-red-100" : "bg-amber-100"
-            }`}
-        >
-            <Text
-            className={`text-[10px] font-extrabold ${
-                type === "absent" ? "text-red-700" : "text-amber-800"
-            }`}
-            >
-            {type === "absent" ? "ABSENT" : "ON LEAVE"}
-            </Text>
-        </View>
+        
     </View>
   </View>
-);
+)
 
   if (loading) {
     return (

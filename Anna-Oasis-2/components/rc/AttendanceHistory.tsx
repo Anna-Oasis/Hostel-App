@@ -4,6 +4,7 @@ import { getAttendanceHistory } from "@/utils/rc/RcAttendenceUtils";
 import { Button, ButtonText } from "../ui/button";
 import { Modal, ModalBackdrop, ModalCloseButton, ModalContent, ModalHeader, ModalBody } from "@/components/ui/modal";
 import { Icon, CloseIcon } from "@/components/ui/icon";
+import { router } from "expo-router";
 
 const PRIMARY_COLOR = "#022B60";
 
@@ -12,6 +13,7 @@ const AttendanceHistory = () => {
   const [selectedAttendance, setSelectedAttendance] = useState<any | null>(
     null
   );
+
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -92,7 +94,15 @@ const AttendanceHistory = () => {
 
             {/* View Details Button */}
             <Button
-              onPress={() => setSelectedAttendance(item)}
+              onPress={() =>
+                router.push({
+                  pathname: "/RC/Attendance/[id]",
+                  params: {
+                    id: item.id.toString(),
+                    attendance: JSON.stringify(item),
+                  },
+                })
+              }
               style={{ backgroundColor: PRIMARY_COLOR }}
             >
               <ButtonText className="text-white font-semibold">
@@ -103,62 +113,7 @@ const AttendanceHistory = () => {
         ))}
       </ScrollView>
 
-      {/* Attendance Details Modal */}
-      <Modal
-        isOpen={selectedAttendance}
-        onClose={() => setSelectedAttendance(null)}
-      >
-        <ModalBackdrop/>
-        <ModalContent
-          style={{ maxHeight: Dimensions.get("window").height * 0.9, maxWidth: Dimensions.get("window").height * 1 }}
-        >
-          <ModalHeader className="border-b-2">
-            <Text className="text-2xl font-bold mb-2 text-black flex-col flex">Attendance Details
-              {selectedAttendance && (
-                <Text className="text-[#022B60] mb-5 font-bold text-xl">
-                  ({new Date(selectedAttendance.date).toLocaleDateString("en-GB")}) - {floorNumtoName(selectedAttendance.floor)}
-                </Text>
-              )}
-              </Text>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} className="mb-2" size="xl" />
-            </ModalCloseButton>
-          </ModalHeader>
-
-          <ModalBody className="mt-6">
-                {selectedAttendance && (
-                    <ScrollView className="max-h-80">
-                      {/* Absentees */}
-                      <Text className="text-base font-bold text-[#022B60] mb-2">
-                        Absentees ({selectedAttendance.no_absent})
-                      </Text>
-
-                      <View className="bg-red-50 rounded-lg p-3 mb-5">
-                        <Text className="text-gray-700">
-                          {selectedAttendance.absentee?.length > 0
-                            ? selectedAttendance.absentee.join(", ")
-                            : "No absentees"}
-                        </Text>
-                      </View>
-
-                      {/* Students on Leave */}
-                      <Text className="text-base font-bold text-[#022B60] mb-2">
-                        Students on Leave ({selectedAttendance.no_leave ?? 0})
-                      </Text>
-
-                      <View className="bg-orange-50 rounded-lg p-3">
-                        <Text className="text-gray-700">
-                          {selectedAttendance.onleave?.length > 0
-                            ? selectedAttendance.onleave.join("\n ")
-                            : "No students on leave"}
-                        </Text>
-                      </View>
-                    </ScrollView>
-                )}
-          </ModalBody>
-        </ModalContent>
-        
-      </Modal>
+   
     </>
   );
 };
