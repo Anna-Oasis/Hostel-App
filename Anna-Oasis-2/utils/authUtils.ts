@@ -86,7 +86,7 @@ export const handleSignup = async (
 ) => {
   try {
     const response = await api.post("/register", values);
-    console.log("Signup API response:", response.data);
+    // console.log("Signup API response:", response.data);
     Alert.alert("Signup Successful", "You can now log in.");
     onSuccess();
   } catch (error: any) {
@@ -115,7 +115,7 @@ export const redirectByRole = (role: string | null) => {
       router.replace("/Manager");
       break;
     default:
-      console.error("Unknown user role:", role);
+      // console.error("Unknown user role:", role);
       router.replace("/Login");
       break;
   }

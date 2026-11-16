@@ -15,7 +15,7 @@ const FileUploads = () => {
   const details = useUserStore((state) => state.details);
 
   useEffect(() => {
-    console.log(details)
+    // console.log(details)
     if (details) {
       const isForeign = details.govtIdType === "Passport" ? "Yes" : "No";
       setFieldValue("isForeignNational", isForeign);

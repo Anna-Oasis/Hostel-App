@@ -32,7 +32,7 @@ export default function SummerVacationVericationPage() {
       if (result.success) {
         setLeaves(result.data);
       } else {
-        console.error(result.message || "Failed to fetch leaves");
+        // console.error(result.message || "Failed to fetch leaves");
       }
     } catch (err: any) {
       console.error("Error fetching leaves:", err);

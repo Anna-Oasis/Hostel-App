@@ -89,7 +89,7 @@ export default function StudentMain() {
           const admissionData = await getStudentAdmissionDetails(
             details.data.rollNo
           );
-          console.log("Student Admission Data:", admissionData);
+          // console.log("Student Admission Data:", admissionData);
           setAdmissionCount(admissionData.count);
           if (admissionData.count > 0 && admissionData.data?.[0]?.status) {
             setAdmissionStatus(Number(admissionData.data[0].status));

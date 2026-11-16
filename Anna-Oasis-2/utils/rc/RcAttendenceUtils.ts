@@ -24,7 +24,7 @@ export const handelRCAttendance = async (attendanceObj: {
         },
       }
     );
-    console.log("Attendance submitted:", response.data);
+    // console.log("Attendance submitted:", response.data);
     Alert.alert("Success", "Attendance submitted successfully");
   } catch (error: any) {
     Alert.alert(

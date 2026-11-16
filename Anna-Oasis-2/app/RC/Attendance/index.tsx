@@ -147,7 +147,7 @@ export default function AttendancePage() {
         onleave: leaveStudents.map((s) => s.rollNo),
         no_leave: leaveStudents.length,
       };
-      console.log(attendanceObj)
+      // console.log(attendanceObj)
       await handelRCAttendance(attendanceObj);
 
       setFloor("");

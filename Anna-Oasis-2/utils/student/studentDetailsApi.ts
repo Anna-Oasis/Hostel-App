@@ -15,7 +15,7 @@ export async function submitStudentDetails(formData: FormData) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Form submitted successfully:", response.data);
+    // console.log("Form submitted successfully:", response.data);
     Alert.alert("Success", "Form has submitted successfully");
     setTimeout(() => router.replace("/User/Student"), 1000);
   } catch (error) {
@@ -60,7 +60,7 @@ export async function updateStudentDetails(rollNo: string, formData: FormData) {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Form updated successfully:", response.data);
+    // console.log("Form updated successfully:", response.data);
     Alert.alert("Success", "Details updated successfully");
     setTimeout(() => router.replace("/User/Student"), 1000);
   } catch (error) {

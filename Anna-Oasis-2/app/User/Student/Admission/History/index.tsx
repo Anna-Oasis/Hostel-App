@@ -39,7 +39,7 @@ const AdmissionHistory = () => {
 
   useEffect(() => {
     fetchHistory()
-    console.log("Admission History");
+    // console.log("Admission History");
   }, [rollNo])
 
   const download = async (admission_id : string, feePayment_id ?: string) => {

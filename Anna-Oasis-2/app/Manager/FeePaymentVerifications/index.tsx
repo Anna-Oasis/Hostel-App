@@ -16,7 +16,7 @@ export default function FeePaymentVerificationsPage() {
     try {
       const data = await getAllManagerFeePayments();
       setFeePayments(Array.isArray(data) ? data : []);
-      console.log(data)
+      // console.log(data)
     } catch (err) {
       // console.log("Error fetching manager admissions:", err);
     }

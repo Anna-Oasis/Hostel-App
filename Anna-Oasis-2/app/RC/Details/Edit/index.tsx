@@ -24,7 +24,7 @@ const RCDetailsEditPage = () => {
   const [submit, setSubmit] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(details)
+    // console.log(details)
   },[details])
 
   return (

@@ -96,7 +96,7 @@ export interface VacationForm {
 
 export const getStudentVacations = async (): Promise<VacationFormResponse> => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token) {
         throw new Error("No authentication token found");
@@ -117,7 +117,7 @@ export interface UpdateVacationStatusResponse {
 }
 export const updateVacationStatus = async (id: number, status: boolean, comment?: string): Promise<UpdateVacationStatusResponse> => {
     const token = await getToken();
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token) {
         throw new Error("No authentication token found");
