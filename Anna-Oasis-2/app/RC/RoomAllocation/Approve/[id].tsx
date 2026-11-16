@@ -72,7 +72,7 @@ const ApprovePage = () => {
   const handleFetchRooms = async () => {
     try {
       const roomList = await getAllRooms(selectedSession);
-      console.log(roomList)
+      // console.log(roomList)
       setRooms(roomList);
     } catch (error) {
       console.error('Error fetching rooms:', error);

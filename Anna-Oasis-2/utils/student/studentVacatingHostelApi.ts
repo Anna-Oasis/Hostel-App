@@ -9,12 +9,12 @@ export const submitStudentVacatingForm = async (
 ) => {
   try {
     if (!roll_number) {
-      console.error("User details not found or roll number is missing.");
+      // console.error("User details not found or roll number is missing.");
       return false;
     }
 
     if (!vacatingValues || !cautionDepositValues) {
-      console.error("Vacating values or caution deposit values are missing.");
+      // console.error("Vacating values or caution deposit values are missing.");
       return false;
     }
     const reqBody = {
@@ -32,7 +32,7 @@ export const submitStudentVacatingForm = async (
     };
 
     const token = await getToken();
-    console.log("Submitting vacating form with data:", reqBody);
+    // console.log("Submitting vacating form with data:", reqBody);
 
     const response = await api.post("/api/student/vacating_hostel", reqBody, {
       headers: {

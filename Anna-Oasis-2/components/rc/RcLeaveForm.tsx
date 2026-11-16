@@ -22,11 +22,11 @@ const RcLeaveForm = (props: RcLeaveFormProps) => {
     const fetchRCList = async () => {
       try {
         const result = await getRCList();
-        console.log(details);
+        // console.log(details);
         if (result.success) {
           setAlterrc(result);
         } else {
-          console.error("Failed to fetch RC list:", result.message);
+          // console.error("Failed to fetch RC list:", result.message);
         }
       } catch (error) {
         console.error("Error fetching RC list:", error);

@@ -13,7 +13,7 @@ export async function getAllManagerGrievances() {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Manager grievances response:", response.data.data);
+    // console.log("Manager grievances response:", response.data.data);
     return response.data.data;
   } catch (error: any) {
     Alert.alert(

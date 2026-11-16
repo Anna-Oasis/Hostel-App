@@ -37,7 +37,7 @@ const GrievanceHistory = () => {
       const result = await getHistoryOfGrievance();
 
       if (!result) {
-        console.log("Failed to fetch grievance history");
+        // console.log("Failed to fetch grievance history");
         return;
       }
 

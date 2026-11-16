@@ -8,7 +8,7 @@ export async function deleteStudentProfile(rollNumber : string) {
     if (!token) {
       throw new Error("User is not authenticated");
     }
-    console.log(rollNumber)
+    // console.log(rollNumber)
     const response = await api.delete(`/api/manager/delete/profile/${rollNumber}`, {
       headers: {
         Authorization: `Bearer ${token}`,

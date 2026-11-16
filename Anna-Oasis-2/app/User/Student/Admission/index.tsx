@@ -75,7 +75,7 @@ const AdmissionForm = () => {
     const checkFeePaymentService = async () => {
       try{
         const result = await checkFeePaymentEligible(details.semester, details.roll_number)
-        console.log(result.isOpen)
+        // console.log(result.isOpen)
         if(!result.data || !result.isOpen){
             router.replace("/User/Student/Admission/FeePaymentClosed");
           }

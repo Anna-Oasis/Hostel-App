@@ -15,13 +15,13 @@ const DataDeletion = () => {
 
     const deleteProfile = async() => {
         if(searchRollNo.trim() === "") return
-        console.log(searchRollNo.trim())
+        // console.log(searchRollNo.trim())
         await deleteStudentProfile(searchRollNo.trim())
     }
 
     const deleteAdmission = async() => {
         if(searchRollNo.trim() === "") return
-        console.log(searchRollNo.trim())
+        // console.log(searchRollNo.trim())
         await deleteStudentAdmission(searchRollNo.trim())
     }
 

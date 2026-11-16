@@ -28,7 +28,7 @@ export default function RCPage() {
         router.push("/RC/Details/Edit");
       } else {
         setDetails(rcDetails[0]);
-        console.log("RC Details:", rcDetails);
+        // console.log("RC Details:", rcDetails);
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);

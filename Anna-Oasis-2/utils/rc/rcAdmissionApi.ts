@@ -76,7 +76,7 @@ export async function allocateRoomAdmission(admissionId: string, updateData: any
   if (!token) {
     throw new Error("User is not authenticated");
   }
-  console.log("Allocating room for admission:", admissionId, updateData);
+  // console.log("Allocating room for admission:", admissionId, updateData);
   const response = await api.put(
     `/api/resident_counsellor/admissions/room/${admissionId}`,
     updateData,

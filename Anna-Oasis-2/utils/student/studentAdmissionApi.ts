@@ -47,7 +47,7 @@ export async function submitStudentAdmission(data: AdmissionRequestBody) {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("Admission response:", response.data);
+    // console.log("Admission response:", response.data);
     Alert.alert(
       "Admission Successful",
       "Your admission request has been successfully submitted. You can check your admission status"
