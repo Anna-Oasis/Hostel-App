@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, arrayContains } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { rcModel } from "../models/rcModel";
 import { rcDetailsModel } from "../models/rcDetails";
@@ -102,4 +102,18 @@ export const getAllRCDetailsServiceByBlock = async (block : string) => {
               .innerJoin(rcModel, eq(rcDetailsModel.userId, rcModel.userId))
               .where(eq(rcModel.hostel, block))
               
+};
+
+export const getAllRCDetailsServiceByFloor = async (floor: number) => {
+  return await db
+    .select({
+      name : rcDetailsModel.name,
+      email: rcDetailsModel.email,
+    })
+    .from(rcDetailsModel)
+    .innerJoin(
+      rcModel,
+      eq(rcDetailsModel.userId, rcModel.userId)
+    )
+    .where(arrayContains(rcModel.floor, [floor]));
 };

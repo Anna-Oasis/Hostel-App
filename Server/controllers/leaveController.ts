@@ -3,7 +3,7 @@ import { Response } from "express";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
-import {  getRCById, getRCByUserId } from "../services/rcServices";
+import {  getAllRCDetailsServiceByFloor, getRCById, getRCByUserId } from "../services/rcServices";
 import { getRollNoFromUserId } from "../services/helper";
 import {
   getLeaveFormsToBeApprovedByRcByFloor,
@@ -17,7 +17,10 @@ import {
   getApprovedLeavesByDeputyWarden,
 } from "../services/leaveServices";
 import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.schema";
-import { getDeputyWardenBlockByUserId } from "../services/dwServices";
+import { getDeputyWardenBlockByUserId, getDeputyWardenByBlock } from "../services/dwServices";
+import { findStudentByRollNo } from "../services/detailsService";
+import { sendMail } from "../services/emailServices";
+import { parentLeaveNotificationMessage, rcLeaveNotificationMessage, studentLeaveNotificationMessage } from "../services/emailMessageServicesForLeave";
 
 export const createLeaveFormController = async (
   req: AuthRequest,
@@ -32,7 +35,6 @@ export const createLeaveFormController = async (
 
   //const rollNo = req.params.roll_number;
   const rollNo = await getRollNoFromUserId(Number(req.User.id));
-
   if (!rollNo) {
     throw AppError("Roll number not found for user", httpStatus.NOT_FOUND);
   }
@@ -64,6 +66,23 @@ export const createLeaveFormController = async (
     throw AppError(
       "Failed to create leave form",
       httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
+  const details = await findStudentByRollNo(rollNo);
+  //Mail services
+  if (details.length > 0 && details[0].floor) {
+    const floorRcs = await getAllRCDetailsServiceByFloor(details[0].floor);
+
+    await Promise.all(
+      floorRcs.map((rc) => {
+        const { subject, message } = rcLeaveNotificationMessage({
+          student: details[0],
+          rcName: rc.name,
+        });
+
+        return sendMail(rc.email, subject, message);
+      })
     );
   }
   
@@ -292,6 +311,58 @@ export const updateLeaveFormApprovalStatusController = async (
       "Failed to update leave form",
       httpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  const details = await findStudentByRollNo(existingleaveForm[0].roll_number);
+  
+  //Mail-related code
+
+  if(validated.approve){
+    //Approved by RC
+    if(req.User.role === "rc"){
+      if(details[0].hostelBlock){
+        const deputyWardens = await getDeputyWardenByBlock(details[0].hostelBlock)
+            await Promise.all(
+              deputyWardens.map((dw) => {
+                const { subject, message } = rcLeaveNotificationMessage({
+                  student: details[0],
+                  rcName: dw.name,
+                });
+
+                return sendMail(dw.email, subject, message);
+              })
+            );
+      }
+    }
+    //Approved by DeputyWarden
+    else if(req.User.role === "deputyWarden"){
+      const { subject, message } = studentLeaveNotificationMessage({
+        student: details[0],
+        status: validated.approve,
+        role: "Deputy Warden",
+        leave: existingleaveForm[0],
+      });
+      await sendMail(details[0].email, subject, message)
+
+      const {parentSubject, parentMessage} = parentLeaveNotificationMessage({
+          student : details[0], 
+          leave : existingleaveForm[0]
+      })
+
+      if(details[0].fatherEmail) await sendMail(details[0].fatherEmail, parentSubject, parentMessage)
+      if(details[0].motherEmail) await sendMail(details[0].motherEmail, parentSubject, parentMessage)
+    }
+  }
+  else{
+
+    //Rejected Message
+    const { subject, message } = studentLeaveNotificationMessage({
+        student: details[0],
+        status: validated.approve,
+        role: req.User.role === "deputyWarden" ? "Deputy Warden" : "RC",
+        leave: existingleaveForm[0],
+      });
+      await sendMail(details[0].email, subject, message)
   }
 
   res.status(httpStatus.OK).json({

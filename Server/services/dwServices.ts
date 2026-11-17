@@ -49,3 +49,16 @@ export const getDeputyWardenDetails = async (
 
   return deputyWarden;
 };
+
+export const getDeputyWardenByBlock = async (
+  block : string
+) => {
+  const result = await db
+        .select()
+        .from(deputyWardenModel)
+        .where(
+          eq(deputyWardenModel.block, block)
+        )
+
+  return result
+}
