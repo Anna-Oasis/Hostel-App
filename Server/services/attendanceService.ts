@@ -33,7 +33,7 @@ export const getAttendanceByRc = async (rc_id: number) => {
       name: studentModel.name,
       roomNumber: studentModel.roomNumber,
       floor: studentModel.floor,
-      mobile: studentModel.mobile,
+      mobile: studentModel.fatherMobile,
     })
     .from(studentModel)
     .where(inArray(studentModel.rollNo, rollNumbers));
@@ -135,7 +135,7 @@ export const fetchAllAttendanceByDate = async (date:string, block : string, floo
       rollNo: studentModel.rollNo,
       name: studentModel.name,
       roomNumber: studentModel.roomNumber,
-      mobile: studentModel.mobile,
+      mobile: studentModel.fatherMobile,
     })
     .from(studentModel)
     .where(inArray(studentModel.rollNo, rollNumbers));

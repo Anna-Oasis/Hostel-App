@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import nodemailer from "nodemailer";
 import { redisClient } from "../services/redisService";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -7,6 +6,7 @@ import { db } from "../config/dbConnection";
 import { userModel } from "../models/userModel"; 
 import { eq } from "drizzle-orm";
 import { UserRole } from "../types/roles";
+import {  sendMail } from "../services/emailServices";
 
 const generateToken = (id: string, role: UserRole): string => {
   const jwtSecret = process.env.JWT_SECRET;
@@ -18,13 +18,7 @@ const generateToken = (id: string, role: UserRole): string => {
   });
 };
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Your Gmail App Password
-  },
-});
+
 
 const generateResetToken = (email: string): string => {
   const jwtSecret = process.env.JWT_SECRET;
@@ -198,12 +192,11 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     await redisClient.setEx(`otp:${email}`, 600, otp);
 
     // Dispatch the email to the student
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Anna Oasis - Password Reset OTP",
-      text: `Your temporary verification code is ${otp}. This code will expire in 10 minutes.`,
-    });
+    await sendMail(
+      email,
+      "Anna Oasis - Password Reset OTP",
+      `Your temporary verification code is ${otp}. This code will expire in 10 minutes.`,
+    );
 
     res.status(200).json({
       success: true,
