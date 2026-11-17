@@ -3,7 +3,7 @@ import { Response } from "express";
 import { studentLeaveApprovalStatus } from "../constants/enum";
 import AppError from "../utils/AppError";
 import { AuthRequest } from "../types/roles";
-import {  getRCByUserId } from "../services/rcServices";
+import {  getRCById, getRCByUserId } from "../services/rcServices";
 import { getRollNoFromUserId } from "../services/helper";
 import {
   getLeaveFormsToBeApprovedByRcByFloor,
@@ -135,6 +135,18 @@ export const getLeaveFormWaitingForApprovalController = async (
       rc[0].floor,
       rc[0].hostel
     );
+
+    if(rc[0].alternatingToRCId !== null){
+      const alterRC = await getRCById(Number(rc[0].alternatingToRCId))
+      if (alterRC.length > 0) {
+          const alternateLeaves = await getLeaveFormsToBeApprovedByRcByFloor(
+            alterRC[0].floor,
+            alterRC[0].hostel
+          );
+
+          result = [...result, ...alternateLeaves];
+        }
+    }
   } else if (userRole === "deputyWarden") {
     const block = await getDeputyWardenBlockByUserId(Number(req.User.id))
     result = await getLeaveFormsToBeApprovedByDeputyWarden(block);
