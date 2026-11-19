@@ -20,7 +20,7 @@ import { leaveFormSchema, LeaveDecisionSchema } from "../validation/leaveform.sc
 import { getDeputyWardenBlockByUserId, getDeputyWardenByBlock } from "../services/dwServices";
 import { findStudentByRollNo } from "../services/detailsService";
 import { sendMail } from "../services/emailServices";
-import { parentLeaveNotificationMessage, rcLeaveNotificationMessage, studentLeaveNotificationMessage } from "../services/emailMessageServicesForLeave";
+import { dwLeaveNotificationMessage, parentLeaveNotificationMessage, rcLeaveNotificationMessage, studentLeaveNotificationMessage } from "../services/emailMessageServicesForLeave";
 
 export const createLeaveFormController = async (
   req: AuthRequest,
@@ -71,8 +71,8 @@ export const createLeaveFormController = async (
 
   const details = await findStudentByRollNo(rollNo);
   //Mail services
-  if (details.length > 0 && details[0].floor) {
-    const floorRcs = await getAllRCDetailsServiceByFloor(details[0].floor);
+  if (details.length > 0 && details[0].floor && details[0].hostelBlock) {
+    const floorRcs = await getAllRCDetailsServiceByFloor(details[0].floor, details[0].hostelBlock);
 
     await Promise.all(
       floorRcs.map((rc) => {
@@ -324,9 +324,9 @@ export const updateLeaveFormApprovalStatusController = async (
         const deputyWardens = await getDeputyWardenByBlock(details[0].hostelBlock)
             await Promise.all(
               deputyWardens.map((dw) => {
-                const { subject, message } = rcLeaveNotificationMessage({
+                const { subject, message } = dwLeaveNotificationMessage({
                   student: details[0],
-                  rcName: dw.name,
+                  dwName: dw.name,
                 });
 
                 return sendMail(dw.email, subject, message);
