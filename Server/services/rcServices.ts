@@ -1,4 +1,4 @@
-import { eq, arrayContains } from "drizzle-orm";
+import { eq, arrayContains, and } from "drizzle-orm";
 import { db } from "../config/dbConnection";
 import { rcModel } from "../models/rcModel";
 import { rcDetailsModel } from "../models/rcDetails";
@@ -104,7 +104,7 @@ export const getAllRCDetailsServiceByBlock = async (block : string) => {
               
 };
 
-export const getAllRCDetailsServiceByFloor = async (floor: number) => {
+export const getAllRCDetailsServiceByFloor = async (floor: number, block : string) => {
   return await db
     .select({
       name : rcDetailsModel.name,
@@ -115,5 +115,9 @@ export const getAllRCDetailsServiceByFloor = async (floor: number) => {
       rcModel,
       eq(rcDetailsModel.userId, rcModel.userId)
     )
-    .where(arrayContains(rcModel.floor, [floor]));
+    .where(
+      and(
+        arrayContains(rcModel.floor, [floor]),
+        eq(rcModel.hostel, block)
+      ));
 };
